@@ -64,17 +64,17 @@ classifiers = [ # Optional
 ]
 
 
-# This field lists other packages that your project depends on to run.
+dependencies = [ # Optional
+    "pandas",
+    "Pyarrow",
+    "scikit-learn",
+    "tqdm",
+] # This field lists other packages that your project depends on to run.
 # Any package you put here will be installed by pip when your project is
 # installed, so they must be valid existing projects.
 #
 # For an analysis of this field vs pip's requirements files see:
 # https://packaging.python.org/discussions/install-requires-vs-requirements/
-dependencies = [ # Optional
-    "pandas",
-    "Pyarrow",
-    "scikit-learn",
-]
 
 
 # List additional groups of dependencies here (e.g. development

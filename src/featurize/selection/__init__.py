@@ -1,3 +1,3 @@
-from .utils import remove_low_quality_features
-from .mrmr import mrmr
+from .utils import remove_zero_variance_columns
+from .mrmr import MaxRelevanceMinRedundancy
 from .pso import BinaryParticleSwarmOptimiser

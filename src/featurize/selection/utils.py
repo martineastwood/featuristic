@@ -1,4 +1,4 @@
-def remove_low_quality_features(df):
+def remove_zero_variance_columns(df):
     """
     Remove features that are not useful for modeling
     """

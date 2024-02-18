@@ -18,6 +18,11 @@ data.columns = [str(x) for x in data.columns]
 
 feats = ft.featurize(data)
 
+k = int(feats.shape[0] * 0.75)
+k = 50
+mrmr = ft.selection.MaxRelevanceMinRedundancy(K=k)
+feats = mrmr.fit_transform(feats, target)
+
 
 def cost_function(x0, X, y):
     X_train, X_test, y_train, y_test = train_test_split(
@@ -31,11 +36,10 @@ def cost_function(x0, X, y):
 
 
 f = partial(cost_function, X=feats, y=target)
-options = {"c1": 1, "c2": 2, "w": 0.75}
 
 pso = ft.selection.BinaryParticleSwarmOptimiser(
-    num_particles=10, num_dimensions=feats.shape[1], options=options
+    num_particles=10, num_dimensions=feats.shape[1]
 )
 
-cost, position = pso.optimize(f, max_iter=10, verbose=True)
+cost, position = pso.optimize(f, max_iter=10)
 print(cost, position, position.sum())
