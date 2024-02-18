@@ -4,7 +4,6 @@ from sklearn.metrics import mean_absolute_error
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from functools import partial
 
 
 data_url = "http://lib.stat.cmu.edu/datasets/boston"
