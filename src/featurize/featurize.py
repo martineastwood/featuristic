@@ -3,14 +3,18 @@ from featurize import schema
 import pandas as pd
 import itertools
 from typing import Callable, Union
+from functools import partial
 from featurize.logging import logger
 
 
 def featurize(
-    df,
+    X: pd.DataFrame,
+    y: pd.Series,
     problem_type: str = "regression",
     feature_depth: int = 1,
-    mrmr_k: int = 100,
+    mrmr_k: int = None,
+    swarm_particles: int = 10,
+    swarm_iters: int = 10,
     cost_function: Union[None, Callable] = None,
 ):
     """
@@ -40,21 +44,46 @@ def featurize(
             f"Problem_type must be either 'regression' or 'classification'. Got {problem_type}"
         )
 
-    if mrmr_k < 1:
+    if mrmr_k is None:
+        mrmr_k = int(X.shape[0] * 0.5)
+    elif mrmr_k < 1:
         raise ValueError("mrmr_k must be greater than 0")
 
     if feature_depth < 1:
         raise ValueError("steps must be greater than 0")
 
+    if cost_function is None:
+        if problem_type == "regression":
+            cost_function = ft.cost_funcs.regression.linear_reg_mae
+
     logger.info("Inferring initial dataframe schema")
     s = schema.Schema()
-    s.infer_schema(df)
+    s.infer_schema(X)
 
     for i in range(feature_depth):
         logger.info(f"Featurizing dataframe at depth {i + 1}")
-        df, s = _featurize(df, s, i)
+        X, s = _featurize(X, s, i)
 
-    return df
+    logger.info("Selecting features using MRMR algorithm")
+    mrmr = ft.selection.MaxRelevanceMinRedundancy(K=mrmr_k)
+    X = mrmr.fit_transform(X, y)
+
+    logger.info(
+        f"Optimizing features using Particle Swarm Optimizer with {swarm_particles} particles and {X.shape[1]} dimensions."
+    )
+    pso = ft.selection.BinaryParticleSwarmOptimiser(
+        num_particles=swarm_particles, num_dimensions=X.shape[1]
+    )
+
+    logger.info("Creating partial function for cost function")
+    f = partial(cost_function, X=X, y=y)
+
+    cost, position = pso.optimize(f, max_iters=10)
+    logger.info(
+        f"Optimization completed with final cost: {cost} and {position.sum()} features selected."
+    )
+
+    return X[X.columns[position == 1]]
 
 
 def _featurize(df, schema: schema.Schema, step: int):

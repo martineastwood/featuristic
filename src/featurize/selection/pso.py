@@ -21,7 +21,7 @@ class BaseSwarmOptimizer:
         self.num_particles = num_particles
         self.num_dimensions = num_dimensions
 
-    def optimize(self, cost_function, max_iter, verbose=False):
+    def optimize(self, cost_function, max_iters, verbose=False):
         """
         Optimize the cost function using the swarm optimization algorithm.
 
@@ -30,7 +30,7 @@ class BaseSwarmOptimizer:
         cost_function : function
             The cost function to optimize.
 
-        max_iter : int
+        max_iters : int
             The maximum number of iterations.
 
         verbose : bool (default=False)
@@ -71,7 +71,7 @@ class BaseParticle:
         """
         raise NotImplementedError
 
-    def update_velocity(self, best_position, current_iter, max_iter):
+    def update_velocity(self, best_position, current_iter, max_iters):
         """
         Update the particle's velocity.
 
@@ -81,7 +81,7 @@ class BaseParticle:
             The best position found by the swarm.
         current_iter : int
             The current iteration.
-        max_iter : int
+        max_iters : int
             The maximum number of iterations.
         """
         raise NotImplementedError
@@ -115,7 +115,7 @@ class BinaryParticleSwarmOptimiser(BaseSwarmOptimizer):
         logger.info("Creating swarm of binary particles")
         self.swarm = [BinaryParticle(num_dimensions) for _ in range(self.num_particles)]
 
-    def optimize(self, cost_function: Callable, max_iter: int, verbose=False):
+    def optimize(self, cost_function: Callable, max_iters: int, verbose=False):
         """
         Optimize the cost function using the Binary Particle Swarm Optimizer.
 
@@ -124,7 +124,7 @@ class BinaryParticleSwarmOptimiser(BaseSwarmOptimizer):
         cost_function : function
             The cost function to optimize.
 
-        max_iter : int
+        max_iters : int
             The maximum number of iterations.
 
         verbose : bool (default=False)
@@ -136,10 +136,10 @@ class BinaryParticleSwarmOptimiser(BaseSwarmOptimizer):
         self.global_best_error = 99999999
         self.global_best_position = np.array([])
 
-        max_ticks = max_iter * self.num_particles
+        max_ticks = max_iters * self.num_particles
         pbar = tqdm(total=max_ticks, desc="Optimising feature space...")
 
-        for i in range(max_iter):
+        for i in range(max_iters):
             if verbose:
                 print(f"iter: {i:>4d}, best error: {self.global_best_error:10.6f}")
 
@@ -151,7 +151,7 @@ class BinaryParticleSwarmOptimiser(BaseSwarmOptimizer):
                 pbar.update(1)
 
             for particle in self.swarm:
-                particle.update_velocity(self.global_best_position, i, max_iter)
+                particle.update_velocity(self.global_best_position, i, max_iters)
                 particle.update_position()
 
         return self.global_best_error, self.global_best_position
@@ -174,7 +174,7 @@ class BinaryParticle(BaseParticle):
         super().__init__(num_dimensions)
         self.position = np.rint(self.position).astype(int)
 
-    def update_velocity(self, best_global_position, current_iter, max_iter):
+    def update_velocity(self, best_global_position, current_iter, max_iters):
         """
         Update the particle's velocity.
 
@@ -184,13 +184,13 @@ class BinaryParticle(BaseParticle):
             The best position found by the swarm.
         current_iter : int
             The current iteration.
-        max_iter : int
+        max_iters : int
             The maximum number of iterations.
         """
         r1 = np.random.random(size=len(self.position))
         r2 = np.random.random(size=len(self.position))
 
-        n = max_iter
+        n = max_iters
         t = current_iter
 
         w = (0.4 / n**2) * (t - n) ** 2 + 0.4
