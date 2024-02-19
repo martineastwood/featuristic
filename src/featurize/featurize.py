@@ -68,22 +68,24 @@ def featurize(
     mrmr = ft.selection.MaxRelevanceMinRedundancy(K=mrmr_k)
     X = mrmr.fit_transform(X, y)
 
-    logger.info(
-        f"Optimizing features using Particle Swarm Optimizer with {swarm_particles} particles and {X.shape[1]} dimensions."
-    )
-    pso = ft.selection.BinaryParticleSwarmOptimiser(
-        num_particles=swarm_particles, num_dimensions=X.shape[1]
-    )
+    return X
 
-    logger.info("Creating partial function for cost function")
-    f = partial(cost_function, X=X, y=y)
+    # logger.info(
+    #     f"Optimizing features using Particle Swarm Optimizer with {swarm_particles} particles and {X.shape[1]} dimensions."
+    # )
+    # pso = ft.selection.BinaryParticleSwarmOptimiser(
+    #     num_particles=swarm_particles, num_dimensions=X.shape[1]
+    # )
 
-    cost, position = pso.optimize(f, max_iters=10)
-    logger.info(
-        f"Optimization completed with final cost: {cost} and {position.sum()} features selected."
-    )
+    # logger.info("Creating partial function for cost function")
+    # f = partial(cost_function, X=X, y=y)
 
-    return X[X.columns[position == 1]]
+    # cost, position = pso.optimize(f, max_iters=10)
+    # logger.info(
+    #     f"Optimization completed with final cost: {cost} and {position.sum()} features selected."
+    # )
+
+    # return X[X.columns[position == 1]]
 
 
 def _featurize(df, schema: schema.Schema, step: int):
