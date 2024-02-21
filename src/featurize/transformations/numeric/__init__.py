@@ -11,12 +11,12 @@ from .reciprocal import ReciprocalTransformer
 
 transfomers = {
     "ABSOLUTE": AbsoluteTransformer(),
-    "COSINE": CosineTransformer(),
+    # "COSINE": CosineTransformer(),
     "CUBE": CubeTransformer(),
     # "EXP": ExpTransformer(),
-    "SINE": SineTransformer(),
+    # "SINE": SineTransformer(),
     "SQRT": SqrtTransformer(),
     "SQUARE": SquareTransformer(),
     "RECIPROCAL": ReciprocalTransformer(),
-    "TAN": TanTransformer(),
+    # "TAN": TanTransformer(),
 }
