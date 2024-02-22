@@ -12,3 +12,6 @@ class SquareTransformer(BaseTransformer):
 
     def __call__(self, x):
         return x**2
+
+    def get_description(self):
+        return "Calculates the square of a number."

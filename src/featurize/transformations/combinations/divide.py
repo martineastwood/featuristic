@@ -11,3 +11,6 @@ class DivideTransformer(BaseCombinationTransformer):
 
     def __call__(self, x, y):
         return x / y
+
+    def get_description(self):
+        return "Calculates the division of two numbers."

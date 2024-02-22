@@ -12,3 +12,6 @@ class ReciprocalTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.select([x != 0, x == 0], [1 / x, 0])
+
+    def get_description(self):
+        return "Calculates the reciprocal of a number."

@@ -12,3 +12,6 @@ class TanTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.tan(x)
+
+    def get_description(self):
+        return "Calculates the tangent of a number."

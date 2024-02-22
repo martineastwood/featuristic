@@ -12,3 +12,6 @@ class ExpTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.exp(x)
+
+    def get_description(self):
+        return "Calculates the exponential of a number."

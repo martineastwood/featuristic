@@ -12,3 +12,6 @@ class CosineTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.cos(x)
+
+    def get_description(self):
+        return "Calculates the cosine of a number."

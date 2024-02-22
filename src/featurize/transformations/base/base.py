@@ -28,6 +28,9 @@ class BaseTransformer:
         """
         return f"{self.name}({col_name})"
 
+    def get_description(self):
+        raise NotImplementedError
+
 
 class BaseCombinationTransformer:
     """
@@ -58,3 +61,6 @@ class BaseCombinationTransformer:
             name of the column before transformation
         """
         return f"{self.name}({col_name1}, {col_name2})"
+
+    def get_description(self):
+        raise NotImplementedError

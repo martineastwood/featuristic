@@ -12,3 +12,6 @@ class SineTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.sin(x)
+
+    def get_description(self):
+        return "Calculates the sine of a number."

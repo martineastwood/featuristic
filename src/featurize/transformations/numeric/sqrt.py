@@ -12,3 +12,6 @@ class SqrtTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.sqrt(x)
+
+    def get_description(self):
+        return "Calculates the square root of a number."

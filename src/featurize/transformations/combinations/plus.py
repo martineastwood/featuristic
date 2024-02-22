@@ -11,3 +11,6 @@ class PlusTransformer(BaseCombinationTransformer):
 
     def __call__(self, x, y):
         return x + y
+
+    def get_description(self):
+        return "Calculates the sum of two numbers."

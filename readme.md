@@ -1,7 +1,7 @@
 Featurize
 ------------
 
-> Because feature engineering is a science, not an art
+> Because feature engineering should be a science, not an art
 
 # TODO
 

@@ -12,3 +12,6 @@ class CubeTransformer(BaseTransformer):
 
     def __call__(self, x):
         return x**3
+
+    def get_description(self):
+        return "Calculates the cube of a number."

@@ -12,3 +12,6 @@ class AbsoluteTransformer(BaseTransformer):
 
     def __call__(self, x):
         return np.abs(x)
+
+    def get_description(self):
+        return "Calculates the absolute value of a number."
