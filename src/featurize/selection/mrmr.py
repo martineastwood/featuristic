@@ -1,11 +1,22 @@
+"""Class for selecting most relevant features using the mrmr algorithm."""
+
+from typing import Iterable
 import pandas as pd
 from sklearn.feature_selection import f_regression
 from tqdm import tqdm
-from featurize.logging import logger
+import numpy as np
+from featurize.custom_types import MatrixType
+
+# set the floor value for the correlation matrix
+FLOOR: float = 0.00001
 
 
 class MaxRelevanceMinRedundancy:
-    def __init__(self, K=6):
+    """
+    Class for selecting most relevant features using the mrmr algorithm.
+    """
+
+    def __init__(self, k: int = 6):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -14,76 +25,76 @@ class MaxRelevanceMinRedundancy:
         K : int (default=6)
             The number of features to select.
         """
-        logger.info("Initializing MaxRelevanceMinRedundancy class")
-        self.K = K
+        self.k = k
+        self.selected_features = None
 
-    def fit(self, X, y):
+    def fit(self, X: MatrixType, y: Iterable):
         """
         Fit the mRMR algorithm to the data.
 
         Parameters
         ----------
-        X : pd.DataFrame
+        X : MatrixType
             The dataframe with the features.
-        y : pd.Series
+        y : Iterable
             The target variable.
 
         Returns
         -------
         None
         """
-        logger.info("Fitting mrmr algorithm to the data")
-        self.selected_features = self._mrmr(X, y, self.K)
+        self.selected_features = self._mrmr(X, y, k=self.k)
 
-    def transform(self, X):
+    def transform(self, X: MatrixType) -> MatrixType:
         """
         Transform the data using the selected features.
 
         Parameters
         ----------
-        X : pd.DataFrame
+        X : MatrixType
             The dataframe with the features.
 
         Returns
         -------
-        pd.DataFrame
-            The dataframe with the selected features.
+        MatrixType
+            The MatrixType with the selected features.
         """
-        logger.info("Transforming the data using the selected features")
+        if isinstance(X, np.ndarray):
+            X = pd.DataFrame(X)[self.selected_features]
+            return X.to_numpy()
         return X[self.selected_features]
 
-    def fit_transform(self, X, y):
+    def fit_transform(self, X: MatrixType, y: Iterable) -> MatrixType:
         """
         Fit the mRMR algorithm to the data and transform the data using the selected features.
 
         Parameters
         ----------
-        X : pd.DataFrame
-            The dataframe with the features.
-        y : pd.Series
+        X : MatrixType
+            The MatrixType with the features.
+        y : Iterable
             The target variable.
 
         Returns
         -------
-        pd.DataFrame
+        MatrixType
             The dataframe with the selected features.
         """
-        logger.info("Fitting and transforming the data using the selected features")
         self.fit(X, y)
         return self.transform(X)
 
     @staticmethod
-    def _mrmr(X, y, K=6):
+    def _mrmr(X: MatrixType, y: Iterable, k: int = 6):
         """
         Select the top n_features features using the mRMR algorithm.
 
         Parameters
         ----------
-        X : pd.DataFrame
-            The dataframe with the features.
-        y : pd.Series
+        X : MatrixType
+            A pandas dataframe or np.ndarray containing the features to prune.
+        y : Iterable
             The target variable.
-        K : int (default=6)
+        k : int (default=6)
             The number of features to select.
 
         Returns
@@ -91,12 +102,13 @@ class MaxRelevanceMinRedundancy:
         list
             The list of selected features.
         """
-        # set the floor value for the correlation matrix
-        FLOOR = 0.00001
+        # cast to pandas dataframe if the input is a numpy array
+        # so can use the .corrwith method with either input type
+        if isinstance(X, np.ndarray):
+            X = pd.DataFrame(X)
 
         # set the maximum number of features to select
-        K = min(K, X.shape[1])
-        logger.info(f"Setting mrmr k to {K}")
+        k: int = min(k, X.shape[1])
 
         # calculate the f-statistic and the correlation matrix
         f_stat = pd.Series(f_regression(X, y)[0], index=X.columns)
@@ -106,12 +118,10 @@ class MaxRelevanceMinRedundancy:
         selected = []
         not_selected = X.columns.to_list()
 
-        pbar = tqdm(total=K, desc="Pruning feature space...")
-
-        logger.info(f"Starting feature pruning with {len(not_selected)} features")
+        pbar = tqdm(total=k, desc="Pruning feature space...")
 
         # select the top K features
-        for i in range(K):
+        for i in range(k):
             if i > 0:
                 last_selected = selected[-1]
                 corr.loc[not_selected, last_selected] = (
@@ -126,7 +136,5 @@ class MaxRelevanceMinRedundancy:
             selected.append(best)
             not_selected.remove(best)
             pbar.update(1)
-
-        logger.info(f"Finished feature pruning with {len(selected)} features")
 
         return selected

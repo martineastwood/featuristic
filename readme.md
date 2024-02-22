@@ -1,3 +1,8 @@
+Featurize
+------------
+
+> Because feature engineering is a science, not an art
+
 # TODO
 
 - Infer schema for cols, e.g. numeric, ordinal, categorical etc

@@ -7,3 +7,7 @@ venv_create:
 .PHONY:
 test:
 	python3 -m pytest -v tests
+
+.PHONY:
+lint:
+	python3 -m pylint --rcfile=.pylintrc ./src/featurize/selection/mrmr.py
