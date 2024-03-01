@@ -4,7 +4,6 @@ import pandas as pd
 import itertools
 from typing import Callable, Union
 from functools import partial
-from featurize.logging import logger
 
 
 def featurize(

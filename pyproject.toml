@@ -86,7 +86,14 @@ dependencies = [ # Optional
 # Similar to `dependencies` above, these must be valid existing
 # projects.
 [project.optional-dependencies] # Optional
-dev = ["ipykernel", "pytest", "coverage"]
+dev = [
+    "ipykernel",
+    "pytest",
+    "coverage",
+    "Sphinx",
+    "sphinxawesome-theme",
+    "nbsphinx",
+]
 
 [tool.setuptools.packages.find]
 where = ["src/"]

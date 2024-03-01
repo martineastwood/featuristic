@@ -11,3 +11,10 @@ test:
 .PHONY:
 lint:
 	python3 -m pylint --rcfile=.pylintrc ./src/featurize/selection/mrmr.py
+
+make clean:
+	rm -rf build docs/_build dist featurize.egg-info
+
+html:
+	rm -rf docs/_build && \
+	cd docs && make html

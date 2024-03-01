@@ -5,7 +5,6 @@ import pandas as pd
 from sklearn.feature_selection import f_regression
 from tqdm import tqdm
 import numpy as np
-from featurize.custom_types import MatrixType
 
 # set the floor value for the correlation matrix
 FLOOR: float = 0.00001
@@ -28,7 +27,7 @@ class MaxRelevanceMinRedundancy:
         self.k = k
         self.selected_features = None
 
-    def fit(self, X: MatrixType, y: Iterable):
+    def fit(self, X, y: Iterable):
         """
         Fit the mRMR algorithm to the data.
 
@@ -45,7 +44,7 @@ class MaxRelevanceMinRedundancy:
         """
         self.selected_features = self._mrmr(X, y, k=self.k)
 
-    def transform(self, X: MatrixType) -> MatrixType:
+    def transform(self, X):
         """
         Transform the data using the selected features.
 
@@ -64,7 +63,7 @@ class MaxRelevanceMinRedundancy:
             return X.to_numpy()
         return X[self.selected_features]
 
-    def fit_transform(self, X: MatrixType, y: Iterable) -> MatrixType:
+    def fit_transform(self, X, y: Iterable):
         """
         Fit the mRMR algorithm to the data and transform the data using the selected features.
 
@@ -84,7 +83,7 @@ class MaxRelevanceMinRedundancy:
         return self.transform(X)
 
     @staticmethod
-    def _mrmr(X: MatrixType, y: Iterable, k: int = 6):
+    def _mrmr(X, y: Iterable, k: int = 6):
         """
         Select the top n_features features using the mRMR algorithm.
 
@@ -127,6 +126,10 @@ class MaxRelevanceMinRedundancy:
                 corr.loc[not_selected, last_selected] = (
                     X[not_selected].corrwith(X[last_selected]).abs().clip(FLOOR)
                 )
+
+            import pdb
+
+            pdb.set_trace()
 
             score = f_stat.loc[not_selected] / corr.loc[not_selected, selected].mean(
                 axis=1
