@@ -33,7 +33,7 @@ def sqrt(a):
     return np.sqrt(np.abs(a))
 
 
-class Function:
+class SymbolicFunction:
     def __init__(self, func, arg_count, format_str, name):
         self.func = func
         self.arg_count = arg_count
@@ -48,17 +48,17 @@ class Function:
 
 
 operations = [
-    Function(np.add, 2, "({} + {})", "add"),
-    Function(np.subtract, 2, "({} - {})", "subtract"),
-    Function(np.multiply, 2, "({} * {})", "multiply"),
-    Function(safe_div, 2, "({} / {})", "divide"),
-    Function(negate, 1, "-({})", "negate"),
-    Function(np.abs, 1, "abs({})", "abs"),
-    Function(square, 1, "square({})", "sqaure"),
-    Function(cube, 1, "cube({})", "cube"),
-    Function(sin, 1, "sin({})", "sin"),
-    Function(cos, 1, "cos({})", "cos"),
-    Function(tan, 1, "tan({})", "tan"),
+    SymbolicFunction(np.add, 2, "({} + {})", "add"),
+    SymbolicFunction(np.subtract, 2, "({} - {})", "subtract"),
+    SymbolicFunction(np.multiply, 2, "({} * {})", "multiply"),
+    SymbolicFunction(safe_div, 2, "({} / {})", "divide"),
+    SymbolicFunction(negate, 1, "-({})", "negate"),
+    SymbolicFunction(np.abs, 1, "abs({})", "abs"),
+    SymbolicFunction(square, 1, "square({})", "sqaure"),
+    SymbolicFunction(cube, 1, "cube({})", "cube"),
+    SymbolicFunction(sin, 1, "sin({})", "sin"),
+    SymbolicFunction(cos, 1, "cos({})", "cos"),
+    SymbolicFunction(tan, 1, "tan({})", "tan"),
 ]
 
 

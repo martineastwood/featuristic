@@ -1,8 +1,7 @@
 import pandas as pd
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
-from scipy.stats import pearsonr
 import featurize as ft
 import numpy as np
 
@@ -25,21 +24,19 @@ np.random.seed(8888)
 
 
 symb = ft.SymbolicFeatureGenerator(
-    X=X,
-    y=y,
     functions=None,
-    max_generations=20,
+    fitness="spearman",
+    max_generations=25,
     num_features=10,
     population_size=100,
-    parsimony_coefficient=0.25,
+    parsimony_coefficient=0.001,
 )
-symb.optimise()
+symb.fit(X, y)
 # symb.plot_history()
 
 
-X_new = pd.DataFrame([symb.get_feature(i) for i in range(symb.num_features)]).T
-X_new = pd.concat([X, X_new], axis=1)
-X_new.columns = [f"feature_{i}" for i in range(X_new.shape[1])]
+features = symb.transform(X)
+X_new = pd.concat([X, features], axis=1)
 
 
 def model_accuracy(X, y):
