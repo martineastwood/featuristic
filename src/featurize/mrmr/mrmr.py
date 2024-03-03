@@ -15,7 +15,7 @@ class MaxRelevanceMinRedundancy:
     Class for selecting most relevant features using the mrmr algorithm.
     """
 
-    def __init__(self, k: int = 6, type: str = "regression"):
+    def __init__(self, k: int = 6, problem_type: str = "regression"):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -31,7 +31,7 @@ class MaxRelevanceMinRedundancy:
             raise ValueError(
                 "Invalid type. Must be either 'regression' or 'classification'."
             )
-        if type == "regression":
+        if problem_type == "regression":
             self.metric = f_regression
         else:
             self.metric = f_classif

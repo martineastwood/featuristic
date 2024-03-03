@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from featurize.mrmr import MaxRelevanceMinRedundancy
+from ..mrmr import MaxRelevanceMinRedundancy
 
 from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
 from .program import random_prog, render_prog, select_random_node
@@ -26,11 +26,12 @@ class GeneticFeatureGenerator:
         functions: Union[List[SymbolicFunction] | None] = None,
         num_features: int = 10,
         population_size: int = 100,
-        max_generations: int = 10,
+        max_generations: int = 25,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
         parsimony_coefficient: float = 0.1,
-        verbose: bool = True,
+        early_termination_iters: int = 10,
+        verbose: bool = False,
     ):
         """
         Initialize the Symbolic Feature Generator.
@@ -61,6 +62,9 @@ class GeneticFeatureGenerator:
         parsimony_coefficient : float
             The parsimony coefficient.
 
+        early_termination_iters : int
+            The number of iterations to wait for early termination.
+
         verbose : bool
             Whether to print out aditional information
         """
@@ -81,6 +85,9 @@ class GeneticFeatureGenerator:
         self.len_hall_of_fame = self.num_features * 2
 
         self.population = None
+
+        self.early_termination_iters = early_termination_iters
+        self.early_termination_counter = 0
 
         if fitness == "mae":
             self.compute_fitness = fitness_mae
@@ -248,6 +255,7 @@ class GeneticFeatureGenerator:
                 if score < global_best:
                     global_best = score
                     best_prog = prog
+                    self.early_termination_counter = 0
 
             # update the history
             results = {
@@ -257,6 +265,14 @@ class GeneticFeatureGenerator:
                 "best_program": render_prog(best_prog),
             }
             self.history.append(results)
+
+            self.early_termination_counter += 1
+            if self.early_termination_counter >= self.early_termination_iters:
+                if self.verbose:
+                    print(
+                        f"Early termination at iter {gen}, best error: {global_best:10.6f}"
+                    )
+                break
 
             pbar.update(1)
 

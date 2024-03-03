@@ -64,7 +64,8 @@ classifiers = [ # Optional
 ]
 
 
-dependencies = [ # Optional
+dependencies = [
+    "matplotlib",
     "pandas",
     "Pyarrow",
     "scikit-learn",
