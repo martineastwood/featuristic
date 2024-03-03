@@ -1,8 +1,9 @@
-import pytest
-import featurize
-from sklearn import datasets as sklearn_datasets
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
+from sklearn import datasets as sklearn_datasets
+
+import featurize
 
 
 @pytest.fixture

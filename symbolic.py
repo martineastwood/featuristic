@@ -1,9 +1,10 @@
+import numpy as np
 import pandas as pd
-from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import KFold
+
 import featurize as ft
-import numpy as np
 
 filepath = "https://gist.githubusercontent.com/wmeints/80c1ba22ceeb7a29a0e5e979f0b0afba/raw/8629fe51f0e7642fc5e05567130807b02a93af5e/auto-mpg.csv"
 df = pd.read_csv("test.csv")
@@ -23,15 +24,17 @@ y = df["mpg"]
 np.random.seed(8888)
 
 
-symb = ft.SymbolicFeatureGenerator(
+symb = ft.GeneticFeatureGenerator(
     functions=None,
-    fitness="spearman",
-    max_generations=25,
+    fitness="pearson",
+    max_generations=30,
     num_features=10,
     population_size=100,
     parsimony_coefficient=0.001,
 )
 symb.fit(X, y)
+f = symb.get_feature_info()
+# print(f)
 # symb.plot_history()
 
 
@@ -57,8 +60,23 @@ def model_accuracy(X, y):
     return scores.mean()
 
 
+selection = ft.GeneticFeatureSelector(
+    cost_func=model_accuracy,
+    population_size=100,
+    num_genes=X_new.shape[1],
+    crossover_proba=0.8,
+    mutation_proba=0.2,
+    max_iters=100,
+    early_termination_iters=10,
+)
+
+cost, features = selection.optimize(X_new, y)
+
+print(f"Cost: {cost}, Features: {features}")
+
+
 old = model_accuracy(X, y)
 
-new = model_accuracy(X_new, y)
+new = model_accuracy(X_new[features], y)
 
-print(f"Old: {old}, New: {new}, Improvement: {old / new}")
+print(f"Old: {old}, New: {new}, Improvement: {1 - (new / old)}")

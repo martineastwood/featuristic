@@ -1,7 +1,10 @@
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-from .program import node_count
+"""Fitness functions for measuring how well the features are performing"""
+
 import pandas as pd
 from scipy.stats import pearsonr, spearmanr
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+from .program import node_count
 
 
 def fitness_mae(program: dict, parsimony: float, y_true: pd.Series, y_pred: pd.Series):

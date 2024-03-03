@@ -1,15 +1,17 @@
-from ucimlrepo import fetch_ucirepo
-from sklearn.metrics import accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import KFold, train_test_split
-from sklearn.linear_model import LogisticRegression
-import numpy as np
-import featurize as ft
+import copy
+import warnings
 from functools import partial
 from random import random
-import copy
+
+import numpy as np
 import pandas as pd
-import warnings
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold, train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from ucimlrepo import fetch_ucirepo
+
+import featurize as ft
 
 warnings.simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 

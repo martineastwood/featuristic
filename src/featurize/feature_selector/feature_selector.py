@@ -1,10 +1,13 @@
 """Class for binary genetic algorithm for feature selection."""
 
 from __future__ import annotations
+
 import copy
 import sys
-from typing import Callable, Tuple, List, Iterable
+from typing import Callable, Iterable, List, Tuple
+
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 
@@ -13,7 +16,6 @@ class Individual:
     Class for an individual in the genetic algorithm's population.
     """
 
-    # pylint: disable=too-few-public-methods
     def __init__(self, genome: Iterable, mutation_proba: float = 0.1) -> None:
         """
         Initialize an individual.
@@ -30,7 +32,7 @@ class Individual:
         self.mutation_proba = mutation_proba
         self.current_cost = sys.maxsize
 
-    def evaluate(self, cost_func: Callable) -> float:
+    def evaluate(self, cost_func: Callable, X: pd.DataFrame, y: pd.Series) -> float:
         """
         Evaluate the individual's fitness using the cost function.
 
@@ -44,7 +46,10 @@ class Individual:
         cost : float
             The fitness of the individual.
         """
-        self.current_cost = cost_func(self.genome)
+        if self.genome.sum() == 0:
+            self.current_cost = sys.maxsize
+        else:
+            self.current_cost = cost_func(X[X.columns[self.genome == 1]], y)
         return self.current_cost
 
     def mutate(self) -> None:
@@ -90,12 +95,11 @@ class Individual:
         return c1, c2
 
 
-class BinaryGeneticAlgorithm:
+class GeneticFeatureSelector:
     """
     Genetic algorithm for binary feature selection.
     """
 
-    # pylint: disable=too-many-arguments, too-many-instance-attributes, too-few-public-methods
     def __init__(
         self,
         cost_func: Callable,
@@ -159,7 +163,7 @@ class BinaryGeneticAlgorithm:
             for _ in range(self.population_size)
         ]
 
-    def optimize(self) -> Tuple[float, np.ndarray]:
+    def optimize(self, X: pd.DataFrame, y: pd.Series) -> Tuple[float, np.ndarray]:
         """
         Optimize the feature selection using a genetic algorithm.
 
@@ -170,12 +174,12 @@ class BinaryGeneticAlgorithm:
         features : array
             The column indexes of the best selected features.
         """
-        pbar = tqdm(total=self.max_iters, desc="Optimising feature space...")
+        pbar = tqdm(total=self.max_iters, desc="Optimising feature selection...")
 
         for current_iter in range(self.max_iters):
             scores = []
             for individual in self.population:
-                individual.evaluate(self.cost_func)
+                individual.evaluate(self.cost_func, X, y)
                 scores.append(individual.current_cost)
 
                 if individual.current_cost < self.best_cost:
@@ -183,7 +187,9 @@ class BinaryGeneticAlgorithm:
                     self.best_genome = individual.genome
                     self.early_termination_counter = 0
                     if self.verbose:
-                        print(f"iter: {iter:>4d}, best error: {self.best_cost:10.6f}")
+                        print(
+                            f"iter: {current_iter}, best error: {self.best_cost:10.6f}"
+                        )
 
             self.early_termination_counter += 1
             if self.early_termination_counter >= self.early_termination_iters:
@@ -208,7 +214,7 @@ class BinaryGeneticAlgorithm:
             # replace population
             self.population = children
             pbar.update(1)
-        return self.best_cost, np.array(self.best_genome)
+        return self.best_cost, X.columns[self.best_genome == 1]
 
     def _selection(self, scores: List, k: int = 3) -> Individual:
         """

@@ -1,10 +1,10 @@
 """Class for selecting most relevant features using the mrmr algorithm."""
 
-from typing import Iterable
-import pandas as pd
-from sklearn.feature_selection import f_regression, f_classif
-from tqdm import tqdm
+from typing import List
 
+import pandas as pd
+from sklearn.feature_selection import f_classif, f_regression
+from tqdm import tqdm
 
 # set the floor value for the correlation matrix
 FLOOR: float = 0.00001
@@ -36,15 +36,16 @@ class MaxRelevanceMinRedundancy:
         else:
             self.metric = f_classif
 
-    def fit(self, X, y: Iterable):
+    def fit(self, X: pd.DataFrame, y: pd.Series):
         """
         Fit the mRMR algorithm to the data.
 
         Parameters
         ----------
-        X : MatrixType
+        X : pd.DataFrame
             The dataframe with the features.
-        y : Iterable
+
+        y : pd.Series
             The target variable.
 
         Returns
@@ -53,50 +54,52 @@ class MaxRelevanceMinRedundancy:
         """
         self.selected_features = self._mrmr(X, y)
 
-    def transform(self, X):
+    def transform(self, X: pd.DataFrame):
         """
         Transform the data using the selected features.
 
         Parameters
         ----------
-        X : MatrixType
+        X : pd.DataFrame
             The dataframe with the features.
 
         Returns
         -------
-        MatrixType
-            The MatrixType with the selected features.
+        pd.DataFrame
+            The dataframe with the selected features.
         """
         return X[self.selected_features]
 
-    def fit_transform(self, X, y: Iterable):
+    def fit_transform(self, X: pd.DataFrame, y: pd.Series):
         """
         Fit the mRMR algorithm to the data and transform the data using the selected features.
 
         Parameters
         ----------
-        X : MatrixType
-            The MatrixType with the features.
-        y : Iterable
+        X : pd.DataFrame
+            The dataframe with the features.
+
+        y : pd.Series
             The target variable.
 
         Returns
         -------
-        MatrixType
+        pd.DataFrame
             The dataframe with the selected features.
         """
         self.fit(X, y)
         return self.transform(X)
 
-    def _mrmr(self, X, y: Iterable):
+    def _mrmr(self, X: pd.DataFrame, y: pd.Series) -> List[str]:
         """
         Select the top n_features features using the mRMR algorithm.
 
         Parameters
         ----------
-        X : MatrixType
-            A pandas dataframe containing the features to prune.
-        y : Iterable
+        X : pd.DataFrame
+            The dataframe with the features.
+
+        y : pd.Series
             The target variable.
 
         Returns

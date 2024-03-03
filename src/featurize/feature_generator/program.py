@@ -1,7 +1,26 @@
+"""Functions for manipulating the symbolic programs."""
+
+from typing import List
+import pandas as pd
 import numpy as np
+from .symbolic_functions import SymbolicFunction
 
 
-def random_prog(depth, X, operations):
+def random_prog(depth: int, X: pd.DataFrame, operations: List[SymbolicFunction]):
+    """
+    Generate a random program for symbolic regression.
+
+    Parameters
+    ----------
+    depth : int
+        The depth of the program.
+
+    X : pd.DataFrame
+        The input data.
+
+    operations : list
+        The list of operations to use.
+    """
     if np.random.randint(0, 10) >= depth * 2:
         op = operations[np.random.randint(0, len(operations) - 1)]
         return {
@@ -11,17 +30,50 @@ def random_prog(depth, X, operations):
             ],
             "format_str": op.format_str,
         }
-    else:
-        return {"feature_name": X.columns[np.random.randint(0, X.shape[1] - 1)]}
+
+    return {"feature_name": X.columns[np.random.randint(0, X.shape[1] - 1)]}
 
 
-def node_count(node):
+def node_count(node: dict) -> int:
+    """
+    Count the number of nodes in the program.
+
+    Parameters
+    ----------
+    node : dict
+        The program to count.
+
+    Returns
+    -------
+    int
+        The number of nodes in the program.
+    """
     if "children" not in node:
         return 1
-    return sum([node_count(c) for c in node["children"]])
+    return sum((node_count(c) for c in node["children"]))
 
 
-def select_random_node(selected, parent, depth):
+def select_random_node(selected: dict, parent: dict, depth: int) -> dict:
+    """
+    Select a random node from the program.
+
+    Parameters
+    ----------
+
+    selected : dict
+        The current node.
+
+    parent : dict
+        The parent node.
+
+    depth : int
+        The depth of the program.
+
+    Returns
+    -------
+    dict
+        The selected node.
+    """
     if "children" not in selected:
         return parent
 
@@ -38,7 +90,20 @@ def select_random_node(selected, parent, depth):
     )
 
 
-def render_prog(node):
+def render_prog(node: dict) -> str:
+    """
+    Render a program to a string.
+
+    Parameters
+    ----------
+    node : dict
+        The program to render.
+
+    Returns
+    -------
+    str
+        The rendered program.
+    """
     if "children" not in node:
         return node["feature_name"]
     return node["format_str"].format(*[render_prog(c) for c in node["children"]])

@@ -1,9 +1,11 @@
-import pytest
-import featurize as ft
-from sklearn import datasets as sklearn_datasets
 import sys
-import numpy as np
 from functools import partial
+
+import numpy as np
+import pytest
+from sklearn import datasets as sklearn_datasets
+
+import featurize as ft
 
 
 @pytest.fixture

@@ -1,7 +1,4 @@
-from . import transformations
-from . import schema
-from . import selection
-from .featurize import featurize
-from .feature_generator.feature_generator import SymbolicFeatureGenerator
-from .feature_generator.symbolic_functions import operations, list_operations
-from .transformations import list_transformations
+from .feature_generator.feature_generator import GeneticFeatureGenerator
+from .feature_generator.symbolic_functions import list_operations, operations
+from .feature_selector.feature_selector import GeneticFeatureSelector
+from .mrmr import MaxRelevanceMinRedundancy
