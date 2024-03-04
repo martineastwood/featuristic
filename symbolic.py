@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.utils import shuffle
 
 import featurize as ft
 
@@ -43,31 +45,23 @@ X_new = pd.concat([X, features], axis=1)
 
 
 def model_accuracy(X, y):
-    N_SPLITS = 5
-    strat_kf = KFold(n_splits=N_SPLITS, shuffle=True, random_state=8888)
-    scores = np.empty(N_SPLITS)
-    for idx, (train_idx, test_idx) in enumerate(strat_kf.split(X, y)):
-        X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
-        y_train, y_test = y[train_idx], y[test_idx]
-
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-
-        preds = model.predict(X_test)
-        loss = mean_absolute_error(y_test, preds)
-        scores[idx] = loss
-
+    X_s, y_s = shuffle(X, y, random_state=8888)
+    model = LinearRegression()
+    scores = cross_val_score(model, X_s, y_s, cv=3, scoring="neg_mean_absolute_error")
     return scores.mean()
 
 
 selection = ft.GeneticFeatureSelector(
     cost_func=model_accuracy,
+    bigger_is_better=True,
     population_size=100,
     num_genes=X_new.shape[1],
     crossover_proba=0.8,
     mutation_proba=0.2,
     max_iters=100,
-    early_termination_iters=10,
+    early_termination_iters=25,
+    n_jobs=8,
+    verbose=False,
 )
 
 cost, features = selection.optimize(X_new, y)

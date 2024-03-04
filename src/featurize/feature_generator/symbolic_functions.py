@@ -1,6 +1,7 @@
 """Functions to use in the symbolic regression"""
 
 from typing import Callable
+
 import numpy as np
 
 

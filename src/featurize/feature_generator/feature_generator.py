@@ -6,10 +6,10 @@ from typing import List, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from joblib import Parallel, cpu_count, delayed
 from tqdm import tqdm
 
 from ..mrmr import MaxRelevanceMinRedundancy
-
 from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
 from .program import random_prog, render_prog, select_random_node
 from .symbolic_functions import SymbolicFunction, operations
@@ -31,6 +31,7 @@ class GeneticFeatureGenerator:
         crossover_prob: float = 0.75,
         parsimony_coefficient: float = 0.1,
         early_termination_iters: int = 10,
+        n_jobs: int = -1,
         verbose: bool = False,
     ):
         """
@@ -64,6 +65,9 @@ class GeneticFeatureGenerator:
 
         early_termination_iters : int
             The number of iterations to wait for early termination.
+
+        n_jobs : int
+            The number of parallel jobs to run. If -1, use all available cores else uses the minimum of n_jobs and cpu_count.
 
         verbose : bool
             Whether to print out aditional information
@@ -103,6 +107,13 @@ class GeneticFeatureGenerator:
         self.verbose = verbose
 
         self.fit_called = False
+
+        if n_jobs == -1:
+            self.n_jobs = cpu_count()
+        elif n_jobs is None:
+            self.n_jobs = 1
+        else:
+            self.n_jobs = min(n_jobs, cpu_count())
 
     def _mutate(self, selected: dict, X: pd.DataFrame) -> dict:
         """
@@ -245,12 +256,29 @@ class GeneticFeatureGenerator:
         pbar = tqdm(total=self.max_generations, desc="Creating new features...")
         for gen in range(self.max_generations):
             fitness = []
-            for prog in self.population:
-                prediction = self._evaluate_df(prog, X)
-                score = self.compute_fitness(
-                    prog, self.parsimony_coefficient, prediction, y
+
+            # Run the prediction and fitness calculation in parallel
+            if self.n_jobs > 1:
+                prediction = Parallel(n_jobs=self.n_jobs)(
+                    delayed(self._evaluate_df)(prog, X) for prog in self.population
                 )
 
+                score = Parallel(n_jobs=self.n_jobs)(
+                    delayed(self.compute_fitness)(
+                        prog, self.parsimony_coefficient, pred, y
+                    )
+                    for prog, pred, in zip(self.population, prediction)
+                )
+            # Run the prediction and fitness calculation in serial
+            else:
+                prediction = [self._evaluate_df(prog, X) for prog in self.population]
+                score = [
+                    self.compute_fitness(prog, self.parsimony_coefficient, pred, y)
+                    for prog, pred in zip(self.population, prediction)
+                ]
+
+            for prog, score in zip(self.population, score):
+                # check for the best program
                 fitness.append(score)
                 if score < global_best:
                     global_best = score
@@ -266,6 +294,7 @@ class GeneticFeatureGenerator:
             }
             self.history.append(results)
 
+            # check for early termination
             self.early_termination_counter += 1
             if self.early_termination_counter >= self.early_termination_iters:
                 if self.verbose:
@@ -284,14 +313,16 @@ class GeneticFeatureGenerator:
                 self._get_offspring(fitness, X) for _ in range(self.population_size)
             ]
 
-        self.fit_called = True
-
+        # select the best features using mrmr
         self._select_best_features(X, y)
 
         if self.verbose:
             print("Symbolic Feature Generator")
             print(f"Best program: {render_prog(best_prog)}")
             print(f"Best score: {global_best}")
+
+        # we've successfully finished the fit
+        self.fit_called = True
 
         return self
 

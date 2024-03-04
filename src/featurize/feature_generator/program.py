@@ -1,8 +1,10 @@
 """Functions for manipulating the symbolic programs."""
 
 from typing import List
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+
 from .symbolic_functions import SymbolicFunction
 
 

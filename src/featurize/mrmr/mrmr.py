@@ -27,7 +27,7 @@ class MaxRelevanceMinRedundancy:
         self.k = k
         self.selected_features = None
 
-        if type not in ["regression", "classification"]:
+        if problem_type not in ["regression", "classification"]:
             raise ValueError(
                 "Invalid type. Must be either 'regression' or 'classification'."
             )

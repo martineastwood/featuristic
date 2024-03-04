@@ -8,6 +8,7 @@ from typing import Callable, Iterable, List, Tuple
 
 import numpy as np
 import pandas as pd
+from joblib import Parallel, cpu_count, delayed
 from tqdm import tqdm
 
 
@@ -104,11 +105,13 @@ class GeneticFeatureSelector:
         self,
         cost_func: Callable,
         num_genes: int,
+        bigger_is_better: bool = False,
         population_size: int = 100,
         crossover_proba: float = 0.75,
         mutation_proba: float = 0.1,
         max_iters: int = 150,
         early_termination_iters: int = 10,
+        n_jobs: int = -1,
         verbose: bool = False,
     ) -> None:
         """
@@ -121,6 +124,9 @@ class GeneticFeatureSelector:
 
         num_genes : int
             The number of genes in the genome.
+
+        bigger_is_better : bool
+            If True, then the cost function is a score to maximize, else it is an error to minimize.
 
         population_size : int
             The number of individuals in the population.
@@ -136,6 +142,9 @@ class GeneticFeatureSelector:
 
         early_termination_iters : int
             The number of iterations to wait for early termination.
+
+        n_jobs : int
+            The number of parallel jobs to run. If -1, use all available cores else uses the minimum of n_jobs and cpu_count.
 
         verbose : bool
             Whether to print progress.
@@ -153,8 +162,20 @@ class GeneticFeatureSelector:
         self.history_best = []
         self.history_mean = []
 
-        self.best_cost = sys.maxsize
         self.best_genome = None
+
+        self.bigger_is_better = bigger_is_better
+        if self.bigger_is_better:
+            self.best_cost = -sys.maxsize
+        else:
+            self.best_cost = sys.maxsize
+
+        if n_jobs == -1:
+            self.n_jobs = cpu_count()
+        elif n_jobs is None:
+            self.n_jobs = 1
+        else:
+            self.n_jobs = min(n_jobs, cpu_count())
 
         self.verbose = verbose
 
@@ -176,21 +197,49 @@ class GeneticFeatureSelector:
         """
         pbar = tqdm(total=self.max_iters, desc="Optimising feature selection...")
 
+        def _parallel_wrapper(cost_func, individual, X, y):
+            individual.evaluate(cost_func, X, y)
+            return individual
+
         for current_iter in range(self.max_iters):
-            scores = []
-            for individual in self.population:
-                individual.evaluate(self.cost_func, X, y)
-                scores.append(individual.current_cost)
+            # Run the prediction and fitness calculation in parallel
+            if self.n_jobs > 1:
+                self.population = Parallel(n_jobs=self.n_jobs)(
+                    delayed(_parallel_wrapper)(self.cost_func, individual, X, y)
+                    for individual in self.population
+                )
+                scores = [individual.current_cost for individual in self.population]
+            # Run the prediction and fitness calculation in serial
+            else:
+                scores = []
+                for individual in self.population:
+                    individual.evaluate(self.cost_func, X, y)
+                    scores.append(individual.current_cost)
 
-                if individual.current_cost < self.best_cost:
-                    self.best_cost = individual.current_cost
-                    self.best_genome = individual.genome
-                    self.early_termination_counter = 0
-                    if self.verbose:
-                        print(
-                            f"iter: {current_iter}, best error: {self.best_cost:10.6f}"
-                        )
+            if self.bigger_is_better:
+                for individual in self.population:
+                    # check for best genome
+                    if individual.current_cost > self.best_cost:
+                        self.best_cost = individual.current_cost
+                        self.best_genome = individual.genome
+                        self.early_termination_counter = 0
+                        if self.verbose:
+                            print(
+                                f"iter: {current_iter}, best error: {self.best_cost:10.6f}"
+                            )
+            else:
+                for individual in self.population:
+                    # check for best genome
+                    if individual.current_cost < self.best_cost:
+                        self.best_cost = individual.current_cost
+                        self.best_genome = individual.genome
+                        self.early_termination_counter = 0
+                        if self.verbose:
+                            print(
+                                f"iter: {current_iter}, best error: {self.best_cost:10.6f}"
+                            )
 
+            # check for early termination
             self.early_termination_counter += 1
             if self.early_termination_counter >= self.early_termination_iters:
                 if self.verbose:
@@ -199,11 +248,14 @@ class GeneticFeatureSelector:
                     )
                 break
 
+            # store history
             self.history_best.append(self.best_cost)
             self.history_mean.append(np.mean(scores))
 
+            # select the parents for the next generation
             selected = [self._selection(scores) for _ in range(self.population_size)]
 
+            # create the offspring and mutate
             children = []
             for i in range(0, len(self.population) - 1, 2):
                 p1, p2 = selected[i], selected[i + 1]
@@ -214,6 +266,7 @@ class GeneticFeatureSelector:
             # replace population
             self.population = children
             pbar.update(1)
+
         return self.best_cost, X.columns[self.best_genome == 1]
 
     def _selection(self, scores: List, k: int = 3) -> Individual:
