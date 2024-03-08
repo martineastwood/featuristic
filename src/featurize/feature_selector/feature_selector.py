@@ -17,7 +17,9 @@ class Individual:
     Class for an individual in the genetic algorithm's population.
     """
 
-    def __init__(self, genome: Iterable, mutation_proba: float = 0.1) -> None:
+    def __init__(
+        self, genome: Iterable, bigger_is_better=True, mutation_proba: float = 0.1
+    ) -> None:
         """
         Initialize an individual.
 
@@ -26,12 +28,19 @@ class Individual:
         genome : array
             The individual's genome.
 
+        bigger_is_better : bool
+            If True, then the cost function is a score to maximize, else it is an error to minimize.
+
         mutation_proba : float
             The probability of mutation.
         """
         self.genome = np.array(genome)
         self.mutation_proba = mutation_proba
-        self.current_cost = sys.maxsize
+        self.bigger_is_better = bigger_is_better
+        if self.bigger_is_better:
+            self.current_cost = -sys.maxsize
+        else:
+            self.current_cost = sys.maxsize
 
     def evaluate(self, cost_func: Callable, X: pd.DataFrame, y: pd.Series) -> float:
         """
@@ -48,7 +57,10 @@ class Individual:
             The fitness of the individual.
         """
         if self.genome.sum() == 0:
-            self.current_cost = sys.maxsize
+            if self.bigger_is_better:
+                self.current_cost = -sys.maxsize
+            else:
+                self.current_cost = sys.maxsize
         else:
             self.current_cost = cost_func(X[X.columns[self.genome == 1]], y)
         return self.current_cost
@@ -104,7 +116,6 @@ class GeneticFeatureSelector:
     def __init__(
         self,
         cost_func: Callable,
-        num_genes: int,
         bigger_is_better: bool = False,
         population_size: int = 100,
         crossover_proba: float = 0.75,
@@ -121,9 +132,6 @@ class GeneticFeatureSelector:
         ----------
         cost_func : callable
             The cost function to minimize.
-
-        num_genes : int
-            The number of genes in the genome.
 
         bigger_is_better : bool
             If True, then the cost function is a score to maximize, else it is an error to minimize.
@@ -151,7 +159,6 @@ class GeneticFeatureSelector:
         """
         self.cost_func = cost_func
         self.population_size = population_size
-        self.num_genes = num_genes
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
         self.max_iters = max_iters
@@ -179,10 +186,8 @@ class GeneticFeatureSelector:
 
         self.verbose = verbose
 
-        self.population = [
-            Individual(np.random.randint(0, 2, self.num_genes), self.mutation_proba)
-            for _ in range(self.population_size)
-        ]
+        self.population = None
+        self.num_genes = None
 
     def optimize(self, X: pd.DataFrame, y: pd.Series) -> Tuple[float, np.ndarray]:
         """
@@ -195,6 +200,16 @@ class GeneticFeatureSelector:
         features : array
             The column indexes of the best selected features.
         """
+        self.num_genes = X.shape[1]
+        self.population = [
+            Individual(
+                np.random.randint(0, 2, self.num_genes),
+                self.bigger_is_better,
+                self.mutation_proba,
+            )
+            for _ in range(self.population_size)
+        ]
+
         pbar = tqdm(total=self.max_iters, desc="Optimising feature selection...")
 
         def _parallel_wrapper(cost_func, individual, X, y):

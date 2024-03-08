@@ -15,19 +15,43 @@ author = "Martin Eastwood"
 
 extensions = [
     "nbsphinx",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.autosummary",
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "alabaster"
+html_sidebars = {
+    "**": [
+        "globaltoc.html",
+    ],
+}
+
+html_theme_options = {
+    "pygment_light_style": "tango",
+    "pygment_dark_style": "monokai",
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/martineastwood/featurize",
+            "icon": "fab fa-github-square",
+            "type": "fontawesome",
+        },
+    ],
+}
+
+# autosummary_generate = ["api_reference.rst"]
+
 html_static_path = ["_static"]
 
 html_permalinks_icon = "<span>#</span>"
-html_theme = "sphinxawesome_theme"
+html_theme = "pydata_sphinx_theme"
 
 pygments_style = "sphinx"

@@ -36,9 +36,17 @@ Quickstart
 
 
 
-Indices and tables
+API Reference
+------------------
+
+* :ref:`modindex`
+
+Search
+------------------
+
+* :ref:`search`
+
+Index
 ------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

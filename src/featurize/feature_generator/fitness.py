@@ -3,6 +3,7 @@
 import pandas as pd
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
 
 from .program import node_count
 
@@ -70,6 +71,9 @@ def fitness_pearson(
     y_pred: pd.Series
         The predicted values
     """
+    if np.ptp(y_true) == 0 or np.ptp(y_pred) == 0:
+        return 0
+
     loss = abs(pearsonr(y_true, y_pred).statistic)
     penalty = node_count(program) ** parsimony
     loss /= -penalty

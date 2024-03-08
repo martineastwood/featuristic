@@ -30,7 +30,7 @@ class GeneticFeatureGenerator:
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
         parsimony_coefficient: float = 0.1,
-        early_termination_iters: int = 10,
+        early_termination_iters: int = 15,
         n_jobs: int = -1,
         verbose: bool = False,
     ):
@@ -86,7 +86,7 @@ class GeneticFeatureGenerator:
 
         self.history = []
         self.hall_of_fame = []
-        self.len_hall_of_fame = self.num_features * 2
+        self.len_hall_of_fame = self.num_features * 3
 
         self.population = None
 
