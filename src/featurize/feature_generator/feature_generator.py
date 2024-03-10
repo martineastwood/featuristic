@@ -17,7 +17,13 @@ from .symbolic_functions import SymbolicFunction, operations
 
 class GeneticFeatureGenerator:
     """
-    Symbolic Feature Generator
+    Feature Generator class that uses genetic programming to generate new features using
+    a technique based on Symbolic Regression. This is done by initially building a population of
+    naive random formulas that represent transformations of the input features. The population is
+    then evolved over a number of generations using genetic operators such as mutation and crossover
+    to find the best programs that minimize a given fitness function. The best features are then
+    identified using the Maximum Relevance Minimum Redundancy (mRMR) algorithm to find those features
+    that are most correlated with the target variable while being least correlated with each other.
     """
 
     def __init__(
@@ -40,34 +46,41 @@ class GeneticFeatureGenerator:
         Args
         ----
         fitness : str
-            The fitness function to use. Must be one of "mae", "mse", "pearson", or "spearman".
+            The fitness function to use. Must be one of `("mae", "mse", "pearson", "spearman")`.
 
         functions : list
-            The list of functions to use in the programs.
+            The list of functions to use in the programs. if `None` then all the built-in functions are used.
 
         num_features : int
-            The number of features to generate.
+            The number of best features to generate. Internally, `3 * num_features` programs are generated and the
+            best `num_features` are selected via Maximum Relevance Minimum Redundancy (mRMR).
 
         population_size : int
-            The total size of the population.
+            The number of programs in each generation. The larger the population, the more likely it is to find a good
+            solution, but the longer it will take.
 
         max_generations : int
-            The maximum number of generations to run.
+            The maximum number of generations to run. The larger the number of generations, the more likely it is to
+            find a good solution, but the longer it will take.
 
         tournament_size : int
-            The size of the tournament for selection.
+            The size of the tournament for selection. The larger the tournament size, the more likely it is to select
+            the best program, but the longer it will take.
 
         crossover_prob : float
-            The probability of crossover mutation.
+            The probability of crossover mutation between selected parents in each generation.
 
         parsimony_coefficient : float
-            The parsimony coefficient.
+            The parsimony coefficient. Larger values penalize larger programs more and encourage smaller programs.
+            This helps prevent bloat where the programs become increasingly large and complex without improving the
+            fitness, which increases computation complexity and reduces the interpretability of the features.
 
         early_termination_iters : int
-            The number of iterations to wait for early termination.
+            If the best score does not improve for this number of generations, then the algorithm will terminate early.
 
         n_jobs : int
-            The number of parallel jobs to run. If -1, use all available cores else uses the minimum of n_jobs and cpu_count.
+            The number of parallel jobs to run. If `-1`, use all available cores else uses the minimum of `n_jobs`
+            and `cpu_count`. If `1`, then the computation is done in serial.
 
         verbose : bool
             Whether to print out aditional information
@@ -134,7 +147,7 @@ class GeneticFeatureGenerator:
         mutate_point["children"][child_idx] = random_prog(0, X, self.operations)
         return offspring
 
-    def _crossover(self, selected1, selected2):
+    def _crossover(self, selected1: dict, selected2: dict) -> dict:
         """
         Perform crossover mutation between two selected programs.
 
@@ -227,7 +240,7 @@ class GeneticFeatureGenerator:
             node["func"](*[self._evaluate_df(c, X) for c in node["children"]])
         )
 
-    def fit(self, X, y):
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> "GeneticFeatureGenerator":
         """
         Fit the symbolic feature generator to the data.
 
@@ -326,14 +339,14 @@ class GeneticFeatureGenerator:
 
         return self
 
-    def _update_hall_of_fame(self, fitness):
+    def _update_hall_of_fame(self, fitness: List[float]):
         for prog, fit in zip(self.population, fitness):
             self.hall_of_fame.append({"prog": prog, "fitness": fit})
 
         self.hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
         self.hall_of_fame = self.hall_of_fame[: self.len_hall_of_fame]
 
-    def _select_best_features(self, X, y):
+    def _select_best_features(self, X: pd.DataFrame, y: pd.Series):
         """
         Select the best features using the mRMR algorithm.
 

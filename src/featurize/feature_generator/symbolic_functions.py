@@ -146,7 +146,8 @@ def sqrt(a):
 
 class SymbolicFunction:
     """
-    A class to represent a symbolic function.
+    An internal class used to represent the symbolic functions used to generate new
+    features by the GeneticFeatureGenerator class.
     """
 
     def __init__(self, func: Callable, arg_count: int, format_str: str, name: str):

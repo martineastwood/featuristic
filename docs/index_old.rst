@@ -24,29 +24,25 @@ Quickstart
    print(ft.__version__)
 
 
+.. toctree::
+   :maxdepth: 1
 
-
+   install/index
+   getting_started/index
+   examples   
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Resources & References
 
-   installation/install
-   getting_started/index
+   release_notes
+   api_reference
 
 
 
-API Reference
-------------------
-
-* :ref:`modindex`
-
-Search
-------------------
-
-* :ref:`search`
-
-Index
+Other Links
 ------------------
 
 * :ref:`genindex`
+* :ref:`search`
+

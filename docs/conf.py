@@ -5,6 +5,10 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import sys
+import os
+
+sys.path.insert(0, "../src")
 
 project = "Featurize"
 copyright = "2024, Martin Eastwood"
@@ -17,12 +21,17 @@ extensions = [
     "nbsphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
 ]
 
+autosummary_generate = True
+
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
+
+master_doc = "index"
 
 
 # -- Options for HTML output -------------------------------------------------
