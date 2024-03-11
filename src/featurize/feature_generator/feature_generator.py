@@ -13,6 +13,7 @@ from ..mrmr import MaxRelevanceMinRedundancy
 from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
 from .program import random_prog, render_prog, select_random_node
 from .symbolic_functions import SymbolicFunction, operations
+from .population import SerialPopulation, ParallelPopulation
 
 
 class GeneticFeatureGenerator:
@@ -35,7 +36,7 @@ class GeneticFeatureGenerator:
         max_generations: int = 25,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
-        parsimony_coefficient: float = 0.1,
+        parsimony_coefficient: float = 0.01,
         early_termination_iters: int = 15,
         n_jobs: int = -1,
         verbose: bool = False,
@@ -107,13 +108,13 @@ class GeneticFeatureGenerator:
         self.early_termination_counter = 0
 
         if fitness == "mae":
-            self.compute_fitness = fitness_mae
+            self.fitness_func = fitness_mae
         elif fitness == "mse":
-            self.compute_fitness = fitness_mse
+            self.fitness_func = fitness_mse
         elif fitness == "pearson":
-            self.compute_fitness = fitness_pearson
+            self.fitness_func = fitness_pearson
         elif fitness == "spearman":
-            self.compute_fitness = fitness_spearman
+            self.fitness_func = fitness_spearman
         else:
             raise ValueError("Invalid fitness function")
 
@@ -127,118 +128,6 @@ class GeneticFeatureGenerator:
             self.n_jobs = 1
         else:
             self.n_jobs = min(n_jobs, cpu_count())
-
-    def _mutate(self, selected: dict, X: pd.DataFrame) -> dict:
-        """
-        Mutate the selected program by replacing a random node with a new random program.
-
-        Args
-        ----
-        selected : dict
-            The selected program to mutate.
-
-        X : pd.DataFrame
-            The dataframe with the features.
-        """
-        offspring = deepcopy(selected)
-        mutate_point = select_random_node(offspring, None, 0)
-        child_count = len(mutate_point["children"])
-        child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count - 1)
-        mutate_point["children"][child_idx] = random_prog(0, X, self.operations)
-        return offspring
-
-    def _crossover(self, selected1: dict, selected2: dict) -> dict:
-        """
-        Perform crossover mutation between two selected programs.
-
-        Args
-        ----
-        selected1 : dict
-            The first selected program.
-
-        selected2 : dict
-            The second selected program.
-
-        return
-        ------
-        dict
-            The offspring program.
-        """
-        offspring = deepcopy(selected1)
-        xover_point1 = select_random_node(offspring, None, 0)
-        xover_point2 = select_random_node(selected2, None, 0)
-        child_count = len(xover_point1["children"])
-        child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count - 1)
-        xover_point1["children"][child_idx] = xover_point2
-        return offspring
-
-    def _get_random_parent(self, fitness: List[float]) -> dict:
-        """
-        Select a random parent from the population using tournament selection.
-
-        Args
-        ----
-        fitness : list
-            The fitness values of the population.
-
-        return
-        ------
-        dict
-            The selected parent program.
-        """
-        tournament_members = [
-            np.random.randint(0, self.population_size - 1)
-            for _ in range(self.tournament_size)
-        ]
-        member_fitness = [(fitness[i], self.population[i]) for i in tournament_members]
-        return min(member_fitness, key=lambda x: x[0])[1]
-
-    def _get_offspring(self, fitness: List[float], X: pd.DataFrame) -> dict:
-        """
-        Get the offspring of two parents using crossover mutation.
-
-        Args
-        ----
-        fitness : list
-            The fitness values of the population.
-
-        X : pd.DataFrame
-            The dataframe with the features.
-
-        return
-        ------
-        dict
-            The offspring program.
-        """
-        parent1 = self._get_random_parent(fitness)
-        if np.random.uniform() < self.crossover_prob:
-            parent2 = self._get_random_parent(fitness)
-            return self._crossover(parent1, parent2)
-
-        return self._mutate(parent1, X)
-
-    def _evaluate_df(self, node: dict, X: pd.DataFrame) -> pd.Series:
-        """
-        Evaluate the program against the dataframe of features.
-
-        Args
-        ----
-        node : dict
-            The program to evaluate.
-
-        X : pd.DataFrame
-            The dataframe with the features.
-
-        return
-        ------
-        pd.Series
-            The predicted values.
-        """
-        if "children" not in node:
-            return X[node["feature_name"]]
-        return pd.Series(
-            node["func"](*[self._evaluate_df(c, X) for c in node["children"]])
-        )
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> "GeneticFeatureGenerator":
         """
@@ -256,11 +145,22 @@ class GeneticFeatureGenerator:
         ------
         returns self
         """
-
-        # Initialize the population with random programs
-        self.population = [
-            random_prog(0, X, self.operations) for _ in range(self.population_size)
-        ]
+        # Initialize the population
+        if self.n_jobs == 1:
+            self.population = SerialPopulation(
+                self.population_size,
+                self.operations,
+                self.tournament_size,
+                self.crossover_prob,
+            ).initialize(X)
+        else:
+            self.population = ParallelPopulation(
+                self.population_size,
+                self.operations,
+                self.tournament_size,
+                self.crossover_prob,
+                self.n_jobs,
+            ).initialize(X)
 
         # loss value to minimize
         global_best = float("inf")
@@ -269,28 +169,12 @@ class GeneticFeatureGenerator:
         pbar = tqdm(total=self.max_generations, desc="Creating new features...")
         for gen in range(self.max_generations):
             fitness = []
+            prediction = self.population.evaluate(X)
+            score = self.population.compute_fitness(
+                self.fitness_func, self.parsimony_coefficient, prediction, y
+            )
 
-            # Run the prediction and fitness calculation in parallel
-            if self.n_jobs > 1:
-                prediction = Parallel(n_jobs=self.n_jobs)(
-                    delayed(self._evaluate_df)(prog, X) for prog in self.population
-                )
-
-                score = Parallel(n_jobs=self.n_jobs)(
-                    delayed(self.compute_fitness)(
-                        prog, self.parsimony_coefficient, pred, y
-                    )
-                    for prog, pred, in zip(self.population, prediction)
-                )
-            # Run the prediction and fitness calculation in serial
-            else:
-                prediction = [self._evaluate_df(prog, X) for prog in self.population]
-                score = [
-                    self.compute_fitness(prog, self.parsimony_coefficient, pred, y)
-                    for prog, pred in zip(self.population, prediction)
-                ]
-
-            for prog, score in zip(self.population, score):
+            for prog, score in zip(self.population.population, score):
                 # check for the best program
                 fitness.append(score)
                 if score < global_best:
@@ -321,10 +205,7 @@ class GeneticFeatureGenerator:
             # update the hall of fame with the best programs from the current generation
             self._update_hall_of_fame(fitness)
 
-            # create the next generation
-            self.population = [
-                self._get_offspring(fitness, X) for _ in range(self.population_size)
-            ]
+            self.population = self.population.evolve(fitness, X)
 
         # select the best features using mrmr
         self._select_best_features(X, y)
@@ -340,8 +221,8 @@ class GeneticFeatureGenerator:
         return self
 
     def _update_hall_of_fame(self, fitness: List[float]):
-        for prog, fit in zip(self.population, fitness):
-            self.hall_of_fame.append({"prog": prog, "fitness": fit})
+        for individual, fit in zip(self.population.population, fitness):
+            self.hall_of_fame.append({"individual": individual, "fitness": fit})
 
         self.hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
         self.hall_of_fame = self.hall_of_fame[: self.len_hall_of_fame]
@@ -362,12 +243,15 @@ class GeneticFeatureGenerator:
         ------
         None
         """
-        features = pd.DataFrame(
-            [
-                self._evaluate_df(self.hall_of_fame[i]["prog"], X)
-                for i in range(self.len_hall_of_fame)
-            ]
-        ).T
+        population = SerialPopulation(
+            len(self.hall_of_fame),
+            self.operations,
+            self.tournament_size,
+            self.crossover_prob,
+        )
+
+        population.population = [x["individual"] for x in self.hall_of_fame]
+        features = pd.DataFrame(population.evaluate(X)).T
 
         features.columns = [f"feature_{i}" for i in range(self.len_hall_of_fame)]
 
@@ -399,16 +283,16 @@ class GeneticFeatureGenerator:
         if not self.fit_called:
             raise ValueError("Must call fit before transform")
 
-        output = []
-        names = []
-        for prog in self.hall_of_fame:
-            tmp = self._evaluate_df(prog["prog"], X)
-            output.append(tmp)
-            names.append(prog["name"])
+        population = SerialPopulation(
+            len(self.hall_of_fame),
+            self.operations,
+            self.tournament_size,
+            self.crossover_prob,
+        )
 
-        output = pd.DataFrame(output).T
-        output.columns = names
-
+        population.population = [x["individual"] for x in self.hall_of_fame]
+        output = pd.DataFrame(population.evaluate(X)).T
+        output.columns = [x["name"] for x in self.hall_of_fame]
         return output
 
     def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
