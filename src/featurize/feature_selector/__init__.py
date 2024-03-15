@@ -1,1 +1,1 @@
-from .feature_selector import GeneticFeatureSelector, Individual
+from .feature_selector import GeneticFeatureSelector

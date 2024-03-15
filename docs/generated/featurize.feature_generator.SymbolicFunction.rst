@@ -1,7 +1,7 @@
-﻿featurize.SymbolicFunction
-==========================
+﻿featurize.feature\_generator.SymbolicFunction
+=============================================
 
-.. currentmodule:: featurize
+.. currentmodule:: featurize.feature_generator
 
 .. autoclass:: SymbolicFunction
 

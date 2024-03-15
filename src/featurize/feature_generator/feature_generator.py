@@ -10,10 +10,11 @@ from joblib import Parallel, cpu_count, delayed
 from tqdm import tqdm
 
 from ..mrmr import MaxRelevanceMinRedundancy
-from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
+from .fitness import (fitness_mae, fitness_mse, fitness_pearson,
+                      fitness_spearman)
+from .population import ParallelPopulation, SerialPopulation
 from .program import random_prog, render_prog, select_random_node
 from .symbolic_functions import SymbolicFunction, operations
-from .population import SerialPopulation, ParallelPopulation
 
 
 class GeneticFeatureGenerator:
@@ -343,7 +344,7 @@ class GeneticFeatureGenerator:
         for prog in self.hall_of_fame:
             tmp = {
                 "name": prog["name"],
-                "prog": render_prog(prog["prog"]),
+                "prog": render_prog(prog["individual"]),
                 "fitness": prog["fitness"],
             }
             output.append(tmp)

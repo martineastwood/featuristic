@@ -1,7 +1,10 @@
-import pandas as pd
-from featurize import GeneticFeatureGenerator, GeneticFeatureSelector, SymbolicFunction
 from typing import Callable, Union
+
 import numpy as np
+import pandas as pd
+
+from featurize import (GeneticFeatureGenerator, GeneticFeatureSelector,
+                       SymbolicFunction)
 
 
 def featurize(
@@ -46,6 +49,7 @@ def featurize(
 
     new_features = symb.transform(X)
     X_new = pd.concat([X, new_features], axis=1)
+    feature_info = symb.get_feature_info()
 
     selection = GeneticFeatureSelector(
         cost_func=selection_cost_func,
@@ -61,4 +65,4 @@ def featurize(
 
     _, features = selection.optimize(X_new, y)
 
-    return X_new[features]
+    return X_new[features], feature_info

@@ -1,7 +1,7 @@
-﻿featurize.GeneticFeatureGenerator
-=================================
+﻿featurize.feature\_generator.GeneticFeatureGenerator
+====================================================
 
-.. currentmodule:: featurize
+.. currentmodule:: featurize.feature_generator
 
 .. autoclass:: GeneticFeatureGenerator
 

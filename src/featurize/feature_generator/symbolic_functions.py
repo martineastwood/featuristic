@@ -1,6 +1,6 @@
 """Functions to use in the symbolic regression"""
 
-from typing import Callable
+from typing import Callable, List
 
 import numpy as np
 
@@ -192,7 +192,7 @@ operations = [
 ]
 
 
-def list_operations():
+def list_operations() -> List[str]:
     """
     List the available operations.
 

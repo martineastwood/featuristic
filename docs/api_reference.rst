@@ -8,12 +8,15 @@ API Reference
 
 Genetic Feature Generation
 ----------------------------
-.. currentmodule:: featurize
+.. currentmodule:: featurize.feature_generator
 
 .. autosummary::
     :toctree: generated/
 
     GeneticFeatureGenerator
+    BasePopulation
+    SerialPopulation
+    ParallelPopulation
     SymbolicFunction
     fitness_pearson
     fitness_mae

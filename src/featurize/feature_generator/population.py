@@ -1,15 +1,18 @@
-import pandas as pd
-from typing import List, Self, Callable
-from .symbolic_functions import SymbolicFunction
-from .program import random_prog, select_random_node
-from joblib import Parallel, cpu_count, delayed
 from copy import deepcopy
+from typing import Callable, List, Self
+
 import numpy as np
+import pandas as pd
+from joblib import Parallel, cpu_count, delayed
+
+from .program import random_prog, select_random_node
+from .symbolic_functions import SymbolicFunction
 
 
 class BasePopulation:
     """
-    A class to represent the population of programs in the genetic programming algorithm.
+    A class to represent the population of symbolic programs in the
+    genetic programming algorithm.
     """
 
     def __init__(
@@ -25,10 +28,13 @@ class BasePopulation:
         Args
         ----
         population_size : int
-            The size of the population.
+            The size of the population. The larger the population, the more
+            likely the algorithm will find a good solution, but the longer it
+            will take to run.
 
         operations : list
-            The list of functions to use in the programs.
+            The list of functions to use in the programs. These are the
+            functions that the algorithm can use to create the programs with.
         """
         self.population_size = population_size
         self.operations = operations
@@ -38,7 +44,7 @@ class BasePopulation:
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
-        Setup the initial population of programs.
+        Setup the initial population with simple, random programs.
 
         Args
         ----

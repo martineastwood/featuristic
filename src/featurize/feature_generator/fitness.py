@@ -1,12 +1,13 @@
 """Fitness functions for measuring how well the features are performing"""
 
+import warnings
+
+import numpy as np
 import pandas as pd
+import scipy
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import mean_absolute_error, mean_squared_error
-import numpy as np
-import scipy
 
-import warnings
 from .program import node_count
 
 

@@ -24,12 +24,12 @@ def cost_function(X, y):
     return scores.mean()
 
 
-features = ft.featurize(
+features, feature_info = ft.featurize(
     X,
     y,
     selection_cost_func=cost_function,
     selection_bigger_is_better=True,
-    n_jobs=1,
+    n_jobs=-1,
     generate_parsimony_coefficient=0.01,
 )
 
