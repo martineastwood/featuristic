@@ -1,108 +1,13 @@
 import copy
 import sys
-from typing import Callable, Iterable, List, Self, Tuple
+from typing import Callable, List, Tuple
 
 import numpy as np
 import pandas as pd
+from joblib import Parallel, cpu_count, delayed
 
 
-class Individual:
-    """
-    Class for an individual in the genetic algorithm's population.
-    """
-
-    def __init__(
-        self, genome: Iterable, bigger_is_better=True, mutation_proba: float = 0.1
-    ) -> None:
-        """
-        Initialize an individual.
-
-        Parameters
-        ----------
-        genome : array
-            The individual's genome.
-
-        bigger_is_better : bool
-            If True, then the cost function is a score to maximize, else it is an error to minimize.
-
-        mutation_proba : float
-            The probability of mutation.
-        """
-        self.genome = np.array(genome)
-        self.mutation_proba = mutation_proba
-        self.bigger_is_better = bigger_is_better
-        if self.bigger_is_better:
-            self.current_cost = -sys.maxsize
-        else:
-            self.current_cost = sys.maxsize
-
-    def evaluate(self, cost_func: Callable, X: pd.DataFrame, y: pd.Series) -> float:
-        """
-        Evaluate the individual's fitness using the cost function.
-
-        Parameters
-        ----------
-        cost_func : callable
-            The cost function to evaluate the individual's fitness.
-
-        Returns
-        -------
-        cost : float
-            The fitness of the individual.
-        """
-        if self.genome.sum() == 0:
-            if self.bigger_is_better:
-                self.current_cost = -sys.maxsize
-            else:
-                self.current_cost = sys.maxsize
-        else:
-            self.current_cost = cost_func(X[X.columns[self.genome == 1]], y)
-        return self.current_cost
-
-    def mutate(self) -> None:
-        """
-        Mutate the individual's genome.
-        """
-        proba = np.random.uniform(size=len(self.genome))
-        mask = proba < self.mutation_proba
-        self.genome[mask == 1] = 1 - self.genome[mask == 1]
-
-    @classmethod
-    def crossover(
-        cls, parent1: "Individual", parent2: "Individual", crossover_proba: float
-    ) -> Tuple["Individual", "Individual"]:
-        """
-        Crossover two individuals to create two new children.
-
-        Parameters
-        ----------
-        parent1 : Individual
-            The first parent.
-
-        parent2 : Individual
-            The second parent.
-
-        crossover_proba : float
-            The probability of crossover.
-
-        Returns
-        -------
-        c1 : Individual
-            The first child.
-
-        c2 : Individual
-            The second child.
-        """
-        c1, c2 = copy.deepcopy(parent1), copy.deepcopy(parent2)
-
-        if np.random.rand() < crossover_proba:
-            pt = np.random.randint(1, len(parent1.genome) - 2)
-            c1.genome = np.concatenate([parent1.genome[:pt], parent2.genome[pt:]])
-            c2.genome = np.concatenate([parent2.genome[:pt], parent1.genome[pt:]])
-        return c1, c2
-
-
-class BaseGeneticSelectionPopulation:
+class BasePopulation:
     def __init__(
         self,
         population_size: int,
@@ -159,35 +64,30 @@ class BaseGeneticSelectionPopulation:
         """
         raise NotImplementedError
 
-    def _crosover(
-        self, parent1: Individual, parent2: Individual
-    ) -> Tuple[Individual, Individual]:
+    def _evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series, genome: np.ndarray
+    ) -> float:
         """
-        Crossover two individuals to create two new children.
+        Evaluate the populations's fitness using the cost function.
 
         Parameters
         ----------
-        parent1 : Individual
-            The first parent.
-
-        parent2 : Individual
-            The second parent.
+        cost_func : callable
+            The cost function to evaluate the individual's fitness.
 
         Returns
         -------
-        c1 : Individual
-            The first child.
-
-        c2 : Individual
-            The second child.
+        cost : float
+            The fitness of the individual.
         """
-        c1, c2 = copy.deepcopy(parent1), copy.deepcopy(parent2)
-
-        if np.random.rand() < self.crossover_proba:
-            pt = np.random.randint(1, len(parent1.genome) - 2)
-            c1.genome = np.concatenate([parent1.genome[:pt], parent2.genome[pt:]])
-            c2.genome = np.concatenate([parent2.genome[:pt], parent1.genome[pt:]])
-        return c1, c2
+        if genome.sum() == 0:
+            if self.bigger_is_better:
+                current_cost = -sys.maxsize
+            else:
+                current_cost = sys.maxsize
+        else:
+            current_cost = cost_func(X[X.columns[genome == 1]], y)
+        return current_cost
 
     def _selection(self, scores: List, k: int = 3) -> np.ndarray:
         """
@@ -268,7 +168,7 @@ class BaseGeneticSelectionPopulation:
         self.population = children
 
 
-class SerialGeneticSelectionPopulation(BaseGeneticSelectionPopulation):
+class SerialPopulation(BasePopulation):
     """
     A class to represent the population of programs in the genetic programming algorithm where
     the programs are evaluated serially.
@@ -302,31 +202,6 @@ class SerialGeneticSelectionPopulation(BaseGeneticSelectionPopulation):
             mutation_proba,
         )
 
-    def _evaluate(
-        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series, genome: np.ndarray
-    ) -> float:
-        """
-        Evaluate the populations's fitness using the cost function.
-
-        Parameters
-        ----------
-        cost_func : callable
-            The cost function to evaluate the individual's fitness.
-
-        Returns
-        -------
-        cost : float
-            The fitness of the individual.
-        """
-        if genome.sum() == 0:
-            if self.bigger_is_better:
-                current_cost = -sys.maxsize
-            else:
-                current_cost = sys.maxsize
-        else:
-            current_cost = cost_func(X[X.columns[genome == 1]], y)
-        return current_cost
-
     def evaluate(
         self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
     ) -> List[float]:
@@ -351,3 +226,69 @@ class SerialGeneticSelectionPopulation(BaseGeneticSelectionPopulation):
             The predicted values.
         """
         return [self._evaluate(cost_func, X, y, genome) for genome in self.population]
+
+
+class ParallelPopulation(BasePopulation):
+    """
+    A class to represent the population of programs in the genetic programming algorithm where
+    the programs are evaluated serially.
+    """
+
+    def __init__(
+        self,
+        population_size: int,
+        feature_count: int,
+        bigger_is_better: bool = True,
+        crossover_proba: float = 0.9,
+        mutation_proba: float = 0.1,
+        n_jobs: int = -1,
+    ):
+        """
+        Initialize the population class.
+
+        Args
+        ----
+
+        population_size : int
+            The size of the population.
+
+        operations : list
+            The list of functions to use in the programs.
+        """
+        super().__init__(
+            population_size,
+            feature_count,
+            bigger_is_better,
+            crossover_proba,
+            mutation_proba,
+        )
+
+        n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+
+    def evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
+    ) -> List[float]:
+        """
+        Evaluate the population against the dataframe of features.
+
+        Args
+        ----
+
+        cost_func : callable
+            The cost function to evaluate the individual's fitness.
+
+        X : pd.DataFrame
+            The dataframe with the features.
+
+        y : pd.Series
+            The true values.
+
+        return
+        ------
+        list
+            The predicted values.
+        """
+        return Parallel(n_jobs=cpu_count())(
+            delayed(self._evaluate)(cost_func, X, y, genome)
+            for genome in self.population
+        )

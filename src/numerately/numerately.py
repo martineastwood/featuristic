@@ -3,8 +3,8 @@ from typing import Callable, Union
 import numpy as np
 import pandas as pd
 
-from featurize import (GeneticFeatureGenerator, GeneticFeatureSelector,
-                       SymbolicFunction)
+from numerately import (GeneticFeatureGenerator, GeneticFeatureSelector,
+                        SymbolicFunction)
 
 
 def featurize(

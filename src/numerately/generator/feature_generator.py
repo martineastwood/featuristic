@@ -1,19 +1,17 @@
 """Contains the SymbolicFeatureGenerator class."""
 
-from copy import deepcopy
 from typing import List, Union
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from joblib import Parallel, cpu_count, delayed
+from joblib import cpu_count
 from tqdm import tqdm
 
-from ..mrmr import MaxRelevanceMinRedundancy
 from .fitness import (fitness_mae, fitness_mse, fitness_pearson,
                       fitness_spearman)
+from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
-from .program import random_prog, render_prog, select_random_node
+from .program import render_prog
 from .symbolic_functions import SymbolicFunction, operations
 
 

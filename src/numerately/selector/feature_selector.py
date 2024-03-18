@@ -8,7 +8,7 @@ import pandas as pd
 from joblib import cpu_count
 from tqdm import tqdm
 
-from .population import SerialGeneticSelectionPopulation
+from .population import ParallelPopulation, SerialPopulation
 
 
 class GeneticFeatureSelector:
@@ -105,13 +105,23 @@ class GeneticFeatureSelector:
         """
         self.num_genes = X.shape[1]
 
-        self.population = SerialGeneticSelectionPopulation(
-            self.population_size,
-            self.num_genes,
-            self.bigger_is_better,
-            self.crossover_proba,
-            self.mutation_proba,
-        )
+        if self.n_jobs == 1:
+            self.population = SerialPopulation(
+                self.population_size,
+                self.num_genes,
+                self.bigger_is_better,
+                self.crossover_proba,
+                self.mutation_proba,
+            )
+        else:
+            self.population = ParallelPopulation(
+                self.population_size,
+                self.num_genes,
+                self.bigger_is_better,
+                self.crossover_proba,
+                self.mutation_proba,
+                self.n_jobs,
+            )
 
         pbar = tqdm(total=self.max_iters, desc="Optimising feature selection...")
 

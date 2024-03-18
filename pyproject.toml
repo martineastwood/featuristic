@@ -1,8 +1,8 @@
 [project]
-name = "featurize"
+name = "numerately"
 
 # Versions should comply with PEP 440
-version = "0.1"
+version = "0.1.1"
 
 
 # This is a one-line description or tagline of what your project does. This
@@ -41,7 +41,17 @@ license = { file = "LICENSE.txt" }
 # Note that this is a list of additional keywords, separated
 # by commas, to be used to assist searching for the distribution in a
 # larger catalog.
-keywords = ["data", "machine learning", "feature engineering"] # Optional
+keywords = [
+    "data",
+    "machine learning",
+    "feature engineering",
+    "feature selection",
+    "model selection",
+    "model evaluation",
+    "genetic algorithm",
+    "optimization",
+    "hyperparameter tuning",
+] # Optional
 
 
 # Classifiers help users find your project by categorizing it.
@@ -90,6 +100,9 @@ dependencies = [
 dev = [
     "ipykernel",
     "pytest",
+    "pylint",
+    "black",
+    "isort",
     "coverage",
     "Sphinx",
     "sphinxawesome-theme",

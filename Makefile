@@ -1,6 +1,7 @@
 .PHONY:
 venv_create:
-	python3 -m venv venv
+	python3 -m venv venv && \
+	source venv/bin/activate && \
 	python3 -m pip install .[dev]
 
 
@@ -10,10 +11,10 @@ test:
 
 .PHONY:
 lint:
-	python3 -m pylint --rcfile=.pylintrc ./src/featurize/selection/mrmr.py
+	python3 -m pylint --rcfile=.pylintrc src/numerately/
 
 make clean:
-	rm -rf build docs/_build dist featurize.egg-info
+	rm -rf build docs/_build dist src/numerately.egg-info src/numerately/__pycache__ src/numerately/*.pyc src/numerately/*/__pycache__ src/numerately/*/*.pyc
 
 html:
 	rm -rf docs/_build && \
