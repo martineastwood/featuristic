@@ -12,7 +12,6 @@ class BasePopulation:
         self,
         population_size: int,
         feature_count: int,
-        bigger_is_better: bool = True,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
     ):
@@ -30,7 +29,6 @@ class BasePopulation:
         """
         self.population_size = population_size
         self.feature_count = feature_count
-        self.bigger_is_better = bigger_is_better
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
         self._initialize_population()
@@ -81,10 +79,7 @@ class BasePopulation:
             The fitness of the individual.
         """
         if genome.sum() == 0:
-            if self.bigger_is_better:
-                current_cost = -sys.maxsize
-            else:
-                current_cost = sys.maxsize
+            current_cost = sys.maxsize
         else:
             current_cost = cost_func(X[X.columns[genome == 1]], y)
         return current_cost
@@ -178,7 +173,6 @@ class SerialPopulation(BasePopulation):
         self,
         population_size: int,
         feature_count: int,
-        bigger_is_better: bool = True,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
     ):
@@ -197,7 +191,6 @@ class SerialPopulation(BasePopulation):
         super().__init__(
             population_size,
             feature_count,
-            bigger_is_better,
             crossover_proba,
             mutation_proba,
         )
@@ -238,7 +231,6 @@ class ParallelPopulation(BasePopulation):
         self,
         population_size: int,
         feature_count: int,
-        bigger_is_better: bool = True,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         n_jobs: int = -1,
@@ -258,7 +250,6 @@ class ParallelPopulation(BasePopulation):
         super().__init__(
             population_size,
             feature_count,
-            bigger_is_better,
             crossover_proba,
             mutation_proba,
         )

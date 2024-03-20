@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from sklearn import datasets as sklearn_datasets
 
-import featuring
+import featuristic
 
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def test_with_pandas_df(data_pandas):
     df, target = data_pandas
     assert df.shape[0] == target.shape[0]
 
-    mrmr = featuring.selection.MaxRelevanceMinRedundancy(k=3)
+    mrmr = featuristic.selection.MaxRelevanceMinRedundancy(k=3)
     mrmr.fit(df, target)
     feats = mrmr.transform(df)
 
@@ -36,7 +36,7 @@ def test_with_numpy(data_numpy):
     df, target = data_numpy
     assert df.shape[0] == target.shape[0]
 
-    mrmr = featuring.selection.MaxRelevanceMinRedundancy(k=3)
+    mrmr = featuristic.selection.MaxRelevanceMinRedundancy(k=3)
     mrmr.fit(df, target)
     feats = mrmr.transform(df)
 

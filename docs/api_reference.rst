@@ -3,17 +3,17 @@
 API Reference
 =============
 
-.. currentmodule:: featurize
+.. currentmodule:: featuring
 
 
 Genetic Feature Generation
 ----------------------------
-.. currentmodule:: featurize.feature_generator
+.. currentmodule:: featuring.synthesis
 
 .. autosummary::
     :toctree: generated/
 
-    GeneticFeatureGenerator
+    GeneticFeatureSynthesizer
     BasePopulation
     SerialPopulation
     ParallelPopulation
@@ -22,19 +22,10 @@ Genetic Feature Generation
     fitness_mae
     fitness_mse
 
-Maximum Relevance — Minimum Redundancy
----------------------------------------
-.. currentmodule:: featurize
-
-.. autosummary::
-    :toctree: generated/
-
-    MaxRelevanceMinRedundancy
-
 
 Genetic Feature Selection
 ----------------------------
-.. currentmodule:: featurize
+.. currentmodule:: featuring
 
 .. autosummary::
     :toctree: generated/   

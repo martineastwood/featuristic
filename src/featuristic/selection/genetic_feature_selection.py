@@ -1,8 +1,10 @@
 """Class for binary genetic algorithm for feature selection."""
 
 import sys
-from typing import Callable, Tuple
+from typing import Callable, Self, Union
 
+import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import pandas as pd
 from joblib import cpu_count
@@ -13,17 +15,20 @@ from .population import ParallelPopulation, SerialPopulation
 
 class GeneticFeatureSelector:
     """
-    Genetic algorithm for binary feature selection.
+    The Genetic Feature Selector class uses genetic programming to select the best features
+    to minimise a given objective function. This is done by initially building a population of
+    naive random selection of the available features. The population is then evolved over a
+    number of generations using genetic operators such as mutation and crossover to find the
+    best combination of features to minimise the output of the objective function.
     """
 
     def __init__(
         self,
-        cost_func: Callable,
-        bigger_is_better: bool = False,
+        objective_function: Callable,
         population_size: int = 100,
+        max_generations: int = 150,
         crossover_proba: float = 0.75,
         mutation_proba: float = 0.1,
-        max_generations: int = 150,
         early_termination_iters: int = 10,
         n_jobs: int = -1,
         pbar: bool = True,
@@ -34,23 +39,20 @@ class GeneticFeatureSelector:
 
         Parameters
         ----------
-        cost_func : callable
-            The cost function to minimize.
-
-        bigger_is_better : bool
-            If True, then the cost function is a score to maximize, else it is an error to minimize.
+        objective_function : callable
+            The cost function to minimize. Must take X and y as input and return a float.
 
         population_size : int
             The number of individuals in the population.
+
+        max_generations : int
+            The maximum number of iterations.
 
         crossover_proba : float
             The probability of crossover.
 
         mutation_proba : float
             The probability of mutation.
-
-        max_generations : int
-            The maximum number of iterations.
 
         early_termination_iters : int
             The number of iterations to wait for early termination.
@@ -61,7 +63,7 @@ class GeneticFeatureSelector:
         verbose : bool
             Whether to print progress.
         """
-        self.cost_func = cost_func
+        self.objective_function = objective_function
         self.population_size = population_size
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
@@ -70,23 +72,17 @@ class GeneticFeatureSelector:
         self.early_termination_iters = early_termination_iters
         self.early_termination_counter = 0
 
-        self.history_best = []
-        self.history_mean = []
+        self.history = []
 
         self.best_genome = None
+        self.best_cost = sys.maxsize
 
-        self.bigger_is_better = bigger_is_better
-        if self.bigger_is_better:
-            self.best_cost = -sys.maxsize
-        else:
-            self.best_cost = sys.maxsize
+        self.fit_called = False
 
         if n_jobs == -1:
             self.n_jobs = cpu_count()
-        elif n_jobs is None:
-            self.n_jobs = 1
         else:
-            self.n_jobs = min(n_jobs, cpu_count())
+            self.n_jobs = n_jobs
 
         self.verbose = verbose
 
@@ -95,7 +91,35 @@ class GeneticFeatureSelector:
         self.population = None
         self.num_genes = None
 
-    def optimize(self, X: pd.DataFrame, y: pd.Series) -> np.ndarray:
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
+        """
+        Fit is not used, only for compatibility with sklearn.
+
+        Parameters
+        ----------
+        X : DataFrame
+            The input features.
+
+        y : Series
+            The target variable.
+        """
+        return self
+
+    def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> Self:
+        """
+        Fit the genetic algorithm and return the selected features.
+
+        Parameters
+        ----------
+        X : DataFrame
+            The input features.
+
+        y : Series
+            The target variable.
+        """
+        return self.transform(X, y)
+
+    def transform(self, X: pd.DataFrame, y: pd.Series) -> np.ndarray:
         """
         Optimize the feature selection using a genetic algorithm.
 
@@ -112,7 +136,6 @@ class GeneticFeatureSelector:
             self.population = SerialPopulation(
                 self.population_size,
                 self.num_genes,
-                self.bigger_is_better,
                 self.crossover_proba,
                 self.mutation_proba,
             )
@@ -120,7 +143,6 @@ class GeneticFeatureSelector:
             self.population = ParallelPopulation(
                 self.population_size,
                 self.num_genes,
-                self.bigger_is_better,
                 self.crossover_proba,
                 self.mutation_proba,
                 self.n_jobs,
@@ -132,20 +154,14 @@ class GeneticFeatureSelector:
             )
 
         for current_iter in range(self.max_generations):
-            scores = self.population.evaluate(self.cost_func, X, y)
+            scores = self.population.evaluate(self.objective_function, X, y)
 
             for genome, score in zip(self.population.population, scores):
                 # check for the best genome
-                if self.bigger_is_better and score > self.best_cost:
+                if score < self.best_cost:
                     self.best_cost = score
                     self.best_genome = genome
                     self.early_termination_counter = 0
-                elif not self.bigger_is_better and score < self.best_cost:
-                    self.best_cost = score
-                    self.best_genome = genome
-                    self.early_termination_counter = 0
-                else:
-                    continue
 
             # check for early termination
             self.early_termination_counter += 1
@@ -157,8 +173,13 @@ class GeneticFeatureSelector:
                 break
 
             # store history
-            self.history_best.append(self.best_cost)
-            self.history_mean.append(np.mean(scores))
+            self.history.append(
+                {
+                    "generation": current_iter,
+                    "best_score": self.best_cost,
+                    "median_score": np.median(scores),
+                }
+            )
 
             # evolve the population
             self.population.evolve(scores)
@@ -166,4 +187,24 @@ class GeneticFeatureSelector:
             if self.pbar:
                 pbar.update(1)
 
+        self.fit_called = True
+
         return X.columns[self.best_genome == 1]
+
+    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
+        """
+        Plot the history of the fitness function.
+
+        return
+        ------
+        None
+        """
+        if not self.fit_called:
+            raise ValueError("Must call fit_transform or transform before plot_history")
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        df = pd.DataFrame(self.history)
+        df.plot(x="generation", y=["best_score", "median_score"], ax=ax)
+        plt.show()

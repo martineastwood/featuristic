@@ -17,7 +17,7 @@ from .symbolic_functions import SymbolicFunction, operations
 
 class GeneticFeatureSynthesis:
     """
-    Genetic Feature Synthesis class that uses genetic programming to generate new features using
+    The Genetic Feature Synthesis class uses genetic programming to generate new features using
     a technique based on Symbolic Regression. This is done by initially building a population of
     naive random formulas that represent transformations of the input features. The population is
     then evolved over a number of generations using genetic operators such as mutation and crossover
@@ -272,7 +272,7 @@ class GeneticFeatureSynthesis:
         selected = [int(x.split("_")[1]) for x in selected]
         self.hall_of_fame = [self.hall_of_fame[i] for i in selected]
 
-    def transform(self, X) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transform the dataframe of features using the best programs found.
 
@@ -310,7 +310,7 @@ class GeneticFeatureSynthesis:
         output.columns = [x["name"] for x in self.hall_of_fame]
         return output
 
-    def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+    def fit_transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """
         Fit the symbolic feature generator to the data and transform the dataframe of features.
 
