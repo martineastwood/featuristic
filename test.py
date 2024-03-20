@@ -1,9 +1,8 @@
 from ucimlrepo import fetch_ucirepo
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
-import numerately as nm
+import featuring as ft
 import numpy as np
-import xgboost as xgb
 
 np.random.seed(8888)
 
@@ -17,38 +16,31 @@ rows_with_nulls = X.isnull().sum(axis=1)
 X = X[rows_with_nulls == 0].reset_index(drop=True)
 y = y[rows_with_nulls == 0]["mpg"].reset_index(drop=True)
 
-params = {
-    "max_depth": nm.Categorical([0, 2, 4, 6, 8, 10, 15]),
-    "eta": nm.LogUniform(1e-3, 0.75),
-    "min_child_weight": nm.LogUniform(1, 10),
-    "subsample": nm.Uniform(0.5, 1),
-    "n_estimators": nm.Categorical([100, 200, 300, 400, 500, 750]),
-}
-
-
-def objective_func(params, X, y):
-    model = xgb.XGBRegressor(**params)
-    scores = cross_val_score(model, X, y, cv=3, scoring="neg_mean_absolute_error")
-    return -scores.mean()
-
-
-tuner = nm.GeneticTuner(
-    params,
-    objective_func,
-    bigger_is_better=False,
-    n_generations=25,
-    population_size=15,
-    crossover_proba=0.7,
-    mutation_proba=0.05,
+synth = ft.GeneticFeatureSynthesis(
+    num_features=5,
+    population_size=100,
+    crossover_proba=0.8,
+    max_generations=30,
+    parsimony_coefficient=0.001,
     early_termination_iters=10,
-    n_jobs=1,
+    n_jobs=-1,
 )
 
-cost, params = tuner.optimize(X, y)
-print(cost, params)
+synth.fit(X, y)
 
-tuner.plot_history()
+X_new = synth.transform(X)
 
+print(X_new.head())
+
+print(synth.get_feature_info())
+
+selector = ft.GeneticFeatureSelector(
+    population_size=100,
+    crossover_proba=0.8,
+    max_generations=30,
+    early_termination_iters=10,
+    n_jobs=-1,
+)
 
 # def cost_function(X, y):
 #     model = LinearRegression()

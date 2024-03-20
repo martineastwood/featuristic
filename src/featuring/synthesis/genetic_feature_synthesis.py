@@ -3,21 +3,21 @@
 from typing import List, Union
 
 import matplotlib.pyplot as plt
+import matplotlib
 import pandas as pd
 from joblib import cpu_count
 from tqdm import tqdm
 
-from .fitness import (fitness_mae, fitness_mse, fitness_pearson,
-                      fitness_spearman)
+from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
 from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
 from .program import render_prog
 from .symbolic_functions import SymbolicFunction, operations
 
 
-class GeneticFeatureGenerator:
+class GeneticFeatureSynthesis:
     """
-    Feature Generator class that uses genetic programming to generate new features using
+    Genetic Feature Synthesis class that uses genetic programming to generate new features using
     a technique based on Symbolic Regression. This is done by initially building a population of
     naive random formulas that represent transformations of the input features. The population is
     then evolved over a number of generations using genetic operators such as mutation and crossover
@@ -34,10 +34,11 @@ class GeneticFeatureGenerator:
         population_size: int = 100,
         max_generations: int = 25,
         tournament_size: int = 3,
-        crossover_prob: float = 0.75,
+        crossover_proba: float = 0.75,
         parsimony_coefficient: float = 0.01,
         early_termination_iters: int = 15,
         n_jobs: int = -1,
+        pbar: bool = True,
         verbose: bool = False,
     ):
         """
@@ -67,7 +68,7 @@ class GeneticFeatureGenerator:
             The size of the tournament for selection. The larger the tournament size, the more likely it is to select
             the best program, but the longer it will take.
 
-        crossover_prob : float
+        crossover_proba : float
             The probability of crossover mutation between selected parents in each generation.
 
         parsimony_coefficient : float
@@ -79,8 +80,11 @@ class GeneticFeatureGenerator:
             If the best score does not improve for this number of generations, then the algorithm will terminate early.
 
         n_jobs : int
-            The number of parallel jobs to run. If `-1`, use all available cores else uses the minimum of `n_jobs`
-            and `cpu_count`. If `1`, then the computation is done in serial.
+            The number of parallel jobs to run. If `-1`, use all available cores else uses n_jobs. If `n_jobs=1`,
+            then the computation is done in serial.
+
+        pbar: bool
+            Whether to show a progress bar.
 
         verbose : bool
             Whether to print out aditional information
@@ -93,7 +97,7 @@ class GeneticFeatureGenerator:
         self.population_size = population_size
         self.max_generations = max_generations
         self.tournament_size = tournament_size
-        self.crossover_prob = crossover_prob
+        self.crossover_proba = crossover_proba
         self.num_features = num_features
         self.parsimony_coefficient = parsimony_coefficient
 
@@ -123,12 +127,12 @@ class GeneticFeatureGenerator:
 
         if n_jobs == -1:
             self.n_jobs = cpu_count()
-        elif n_jobs is None:
-            self.n_jobs = 1
         else:
-            self.n_jobs = min(n_jobs, cpu_count())
+            self.n_jobs = n_jobs
 
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> "GeneticFeatureGenerator":
+        self.pbar = pbar
+
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> "GeneticFeatureSynthesis":
         """
         Fit the symbolic feature generator to the data.
 
@@ -150,14 +154,14 @@ class GeneticFeatureGenerator:
                 self.population_size,
                 self.operations,
                 self.tournament_size,
-                self.crossover_prob,
+                self.crossover_proba,
             ).initialize(X)
         else:
             self.population = ParallelPopulation(
                 self.population_size,
                 self.operations,
                 self.tournament_size,
-                self.crossover_prob,
+                self.crossover_proba,
                 self.n_jobs,
             ).initialize(X)
 
@@ -165,7 +169,9 @@ class GeneticFeatureGenerator:
         global_best = float("inf")
         best_prog = None
 
-        pbar = tqdm(total=self.max_generations, desc="Creating new features...")
+        if self.pbar:
+            pbar = tqdm(total=self.max_generations, desc="Creating new features...")
+
         for gen in range(self.max_generations):
             fitness = []
             prediction = self.population.evaluate(X)
@@ -199,7 +205,8 @@ class GeneticFeatureGenerator:
                     )
                 break
 
-            pbar.update(1)
+            if self.pbar:
+                pbar.update(1)
 
             # update the hall of fame with the best programs from the current generation
             self._update_hall_of_fame(fitness)
@@ -246,7 +253,7 @@ class GeneticFeatureGenerator:
             len(self.hall_of_fame),
             self.operations,
             self.tournament_size,
-            self.crossover_prob,
+            self.crossover_proba,
         )
 
         population.population = [x["individual"] for x in self.hall_of_fame]
@@ -282,12 +289,21 @@ class GeneticFeatureGenerator:
         if not self.fit_called:
             raise ValueError("Must call fit before transform")
 
-        population = SerialPopulation(
-            len(self.hall_of_fame),
-            self.operations,
-            self.tournament_size,
-            self.crossover_prob,
-        )
+        if self.n_jobs == 1:
+            population = SerialPopulation(
+                len(self.hall_of_fame),
+                self.operations,
+                self.tournament_size,
+                self.crossover_proba,
+            )
+        else:
+            population = ParallelPopulation(
+                len(self.hall_of_fame),
+                self.operations,
+                self.tournament_size,
+                self.crossover_proba,
+                self.n_jobs,
+            )
 
         population.population = [x["individual"] for x in self.hall_of_fame]
         output = pd.DataFrame(population.evaluate(X)).T
@@ -314,18 +330,6 @@ class GeneticFeatureGenerator:
         self.fit(X, y)
         return self.transform(X)
 
-    def plot_history(self):
-        """
-        Plot the history of the best and median scores.
-
-        return
-        ------
-        None
-        """
-        df = pd.DataFrame(self.history)
-        df.plot(y=["best_score", "median_score"])
-        plt.show()
-
     def get_feature_info(self) -> pd.DataFrame:
         """
         Get the information about the best programs found.
@@ -348,3 +352,24 @@ class GeneticFeatureGenerator:
             output.append(tmp)
 
         return pd.DataFrame(output)
+
+    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
+        """
+        Plot the history of the fitness function.
+
+        return
+        ------
+        None
+        """
+        if not self.fit_called:
+            raise ValueError("Must call fit before plot_history")
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        df = pd.DataFrame(self.history)
+        df.plot(x="generation", y=["best_score", "median_score"], ax=ax)
+        plt.show()
+
+
+# matplotlib.axes._axes.Axes

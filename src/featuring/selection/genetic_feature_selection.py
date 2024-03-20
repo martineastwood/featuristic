@@ -23,9 +23,10 @@ class GeneticFeatureSelector:
         population_size: int = 100,
         crossover_proba: float = 0.75,
         mutation_proba: float = 0.1,
-        max_iters: int = 150,
+        max_generations: int = 150,
         early_termination_iters: int = 10,
         n_jobs: int = -1,
+        pbar: bool = True,
         verbose: bool = False,
     ) -> None:
         """
@@ -48,7 +49,7 @@ class GeneticFeatureSelector:
         mutation_proba : float
             The probability of mutation.
 
-        max_iters : int
+        max_generations : int
             The maximum number of iterations.
 
         early_termination_iters : int
@@ -64,7 +65,7 @@ class GeneticFeatureSelector:
         self.population_size = population_size
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
-        self.max_iters = max_iters
+        self.max_generations = max_generations
 
         self.early_termination_iters = early_termination_iters
         self.early_termination_counter = 0
@@ -89,10 +90,12 @@ class GeneticFeatureSelector:
 
         self.verbose = verbose
 
+        self.pbar = pbar
+
         self.population = None
         self.num_genes = None
 
-    def optimize(self, X: pd.DataFrame, y: pd.Series) -> Tuple[float, np.ndarray]:
+    def optimize(self, X: pd.DataFrame, y: pd.Series) -> np.ndarray:
         """
         Optimize the feature selection using a genetic algorithm.
 
@@ -123,9 +126,12 @@ class GeneticFeatureSelector:
                 self.n_jobs,
             )
 
-        pbar = tqdm(total=self.max_iters, desc="Optimising feature selection...")
+        if self.pbar:
+            pbar = tqdm(
+                total=self.max_generations, desc="Optimising feature selection..."
+            )
 
-        for current_iter in range(self.max_iters):
+        for current_iter in range(self.max_generations):
             scores = self.population.evaluate(self.cost_func, X, y)
 
             for genome, score in zip(self.population.population, scores):
@@ -156,6 +162,8 @@ class GeneticFeatureSelector:
 
             # evolve the population
             self.population.evolve(scores)
-            pbar.update(1)
 
-        return self.best_cost, X.columns[self.best_genome == 1]
+            if self.pbar:
+                pbar.update(1)
+
+        return X.columns[self.best_genome == 1]

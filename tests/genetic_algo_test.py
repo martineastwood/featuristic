@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from sklearn import datasets as sklearn_datasets
 
-import numerately as ft
+import featuring as ft
 
 
 @pytest.fixture
