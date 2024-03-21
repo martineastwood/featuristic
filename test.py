@@ -11,19 +11,17 @@ np.random.seed(8888)
 auto_mpg = fetch_ucirepo(id=9)
 
 X = auto_mpg.data.features
-y = auto_mpg.data.targets
+y = auto_mpg.data.targets["mpg"]
 
-rows_with_nulls = X.isnull().sum(axis=1)
-X = X[rows_with_nulls == 0].reset_index(drop=True)
-y = y[rows_with_nulls == 0]["mpg"].reset_index(drop=True)
+null_indices = X[X.isnull().any(axis=1)].index
+X = X.drop(null_indices).reset_index(drop=True)
+y = y.drop(null_indices).reset_index(drop=True)
 
 synth = ft.GeneticFeatureSynthesis(
     num_features=10,
     population_size=100,
-    crossover_proba=0.75,
-    max_generations=30,
-    parsimony_coefficient=0.01,
-    early_termination_iters=10,
+    max_generations=50,
+    early_termination_iters=15,
     n_jobs=-1,
 )
 
@@ -52,6 +50,8 @@ X_all = pd.concat([X, X_new], axis=1)
 selected_features = selector.fit_transform(X_new, y)
 
 print(selected_features)
+
+print(synth.get_feature_info())
 
 original = objective(X, y)
 

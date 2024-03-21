@@ -15,7 +15,7 @@ class MaxRelevanceMinRedundancy:
     Class for selecting most relevant features using the mrmr algorithm.
     """
 
-    def __init__(self, k: int = 6, problem_type: str = "regression"):
+    def __init__(self, k: int = 6, problem_type: str = "regression", pbar=True):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -26,6 +26,7 @@ class MaxRelevanceMinRedundancy:
         """
         self.k = k
         self.selected_features = None
+        self.pbar = pbar
 
         if problem_type not in ["regression", "classification"]:
             raise ValueError(
@@ -118,7 +119,8 @@ class MaxRelevanceMinRedundancy:
         selected = []
         not_selected = X.columns.to_list()
 
-        pbar = tqdm(total=k, desc="Pruning feature space...")
+        if self.pbar:
+            pbar = tqdm(total=k, desc="Pruning feature space...")
 
         # select the top K features
         for i in range(k):
@@ -135,6 +137,8 @@ class MaxRelevanceMinRedundancy:
             best = score.index[score.argmax()]
             selected.append(best)
             not_selected.remove(best)
-            pbar.update(1)
+
+            if self.pbar:
+                pbar.update(1)
 
         return selected

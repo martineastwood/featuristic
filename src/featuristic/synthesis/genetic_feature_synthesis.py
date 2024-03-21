@@ -13,6 +13,7 @@ from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
 from .program import render_prog
 from .symbolic_functions import SymbolicFunction, operations
+from .preprocess import preprocess_data
 
 
 class GeneticFeatureSynthesis:
@@ -34,8 +35,8 @@ class GeneticFeatureSynthesis:
         population_size: int = 100,
         max_generations: int = 25,
         tournament_size: int = 3,
-        crossover_proba: float = 0.75,
-        parsimony_coefficient: float = 0.01,
+        crossover_proba: float = 0.8,
+        parsimony_coefficient: float = 0.02,
         early_termination_iters: int = 15,
         n_jobs: int = -1,
         pbar: bool = True,
@@ -169,14 +170,16 @@ class GeneticFeatureSynthesis:
         global_best = float("inf")
         best_prog = None
 
+        X_copy, y_copy = preprocess_data(X.copy(), y.copy())
+
         if self.pbar:
             pbar = tqdm(total=self.max_generations, desc="Creating new features...")
 
         for gen in range(self.max_generations):
             fitness = []
-            prediction = self.population.evaluate(X)
+            prediction = self.population.evaluate(X_copy)
             score = self.population.compute_fitness(
-                self.fitness_func, self.parsimony_coefficient, prediction, y
+                self.fitness_func, self.parsimony_coefficient, prediction, y_copy
             )
 
             for prog, score in zip(self.population.population, score):
@@ -211,10 +214,10 @@ class GeneticFeatureSynthesis:
             # update the hall of fame with the best programs from the current generation
             self._update_hall_of_fame(fitness)
 
-            self.population = self.population.evolve(fitness, X)
+            self.population = self.population.evolve(fitness, X_copy)
 
         # select the best features using mrmr
-        self._select_best_features(X, y)
+        self._select_best_features(X_copy, y_copy)
 
         if self.verbose:
             print("Symbolic Feature Generator")
@@ -265,7 +268,7 @@ class GeneticFeatureSynthesis:
             self.hall_of_fame[i]["name"] = f"feature_{i}"
 
         selected = (
-            MaxRelevanceMinRedundancy(k=self.num_features)
+            MaxRelevanceMinRedundancy(k=self.num_features, pbar=self.pbar)
             .fit_transform(features, y)
             .columns
         )

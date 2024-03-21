@@ -12,10 +12,10 @@ test:
 
 .PHONY:
 lint:
-	python3 -m pylint --rcfile=.pylintrc src/featuring/
+	python3 -m pylint --rcfile=.pylintrc src/featuristic/
 
 make clean:
-	rm -rf build docs/_build dist src/featuring.egg-info src/featuring/__pycache__ src/featuring/*.pyc src/featuring/*/__pycache__ src/featuring/*/*.pyc
+	rm -rf build docs/_build dist src/featuristic.egg-info src/featuristic/__pycache__ src/featuristic/*.pyc src/featuristic/*/__pycache__ src/featuristic/*/*.pyc
 
 html:
 	rm -rf docs/_build && \
