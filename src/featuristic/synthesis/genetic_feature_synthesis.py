@@ -40,6 +40,7 @@ class GeneticFeatureSynthesis:
         crossover_proba: float = 0.8,
         parsimony_coefficient: float = 0.02,
         early_termination_iters: int = 15,
+        return_all_features: bool = False,
         n_jobs: int = -1,
         pbar: bool = True,
         verbose: bool = False,
@@ -92,6 +93,9 @@ class GeneticFeatureSynthesis:
             If the best score does not improve for this number of generations, then the
             algorithm will terminate early.
 
+        return_all_features : bool
+            Whether to return all the features generated or just the best features.
+
         n_jobs : int
             The number of parallel jobs to run. If `-1`, use all available cores else
             uses n_jobs. If `n_jobs=1`, then the computation is done in serial.
@@ -122,6 +126,8 @@ class GeneticFeatureSynthesis:
 
         self.early_termination_iters = early_termination_iters
         self.early_termination_counter = 0
+
+        self.return_all_features = return_all_features
 
         if fitness == "mae":
             self.fitness_func = fitness_mae
@@ -323,6 +329,10 @@ class GeneticFeatureSynthesis:
         population.population = [x["individual"] for x in self.hall_of_fame]
         output = pd.DataFrame(population.evaluate(X)).T
         output.columns = [x["name"] for x in self.hall_of_fame]
+
+        if self.return_all_features:
+            return pd.concat([X, output], axis=1)
+
         return output
 
     def fit_transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:

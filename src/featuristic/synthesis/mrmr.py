@@ -23,6 +23,12 @@ class MaxRelevanceMinRedundancy:
         ----------
         K : int (default=6)
             The number of features to select.
+
+        problem_type : str (default='regression')
+            The type of problem. Either 'regression' or 'classification'.
+
+        pbar : bool (default=True)
+            Whether to display a progress bar or not.
         """
         self.k = k
         self.selected_features = None
@@ -55,7 +61,7 @@ class MaxRelevanceMinRedundancy:
         """
         self.selected_features = self._mrmr(X, y)
 
-    def transform(self, X: pd.DataFrame):
+    def transform(self, X: pd.DataFrame, y: pd.Series = None):
         """
         Transform the data using the selected features.
 
@@ -63,6 +69,9 @@ class MaxRelevanceMinRedundancy:
         ----------
         X : pd.DataFrame
             The dataframe with the features.
+
+        y : pd.Series
+            The target variable. Not used in this function.
 
         Returns
         -------
