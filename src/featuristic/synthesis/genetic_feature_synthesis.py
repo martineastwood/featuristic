@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import pandas as pd
 from joblib import cpu_count
+from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
 from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
@@ -16,7 +17,7 @@ from .symbolic_functions import SymbolicFunction, operations
 from .preprocess import preprocess_data
 
 
-class GeneticFeatureSynthesis:
+class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
     """
     The Genetic Feature Synthesis class uses genetic programming to generate new
     features using a technique based on Symbolic Regression. This is done by initially
@@ -353,7 +354,7 @@ class GeneticFeatureSynthesis:
             The transformed dataframe.
         """
         self.fit(X, y)
-        return self.transform(X)
+        return self.transform(X, y)
 
     def get_feature_info(self) -> pd.DataFrame:
         """

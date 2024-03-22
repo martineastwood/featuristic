@@ -25,9 +25,7 @@ synth = ft.GeneticFeatureSynthesis(
     n_jobs=-1,
 )
 
-synth.fit(X, y)
-
-X_new = synth.transform(X)
+X_new = synth.fit_transform(X, y)
 
 
 def objective(X, y):
@@ -41,11 +39,9 @@ selector = ft.GeneticFeatureSelector(
     population_size=100,
     crossover_proba=0.75,
     max_generations=50,
-    early_termination_iters=50,
+    early_termination_iters=25,
     n_jobs=-1,
 )
-
-X_all = pd.concat([X, X_new], axis=1)
 
 selected_features = selector.fit_transform(X_new, y)
 
@@ -55,7 +51,7 @@ print(synth.get_feature_info())
 
 original = objective(X, y)
 
-new = objective(X_all[selected_features], y)
+new = objective(X_new[selected_features], y)
 
 print(
     f"Old: {original}, New: {new}, Improvement: {round((1 - (new / original))* 100, 1)}%"

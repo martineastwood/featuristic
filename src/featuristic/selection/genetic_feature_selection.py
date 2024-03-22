@@ -8,12 +8,13 @@ import matplotlib
 import numpy as np
 import pandas as pd
 from joblib import cpu_count
+from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
 from .population import ParallelPopulation, SerialPopulation
 
 
-class GeneticFeatureSelector:
+class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
     """
     The Genetic Feature Selector class uses genetic programming to select the best
     features to minimise a given objective function. This is done by initially
