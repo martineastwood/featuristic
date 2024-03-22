@@ -1,3 +1,5 @@
+""" The module to represent the population of programs in the genetic programming algorithm. """
+
 import copy
 import sys
 from typing import Callable, List, Tuple
@@ -8,6 +10,21 @@ from joblib import Parallel, cpu_count, delayed
 
 
 class BasePopulation:
+    """
+    A class to represent the population of programs in the genetic programming algorithm.
+
+    Parameters
+    ----------
+    population_size : int
+        The size of the population.
+    feature_count : int
+        The number of features in the dataset.
+    crossover_proba : float, optional
+        The probability of crossover, by default 0.9.
+    mutation_proba : float, optional
+        The probability of mutation, by default 0.1.
+    """
+
     def __init__(
         self,
         population_size: int,
@@ -15,22 +32,12 @@ class BasePopulation:
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
     ):
-        """
-        Initialize the Population class.
-
-        Parameters
-        ----------
-        population_size : int
-            The size of the population.
-        feature_count : int
-            The number of features in the dataset.
-        feature_selector : FeatureSelector
-            The feature selector object.
-        """
         self.population_size = population_size
         self.feature_count = feature_count
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
+
+        self.population = None
         self._initialize_population()
 
     def _initialize_population(self):
@@ -46,18 +53,24 @@ class BasePopulation:
             [0, 1], size=(self.population_size, self.feature_count)
         )
 
-    def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
+    def evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
+    ) -> List[pd.Series]:
         """
         Evaluate the population against the dataframe of features.
 
         Args
         ----
+        cost_func : Callable
+            The cost function to evaluate the individual's fitness.
         X : pd.DataFrame
             The dataframe with the features.
+        y : pd.Series
+            The true values.
 
-        return
-        ------
-        list
+        Returns
+        -------
+        List[pd.Series]
             The predicted values.
         """
         raise NotImplementedError
@@ -70,12 +83,18 @@ class BasePopulation:
 
         Parameters
         ----------
-        cost_func : callable
+        cost_func : Callable
             The cost function to evaluate the individual's fitness.
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+        genome : np.ndarray
+            The genome of an individual.
 
         Returns
         -------
-        cost : float
+        float
             The fitness of the individual.
         """
         if genome.sum() == 0:
@@ -90,15 +109,14 @@ class BasePopulation:
 
         Parameters
         ----------
-        scores : array
+        scores : List
             The fitness scores of the population.
-
-        k : int
-            The number of individuals to select for the tournament.
+        k : int, optional
+            The number of individuals to select for the tournament, by default 3.
 
         Returns
         -------
-        selection : Individual
+        np.ndarray
             The selected individual.
         """
         selection_ix = np.random.randint(len(self.population))
@@ -111,6 +129,16 @@ class BasePopulation:
     def _mutate(self, genome) -> np.ndarray:
         """
         Mutate the individual's genome.
+
+        Parameters
+        ----------
+        genome : np.ndarray
+            The genome of an individual.
+
+        Returns
+        -------
+        np.ndarray
+            The mutated genome.
         """
         proba = np.random.uniform(size=len(genome))
         mask = proba < self.mutation_proba
@@ -127,20 +155,15 @@ class BasePopulation:
         ----------
         parent1 : np.ndarray
             The first parent.
-
         parent2 : np.ndarray
             The second parent.
-
         crossover_proba : float
             The probability of crossover.
 
         Returns
         -------
-        c1 : np.ndarray
-            The first child.
-
-        c2 : np.ndarray
-            The second child.
+        Tuple[np.ndarray, np.ndarray]
+            The two new children.
         """
         c1, c2 = copy.deepcopy(parent1), copy.deepcopy(parent2)
 
@@ -151,6 +174,14 @@ class BasePopulation:
         return c1, c2
 
     def evolve(self, fitness: List[float]):
+        """
+        Evolve the population based on the fitness scores.
+
+        Parameters
+        ----------
+        fitness : List[float]
+            The fitness scores of the population.
+        """
         selected = [self._selection(fitness) for _ in range(self.population_size)]
 
         children = []
@@ -181,12 +212,14 @@ class SerialPopulation(BasePopulation):
 
         Args
         ----
-
         population_size : int
             The size of the population.
-
-        operations : list
-            The list of functions to use in the programs.
+        feature_count : int
+            The number of features in the dataset.
+        crossover_proba : float, optional
+            The probability of crossover, by default 0.9.
+        mutation_proba : float, optional
+            The probability of mutation, by default 0.1.
         """
         super().__init__(
             population_size,
@@ -203,19 +236,16 @@ class SerialPopulation(BasePopulation):
 
         Args
         ----
-
-        cost_func : callable
+        cost_func : Callable
             The cost function to evaluate the individual's fitness.
-
         X : pd.DataFrame
             The dataframe with the features.
-
         y : pd.Series
             The true values.
 
-        return
-        ------
-        list
+        Returns
+        -------
+        List[float]
             The predicted values.
         """
         return [self._evaluate(cost_func, X, y, genome) for genome in self.population]
@@ -224,7 +254,7 @@ class SerialPopulation(BasePopulation):
 class ParallelPopulation(BasePopulation):
     """
     A class to represent the population of programs in the genetic programming algorithm where
-    the programs are evaluated serially.
+    the programs are evaluated in parallel.
     """
 
     def __init__(
@@ -240,12 +270,16 @@ class ParallelPopulation(BasePopulation):
 
         Args
         ----
-
         population_size : int
             The size of the population.
-
-        operations : list
-            The list of functions to use in the programs.
+        feature_count : int
+            The number of features in the dataset.
+        crossover_proba : float, optional
+            The probability of crossover, by default 0.9.
+        mutation_proba : float, optional
+            The probability of mutation, by default 0.1.
+        n_jobs : int, optional
+            The number of parallel jobs to run, by default -1 (use all available cores).
         """
         super().__init__(
             population_size,
@@ -264,19 +298,16 @@ class ParallelPopulation(BasePopulation):
 
         Args
         ----
-
-        cost_func : callable
+        cost_func : Callable
             The cost function to evaluate the individual's fitness.
-
         X : pd.DataFrame
             The dataframe with the features.
-
         y : pd.Series
             The true values.
 
-        return
-        ------
-        list
+        Returns
+        -------
+        List[float]
             The predicted values.
         """
         return Parallel(n_jobs=cpu_count())(

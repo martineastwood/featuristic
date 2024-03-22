@@ -15,11 +15,12 @@ from .population import ParallelPopulation, SerialPopulation
 
 class GeneticFeatureSelector:
     """
-    The Genetic Feature Selector class uses genetic programming to select the best features
-    to minimise a given objective function. This is done by initially building a population of
-    naive random selection of the available features. The population is then evolved over a
-    number of generations using genetic operators such as mutation and crossover to find the
-    best combination of features to minimise the output of the objective function.
+    The Genetic Feature Selector class uses genetic programming to select the best
+    features to minimise a given objective function. This is done by initially
+    building a population of naive random selection of the available features.
+    The population is then evolved over a number of generations using genetic operators
+    such as mutation and crossover to find the best combination of features to minimise
+    the output of the objective function.
     """
 
     def __init__(
@@ -58,7 +59,8 @@ class GeneticFeatureSelector:
             The number of iterations to wait for early termination.
 
         n_jobs : int
-            The number of parallel jobs to run. If -1, use all available cores else uses the minimum of n_jobs and cpu_count.
+            The number of parallel jobs to run. If -1, use all available cores else uses the
+            minimum of n_jobs and cpu_count.
 
         verbose : bool
             Whether to print progress.
@@ -168,7 +170,8 @@ class GeneticFeatureSelector:
             if self.early_termination_counter >= self.early_termination_iters:
                 if self.verbose:
                     print(
-                        f"Early termination at iter {current_iter}, best error: {self.best_cost:10.6f}"
+                        f"Early termination at iter {current_iter}, \
+                          best error: {self.best_cost:10.6f}"
                     )
                 break
 

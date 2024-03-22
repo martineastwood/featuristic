@@ -1,5 +1,8 @@
-import pandas as pd
+""" Preprocessing functions for data synthesis. """
+
 from typing import Tuple
+
+import pandas as pd
 
 
 def preprocess_data(X: pd.DataFrame, y: pd.Series) -> Tuple[pd.DataFrame, pd.Series]:

@@ -75,7 +75,7 @@ def fitness_pearson(
     y_pred: pd.Series
         The predicted values
     """
-    with warnings.catch_warnings(record=True) as w:
+    with warnings.catch_warnings(record=True) as _:
         warnings.simplefilter("ignore", category=scipy.stats.NearConstantInputWarning)
         if np.ptp(y_true) == 0 or np.ptp(y_pred) == 0:
             return 0
@@ -105,7 +105,7 @@ def fitness_spearman(
     y_pred: pd.Series
         The predicted values
     """
-    with warnings.catch_warnings(record=True) as w:
+    with warnings.catch_warnings(record=True) as _:
         warnings.simplefilter("ignore", category=scipy.stats.NearConstantInputWarning)
         if np.ptp(y_true) == 0 or np.ptp(y_pred) == 0:
             return 0

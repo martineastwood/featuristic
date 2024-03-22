@@ -1,3 +1,6 @@
+""" The population module contains the classes for the population of programs in the 
+genetic programming algorithm. """
+
 from copy import deepcopy
 from typing import Callable, List, Self
 
@@ -221,6 +224,16 @@ class BasePopulation:
         return self._mutate(parent1, X)
 
     def evolve(self, fitness: List[float], X: pd.DataFrame) -> Self:
+        """
+        Evolve the population by creating a new generation of programs.
+
+        Args
+        ----
+        fitness : list
+            The fitness values of the population.
+
+        X : pd.DataFrame
+        """
         self.population = [
             self._get_offspring(fitness, X) for _ in range(self.population_size)
         ]

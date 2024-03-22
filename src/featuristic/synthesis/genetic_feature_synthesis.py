@@ -18,13 +18,15 @@ from .preprocess import preprocess_data
 
 class GeneticFeatureSynthesis:
     """
-    The Genetic Feature Synthesis class uses genetic programming to generate new features using
-    a technique based on Symbolic Regression. This is done by initially building a population of
-    naive random formulas that represent transformations of the input features. The population is
-    then evolved over a number of generations using genetic operators such as mutation and crossover
-    to find the best programs that minimize a given fitness function. The best features are then
-    identified using the Maximum Relevance Minimum Redundancy (mRMR) algorithm to find those features
-    that are most correlated with the target variable while being least correlated with each other.
+    The Genetic Feature Synthesis class uses genetic programming to generate new
+    features using a technique based on Symbolic Regression. This is done by initially
+    building a population of naive random formulas that represent transformations of
+    the input features. The population is then evolved over a number of generations
+    using genetic operators such as mutation and crossover to find the best programs
+    that minimize a given fitness function. The best features are then identified using
+    a Maximum Relevance Minimum Redundancy (mRMR) algorithm to find those features
+    that are most correlated with the target variable while being least correlated with
+    each other.
     """
 
     def __init__(
@@ -48,41 +50,51 @@ class GeneticFeatureSynthesis:
         Args
         ----
         fitness : str
-            The fitness function to use. Must be one of `("mae", "mse", "pearson", "spearman")`.
+            The fitness function to use. Must be one of
+            `("mae", "mse", "pearson", "spearman")`.
 
         functions : list
-            The list of functions to use in the programs. if `None` then all the built-in functions are used.
+            The list of functions to use in the programs. If `None` then all the
+            built-in functions are used.
 
         num_features : int
-            The number of best features to generate. Internally, `3 * num_features` programs are generated and the
-            best `num_features` are selected via Maximum Relevance Minimum Redundancy (mRMR).
+            The number of best features to generate. Internally, `3 * num_features`
+            programs are generated and the
+            best `num_features` are selected via Maximum Relevance Minimum Redundancy
+            (mRMR).
 
         population_size : int
-            The number of programs in each generation. The larger the population, the more likely it is to find a good
-            solution, but the longer it will take.
+            The number of programs in each generation. The larger the population, the
+            more likely it is to find a good solution, but the longer it will take.
 
         max_generations : int
-            The maximum number of generations to run. The larger the number of generations, the more likely it is to
-            find a good solution, but the longer it will take.
+            The maximum number of generations to run. The larger the number of
+            generations, the more likely it is to find a good solution, but the longer
+            it will take.
 
         tournament_size : int
-            The size of the tournament for selection. The larger the tournament size, the more likely it is to select
-            the best program, but the longer it will take.
+            The size of the tournament for selection. The larger the tournament size,
+            the more likely it is to select the best program, but the longer it will
+            take.
 
         crossover_proba : float
-            The probability of crossover mutation between selected parents in each generation.
+            The probability of crossover mutation between selected parents in each
+            generation.
 
         parsimony_coefficient : float
-            The parsimony coefficient. Larger values penalize larger programs more and encourage smaller programs.
-            This helps prevent bloat where the programs become increasingly large and complex without improving the
-            fitness, which increases computation complexity and reduces the interpretability of the features.
+            The parsimony coefficient. Larger values penalize larger programs more and
+            encourage smaller programs. This helps prevent bloat where the programs
+            become increasingly large and complex without improving the fitness, which
+            increases computation complexity and reduces the interpretability of the
+            features.
 
         early_termination_iters : int
-            If the best score does not improve for this number of generations, then the algorithm will terminate early.
+            If the best score does not improve for this number of generations, then the
+            algorithm will terminate early.
 
         n_jobs : int
-            The number of parallel jobs to run. If `-1`, use all available cores else uses n_jobs. If `n_jobs=1`,
-            then the computation is done in serial.
+            The number of parallel jobs to run. If `-1`, use all available cores else
+            uses n_jobs. If `n_jobs=1`, then the computation is done in serial.
 
         pbar: bool
             Whether to show a progress bar.
@@ -132,6 +144,52 @@ class GeneticFeatureSynthesis:
             self.n_jobs = n_jobs
 
         self.pbar = pbar
+
+    def _update_hall_of_fame(self, fitness: List[float]):
+        for individual, fit in zip(self.population.population, fitness):
+            self.hall_of_fame.append({"individual": individual, "fitness": fit})
+
+        self.hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
+        self.hall_of_fame = self.hall_of_fame[: self.len_hall_of_fame]
+
+    def _select_best_features(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Select the best features using the mRMR algorithm.
+
+        Args
+        ----
+        X : pd.DataFrame
+            The dataframe with the features.
+
+        y : pd.Series
+            The target variable.
+
+        return
+        ------
+        None
+        """
+        population = SerialPopulation(
+            len(self.hall_of_fame),
+            self.operations,
+            self.tournament_size,
+            self.crossover_proba,
+        )
+
+        population.population = [x["individual"] for x in self.hall_of_fame]
+        features = pd.DataFrame(population.evaluate(X)).T
+
+        features.columns = [f"feature_{i}" for i in range(self.len_hall_of_fame)]
+
+        for i in range(self.len_hall_of_fame):
+            self.hall_of_fame[i]["name"] = f"feature_{i}"
+
+        selected = (
+            MaxRelevanceMinRedundancy(k=self.num_features, pbar=self.pbar)
+            .fit_transform(features, y)
+            .columns
+        )
+        selected = [int(x.split("_")[1]) for x in selected]
+        self.hall_of_fame = [self.hall_of_fame[i] for i in selected]
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> "GeneticFeatureSynthesis":
         """
@@ -229,53 +287,7 @@ class GeneticFeatureSynthesis:
 
         return self
 
-    def _update_hall_of_fame(self, fitness: List[float]):
-        for individual, fit in zip(self.population.population, fitness):
-            self.hall_of_fame.append({"individual": individual, "fitness": fit})
-
-        self.hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
-        self.hall_of_fame = self.hall_of_fame[: self.len_hall_of_fame]
-
-    def _select_best_features(self, X: pd.DataFrame, y: pd.Series):
-        """
-        Select the best features using the mRMR algorithm.
-
-        Args
-        ----
-        X : pd.DataFrame
-            The dataframe with the features.
-
-        y : pd.Series
-            The target variable.
-
-        return
-        ------
-        None
-        """
-        population = SerialPopulation(
-            len(self.hall_of_fame),
-            self.operations,
-            self.tournament_size,
-            self.crossover_proba,
-        )
-
-        population.population = [x["individual"] for x in self.hall_of_fame]
-        features = pd.DataFrame(population.evaluate(X)).T
-
-        features.columns = [f"feature_{i}" for i in range(self.len_hall_of_fame)]
-
-        for i in range(self.len_hall_of_fame):
-            self.hall_of_fame[i]["name"] = f"feature_{i}"
-
-        selected = (
-            MaxRelevanceMinRedundancy(k=self.num_features, pbar=self.pbar)
-            .fit_transform(features, y)
-            .columns
-        )
-        selected = [int(x.split("_")[1]) for x in selected]
-        self.hall_of_fame = [self.hall_of_fame[i] for i in selected]
-
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
         """
         Transform the dataframe of features using the best programs found.
 
