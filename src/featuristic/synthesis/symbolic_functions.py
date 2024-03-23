@@ -177,6 +177,29 @@ class SymbolicFunction:
         return self.format_str
 
 
+class SymbolicAddConstant:
+    """
+    An internal class used to represent the symbolic functions used to generate new
+    features by the GeneticFeatureGenerator class.
+    """
+
+    def __init__(self):
+        """
+        Initialize the SymbolicFunction class.
+        """
+
+        self.random_constant = np.random.uniform(-100, 100)
+        self.arg_count = 1
+        self.format_str = "add_constant({} + {})"
+        self.name = "add_constant"
+
+    def __call__(self, x):
+        return self.rand + x
+
+    def __str__(self):
+        return self.format_str
+
+
 operations = [
     SymbolicFunction(np.add, 2, "({} + {})", "add"),
     SymbolicFunction(np.subtract, 2, "({} - {})", "subtract"),
@@ -189,6 +212,7 @@ operations = [
     SymbolicFunction(sin, 1, "sin({})", "sin"),
     SymbolicFunction(cos, 1, "cos({})", "cos"),
     SymbolicFunction(tan, 1, "tan({})", "tan"),
+    SymbolicAddConstant(),
 ]
 
 

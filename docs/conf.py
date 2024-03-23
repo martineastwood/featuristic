@@ -10,7 +10,7 @@ import os
 
 sys.path.insert(0, "../src")
 
-project = "Featurize"
+project = "Featuristic"
 copyright = "2024, Martin Eastwood"
 author = "Martin Eastwood"
 
@@ -50,7 +50,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://github.com/martineastwood/featurize",
+            "url": "https://github.com/martineastwood/featuristic",
             "icon": "fab fa-github-square",
             "type": "fontawesome",
         },

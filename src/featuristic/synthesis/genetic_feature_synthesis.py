@@ -41,7 +41,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         crossover_proba: float = 0.8,
         parsimony_coefficient: float = 0.02,
         early_termination_iters: int = 15,
-        return_all_features: bool = False,
+        return_all_features: bool = True,
         n_jobs: int = -1,
         pbar: bool = True,
         verbose: bool = False,
@@ -108,9 +108,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             Whether to print out aditional information
         """
         if functions is None:
-            self.operations = operations
+            self.functions = operations
         else:
-            self.operations = functions
+            self.functions = functions
 
         self.population_size = population_size
         self.max_generations = max_generations
@@ -130,6 +130,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.return_all_features = return_all_features
 
+        self.fitness = fitness
         if fitness == "mae":
             self.fitness_func = fitness_mae
         elif fitness == "mse":
@@ -177,7 +178,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         """
         population = SerialPopulation(
             len(self.hall_of_fame),
-            self.operations,
+            self.functions,
             self.tournament_size,
             self.crossover_proba,
         )
@@ -218,14 +219,14 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         if self.n_jobs == 1:
             self.population = SerialPopulation(
                 self.population_size,
-                self.operations,
+                self.functions,
                 self.tournament_size,
                 self.crossover_proba,
             ).initialize(X)
         else:
             self.population = ParallelPopulation(
                 self.population_size,
-                self.operations,
+                self.functions,
                 self.tournament_size,
                 self.crossover_proba,
                 self.n_jobs,
@@ -294,7 +295,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """
         Transform the dataframe of features using the best programs found.
 
@@ -314,14 +315,14 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         if self.n_jobs == 1:
             population = SerialPopulation(
                 len(self.hall_of_fame),
-                self.operations,
+                self.functions,
                 self.tournament_size,
                 self.crossover_proba,
             )
         else:
             population = ParallelPopulation(
                 len(self.hall_of_fame),
-                self.operations,
+                self.functions,
                 self.tournament_size,
                 self.crossover_proba,
                 self.n_jobs,
@@ -372,7 +373,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         for prog in self.hall_of_fame:
             tmp = {
                 "name": prog["name"],
-                "prog": render_prog(prog["individual"]),
+                "formula": render_prog(prog["individual"]),
                 "fitness": prog["fitness"],
             }
             output.append(tmp)

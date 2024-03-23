@@ -3,12 +3,12 @@
 API Reference
 =============
 
-.. currentmodule:: featuring
+.. currentmodule:: featuristic
 
 
 Genetic Feature Generation
 ----------------------------
-.. currentmodule:: featuring.synthesis
+.. currentmodule:: featuristic.synthesis
 
 .. autosummary::
     :toctree: generated/
@@ -25,7 +25,7 @@ Genetic Feature Generation
 
 Genetic Feature Selection
 ----------------------------
-.. currentmodule:: featuring
+.. currentmodule:: featuristic
 
 .. autosummary::
     :toctree: generated/   

@@ -28,7 +28,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         self,
         objective_function: Callable,
         population_size: int = 100,
-        max_generations: int = 150,
+        max_generations: int = 100,
         crossover_proba: float = 0.75,
         mutation_proba: float = 0.1,
         early_termination_iters: int = 10,
@@ -80,7 +80,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         self.best_genome = None
         self.best_cost = sys.maxsize
 
-        self.fit_called = False
+        self.is_fitted_ = False
 
         if n_jobs == -1:
             self.n_jobs = cpu_count()
@@ -93,20 +93,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         self.population = None
         self.num_genes = None
-
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
-        """
-        Fit is not used, only for compatibility with sklearn.
-
-        Parameters
-        ----------
-        X : DataFrame
-            The input features.
-
-        y : Series
-            The target variable.
-        """
-        return self
+        self.selected_columns = None
 
     def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> Self:
         """
@@ -120,18 +107,46 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         y : Series
             The target variable.
         """
+        self.fit(X, y)
         return self.transform(X, y)
 
-    def transform(self, X: pd.DataFrame, y: pd.Series) -> np.ndarray:
+    def transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """
-        Optimize the feature selection using a genetic algorithm.
+        Transform the input features to the selected features.
+
+        Parameters
+        ----------
+        X : DataFrame
+            The input features.
+
+        y : Series
+            The target variable.
 
         Returns
         -------
-        best_cost : float
-            The minimized cost found during the optimization.
-        features : array
-            The column indexes of the best selected features.
+        DataFrame
+            The selected features.
+        """
+        if not self.is_fitted_:
+            raise ValueError("Must call fit before transform")
+
+        return X[self.selected_columns]
+
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
+        """
+        Determine the  optimal feature selection using a genetic algorithm.
+
+        Args
+        ----
+        X : DataFrame
+            The input features.
+
+        y : Series
+            The target variable.
+
+        Returns
+        -------
+        self
         """
         self.num_genes = X.shape[1]
 
@@ -191,9 +206,9 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             if self.pbar:
                 pbar.update(1)
 
-        self.fit_called = True
+        self.is_fitted_ = True
 
-        return X.columns[self.best_genome == 1]
+        self.selected_columns = X.columns[self.best_genome == 1]
 
     def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
         """
@@ -203,7 +218,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         ------
         None
         """
-        if not self.fit_called:
+        if not self.is_fitted_:
             raise ValueError("Must call fit_transform or transform before plot_history")
 
         if ax is None:
