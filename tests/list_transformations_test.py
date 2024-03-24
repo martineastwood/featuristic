@@ -1,4 +1,4 @@
-import featuristic as ft
+import numerately as ft
 
 
 def test_list_transformations():

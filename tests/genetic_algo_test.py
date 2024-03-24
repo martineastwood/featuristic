@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from sklearn import datasets as sklearn_datasets
 
-import featuristic as ft
+import numerately as ft
 
 
 @pytest.fixture

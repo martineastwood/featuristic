@@ -1,35 +1,16 @@
-from ucimlrepo import fetch_ucirepo
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
-import featuristic as ft
+import numerately as nm
 import numpy as np
 from sklearn.pipeline import Pipeline
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 
 np.random.seed(8888)
 
-# Download the data and drop the rows with missing values
-# auto_mpg = fetch_ucirepo(id=9)
 
-# X = auto_mpg.data.features
-# y = auto_mpg.data.targets["mpg"]
-
-# null_indices = X[X.isnull().any(axis=1)].index
-# X = X.drop(null_indices).reset_index(drop=True)
-# y = y.drop(null_indices).reset_index(drop=True)
-
-# synth = ft.GeneticFeatureSynthesis(
-#     num_features=10,
-#     population_size=100,
-#     max_generations=50,
-#     early_termination_iters=15,
-#     n_jobs=-1,
-# )
-
-# X_new = synth.fit_transform(X, y)
-
-
-X, y = ft.fetch_cars_dataset()
+X, y = nm.fetch_cars_dataset()
 
 
 def objective(X, y):
@@ -38,73 +19,66 @@ def objective(X, y):
     return -scores.mean()
 
 
-# pipe = Pipeline(
-#     steps=[
-#         (
-#             "genetic_feature_synthesis",
-#             ft.GeneticFeatureSynthesis(
-#                 num_features=10,
-#                 population_size=100,
-#                 max_generations=50,
-#                 early_termination_iters=15,
-#                 n_jobs=-1,
-#             ),
-#         ),
-#         (
-#             "genetic_feature_selector",
-#             ft.GeneticFeatureSelector(
-#                 objective_function=objective,
-#                 population_size=100,
-#                 crossover_proba=0.75,
-#                 max_generations=50,
-#                 early_termination_iters=25,
-#                 n_jobs=-1,
-#             ),
-#         ),
-#     ]
-# )
+scores = []
+for i in range(3):
+    # create a train test split from X
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
-# pipe.fit(X, y)
-# transformed_df = pipe.transform(X)
+    pipe = Pipeline(
+        steps=[
+            (
+                "genetic_feature_synthesis",
+                nm.GeneticFeatureSynthesis(
+                    num_features=10,
+                    population_size=100,
+                    max_generations=50,
+                    early_termination_iters=15,
+                    n_jobs=-1,
+                ),
+            ),
+            (
+                "genetic_feature_selector",
+                nm.GeneticFeatureSelector(
+                    objective_function=objective,
+                    population_size=100,
+                    crossover_proba=0.75,
+                    max_generations=50,
+                    early_termination_iters=25,
+                    n_jobs=-1,
+                ),
+            ),
+        ]
+    )
 
+    X_train = X_train.reset_index(drop=True)
+    y_train = y_train.reset_index(drop=True)
+    X_test = X_test.reset_index(drop=True)
+    y_test = y_test.reset_index(drop=True)
 
-synth = ft.GeneticFeatureSynthesis(
-    num_features=10,
-    population_size=100,
-    max_generations=50,
-    early_termination_iters=15,
-    n_jobs=-1,
-)
+    features = pipe.fit_transform(X_train, y_train)
 
-synth.fit(X, y)
+    model = LinearRegression()
+    model.fit(features, y_train)
+    preds = model.predict(pipe.transform(X_test))
+    mae = mean_absolute_error(y_test, preds)
+    scores.append(mae)
 
-features = synth.transform(X)
-
-
-selector = ft.GeneticFeatureSelector(
-    objective_function=objective,
-    population_size=100,
-    crossover_proba=0.75,
-    max_generations=50,
-    early_termination_iters=25,
-    n_jobs=-1,
-)
-
-selected = selector.fit_transform(pd.concat([X, features], axis=1), y)
-
-# genetic_feature_synthesis = pipe.named_steps["genetic_feature_synthesis"]
-
-# print(transformed_df.head())
-
-print(synth.get_feature_info())
-
-original = objective(X, y)
-
-new = objective(selected, y)
-
-print(
-    f"Old: {original}, New: {new}, Improvement: {round((1 - (new / original))* 100, 1)}%"
-)
+print("Genetic Feature Synthesis + Genetic Feature Selector:", np.mean(scores))
 
 
-# null_indices = X[X.isnull().any(axis=1)].index.union(y[y.isnull()].index)
+scores = []
+for i in range(3):
+    # create a train test split from X
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    preds = model.predict(X_test)
+    mae = mean_absolute_error(y_test, preds)
+    scores.append(mae)
+
+print("Linear Regression:", np.mean(scores))
