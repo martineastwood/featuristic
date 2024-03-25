@@ -1,13 +1,13 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
-import numerately as nm
+import featuristic as nm
 import numpy as np
 from sklearn.pipeline import Pipeline
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 
-np.random.seed(8888)
+# np.random.seed(8888)
 
 
 X, y = nm.fetch_cars_dataset()

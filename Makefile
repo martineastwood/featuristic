@@ -12,10 +12,10 @@ test:
 
 .PHONY:
 lint:
-	python3 -m pylint --rcfile=.pylintrc src/numerately/
+	python3 -m pylint --rcfile=.pylintrc src/featuristic/
 
 make clean:
-	rm -rf build docs/_build dist src/numerately.egg-info src/numerately/__pycache__ src/numerately/*.pyc src/numerately/*/__pycache__ src/numerately/*/*.pyc
+	rm -rf build docs/_build dist src/featuristic.egg-info src/featuristic/__pycache__ src/numfeaturisticerately/*.pyc src/featuristic/*/__pycache__ src/featuristic/*/*.pyc
 
 html:
 	rm -rf docs/_build && \

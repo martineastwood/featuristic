@@ -24,7 +24,7 @@ def random_prog(depth: int, X: pd.DataFrame, operations: List[SymbolicFunction])
         The list of operations to use.
     """
     if np.random.randint(0, 10) >= depth * 2:
-        op = operations[np.random.randint(0, len(operations) - 1)]
+        op = operations[np.random.randint(0, len(operations) - 1)]()
         return {
             "func": op,
             "children": [
