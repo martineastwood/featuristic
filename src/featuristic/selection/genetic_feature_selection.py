@@ -27,11 +27,11 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
     def __init__(
         self,
         objective_function: Callable,
-        population_size: int = 100,
+        population_size: int = 50,
         max_generations: int = 100,
-        crossover_proba: float = 0.75,
+        crossover_proba: float = 0.8,
         mutation_proba: float = 0.1,
-        early_termination_iters: int = 10,
+        early_termination_iters: int = 15,
         n_jobs: int = -1,
         pbar: bool = True,
         verbose: bool = False,
@@ -42,7 +42,10 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         objective_function : callable
-            The cost function to minimize. Must take X and y as input and return a float.
+            The cost function to minimize. Must take X and y as input and return a
+            float. Note that the function should return a value to minimize so a
+            smaller value is better. If you want to maximize a metric, you should
+            multiply the output of your objective_function by -1.
 
         population_size : int
             The number of individuals in the population.

@@ -39,7 +39,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         max_generations: int = 25,
         tournament_size: int = 3,
         crossover_proba: float = 0.8,
-        parsimony_coefficient: float = 0.02,
+        parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
         return_all_features: bool = True,
         n_jobs: int = -1,
@@ -215,6 +215,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         ------
         returns self
         """
+        X_copy = X.reset_index(drop=True)
+        y_copy = y.reset_index(drop=True)
+        X_copy, y_copy = preprocess_data(X_copy, y_copy)
+
         # Initialize the population
         if self.n_jobs == 1:
             self.population = SerialPopulation(
@@ -222,7 +226,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.functions,
                 self.tournament_size,
                 self.crossover_proba,
-            ).initialize(X)
+            ).initialize(X_copy)
         else:
             self.population = ParallelPopulation(
                 self.population_size,
@@ -230,13 +234,11 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.tournament_size,
                 self.crossover_proba,
                 self.n_jobs,
-            ).initialize(X)
+            ).initialize(X_copy)
 
         # loss value to minimize
         global_best = float("inf")
         best_prog = None
-
-        X_copy, y_copy = preprocess_data(X.copy(), y.copy())
 
         if self.pbar:
             pbar = tqdm(total=self.max_generations, desc="Creating new features...")
@@ -329,11 +331,11 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             )
 
         population.population = [x["individual"] for x in self.hall_of_fame]
-        output = pd.DataFrame(population.evaluate(X)).T
+        output = pd.DataFrame(population.evaluate(X.reset_index(drop=True))).T
         output.columns = [x["name"] for x in self.hall_of_fame]
 
         if self.return_all_features:
-            return pd.concat([X, output], axis=1)
+            return pd.concat([X.reset_index(drop=True), output], axis=1)
 
         return output
 

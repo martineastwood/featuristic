@@ -106,7 +106,7 @@ class BasePopulation:
             The fitness of the population.
         """
         score = [
-            fitness_func(prog, parsimony_coefficient, pred, y)
+            fitness_func(prog, parsimony_coefficient, y, pred)
             for prog, pred in zip(self.population, prediction)
         ]
         return score

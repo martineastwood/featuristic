@@ -624,7 +624,7 @@ operations = [
     SymbolicSubtract,
     SymbolicMultiply,
     SymbolicDivide,
-    SymbolicSqrt,
+    # SymbolicSqrt,
     SymbolicSquare,
     SymbolicCube,
     SymbolicAbs,
@@ -632,8 +632,8 @@ operations = [
     SymbolicSin,
     SymbolicCos,
     SymbolicTan,
-    SymbolicAddConstant,
-    SymbolicMulConstant,
+    # SymbolicAddConstant,
+    # SymbolicMulConstant,
 ]
 
 

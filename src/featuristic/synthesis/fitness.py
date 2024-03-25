@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import scipy
+import sys
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
@@ -78,8 +79,15 @@ def fitness_pearson(
 
     with warnings.catch_warnings(record=True) as _:
         warnings.simplefilter("ignore", category=scipy.stats.NearConstantInputWarning)
+
+        if y_pred.isna().any():
+            return sys.maxsize
+
+        if np.isinf(y_pred).any():
+            return sys.maxsize
+
         if np.ptp(y_true) == 0 or np.ptp(y_pred) == 0:
-            return 0
+            return sys.maxsize
 
         loss = abs(pearsonr(y_true, y_pred).statistic)
         penalty = node_count(program) ** parsimony
