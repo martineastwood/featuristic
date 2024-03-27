@@ -13,23 +13,27 @@ Genetic Feature Generation
 .. autosummary::
     :toctree: generated/
 
-    GeneticFeatureSynthesizer
-    BasePopulation
-    SerialPopulation
-    ParallelPopulation
+    GeneticFeatureSynthesis
     SymbolicFunction
-    fitness_pearson
+    list_operations
 
 
 Genetic Feature Selection
 ----------------------------
-.. currentmodule:: featuristic
+.. currentmodule:: featuristic.selection
 
 .. autosummary::
     :toctree: generated/   
 
-    Individual
     GeneticFeatureSelector
-    SerialPopulation
-    ParallelPopulation
+
+
+Datasets
+----------------------------
+.. currentmodule:: featuristic.datasets
+
+.. autosummary::
+    :toctree: generated/   
+
+    fetch_cars_dataset
 

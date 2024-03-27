@@ -1,5 +1,6 @@
-Featurize
-------------
+<p align="center">
+<img width=50% src="docs/_static/logo.png" alt="Featuretools" />
+</p>
 
 > Because feature engineering is a science, not an art
 
