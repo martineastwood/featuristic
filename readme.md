@@ -2,7 +2,9 @@
 <img width=50% src="docs/_static/logo.png" alt="Featuretools" />
 </p>
 
-> Because feature engineering is a science, not an art
+<p align="center">
+<i>"Because feature engineering should be a science and not an art."</i>
+</p>
 
 # TODO
 - handle text
