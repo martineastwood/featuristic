@@ -1,5 +1,5 @@
 <p align="center">
-<img width=50% src="docs/_static/logo.png" alt="Featuretools" />
+<img width=50% src="https://github.com/martineastwood/featuristic/blob/main/docs/_static/logo.png alt="Featuristic" />
 </p>
 
 <p align="center">
