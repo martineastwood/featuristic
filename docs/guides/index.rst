@@ -6,3 +6,4 @@ Guides
 
    sklearn
    tuning
+   parallel
