@@ -2,7 +2,6 @@
 
 from .datasets import fetch_cars_dataset
 from .synthesis.genetic_feature_synthesis import GeneticFeatureSynthesis
-from .synthesis.symbolic_functions import SymbolicFunction, list_operations, operations
+from .synthesis.symbolic_functions import SymbolicFunction, list_operations
 from .selection.genetic_feature_selection import GeneticFeatureSelector
-from .model.regression import SymbolicRegression
 from .version import __version__

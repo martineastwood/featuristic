@@ -13,7 +13,7 @@ X, y = ft.fetch_cars_dataset()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
 synth = ft.GeneticFeatureSynthesis(
-    num_features=10,
+    num_features=5,
     population_size=200,
     max_generations=100,
     early_termination_iters=25,
@@ -34,7 +34,7 @@ def objective_function(X, y):
 
 selector = ft.GeneticFeatureSelector(
     objective_function,
-    population_size=500,
+    population_size=200,
     max_generations=50,
     early_termination_iters=25,
     n_jobs=-1,
@@ -61,6 +61,8 @@ print(
     Improvement: {round((1 - (featurized_mae / original_mae))* 100, 1)}%"
 )
 
-selector.plot_history()
+# selector.plot_history()
 
-# print(generated_features.head())
+print(generated_features.head())
+
+print(selected_features.head())

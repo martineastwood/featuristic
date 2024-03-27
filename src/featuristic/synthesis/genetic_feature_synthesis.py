@@ -10,7 +10,7 @@ from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
-from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
+from .fitness import fitness_pearson, fitness_spearman
 from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
 from .program import render_prog, node_count
@@ -132,11 +132,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.return_all_features = return_all_features
 
         self.fitness = fitness
-        if fitness == "mae":
-            self.fitness_func = fitness_mae
-        elif fitness == "mse":
-            self.fitness_func = fitness_mse
-        elif fitness == "pearson":
+        if fitness == "pearson":
             self.fitness_func = fitness_pearson
         elif fitness == "spearman":
             self.fitness_func = fitness_spearman

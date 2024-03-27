@@ -19,8 +19,6 @@ Genetic Feature Generation
     ParallelPopulation
     SymbolicFunction
     fitness_pearson
-    fitness_mae
-    fitness_mse
 
 
 Genetic Feature Selection
@@ -32,4 +30,6 @@ Genetic Feature Selection
 
     Individual
     GeneticFeatureSelector
+    SerialPopulation
+    ParallelPopulation
 
