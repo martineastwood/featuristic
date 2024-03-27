@@ -1,0 +1,30 @@
+﻿featuristic.selection.GeneticFeatureSelector
+============================================
+
+.. currentmodule:: featuristic.selection
+
+.. autoclass:: GeneticFeatureSelector
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GeneticFeatureSelector.__init__
+      ~GeneticFeatureSelector.fit
+      ~GeneticFeatureSelector.fit_transform
+      ~GeneticFeatureSelector.get_metadata_routing
+      ~GeneticFeatureSelector.get_params
+      ~GeneticFeatureSelector.plot_history
+      ~GeneticFeatureSelector.set_output
+      ~GeneticFeatureSelector.set_params
+      ~GeneticFeatureSelector.transform
+   
+   
+
+   
+   
+   

@@ -1,0 +1,31 @@
+﻿featuristic.synthesis.GeneticFeatureSynthesis
+=============================================
+
+.. currentmodule:: featuristic.synthesis
+
+.. autoclass:: GeneticFeatureSynthesis
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GeneticFeatureSynthesis.__init__
+      ~GeneticFeatureSynthesis.fit
+      ~GeneticFeatureSynthesis.fit_transform
+      ~GeneticFeatureSynthesis.get_feature_info
+      ~GeneticFeatureSynthesis.get_metadata_routing
+      ~GeneticFeatureSynthesis.get_params
+      ~GeneticFeatureSynthesis.plot_history
+      ~GeneticFeatureSynthesis.set_output
+      ~GeneticFeatureSynthesis.set_params
+      ~GeneticFeatureSynthesis.transform
+   
+   
+
+   
+   
+   
