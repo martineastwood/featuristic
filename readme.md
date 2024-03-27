@@ -6,10 +6,11 @@
 <i>"Because feature engineering should be a science and not an art."</i>
 </p>
 
-# TODO
-- handle text
-- handle categorical
-- wrapper function
-- handle test data
-- view history
-- view feature definitions
+Featuristic uses Genetic Algorithms to automate the process of feature engineering and feature selection, enhancing the performance of machine learning models by optimizing their predictive capabilities.
+
+## Installation
+Install with pip
+
+```
+python -m pip install featuristic
+```
