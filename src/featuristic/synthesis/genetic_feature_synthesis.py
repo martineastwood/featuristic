@@ -1,7 +1,8 @@
 """Contains the SymbolicFeatureGenerator class."""
 
+import sys
 from typing import List, Union
-
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import pandas as pd
@@ -12,7 +13,7 @@ from tqdm import tqdm
 from .fitness import fitness_mae, fitness_mse, fitness_pearson, fitness_spearman
 from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
-from .program import render_prog
+from .program import render_prog, node_count
 from .symbolic_functions import SymbolicFunction, operations
 from .preprocess import preprocess_data
 
@@ -38,7 +39,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         population_size: int = 100,
         max_generations: int = 25,
         tournament_size: int = 3,
-        crossover_proba: float = 0.8,
+        crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
         return_all_features: bool = True,
@@ -155,7 +156,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
-            self.hall_of_fame.append({"individual": individual, "fitness": fit})
+            current_fitnesses = [x["fitness"] for x in self.hall_of_fame]
+            if fit not in current_fitnesses:
+                self.hall_of_fame.append({"individual": individual, "fitness": fit})
 
         self.hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
         self.hall_of_fame = self.hall_of_fame[: self.len_hall_of_fame]
@@ -237,7 +240,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             ).initialize(X_copy)
 
         # loss value to minimize
-        global_best = float("inf")
+        global_best = sys.maxsize
         best_prog = None
 
         if self.pbar:
@@ -249,9 +252,14 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             score = self.population.compute_fitness(
                 self.fitness_func, self.parsimony_coefficient, prediction, y_copy
             )
+            # prog_len = [node_count(prog) for prog in self.population.population]
+            # clf = np.cov(prog_len, score)[0, 1]
+            # vl = np.var(prog_len)
+            # parsimony = clf / vl
+            # score = [x - (parsimony * y) for x, y in zip(score, prog_len)]
 
             for prog, score in zip(self.population.population, score):
-                # check for the best program
+
                 fitness.append(score)
                 if score < global_best:
                     global_best = score
@@ -282,7 +290,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             # update the hall of fame with the best programs from the current generation
             self._update_hall_of_fame(fitness)
 
-            self.population = self.population.evolve(fitness, X_copy)
+            self.population.evolve(fitness, X_copy)
 
         # select the best features using mrmr
         self._select_best_features(X_copy, y_copy)

@@ -29,7 +29,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         objective_function: Callable,
         population_size: int = 50,
         max_generations: int = 100,
-        crossover_proba: float = 0.8,
+        crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         early_termination_iters: int = 15,
         n_jobs: int = -1,

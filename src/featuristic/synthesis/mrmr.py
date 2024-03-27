@@ -120,6 +120,8 @@ class MaxRelevanceMinRedundancy:
         # set the maximum number of features to select
         k: int = min(self.k, X.shape[1])
 
+        X = X.loc[:, X.nunique() > 1]
+
         # calculate the f-statistic and the correlation matrix
         f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
         corr = pd.DataFrame(FLOOR, index=X.columns, columns=X.columns)

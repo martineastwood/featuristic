@@ -91,8 +91,8 @@ def fitness_pearson(
 
         loss = abs(pearsonr(y_true, y_pred).statistic)
         penalty = node_count(program) ** parsimony
-        loss /= -penalty
-        return loss
+        loss /= penalty
+        return -loss
 
 
 def fitness_spearman(
