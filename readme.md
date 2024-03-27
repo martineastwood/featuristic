@@ -10,6 +10,8 @@ Featuristic uses Genetic Algorithms to automate the process of feature engineeri
 
 See the documentation for more information.
 
+**Warning - not ready for use yet**
+
 ## Installation
 Install with pip
 
