@@ -8,6 +8,8 @@
 
 Featuristic uses Genetic Algorithms to automate the process of feature engineering and feature selection, enhancing the performance of machine learning models by optimizing their predictive capabilities.
 
+See the documentation for more information.
+
 ## Installation
 Install with pip
 
