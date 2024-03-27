@@ -7,53 +7,8 @@ import pandas as pd
 import scipy
 import sys
 from scipy.stats import pearsonr, spearmanr
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from .program import node_count
-
-
-def fitness_mae(program: dict, parsimony: float, y_true: pd.Series, y_pred: pd.Series):
-    """
-    Compute the fitness of a program based on the mean absolute error and the parsimony coefficient
-
-    Args:
-    program: dict
-        The program to evaluate
-
-    parsimony: float
-        The parsimony coefficient
-
-    y_true: pd.Series
-        The true values
-
-    y_pred: pd.Series
-        The predicted values
-    """
-    loss = mean_absolute_error(y_true, y_pred)
-    penalty = node_count(program) ** parsimony
-    return loss * penalty
-
-
-def fitness_mse(program: dict, parsimony: float, y_true: pd.Series, y_pred: pd.Series):
-    """
-    Compute the fitness of a program based on the mean squared error and the parsimony coefficient
-
-    Args:
-    program: dict
-        The program to evaluate
-
-    parsimony: float
-        The parsimony coefficient
-
-    y_true: pd.Series
-        The true values
-
-    y_pred: pd.Series
-        The predicted values
-    """
-    loss = mean_squared_error(y_true, y_pred)
-    penalty = node_count(program) ** parsimony
-    return loss * penalty
 
 
 def fitness_pearson(
