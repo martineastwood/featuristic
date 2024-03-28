@@ -45,7 +45,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'guides/tuning';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Release Notes" href="../release_notes.html" />
+    <link rel="next" title="Computational Performance" href="computational_performance.html" />
     <link rel="prev" title="Using Featuristic With scikit-learn Pipelines" href="sklearn.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -402,21 +402,19 @@ document.write(`
                   
   <section id="Tuning-the-Genetic-Feature-Synthesis">
 <h1>Tuning the Genetic Feature Synthesis<a class="headerlink" href="#Tuning-the-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h1>
-<p>Featuristic is fully compatible with scikit-learn’s <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> class, which can be used to sequentially apply a list of transformers to preprocess your data.</p>
-<p>Let’s take a look at an example using the <code class="docutils literal notranslate"><span class="pre">cars</span></code> dataset.</p>
+<p>There are several parameters that can be used to tune the genetic algorithms in Featuristic, which we’ll explore below with the <code class="docutils literal notranslate"><span class="pre">cars</span></code> dataset.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
-<span class="kn">import</span> <span class="nn">featuristic</span> <span class="k">as</span> <span class="nn">ft</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">featuristic</span> <span class="k">as</span> <span class="nn">ft</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">fetch_cars_dataset</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -428,373 +426,119 @@ document.write(`
 0.1.1
 </pre></div></div>
 </div>
-<section id="Load-the-Data">
-<h2>Load the Data<a class="headerlink" href="#Load-the-Data" title="Link to this heading"><span>#</span></a></h2>
+<section id="Complexity-of-the-Mathematical-Expressions">
+<h2>Complexity of the Mathematical Expressions<a class="headerlink" href="#Complexity-of-the-Mathematical-Expressions" title="Link to this heading"><span>#</span></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> parameter controls the complexity of the mathematical expressions used to generate new features. When set to larger values, it penalizes larger programs more heavily, thereby encouraging the creation of smaller programs. This reduces bloat, where programs become excessively large and complex without improving their performance. By discouraging overly complex expressions, computation complexity is reduced, and the interpretability of the features is enhanced.</p>
+<p>In the example below, the <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> is set to be very small, leading to larger and more complex features.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">fetch_cars_dataset</span><span class="p">()</span>
-
-<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>displacement</th>
-      <th>cylinders</th>
-      <th>horsepower</th>
-      <th>weight</th>
-      <th>acceleration</th>
-      <th>model_year</th>
-      <th>origin</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>307.0</td>
-      <td>8</td>
-      <td>130.0</td>
-      <td>3504</td>
-      <td>12.0</td>
-      <td>70</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>350.0</td>
-      <td>8</td>
-      <td>165.0</td>
-      <td>3693</td>
-      <td>11.5</td>
-      <td>70</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>318.0</td>
-      <td>8</td>
-      <td>150.0</td>
-      <td>3436</td>
-      <td>11.0</td>
-      <td>70</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>304.0</td>
-      <td>8</td>
-      <td>150.0</td>
-      <td>3433</td>
-      <td>12.0</td>
-      <td>70</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>302.0</td>
-      <td>8</td>
-      <td>140.0</td>
-      <td>3449</td>
-      <td>10.5</td>
-      <td>70</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-0    18.0
-1    15.0
-2    18.0
-3    16.0
-4    17.0
-Name: mpg, dtype: float64
-</pre></div></div>
-</div>
-</section>
-<section id="Objective-Function">
-<h2>Objective Function<a class="headerlink" href="#Objective-Function" title="Link to this heading"><span>#</span></a></h2>
-<p>We use a custom objective function to pass into the Genetic Feature Selection algorithm. The output of this will be minimized to find the optimal subset of features.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
-    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;neg_mean_absolute_error&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="Fit-a-scikit-learn-Pipeline-Containing-Featuristic">
-<h2>Fit a scikit-learn Pipeline Containing Featuristic<a class="headerlink" href="#Fit-a-scikit-learn-Pipeline-Containing-Featuristic" title="Link to this heading"><span>#</span></a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
-    <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span>
-            <span class="s2">&quot;genetic_feature_synthesis&quot;</span><span class="p">,</span>
-            <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
-                <span class="n">num_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-                <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-                <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="s2">&quot;genetic_feature_selector&quot;</span><span class="p">,</span>
-            <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSelector</span><span class="p">(</span>
-                <span class="n">objective_function</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
-                <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                <span class="n">crossover_proba</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
-                <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-                <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-                <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">),</span>
-    <span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
+    <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>
+    <span class="n">return_all_features</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">features</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">info</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+
+<span class="n">info</span><span class="o">.</span><span class="n">head</span><span class="p">()[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Creating new features...:  40%|██████████████████████████████████                                                   | 20/50 [00:05&lt;00:05,  5.15it/s]
-Pruning feature space...: 100%|████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:00&lt;00:00, 262.96it/s]
-Creating new features...:  40%|██████████████████████████████████                                                   | 20/50 [00:05&lt;00:07,  3.77it/s]
-Optimising feature selection...:  96%|██████████████████████████████████████████████████████████████████████████▉   | 48/50 [00:04&lt;00:00, 10.58it/s]
+Creating new features...:  58%|█████████████████████████████████████████████████▎                                   | 29/50 [00:03&lt;00:02,  7.21it/s]
+Pruning feature space...: 100%|██████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 595.60it/s]
+Creating new features...:  58%|█████████████████████████████████████████████████▎                                   | 29/50 [00:03&lt;00:02,  8.91it/s]
 </pre></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>displacement</th>
-      <th>cylinders</th>
-      <th>origin</th>
-      <th>feature_1</th>
-      <th>feature_3</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>307.0</td>
-      <td>8</td>
-      <td>1</td>
-      <td>1396.0</td>
-      <td>-3249.249286</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>350.0</td>
-      <td>8</td>
-      <td>1</td>
-      <td>1207.0</td>
-      <td>-3497.000000</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>318.0</td>
-      <td>8</td>
-      <td>1</td>
-      <td>1464.0</td>
-      <td>-3198.568728</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>304.0</td>
-      <td>8</td>
-      <td>1</td>
-      <td>1467.0</td>
-      <td>-3173.196503</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>302.0</td>
-      <td>8</td>
-      <td>1</td>
-      <td>1451.0</td>
-      <td>-3185.744002</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<section id="Accessing-Featuristic-Inside-the-Pipeline">
-<h3>Accessing Featuristic Inside the Pipeline<a class="headerlink" href="#Accessing-Featuristic-Inside-the-Pipeline" title="Link to this heading"><span>#</span></a></h3>
-<p>We can still access the individual Featuristic steps via the pipeline’s <code class="docutils literal notranslate"><span class="pre">named_steps</span></code> functionality. For example, to look at the formulae used for the feature engineering or to plot the genetic algorithm’s history.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;genetic_feature_synthesis&quot;</span><span class="p">]</span>
-
-<span class="n">gfs</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>name</th>
-      <th>formula</th>
-      <th>fitness</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>feature_0</td>
-      <td>(abs(abs(square(model_year))) - weight)</td>
-      <td>-0.883948</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>feature_1</td>
-      <td>(abs(-(square(model_year))) - weight)</td>
-      <td>-0.883948</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>feature_2</td>
-      <td>((abs(square(model_year)) - weight) + abs(hors...</td>
-      <td>-0.875738</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>feature_3</td>
-      <td>((square(abs(square(model_year))) / square(dis...</td>
-      <td>-0.854884</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>feature_5</td>
-      <td>(abs(abs(square(-(acceleration)))) - weight)</td>
-      <td>-0.825592</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/guides_tuning_12_0.png" src="../_images/guides_tuning_12_0.png" />
+<div class="highlight"><pre>
+&#39;((abs((-(-(-((displacement / ((model_year + displacement) + weight))))) + (weight + displacement))) - -(sin(displacement))) + displacement)&#39;
+</pre></div></div>
 </div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<p>And in the example, below the <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> is increased to keep the features simpler.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
+    <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">return_all_features</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">features</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">info</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+
+<span class="n">info</span><span class="o">.</span><span class="n">head</span><span class="p">()[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Creating new features...:  60%|███████████████████████████████████████████████████                                  | 30/50 [00:02&lt;00:01, 11.00it/s]
+Pruning feature space...: 100%|██████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 607.39it/s]
+Creating new features...:  60%|███████████████████████████████████████████████████                                  | 30/50 [00:02&lt;00:01, 11.99it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;abs(-(cube(((weight + displacement) - square(model_year)))))&#39;
+</pre></div></div>
 </div>
 </section>
+<section id="Max-Generations">
+<h2>Max Generations<a class="headerlink" href="#Max-Generations" title="Link to this heading"><span>#</span></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> parameter refers to the maximum number of evolutions or generations the algorithm will undergo before terminating. Each generation represents a cycle of selection, crossover, and mutation operations on the population of candidate solutions.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> parameter is crucial as it determines the duration or number of iterations for which the genetic algorithm will continue evolving potential solutions. Once the specified maximum number of generations is reached, the algorithm terminates, regardless of whether the optimal solution has been found.</p>
+<p>Setting an appropriate <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> value is important to balance computational resources and the algorithm’s ability to converge to a satisfactory solution. If <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> is too low, the algorithm may terminate prematurely before reaching an optimal solution. Conversely, if it’s too high, it may lead to unnecessary computational overhead without significant improvements in solution quality.</p>
+<p>Finding the right value for <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> often requires experimentation and problem-specific considerations, such as the complexity of the optimization problem, computational resources available, and the desired level of solution quality.</p>
+</section>
+<section id="Early-Termination">
+<h2>Early Termination<a class="headerlink" href="#Early-Termination" title="Link to this heading"><span>#</span></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">early_termination_iters</span></code> argument sets the number of generations after which the genetic algorithm will stop if it hasn’t managed to improve the best individual in the population. This prevents unnecessary computation if the algorithm seems to have converged or stalled.</p>
+<p>For example, if <code class="docutils literal notranslate"><span class="pre">early_termination_iters</span></code> is set to 10, it means that after 10 generations (iterations) without any improvement in the best individual’s fitness, the algorithm will terminate prematurely as it assumes that further iterations are unlikely to yield better results.</p>
+<p>This parameter is useful for efficiency purposes, especially when dealing with computationally expensive problems, as it helps avoid unnecessary computations once progress appears to have converged. It works well when combined with larger <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> values, as it helps to avoid prolonged computation when progress appears to have plateaued.</p>
+</section>
+<section id="Population-Size">
+<h2>Population Size<a class="headerlink" href="#Population-Size" title="Link to this heading"><span>#</span></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">population_size</span></code> refers to the number of individuals (or candidate solutions) present in each generation of the algorithm. Each individual represents a potential solution to the optimization problem being solved.</p>
+<p>The population size is a crucial parameter as it influences the diversity and exploration capability of the algorithm. A larger population size typically allows for more diverse solutions to be explored, potentially leading to a broader exploration of the solution space. However, larger populations also require more computational resources and may lead to slower convergence if not properly managed.</p>
+<p>Conversely, a smaller population size may lead to faster convergence but could suffer from premature convergence to local optima due to limited diversity.</p>
+<p>Choosing an appropriate population size is often a balancing act between exploration (diversity) and exploitation (convergence speed). It often depends on the specific problem being solved, computational resources available, and the desired balance between exploration and exploitation. Experimentation and tuning are typically required to determine the optimal population size for a given problem.</p>
+</section>
+<section id="Objective-Function">
+<h2>Objective Function<a class="headerlink" href="#Objective-Function" title="Link to this heading"><span>#</span></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSelector</span></code> class takes a parameter called <code class="docutils literal notranslate"><span class="pre">objective_function</span></code>. This function is used by the genetic algorithm to quantify how well a particular candidate solution performs with respect to the problem being optimized.</p>
+<p>In the context of feature selection, where the aim is often to identify the most informative subset of features, the <code class="docutils literal notranslate"><span class="pre">objective_function</span></code> helps gauge how well a particular feature subset performs. By evaluating various feature combinations, the algorithm navigates towards solutions that exhibit superior performance in terms of the specified objectives.</p>
+<p>Given that feature selection typically precedes more resource-intensive tasks like model selection or hyperparameter optimization, employing a straightforward yet effective <code class="docutils literal notranslate"><span class="pre">objective_function</span></code> allows rapid identification of the most important features.</p>
 </section>
 </section>
 
@@ -818,11 +562,11 @@ Optimising feature selection...:  96%|██████████████
       </div>
     </a>
     <a class="right-next"
-       href="../release_notes.html"
+       href="computational_performance.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Release Notes</p>
+        <p class="prev-next-title">Computational Performance</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -844,12 +588,11 @@ Optimising feature selection...:  96%|██████████████
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Load-the-Data">Load the Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Complexity-of-the-Mathematical-Expressions">Complexity of the Mathematical Expressions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Max-Generations">Max Generations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Early-Termination">Early Termination</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Population-Size">Population Size</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Objective-Function">Objective Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Fit-a-scikit-learn-Pipeline-Containing-Featuristic">Fit a scikit-learn Pipeline Containing Featuristic</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Accessing-Featuristic-Inside-the-Pipeline">Accessing Featuristic Inside the Pipeline</a></li>
-</ul>
-</li>
 </ul>
   </nav></div>
 
