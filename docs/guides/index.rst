@@ -6,4 +6,4 @@ Guides
 
    sklearn
    tuning
-   parallel
+   computational_performance
