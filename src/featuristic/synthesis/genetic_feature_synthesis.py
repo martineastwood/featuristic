@@ -2,7 +2,6 @@
 
 import sys
 from typing import List, Union
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 import pandas as pd
@@ -13,7 +12,7 @@ from tqdm import tqdm
 from .fitness import fitness_pearson, fitness_spearman
 from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
-from .program import render_prog, node_count
+from .program import render_prog
 from .symbolic_functions import SymbolicFunction, operations
 from .preprocess import preprocess_data
 
