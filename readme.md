@@ -6,6 +6,16 @@
 <i>"Because feature engineering should be a science, not an art."</i>
 </p>
 
+<div align="center">
+
+  <a href="">[![Python Version](https://img.shields.io/pypi/pyversions/featuristic)](https://pypi.org/project/featuristic/)</a>
+  <a href="">[![PyPI](https://img.shields.io/pypi/v/featuristic.svg)](https://pypi.org/project/featuristic/)</a>
+  <a href="">[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)</a>
+  <a href="">[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)</a>
+  <a href="">[![Code style: pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)</a>
+
+</div>
+
 [Featuristic](https://www.featuristic.co.uk/) uses Genetic Algorithms to automate the process of **feature engineering** and **feature selection**, enhancing the performance of machine learning models by optimizing their predictive capabilities.
 
 See the [documentation](https://www.featuristic.co.uk/) for more detailed information.
