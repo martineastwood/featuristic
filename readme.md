@@ -173,6 +173,10 @@ featuristic_mae = mean_absolute_error(y_test, preds)
 print(featuristic_mae)
 ```
 
+```
+2.243230501011035
+```
+
 ```python
 print(f"Original MAE: {original_mae}")
 print(f"Featuristic MAE: {featuristic_mae}")
