@@ -103,6 +103,7 @@ dev = [
     "ipykernel",
     "pytest",
     "pylint",
+    "pre-commit",
     "black",
     "isort",
     "coverage",
