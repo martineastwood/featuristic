@@ -36,4 +36,5 @@ Datasets
     :toctree: generated/   
 
     fetch_cars_dataset
+    fetch_wine_dataset
 

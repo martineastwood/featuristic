@@ -8,6 +8,8 @@ __pycache__/
 examples/data/
 docs/generated
 
+test.py
+
 *.csv
 
 # C extensions
