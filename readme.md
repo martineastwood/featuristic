@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-<i>"Because feature engineering should be a science and not an art."</i>
+<i>"Because feature engineering should be a science, not an art."</i>
 </p>
 
 Featuristic uses Genetic Algorithms to automate the process of feature engineering and feature selection, enhancing the performance of machine learning models by optimizing their predictive capabilities.
