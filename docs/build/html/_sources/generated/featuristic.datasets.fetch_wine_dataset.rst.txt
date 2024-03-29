@@ -1,0 +1,6 @@
+﻿featuristic.datasets.fetch\_wine\_dataset
+=========================================
+
+.. currentmodule:: featuristic.datasets
+
+.. autofunction:: fetch_wine_dataset

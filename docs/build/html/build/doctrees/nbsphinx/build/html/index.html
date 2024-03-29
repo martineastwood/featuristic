@@ -1,0 +1,1094 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>What is Featuristic? &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+
+  <link href="../../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'build/doctrees/nbsphinx/build/html/index';</script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+
+
+  <div class="col-lg-3 navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../../../../../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/logo.png" class="logo__image only-dark" alt="Featuristic  documentation - Home"/>`);</script>
+
+
+</a></div>
+
+  </div>
+
+  <div class="col-lg-9 navbar-header-items">
+
+    <div class="me-auto navbar-header-items__center">
+
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../install/index.html">
+                        Installation
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../guides/index.html">
+                        Guides
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../release_notes.html">
+                        Release Notes
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+                        API Reference
+                      </a>
+                    </li>
+
+  </ul>
+</nav></div>
+
+    </div>
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+
+
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+
+
+
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+
+
+      <div class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+      <div class="sidebar-header-items__center">
+
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../install/index.html">
+                        Installation
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../guides/index.html">
+                        Guides
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../release_notes.html">
+                        Release Notes
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+                        API Reference
+                      </a>
+                    </li>
+
+  </ul>
+</nav></div>
+
+      </div>
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../../../../../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../install/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../guides/index.html">Guides</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resources &amp; References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference.html">API Reference</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">What is Featuristic?</li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="What-is-Featuristic?">
+<h1>What is Featuristic?<a class="headerlink" href="#What-is-Featuristic?" title="Link to this heading"><span>#</span></a></h1>
+<p><img alt="featuristic_logo" src="build/doctrees/nbsphinx/build/html/_static/logo.png" /></p>
+<p><strong>Featuristic</strong> uses Genetic Algorithms to automate the process of <strong>feature engineering</strong> and <strong>feature selection</strong>, enhancing the performance of machine learning models by optimizing their predictive capabilities.</p>
+<section id="Understanding-Genetic-Feature-Synthesis">
+<h2>Understanding Genetic Feature Synthesis<a class="headerlink" href="#Understanding-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h2>
+<p>Featuristic uses symbolic regression to intelligently derive interpretable mathematical formulas, which are then used to create new features from your dataset.</p>
+<p>Initially, Featuristic creates a diverse population of formulas using fundamental mathematical operators such as <code class="docutils literal notranslate"><span class="pre">add</span></code>, <code class="docutils literal notranslate"><span class="pre">subtract</span></code>, <code class="docutils literal notranslate"><span class="pre">sin</span></code>, <code class="docutils literal notranslate"><span class="pre">tan</span></code>, <code class="docutils literal notranslate"><span class="pre">square</span></code>, <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>, and more.</p>
+<p>For instance, a formula generated by Featuristic might look like this: <code class="docutils literal notranslate"><span class="pre">(square(feature_1)</span> <span class="pre">-</span> <span class="pre">abs(feature_2))</span> <span class="pre">*</span> <span class="pre">feature_3</span></code>.</p>
+<p>Next, Featuristic assesses the efficacy of these formulas by quanifying how effectively the features correlate with the target variable. Those formulas yielding features with the strongest correlations are then selected and recombined using a genetic algorithm to produce offspring, as illustrated below.</p>
+<p><img alt="Symbolic Regression Example" src="build/doctrees/nbsphinx/build/html/_static/symbolic_regression_example.png" /></p>
+<p>These offspring may also undergo point mutations, which causes alterations to random operators within the formula. This process introduces slight variations to the formulas, enhancing the diversity of the population and potentially leading to the discovery of novel and more effective feature representations.</p>
+<p><img alt="Mutation Example" src="build/doctrees/nbsphinx/build/html/_static/mutation_example.png" /></p>
+<p>This iterative process continues across multiple generations, continually refining the population of formulas with the goal of generating features that exhibit strong correlations with the target variable.</p>
+</section>
+<section id="Quickstart">
+<h2>Quickstart<a class="headerlink" href="#Quickstart" title="Link to this heading"><span>#</span></a></h2>
+<p>Below is a simple example of how Featuristic performs automated feature engineering and selection on the widely used <code class="docutils literal notranslate"><span class="pre">cars</span></code> dataset.</p>
+<p>Featuristic operates in two distinct steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Genetic Feature Synthesis:</strong> In this initial phase, Featuristic intelligently evolves new features through a form of symbolic regression. This involves the generation of mathematical expressions using genetic algorithms. These expressions are designed to capture complex relationships within the dataset.</p></li>
+<li><p><strong>Genetic Feature Selection:</strong> Following the creation of new features, Featuristic employs a Genetic Feature Selection algorithm. This algorithm searches through the newly formed feature space to identify the most optimal subset of features. The objective is to maximize predictive accuracy while minimizing the number of features required for model training.</p></li>
+</ol>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
+<span class="kn">import</span> <span class="nn">featuristic</span> <span class="k">as</span> <span class="nn">ft</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.1.1
+</pre></div></div>
+</div>
+<section id="Load-the-Data">
+<h3>Load the Data<a class="headerlink" href="#Load-the-Data" title="Link to this heading"><span>#</span></a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">fetch_cars_dataset</span><span class="p">()</span>
+
+<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>displacement</th>
+      <th>cylinders</th>
+      <th>horsepower</th>
+      <th>weight</th>
+      <th>acceleration</th>
+      <th>model_year</th>
+      <th>origin</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>307.0</td>
+      <td>8</td>
+      <td>130.0</td>
+      <td>3504</td>
+      <td>12.0</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>350.0</td>
+      <td>8</td>
+      <td>165.0</td>
+      <td>3693</td>
+      <td>11.5</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>318.0</td>
+      <td>8</td>
+      <td>150.0</td>
+      <td>3436</td>
+      <td>11.0</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>304.0</td>
+      <td>8</td>
+      <td>150.0</td>
+      <td>3433</td>
+      <td>12.0</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>302.0</td>
+      <td>8</td>
+      <td>140.0</td>
+      <td>3449</td>
+      <td>10.5</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0    18.0
+1    15.0
+2    18.0
+3    16.0
+4    17.0
+Name: mpg, dtype: float64
+</pre></div></div>
+</div>
+</section>
+<section id="Genetic-Feature-Synthesis">
+<h3>Genetic Feature Synthesis<a class="headerlink" href="#Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h3>
+<p>Now, let’s dive into the fun part: using Genetic Feature Synthesis to automatically engineer new features from our dataset!</p>
+<p>Before we proceed, it’s important to ensure a robust evaluation of our model’s performance. To achieve this, we’ll first split our dataset into training and testing sets. The training set will be used to train our model, while the testing set will remain unseen during the training process and will serve as an independent dataset to evaluate the model’s performance.</p>
+<p>Once our data is appropriately split, we’ll initiate the Genetic Feature Synthesis process. We’ve configured the genetic algorithm to synthesize 5 new features for us. This entails evolving a population consisting of 200 individuals iteratively over 100 generations. To ensure optimal performance, we’ve set the genetic algorithm to halt early if it fails to improve upon the best feature identified within 25 generations. Additionally, for enhanced computational efficiency, we’ve designated
+<code class="docutils literal notranslate"><span class="pre">n_jobs</span></code> as -1, enabling concurrent execution across all available CPUs on our computer.</p>
+<p>With everything set up, we simply call the <code class="docutils literal notranslate"><span class="pre">fit</span></code> function to generate our new features.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
+    <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.0025</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">synth</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Creating new features...:  27%|██████████████████████▋                                                             | 27/100 [00:04&lt;00:10,  6.74it/s]
+Pruning feature space...: 100%|██████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 622.06it/s]
+Creating new features...:  27%|██████████████████████▋                                                             | 27/100 [00:04&lt;00:11,  6.14it/s]
+</pre></div></div>
+</div>
+<p>Next, we call the <code class="docutils literal notranslate"><span class="pre">transform</span></code> function to generate a dataframe containing our new features. By default, the <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code> class will return both the original features and the newly synthesised features. However, we return just the new features by setting the <code class="docutils literal notranslate"><span class="pre">return_all_features</span></code> argument to False when we create the class.</p>
+<p>We can also combine both the <code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">transform</span></code> steps into one step by calling <code class="docutils literal notranslate"><span class="pre">fit_transform</span></code> instead.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">generated_features</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="n">generated_features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>displacement</th>
+      <th>cylinders</th>
+      <th>horsepower</th>
+      <th>weight</th>
+      <th>acceleration</th>
+      <th>model_year</th>
+      <th>origin</th>
+      <th>feature_0</th>
+      <th>feature_7</th>
+      <th>feature_1</th>
+      <th>feature_8</th>
+      <th>feature_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>122.0</td>
+      <td>4</td>
+      <td>86.0</td>
+      <td>2220</td>
+      <td>14.0</td>
+      <td>71</td>
+      <td>1</td>
+      <td>0.072622</td>
+      <td>1.049748e+09</td>
+      <td>206072.467213</td>
+      <td>1.966114e+10</td>
+      <td>-210512.467213</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>200.0</td>
+      <td>6</td>
+      <td>88.0</td>
+      <td>3060</td>
+      <td>17.1</td>
+      <td>81</td>
+      <td>1</td>
+      <td>0.056756</td>
+      <td>1.411911e+09</td>
+      <td>212173.605000</td>
+      <td>3.596968e+10</td>
+      <td>-218293.605000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>302.0</td>
+      <td>8</td>
+      <td>129.0</td>
+      <td>3725</td>
+      <td>13.4</td>
+      <td>79</td>
+      <td>1</td>
+      <td>0.035533</td>
+      <td>8.047110e+08</td>
+      <td>125248.778146</td>
+      <td>1.085258e+10</td>
+      <td>-132698.778146</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>302.0</td>
+      <td>8</td>
+      <td>140.0</td>
+      <td>4294</td>
+      <td>16.0</td>
+      <td>72</td>
+      <td>1</td>
+      <td>0.020243</td>
+      <td>4.611275e+08</td>
+      <td>84692.278146</td>
+      <td>2.032975e+08</td>
+      <td>-93280.278146</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>120.0</td>
+      <td>4</td>
+      <td>97.0</td>
+      <td>2506</td>
+      <td>14.5</td>
+      <td>72</td>
+      <td>3</td>
+      <td>0.059434</td>
+      <td>1.160646e+09</td>
+      <td>221442.800000</td>
+      <td>1.673793e+10</td>
+      <td>-226454.800000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Our newly engineered features currently have generic names. However, since Featuristic synthesizes these features by the applying mathematical expressions to the data, we can look at the underlying formulas responsible for each feature’s creation.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">info</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+<span class="n">info</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;(square(abs((square(-(model_year)) / abs(weight)))) / model_year)&#39;
+</pre></div></div>
+</div>
+</section>
+<section id="Feature-Selection">
+<h3>Feature Selection<a class="headerlink" href="#Feature-Selection" title="Link to this heading"><span>#</span></a></h3>
+<p>Following the synthesis of new features, the next step involves using another genetic algorithm for feature selection. This process sifts through the pool of features to identify the subset that optimally contributes to predictive performance while minimizing redundancy.</p>
+</section>
+<section id="Define-the-Cost-Function">
+<h3>Define the Cost Function<a class="headerlink" href="#Define-the-Cost-Function" title="Link to this heading"><span>#</span></a></h3>
+<p>We set up a custom objective function that the Genetic Feature Selection algorithm will use to quantify how well the subset of features predicts the target. Please note that the function should return a value to <strong>minimize</strong> so a <strong>smaller value is better</strong>. If you want to maximize a metric, you should multiply the output of your objective_function by -1, as shown in the example below.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">objective_function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;neg_mean_absolute_error&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<p>Next, we set up the Genetic Feature Selector. We’ve configured the genetic algorithm to evolve a population consisting of 200 individuals iteratively over 100 generations. To ensure optimal performance, we’ve set the genetic algorithm to halt early if it fails to improve upon the best feature set identified within 25 generations. Additionally, for enhanced computational efficiency, we’ve set <code class="docutils literal notranslate"><span class="pre">n_jobs</span></code> as -1, enabling concurrent execution across all available CPUs on our computer.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">generated_features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">selected_features</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">generated_features</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_features</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Optimising feature selection...:  56%|███████████████████████████████████████████▋                                  | 28/50 [00:06&lt;00:05,  4.36it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+6
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+</section>
+<section id="The-New-Features">
+<h3>The New Features<a class="headerlink" href="#The-New-Features" title="Link to this heading"><span>#</span></a></h3>
+<p>Let’s print out the selcted features to see what the Genetic Feature Selection algorithm kept. You can see below that featurize has kept two of the original features (“cylinders” and “origin”) and has kept four of the features created via the Genetic Feature Synthesis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selected_features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>cylinders</th>
+      <th>origin</th>
+      <th>feature_0</th>
+      <th>feature_7</th>
+      <th>feature_1</th>
+      <th>feature_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>4</td>
+      <td>1</td>
+      <td>0.072622</td>
+      <td>1.049748e+09</td>
+      <td>206072.467213</td>
+      <td>-210512.467213</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6</td>
+      <td>1</td>
+      <td>0.056756</td>
+      <td>1.411911e+09</td>
+      <td>212173.605000</td>
+      <td>-218293.605000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>8</td>
+      <td>1</td>
+      <td>0.035533</td>
+      <td>8.047110e+08</td>
+      <td>125248.778146</td>
+      <td>-132698.778146</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>8</td>
+      <td>1</td>
+      <td>0.020243</td>
+      <td>4.611275e+08</td>
+      <td>84692.278146</td>
+      <td>-93280.278146</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>3</td>
+      <td>0.059434</td>
+      <td>1.160646e+09</td>
+      <td>221442.800000</td>
+      <td>-226454.800000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Training-a-Model">
+<h3>Training a Model<a class="headerlink" href="#Training-a-Model" title="Link to this heading"><span>#</span></a></h3>
+<p>Now that we’ve selected our features, let’s see whether they actually help our model’s predictive performance on our test data set. We’ll start off with the original features as a baseline.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">original_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+<span class="n">original_mae</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2.581708285266024
+</pre></div></div>
+</div>
+<p>And now, let’s see how the model performs with our synthesised feature set.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">selected_features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">test_features</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_features</span><span class="p">)</span>
+<span class="n">featurized_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Original MAE: </span><span class="si">{</span><span class="n">original_mae</span><span class="si">}</span><span class="s2">, Featuristic MAE: </span><span class="si">{</span><span class="n">featurized_mae</span><span class="si">}</span><span class="s2">, </span><span class="se">\</span>
+<span class="s2">    Improvement: </span><span class="si">{</span><span class="nb">round</span><span class="p">((</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">featurized_mae</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">original_mae</span><span class="p">))</span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Original MAE: 2.581708285266024, Featuristic MAE: 2.243230501011035,     Improvement: 13.1%
+</pre></div></div>
+</div>
+<p>The new features generated / selected by the Genetic Feature Synthesis have reduced our mean absolute error 😀</p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+<section id="Other-Links">
+<h2>Other Links<a class="headerlink" href="#Other-Links" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../../../../genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="../../../../../search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Understanding-Genetic-Feature-Synthesis">Understanding Genetic Feature Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Quickstart">Quickstart</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Load-the-Data">Load the Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Genetic-Feature-Synthesis">Genetic Feature Synthesis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Feature-Selection">Feature Selection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Define-the-Cost-Function">Define the Cost Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#The-New-Features">The New Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Training-a-Model">Training a Model</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Other-Links">Other Links</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../../_sources/build/doctrees/nbsphinx/build/html/index.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2024, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>
