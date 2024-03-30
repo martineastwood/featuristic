@@ -8,7 +8,7 @@ version = "0.2.0"
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#summary
-description = "Genetic Feature Synthesis and Genetic Feature Selection for Machine Learning"
+description = "An open source library using genetic algorithms for automated feature engineering and feature selection"
 
 
 # This is an optional longer description of your project that represents
@@ -19,7 +19,7 @@ description = "Genetic Feature Synthesis and Genetic Feature Selection for Machi
 #
 # This field corresponds to the "Description" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#description-optional
-readme = "README.md" # Optional
+readme = "readme.md" # Optional
 
 
 # Specify which Python versions you support. In contrast to the
