@@ -34,7 +34,6 @@ def fitness_pearson(
 
     with warnings.catch_warnings(record=True) as _:
         warnings.simplefilter("ignore", category=scipy.stats.NearConstantInputWarning)
-
         if y_pred.isna().any():
             return sys.maxsize
 
