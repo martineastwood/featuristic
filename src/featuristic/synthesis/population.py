@@ -1,4 +1,4 @@
-""" The population module contains the classes for the population of programs in the 
+""" The population module contains the classes for the population of programs in the
 genetic programming algorithm. """
 
 from copy import deepcopy
@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, cpu_count, delayed
 
-from .program import random_prog, select_random_node
+from .program import random_prog, select_random_node, node_count
 from .symbolic_functions import SymbolicFunction
 
 
@@ -105,11 +105,7 @@ class BasePopulation:
         list
             The fitness of the population.
         """
-        score = [
-            fitness_func(prog, parsimony_coefficient, y, pred)
-            for prog, pred in zip(self.population, prediction)
-        ]
-        return score
+        raise NotImplementedError
 
     def _evaluate_df(self, node: dict, X: pd.DataFrame) -> pd.Series:
         """
@@ -273,6 +269,72 @@ class SerialPopulation(BasePopulation):
         """
         return [self._evaluate_df(prog, X) for prog in self.population]
 
+    def compute_fitness(
+        self,
+        fitness_func: Callable,
+        parsimony_coefficient: float,
+        prediction,
+        y: pd.Series,
+    ) -> List[float]:
+        """
+        Compute the fitness of the population.
+
+        Args
+        ----
+
+        fitness_func : callable
+            The fitness function to use.
+
+        parsimony_coefficient : float
+            The parsimony coefficient.
+
+        prediction : list
+            The predicted values.
+
+        y : pd.Series
+            The true values.
+
+        return
+        ------
+        list
+            The fitness of the population.
+        """
+        score = [
+            fitness_func(prog, parsimony_coefficient, y, pred)
+            for prog, pred in zip(self.population, prediction)
+        ]
+        return score
+
+    def apply_parsimony(
+        self, scores: List[float], parsimony_coefficient: float
+    ) -> List[float]:
+        """
+        Apply the parsimony coefficient to the fitness scores.
+
+        Args
+        ----
+        scores : list
+            The fitness scores.
+
+        parsimony_coefficient : float
+            The parsimony coefficient.
+
+        return
+        ------
+        list
+            The updated fitness scores.
+        """
+
+        def _parsimony_coefficient(loss, prog):
+            penalty = node_count(prog) ** parsimony_coefficient
+            loss = loss / penalty
+            return -loss
+
+        return [
+            _parsimony_coefficient(loss, prog)
+            for loss, prog in zip(scores, self.population)
+        ]
+
 
 class ParallelPopulation(BasePopulation):
     """
@@ -312,4 +374,69 @@ class ParallelPopulation(BasePopulation):
         """
         return Parallel(n_jobs=cpu_count())(
             delayed(self._evaluate_df)(prog, X) for prog in self.population
+        )
+
+    def compute_fitness(
+        self,
+        fitness_func: Callable,
+        parsimony_coefficient: float,
+        prediction,
+        y: pd.Series,
+    ) -> List[float]:
+        """
+        Compute the fitness of the population.
+
+        Args
+        ----
+
+        fitness_func : callable
+            The fitness function to use.
+
+        parsimony_coefficient : float
+            The parsimony coefficient.
+
+        prediction : list
+            The predicted values.
+
+        y : pd.Series
+            The true values.
+
+        return
+        ------
+        list
+            The fitness of the population.
+        """
+        return Parallel(n_jobs=cpu_count())(
+            delayed(fitness_func)(prog, parsimony_coefficient, y, pred)
+            for prog, pred in zip(self.population, prediction)
+        )
+
+    def apply_parsimony(
+        self, scores: List[float], parsimony_coefficient: float
+    ) -> List[float]:
+        """
+        Apply the parsimony coefficient to the fitness scores.
+
+        Args
+        ----
+        scores : list
+            The fitness scores.
+
+        parsimony_coefficient : float
+            The parsimony coefficient.
+
+        return
+        ------
+        list
+            The updated fitness scores.
+        """
+
+        def _parsimony_coefficient(loss, prog):
+            penalty = node_count(prog) ** parsimony_coefficient
+            loss = loss / penalty
+            return -loss
+
+        return Parallel(n_jobs=cpu_count())(
+            delayed(_parsimony_coefficient)(score, prog)
+            for score, prog in zip(scores, self.population)
         )

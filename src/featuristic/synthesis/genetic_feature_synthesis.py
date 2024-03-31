@@ -9,7 +9,7 @@ from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
-from .fitness import fitness_pearson, fitness_spearman
+from .fitness import fitness_pearson
 from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
 from .program import render_prog
@@ -32,7 +32,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        fitness: str = "pearson",
         functions: Union[List[SymbolicFunction] | None] = None,
         num_features: int = 10,
         population_size: int = 100,
@@ -51,10 +50,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         Args
         ----
-        fitness : str
-            The fitness function to use. Must be one of
-            `("mae", "mse", "pearson", "spearman")`.
-
         functions : list
             The list of functions to use in the programs. If `None` then all the
             built-in functions are used.
@@ -121,7 +116,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.history = []
         self.hall_of_fame = []
-        self.len_hall_of_fame = self.num_features * 3
+        self.len_hall_of_fame = self.num_features * 5
 
         self.population = None
 
@@ -130,13 +125,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.return_all_features = return_all_features
 
-        self.fitness = fitness
-        if fitness == "pearson":
-            self.fitness_func = fitness_pearson
-        elif fitness == "spearman":
-            self.fitness_func = fitness_spearman
-        else:
-            raise ValueError("Invalid fitness function")
+        self.fitness_func = fitness_pearson
 
         self.verbose = verbose
 
@@ -247,6 +236,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             score = self.population.compute_fitness(
                 self.fitness_func, self.parsimony_coefficient, prediction, y_copy
             )
+            score = self.population.apply_parsimony(score, self.parsimony_coefficient)
             # prog_len = [node_count(prog) for prog in self.population.population]
             # clf = np.cov(prog_len, score)[0, 1]
             # vl = np.var(prog_len)
