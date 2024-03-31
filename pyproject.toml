@@ -75,12 +75,13 @@ classifiers = [ # Optional
 
 
 dependencies = [
-    "matplotlib",
-    "pandas",
-    "Pyarrow",
-    "scikit-learn",
-    "tqdm",
-    "ucimlrepo",
+    "matplotlib >= 3.0.0",
+    "numpy >= 1.25.0",
+    "pandas >= 2.0.0",
+    "Pyarrow >= 15.0.0",
+    "scikit-learn >= 1.4.0",
+    "tqdm >= 4.32.0",
+    "ucimlrepo >= 0.0.5",
 ] # This field lists other packages that your project depends on to run.
 # Any package you put here will be installed by pip when your project is
 # installed, so they must be valid existing projects.
@@ -99,17 +100,17 @@ dependencies = [
 # projects.
 [project.optional-dependencies] # Optional
 dev = [
+    "black",
     "build",
+    "coverage",
+    "isort",
     "ipykernel",
+    "nbsphinx",
+    "pre-commit",
+    "pydata_sphinx_theme",
     "pytest",
     "pylint",
-    "pre-commit",
-    "black",
-    "isort",
-    "coverage",
     "Sphinx",
-    "pydata_sphinx_theme",
-    "nbsphinx",
 ]
 
 [tool.setuptools.packages.find]
