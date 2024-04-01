@@ -202,9 +202,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         ------
         returns self
         """
-        X_copy = X.reset_index(drop=True)
-        y_copy = y.reset_index(drop=True)
-        X_copy, y_copy = preprocess_data(X_copy, y_copy)
+        X_copy, y_copy = preprocess_data(
+            X.reset_index(drop=True), y.reset_index(drop=True)
+        )
 
         # Initialize the population
         if self.n_jobs == 1:
@@ -392,6 +392,3 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         df = pd.DataFrame(self.history)
         df.plot(x="generation", y=["best_score", "median_score"], ax=ax)
         plt.show()
-
-
-# matplotlib.axes._axes.Axes

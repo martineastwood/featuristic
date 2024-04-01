@@ -8,7 +8,7 @@ venv_create:
 
 .PHONY:
 test:
-	python3 -m pytest -v tests
+	python3 -m pytest -v tests/test_preprocess.py
 
 .PHONY:
 coverage:

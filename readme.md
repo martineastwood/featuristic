@@ -134,7 +134,7 @@ selector.fit(generated_features, y_train)
 selected_features = selector.transform(generated_features)
 ```
 
-Let's print out the selected features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept two of the original features ("cylinders" and "origin") and has kept four of the features created via the Genetic Feature Synthesis.
+Let's print out the selected features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept three of the original features ("displacement", "acceleration" and "origin") and has kept four of the features created via the Genetic Feature Synthesis.
 
 ```python
 print(selected_features.head())
