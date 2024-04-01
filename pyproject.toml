@@ -103,6 +103,7 @@ dev = [
     "black",
     "build",
     "coverage",
+    "coveralls",
     "isort",
     "ipykernel",
     "nbsphinx",

@@ -8,7 +8,7 @@ venv_create:
 
 .PHONY:
 test:
-	python3 -m pytest -v tests/test_preprocess.py
+	python3 -m pytest -v tests/test_genetic_feature_selection.py
 
 .PHONY:
 coverage:
