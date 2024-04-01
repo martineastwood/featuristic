@@ -25,7 +25,7 @@ See the [documentation](https://www.featuristic.co.uk/) for more detailed inform
 Install with pip
 
 ```
-python -m pip install featuristic
+python3 -m pip install featuristic
 ```
 
 ## Understanding Genetic Feature Synthesis
