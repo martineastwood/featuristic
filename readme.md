@@ -21,8 +21,6 @@
 
 See the [documentation](https://www.featuristic.co.uk/) for more detailed information.
 
-**Warning - not ready for use yet**
-
 ## Installation
 Install with pip
 
