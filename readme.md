@@ -87,23 +87,23 @@ generated_features = synth.transform(X_train)
 print(generated_features.head())
 ```
 
-|    |   displacement |   cylinders |   horsepower |   weight |   acceleration |   model_year |   origin |   feature_7 |   feature_8 |   feature_5 |   feature_6 |   feature_15 |
-|---:|---------------:|------------:|-------------:|---------:|---------------:|-------------:|---------:|------------:|------------:|------------:|------------:|-------------:|
-|  0 |             89 |           4 |           62 |     2050 |           17.3 |           81 |        3 |     3921.25 |   -2052.95  |   -2105.08  | -0.00987805 |  0.0113587   |
-|  1 |            318 |           8 |          150 |     4077 |           14   |           72 |        1 |    -2903.26 |    -530.439 |    -545.286 | -0.00220751 |  0.000533039 |
-|  2 |            383 |           8 |          170 |     3563 |           10   |           70 |        1 |    -2667.44 |    -404.931 |    -416.84  | -0.0024558  |  0.000387686 |
-|  3 |            260 |           8 |          110 |     4060 |           19   |           77 |        1 |    -2304.1  |    -979.415 |   -1005.26  | -0.00237069 |  0.00109086  |
-|  4 |            318 |           8 |          140 |     4080 |           13.7 |           78 |        1 |    -2587.7  |    -758.845 |    -778.871 | -0.00238971 |  0.000715705 |
+|    |   displacement |   cylinders |   horsepower |   weight |   acceleration |   model_year |   origin |   feature_0 |   feature_1 |   feature_3 |   feature_2 |   feature_4 |
+|---:|---------------:|------------:|-------------:|---------:|---------------:|-------------:|---------:|------------:|------------:|------------:|------------:|------------:|
+|  0 |             89 |           4 |           62 |     2050 |           17.3 |           81 |        3 |    0.673279 | -0.00987805 |    0.566434 |   -0.917052 |    0.536626 |
+|  1 |            318 |           8 |          150 |     4077 |           14   |           72 |        1 |    0.133744 | -0.00220751 |    0.324324 |   -0.226914 |    0.318668 |
+|  2 |            383 |           8 |          170 |     3563 |           10   |           70 |        1 |    0.144654 | -0.0024558  |    0.291667 |   -0.183216 |    0.287549 |
+|  3 |            260 |           8 |          110 |     4060 |           19   |           77 |        1 |    0.153605 | -0.00237069 |    0.411765 |   -0.29502  |    0.400227 |
+|  4 |            318 |           8 |          140 |     4080 |           13.7 |           78 |        1 |    0.156848 | -0.00238971 |    0.357798 |   -0.245131 |    0.350213 |
 
 Our newly engineered features currently have generic names. However, since Featuristic synthesizes these features by the applying mathematical expressions to the data, we can look at the underlying formulas responsible for each feature's creation.
 
 ```python
 info = synth.get_feature_info()
-print(info["formula"].iloc[0])
+print(info["formula"].iloc[1])
 ```
 
 ```
--(square(((square(-(model_year)) + (sin(square(acceleration)) - model_year)) / (model_year + horsepower))))
+(-(((model_year / (weight + cylinders)) + sin((weight / weight)))) + -(abs(model_year)))
 ```
 
 Following the synthesis of our new features, we can now use another genetic algorithm for [feature selection](https://en.wikipedia.org/wiki/Feature_selection). This process sifts through all our features to identify the subset that optimally contributes to predictive performance while minimizing redundancy.
@@ -133,19 +133,19 @@ selector.fit(generated_features, y_train)
 selected_features = selector.transform(generated_features)
 ```
 
-Let's print out the selected features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept three of the original features ("displacement", "acceleration" and "origin") and has kept four of the features created via the Genetic Feature Synthesis.
+Let's print out the selected features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept four of the original features ("displacement", "horsepower", "weight" and "origin") plus four of the features created via the Genetic Feature Synthesis.
 
 ```python
 print(selected_features.head())
 ```
 
-|    |   displacement |   acceleration |   origin |   feature_7 |   feature_8 |   feature_6 |   feature_15 |
-|---:|---------------:|---------------:|---------:|------------:|------------:|------------:|-------------:|
-|  0 |             89 |           17.3 |        3 |     3921.25 |   -2052.95  | -0.00987805 |  0.0113587   |
-|  1 |            318 |           14   |        1 |    -2903.26 |    -530.439 | -0.00220751 |  0.000533039 |
-|  2 |            383 |           10   |        1 |    -2667.44 |    -404.931 | -0.0024558  |  0.000387686 |
-|  3 |            260 |           19   |        1 |    -2304.1  |    -979.415 | -0.00237069 |  0.00109086  |
-|  4 |            318 |           13.7 |        1 |    -2587.7  |    -758.845 | -0.00238971 |  0.000715705 |
+|    |   displacement |   horsepower |   weight |   origin |   feature_0 |   feature_1 |   feature_3 |   feature_2 |
+|---:|---------------:|-------------:|---------:|---------:|------------:|------------:|------------:|------------:|
+|  0 |             89 |           62 |     2050 |        3 |    0.673279 | -0.00987805 |    0.566434 |   -0.917052 |
+|  1 |            318 |          150 |     4077 |        1 |    0.133744 | -0.00220751 |    0.324324 |   -0.226914 |
+|  2 |            383 |          170 |     3563 |        1 |    0.144654 | -0.0024558  |    0.291667 |   -0.183216 |
+|  3 |            260 |          110 |     4060 |        1 |    0.153605 | -0.00237069 |    0.411765 |   -0.29502  |
+|  4 |            318 |          140 |     4080 |        1 |    0.156848 | -0.00238971 |    0.357798 |   -0.245131 |
 
 Now that we've selected our features, let's see whether they actually help our model's predictive performance on our test data set. We'll start off with the original features as a baseline.
 
@@ -173,7 +173,7 @@ print(featuristic_mae)
 ```
 
 ```
-2.155040691944517
+2.1729482398016042
 ```
 
 ```python
@@ -184,8 +184,8 @@ print(f"Improvement: {round((1 - (featuristic_mae / original_mae))* 100, 1)}%")
 
 ```
 Original MAE: 2.5888868138669303
-Featuristic MAE: 2.155040691944517
-Improvement: 16.8%
+Featuristic MAE: 2.1729482398016042
+Improvement: 16.1%
 ```
 
 The new features generated / selected by the Genetic Feature Synthesis have successfully reduced our mean absolute error &#128512;

@@ -44,7 +44,6 @@ def fitness_pearson(
             return sys.maxsize
 
         loss = abs(pearsonr(y_true, y_pred).statistic)
-        # penalty = node_count(program) ** parsimony
-        # loss /= penalty
-        # return -loss
-        return loss
+        penalty = node_count(program) ** parsimony
+        loss /= penalty
+        return -loss

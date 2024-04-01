@@ -236,7 +236,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             score = self.population.compute_fitness(
                 self.fitness_func, self.parsimony_coefficient, prediction, y_copy
             )
-            score = self.population.apply_parsimony(score, self.parsimony_coefficient)
+            # import pdb
+
+            # pdb.set_trace()
+            # score = self.population.apply_parsimony(score, self.parsimony_coefficient)
             # prog_len = [node_count(prog) for prog in self.population.population]
             # clf = np.cov(prog_len, score)[0, 1]
             # vl = np.var(prog_len)
