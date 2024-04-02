@@ -123,3 +123,13 @@ where = ["src/"]
 # https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
 # requires = ["setuptools>=43.0.0", "wheel"]
 # build-backend = "setuptools.build_meta"
+
+[project.urls]
+
+# Project homepage, often a link to GitHub or GitLab
+# Often specified in the [project] table
+homepage = "https://www.featuristic.co.uk"
+
+# The source code repository, don't use this if your homepage
+# is the repo
+repository = "https://github.com/martineastwood/featuristic.git"
