@@ -1,0 +1,1236 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Load the Data &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+
+  <link href="../../../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'build/html/build/doctrees/nbsphinx/examples/wine';</script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+
+
+  <div class="col-lg-3 navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../../../../../../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <script>document.write(`<img src="../../../../../../_static/logo.png" class="logo__image only-dark" alt="Featuristic  documentation - Home"/>`);</script>
+
+
+</a></div>
+
+  </div>
+
+  <div class="col-lg-9 navbar-header-items">
+
+    <div class="me-auto navbar-header-items__center">
+
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../install/index.html">
+                        Installation
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../guides/index.html">
+                        Guides
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../release_notes.html">
+                        Release Notes
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../api_reference.html">
+                        API Reference
+                      </a>
+                    </li>
+
+  </ul>
+</nav></div>
+
+    </div>
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+
+
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+
+
+
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+
+
+      <div class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+      <div class="sidebar-header-items__center">
+
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../install/index.html">
+                        Installation
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../guides/index.html">
+                        Guides
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../release_notes.html">
+                        Release Notes
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../../api_reference.html">
+                        API Reference
+                      </a>
+                    </li>
+
+  </ul>
+</nav></div>
+
+      </div>
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../../../../../../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../install/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../guides/index.html">Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../examples/index.html">Examples</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Resources &amp; References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../release_notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api_reference.html">API Reference</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Load the Data</li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">f1_score</span>
+<span class="kn">import</span> <span class="nn">featuristic</span> <span class="k">as</span> <span class="nn">ft</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1.0.0
+</pre></div></div>
+</div>
+<section id="Load-the-Data">
+<h1>Load the Data<a class="headerlink" href="#Load-the-Data" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">fetch_wine_dataset</span><span class="p">()</span>
+
+<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>alcohol</th>
+      <th>malicacid</th>
+      <th>ash</th>
+      <th>alcalinity_of_ash</th>
+      <th>magnesium</th>
+      <th>total_phenols</th>
+      <th>flavanoids</th>
+      <th>nonflavanoid_phenols</th>
+      <th>proanthocyanins</th>
+      <th>color_intensity</th>
+      <th>hue</th>
+      <th>0d280_0d315_of_diluted_wines</th>
+      <th>proline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>14.23</td>
+      <td>1.71</td>
+      <td>2.43</td>
+      <td>15.6</td>
+      <td>127</td>
+      <td>2.80</td>
+      <td>3.06</td>
+      <td>0.28</td>
+      <td>2.29</td>
+      <td>5.64</td>
+      <td>1.04</td>
+      <td>3.92</td>
+      <td>1065</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>13.20</td>
+      <td>1.78</td>
+      <td>2.14</td>
+      <td>11.2</td>
+      <td>100</td>
+      <td>2.65</td>
+      <td>2.76</td>
+      <td>0.26</td>
+      <td>1.28</td>
+      <td>4.38</td>
+      <td>1.05</td>
+      <td>3.40</td>
+      <td>1050</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>13.16</td>
+      <td>2.36</td>
+      <td>2.67</td>
+      <td>18.6</td>
+      <td>101</td>
+      <td>2.80</td>
+      <td>3.24</td>
+      <td>0.30</td>
+      <td>2.81</td>
+      <td>5.68</td>
+      <td>1.03</td>
+      <td>3.17</td>
+      <td>1185</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14.37</td>
+      <td>1.95</td>
+      <td>2.50</td>
+      <td>16.8</td>
+      <td>113</td>
+      <td>3.85</td>
+      <td>3.49</td>
+      <td>0.24</td>
+      <td>2.18</td>
+      <td>7.80</td>
+      <td>0.86</td>
+      <td>3.45</td>
+      <td>1480</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>13.24</td>
+      <td>2.59</td>
+      <td>2.87</td>
+      <td>21.0</td>
+      <td>118</td>
+      <td>2.80</td>
+      <td>2.69</td>
+      <td>0.39</td>
+      <td>1.82</td>
+      <td>4.32</td>
+      <td>1.04</td>
+      <td>2.93</td>
+      <td>735</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0    1
+1    1
+2    1
+3    1
+4    1
+Name: class, dtype: int64
+</pre></div></div>
+</div>
+</section>
+<section id="Genetic-Feature-Synthesis">
+<h1>Genetic Feature Synthesis<a class="headerlink" href="#Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">)</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
+    <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">synth</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Creating new features...:  26%|████▏           | 26/100 [00:07&lt;00:20,  3.55it/s]
+Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 285.98it/s]
+Creating new features...:  26%|████▏           | 26/100 [00:07&lt;00:21,  3.47it/s]
+</pre></div></div>
+</div>
+</section>
+<section id="View-the-Synthesised-Features-and-Their-Formulas">
+<h1>View the Synthesised Features and Their Formulas<a class="headerlink" href="#View-the-Synthesised-Features-and-Their-Formulas" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">generated_features</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="n">generated_features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>alcohol</th>
+      <th>malicacid</th>
+      <th>ash</th>
+      <th>alcalinity_of_ash</th>
+      <th>magnesium</th>
+      <th>total_phenols</th>
+      <th>flavanoids</th>
+      <th>nonflavanoid_phenols</th>
+      <th>proanthocyanins</th>
+      <th>color_intensity</th>
+      <th>hue</th>
+      <th>0d280_0d315_of_diluted_wines</th>
+      <th>proline</th>
+      <th>feature_2</th>
+      <th>feature_3</th>
+      <th>feature_5</th>
+      <th>feature_6</th>
+      <th>feature_24</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>12.17</td>
+      <td>1.45</td>
+      <td>2.53</td>
+      <td>19.0</td>
+      <td>104</td>
+      <td>1.89</td>
+      <td>1.75</td>
+      <td>0.45</td>
+      <td>1.03</td>
+      <td>2.95</td>
+      <td>1.45</td>
+      <td>2.23</td>
+      <td>355</td>
+      <td>1.750800</td>
+      <td>-1.628246</td>
+      <td>0.252142</td>
+      <td>0.213379</td>
+      <td>-5.748246</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>13.87</td>
+      <td>1.90</td>
+      <td>2.80</td>
+      <td>19.4</td>
+      <td>107</td>
+      <td>2.95</td>
+      <td>2.97</td>
+      <td>0.37</td>
+      <td>1.76</td>
+      <td>4.50</td>
+      <td>1.25</td>
+      <td>3.40</td>
+      <td>915</td>
+      <td>3.768658</td>
+      <td>-2.235314</td>
+      <td>0.016909</td>
+      <td>0.016827</td>
+      <td>-8.585314</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12.51</td>
+      <td>1.73</td>
+      <td>1.98</td>
+      <td>20.5</td>
+      <td>85</td>
+      <td>2.20</td>
+      <td>1.92</td>
+      <td>0.32</td>
+      <td>1.48</td>
+      <td>2.94</td>
+      <td>1.04</td>
+      <td>3.57</td>
+      <td>672</td>
+      <td>2.654381</td>
+      <td>-1.382150</td>
+      <td>0.137086</td>
+      <td>0.117786</td>
+      <td>-7.152150</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>13.88</td>
+      <td>1.89</td>
+      <td>2.59</td>
+      <td>15.0</td>
+      <td>101</td>
+      <td>3.25</td>
+      <td>3.56</td>
+      <td>0.17</td>
+      <td>1.70</td>
+      <td>5.43</td>
+      <td>0.88</td>
+      <td>3.56</td>
+      <td>1095</td>
+      <td>3.809972</td>
+      <td>-1.793737</td>
+      <td>-0.032059</td>
+      <td>-0.031184</td>
+      <td>-8.603737</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>13.40</td>
+      <td>3.91</td>
+      <td>2.48</td>
+      <td>23.0</td>
+      <td>102</td>
+      <td>1.80</td>
+      <td>0.75</td>
+      <td>0.43</td>
+      <td>1.41</td>
+      <td>7.30</td>
+      <td>0.70</td>
+      <td>1.56</td>
+      <td>750</td>
+      <td>0.788039</td>
+      <td>0.031689</td>
+      <td>0.582597</td>
+      <td>0.538518</td>
+      <td>-3.328311</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">info</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+<span class="n">info</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>formula</th>
+      <th>fitness</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>feature_2</td>
+      <td>(cube(sin(cube(hue))) + flavanoids)</td>
+      <td>-0.839823</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>feature_3</td>
+      <td>-(-((cos(abs(-(flavanoids))) - hue)))</td>
+      <td>-0.837422</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>feature_5</td>
+      <td>(sin(abs(abs(-(flavanoids)))) / (flavanoids + ...</td>
+      <td>-0.820897</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>feature_6</td>
+      <td>(sin(sin(abs(abs(abs(-(flavanoids)))))) / (fla...</td>
+      <td>-0.820330</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>feature_24</td>
+      <td>(((cos(abs(-(flavanoids))) - 0d280_0d315_of_di...</td>
+      <td>-0.806440</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Feature-Selection">
+<h1>Feature Selection<a class="headerlink" href="#Feature-Selection" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">objective_function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;f1_weighted&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">generated_features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">selected_features</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">generated_features</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Optimising feature selection...:  33%|██▉      | 33/100 [00:14&lt;00:29,  2.23it/s]
+</pre></div></div>
+</div>
+</section>
+<section id="View-the-Selected-Features">
+<h1>View the Selected Features<a class="headerlink" href="#View-the-Selected-Features" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selected_features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>alcohol</th>
+      <th>malicacid</th>
+      <th>alcalinity_of_ash</th>
+      <th>total_phenols</th>
+      <th>proanthocyanins</th>
+      <th>hue</th>
+      <th>0d280_0d315_of_diluted_wines</th>
+      <th>feature_3</th>
+      <th>feature_6</th>
+      <th>feature_24</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>12.17</td>
+      <td>1.45</td>
+      <td>19.0</td>
+      <td>1.89</td>
+      <td>1.03</td>
+      <td>1.45</td>
+      <td>2.23</td>
+      <td>-1.628246</td>
+      <td>0.213379</td>
+      <td>-5.748246</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>13.87</td>
+      <td>1.90</td>
+      <td>19.4</td>
+      <td>2.95</td>
+      <td>1.76</td>
+      <td>1.25</td>
+      <td>3.40</td>
+      <td>-2.235314</td>
+      <td>0.016827</td>
+      <td>-8.585314</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12.51</td>
+      <td>1.73</td>
+      <td>20.5</td>
+      <td>2.20</td>
+      <td>1.48</td>
+      <td>1.04</td>
+      <td>3.57</td>
+      <td>-1.382150</td>
+      <td>0.117786</td>
+      <td>-7.152150</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>13.88</td>
+      <td>1.89</td>
+      <td>15.0</td>
+      <td>3.25</td>
+      <td>1.70</td>
+      <td>0.88</td>
+      <td>3.56</td>
+      <td>-1.793737</td>
+      <td>-0.031184</td>
+      <td>-8.603737</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>13.40</td>
+      <td>3.91</td>
+      <td>23.0</td>
+      <td>1.80</td>
+      <td>1.41</td>
+      <td>0.70</td>
+      <td>1.56</td>
+      <td>0.031689</td>
+      <td>0.538518</td>
+      <td>-3.328311</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="Compare-New-Features-to-Original-Features">
+<h1>Compare New Features to Original Features<a class="headerlink" href="#Compare-New-Features-to-Original-Features" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">original_f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;weighted&quot;</span><span class="p">)</span>
+<span class="n">original_f1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.7013084602631234
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">selected_features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">test_features</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_features</span><span class="p">)</span>
+<span class="n">featuristic_f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;weighted&quot;</span><span class="p">)</span>
+<span class="n">featuristic_f1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.9494992598914508
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original F1: </span><span class="si">{</span><span class="n">original_f1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Featuristic F1: </span><span class="si">{</span><span class="n">featuristic_f1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Improvement: </span><span class="si">{</span><span class="nb">round</span><span class="p">(((</span><span class="n">featuristic_f1</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">original_f1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Original F1: 0.7013084602631234
+Featuristic F1: 0.9494992598914508
+Improvement: 35.4%
+</pre></div></div>
+</div>
+</section>
+<section id="View-the-History-of-the-Genetic-Algorithms">
+<h1>View the History of the Genetic Algorithms<a class="headerlink" href="#View-the-History-of-the-Genetic-Algorithms" title="Link to this heading"><span>#</span></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../../../../_images/build_html_build_doctrees_nbsphinx_examples_wine_19_0.png" src="../../../../../../_images/build_html_build_doctrees_nbsphinx_examples_wine_19_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../../../../_images/build_html_build_doctrees_nbsphinx_examples_wine_20_0.png" src="../../../../../../_images/build_html_build_doctrees_nbsphinx_examples_wine_20_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z</span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Load the Data</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Genetic-Feature-Synthesis">Genetic Feature Synthesis</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#View-the-Synthesised-Features-and-Their-Formulas">View the Synthesised Features and Their Formulas</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Feature-Selection">Feature Selection</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#View-the-Selected-Features">View the Selected Features</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#Compare-New-Features-to-Original-Features">Compare New Features to Original Features</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#View-the-History-of-the-Genetic-Algorithms">View the History of the Genetic Algorithms</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../../../_sources/build/html/build/doctrees/nbsphinx/examples/wine.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2024, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -431,7 +431,7 @@ document.write(`
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.0.0
+1.0.1
 </pre></div></div>
 </div>
 <section id="Load-the-Data">
@@ -574,7 +574,7 @@ Name: mpg, dtype: float64
     <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
     <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.035</span><span class="p">,</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">synth</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
@@ -588,9 +588,9 @@ Name: mpg, dtype: float64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Creating new features...:  27%|████▎           | 27/100 [00:11&lt;00:26,  2.71it/s]
-Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 459.32it/s]
-Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:32,  2.23it/s]
+Creating new features...:  48%|███████▋        | 48/100 [00:19&lt;00:21,  2.43it/s]
+Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 519.75it/s]
+Creating new features...:  48%|███████▋        | 48/100 [00:19&lt;00:21,  2.44it/s]
 </pre></div></div>
 </div>
 <p>Next, we call the <code class="docutils literal notranslate"><span class="pre">transform</span></code> function to generate a dataframe containing our new features. By default, the <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code> class will return both the original features and the newly synthesised features. However, we return just the new features by setting the <code class="docutils literal notranslate"><span class="pre">return_all_features</span></code> argument to False when we create the class.</p>
@@ -636,10 +636,10 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
       <th>model_year</th>
       <th>origin</th>
       <th>feature_0</th>
-      <th>feature_1</th>
-      <th>feature_3</th>
-      <th>feature_2</th>
       <th>feature_4</th>
+      <th>feature_11</th>
+      <th>feature_1</th>
+      <th>feature_22</th>
     </tr>
   </thead>
   <tbody>
@@ -652,11 +652,11 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
       <td>17.3</td>
       <td>81</td>
       <td>3</td>
-      <td>0.673279</td>
-      <td>-0.009878</td>
-      <td>0.566434</td>
-      <td>-0.917052</td>
-      <td>0.536626</td>
+      <td>-8571.629032</td>
+      <td>-0.312535</td>
+      <td>-96.744944</td>
+      <td>-105.822581</td>
+      <td>-0.624987</td>
     </tr>
     <tr>
       <th>1</th>
@@ -667,11 +667,11 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
       <td>14.0</td>
       <td>72</td>
       <td>1</td>
-      <td>0.133744</td>
-      <td>-0.002208</td>
-      <td>0.324324</td>
-      <td>-0.226914</td>
-      <td>0.318668</td>
+      <td>-2488.320000</td>
+      <td>-0.786564</td>
+      <td>-75.169811</td>
+      <td>-34.560000</td>
+      <td>-1.573022</td>
     </tr>
     <tr>
       <th>2</th>
@@ -682,11 +682,11 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
       <td>10.0</td>
       <td>70</td>
       <td>1</td>
-      <td>0.144654</td>
-      <td>-0.002456</td>
-      <td>0.291667</td>
-      <td>-0.183216</td>
-      <td>0.287549</td>
+      <td>-2017.647059</td>
+      <td>-0.727317</td>
+      <td>-71.827676</td>
+      <td>-28.823529</td>
+      <td>-1.454460</td>
     </tr>
     <tr>
       <th>3</th>
@@ -697,11 +697,11 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
       <td>19.0</td>
       <td>77</td>
       <td>1</td>
-      <td>0.153605</td>
-      <td>-0.002371</td>
-      <td>0.411765</td>
-      <td>-0.295020</td>
-      <td>0.400227</td>
+      <td>-4150.300000</td>
+      <td>-0.684937</td>
+      <td>-82.626923</td>
+      <td>-53.900000</td>
+      <td>-1.369706</td>
     </tr>
     <tr>
       <th>4</th>
@@ -712,11 +712,11 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
       <td>13.7</td>
       <td>78</td>
       <td>1</td>
-      <td>0.156848</td>
-      <td>-0.002390</td>
-      <td>0.357798</td>
-      <td>-0.245131</td>
-      <td>0.350213</td>
+      <td>-3389.657143</td>
+      <td>-0.670713</td>
+      <td>-81.360377</td>
+      <td>-43.457143</td>
+      <td>-1.341324</td>
     </tr>
   </tbody>
 </table>
@@ -738,7 +738,7 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;(-(((model_year / (weight + cylinders)) + sin((weight / weight)))) + -(abs(model_year)))&#39;
+&#39;-(abs((cube(model_year) / horsepower)))&#39;
 </pre></div></div>
 </div>
 </section>
@@ -786,7 +786,7 @@ Creating new features...:  27%|████▎           | 27/100 [00:12&lt;00:3
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Optimising feature selection...:  28%|██▌      | 28/100 [00:05&lt;00:13,  5.23it/s]
+Optimising feature selection...:  27%|██▍      | 27/100 [00:05&lt;00:13,  5.34it/s]
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -808,7 +808,7 @@ Optimising feature selection...:  28%|██▌      | 28/100 [00:05&lt;00:13,  
 </section>
 <section id="The-Selected-Features">
 <h3>The Selected Features<a class="headerlink" href="#The-Selected-Features" title="Link to this heading"><span>#</span></a></h3>
-<p>Let’s print out the selected features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept two of the original features (“cylinders” and “origin”) and has kept four of the features created via the Genetic Feature Synthesis.</p>
+<p>Let’s print out the selected features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept four of the original features (“weight”, “acceleration”, “model_year” and “origin”) plus four of the features created via the Genetic Feature Synthesis.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -840,71 +840,71 @@ Optimising feature selection...:  28%|██▌      | 28/100 [00:05&lt;00:13,  
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>displacement</th>
-      <th>horsepower</th>
       <th>weight</th>
+      <th>acceleration</th>
+      <th>model_year</th>
       <th>origin</th>
       <th>feature_0</th>
+      <th>feature_4</th>
+      <th>feature_11</th>
       <th>feature_1</th>
-      <th>feature_3</th>
-      <th>feature_2</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>89.0</td>
-      <td>62.0</td>
       <td>2050</td>
+      <td>17.3</td>
+      <td>81</td>
       <td>3</td>
-      <td>0.673279</td>
-      <td>-0.009878</td>
-      <td>0.566434</td>
-      <td>-0.917052</td>
+      <td>-8571.629032</td>
+      <td>-0.312535</td>
+      <td>-96.744944</td>
+      <td>-105.822581</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>318.0</td>
-      <td>150.0</td>
       <td>4077</td>
+      <td>14.0</td>
+      <td>72</td>
       <td>1</td>
-      <td>0.133744</td>
-      <td>-0.002208</td>
-      <td>0.324324</td>
-      <td>-0.226914</td>
+      <td>-2488.320000</td>
+      <td>-0.786564</td>
+      <td>-75.169811</td>
+      <td>-34.560000</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>383.0</td>
-      <td>170.0</td>
       <td>3563</td>
+      <td>10.0</td>
+      <td>70</td>
       <td>1</td>
-      <td>0.144654</td>
-      <td>-0.002456</td>
-      <td>0.291667</td>
-      <td>-0.183216</td>
+      <td>-2017.647059</td>
+      <td>-0.727317</td>
+      <td>-71.827676</td>
+      <td>-28.823529</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>260.0</td>
-      <td>110.0</td>
       <td>4060</td>
+      <td>19.0</td>
+      <td>77</td>
       <td>1</td>
-      <td>0.153605</td>
-      <td>-0.002371</td>
-      <td>0.411765</td>
-      <td>-0.295020</td>
+      <td>-4150.300000</td>
+      <td>-0.684937</td>
+      <td>-82.626923</td>
+      <td>-53.900000</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>318.0</td>
-      <td>140.0</td>
       <td>4080</td>
+      <td>13.7</td>
+      <td>78</td>
       <td>1</td>
-      <td>0.156848</td>
-      <td>-0.002390</td>
-      <td>0.357798</td>
-      <td>-0.245131</td>
+      <td>-3389.657143</td>
+      <td>-0.670713</td>
+      <td>-81.360377</td>
+      <td>-43.457143</td>
     </tr>
   </tbody>
 </table>
@@ -955,7 +955,7 @@ Optimising feature selection...:  28%|██▌      | 28/100 [00:05&lt;00:13,  
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2.1729482398016042
+1.9497667311649802
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -974,8 +974,8 @@ Optimising feature selection...:  28%|██▌      | 28/100 [00:05&lt;00:13,  
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Original MAE: 2.5888868138669303
-Featuristic MAE: 2.1729482398016042
-Improvement: 16.1%
+Featuristic MAE: 1.9497667311649802
+Improvement: 24.7%
 </pre></div></div>
 </div>
 <p>The new features generated / selected by the Genetic Feature Synthesis have successfully reduced our mean absolute error 😀</p>

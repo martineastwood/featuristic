@@ -600,7 +600,7 @@ Name: mpg, dtype: float64
     <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
     <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.0025</span><span class="p">,</span>
-    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">synth</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
@@ -614,9 +614,9 @@ Name: mpg, dtype: float64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Creating new features...:  27%|██████████████████████▋                                                             | 27/100 [00:04&lt;00:10,  6.74it/s]
-Pruning feature space...: 100%|██████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 622.06it/s]
-Creating new features...:  27%|██████████████████████▋                                                             | 27/100 [00:04&lt;00:11,  6.14it/s]
+Creating new features...:  27%|████▎           | 27/100 [00:10&lt;00:24,  2.97it/s]
+Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 635.89it/s]
+Creating new features...:  27%|████▎           | 27/100 [00:11&lt;00:29,  2.45it/s]
 </pre></div></div>
 </div>
 <p>Next, we call the <code class="docutils literal notranslate"><span class="pre">transform</span></code> function to generate a dataframe containing our new features. By default, the <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code> class will return both the original features and the newly synthesised features. However, we return just the new features by setting the <code class="docutils literal notranslate"><span class="pre">return_all_features</span></code> argument to False when we create the class.</p>
@@ -812,7 +812,7 @@ Creating new features...:  27%|████████████████�
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Optimising feature selection...:  56%|███████████████████████████████████████████▋                                  | 28/50 [00:06&lt;00:05,  4.36it/s]
+Optimising feature selection...:  56%|█████▌    | 28/50 [00:05&lt;00:04,  5.44it/s]
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -834,7 +834,7 @@ Optimising feature selection...:  56%|██████████████
 </section>
 <section id="The-New-Features">
 <h3>The New Features<a class="headerlink" href="#The-New-Features" title="Link to this heading"><span>#</span></a></h3>
-<p>Let’s print out the selcted features to see what the Genetic Feature Selection algorithm kept. You can see below that featurize has kept two of the original features (“cylinders” and “origin”) and has kept four of the features created via the Genetic Feature Synthesis.</p>
+<p>Let’s print out the selcted features to see what the Genetic Feature Selection algorithm kept. You can see below that featuristic has kept two of the original features (“cylinders” and “origin”) and has kept four of the features created via the Genetic Feature Synthesis.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -958,7 +958,7 @@ Optimising feature selection...:  56%|██████████████
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">selected_features</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 <span class="n">test_features</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
 <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_features</span><span class="p">)</span>
-<span class="n">featurized_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+<span class="n">featuristic_mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -966,10 +966,9 @@ Optimising feature selection...:  56%|██████████████
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Original MAE: </span><span class="si">{</span><span class="n">original_mae</span><span class="si">}</span><span class="s2">, Featuristic MAE: </span><span class="si">{</span><span class="n">featurized_mae</span><span class="si">}</span><span class="s2">, </span><span class="se">\</span>
-<span class="s2">    Improvement: </span><span class="si">{</span><span class="nb">round</span><span class="p">((</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">featurized_mae</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">original_mae</span><span class="p">))</span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span>
-<span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original MAE: </span><span class="si">{</span><span class="n">original_mae</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Featuristic MAE: </span><span class="si">{</span><span class="n">featuristic_mae</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Improvement: </span><span class="si">{</span><span class="nb">round</span><span class="p">((</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">featuristic_mae</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">original_mae</span><span class="p">))</span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -978,7 +977,9 @@ Optimising feature selection...:  56%|██████████████
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Original MAE: 2.581708285266024, Featuristic MAE: 2.243230501011035,     Improvement: 13.1%
+Original MAE: 2.581708285266024
+Featuristic MAE: 2.243230501011035
+Improvement: 13.1%
 </pre></div></div>
 </div>
 <p>The new features generated / selected by the Genetic Feature Synthesis have reduced our mean absolute error 😀</p>

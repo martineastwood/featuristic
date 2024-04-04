@@ -154,6 +154,13 @@
 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../release_notes.html">
                         Release Notes
                       </a>
@@ -279,6 +286,13 @@ document.write(`
 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../release_notes.html">
                         Release Notes
                       </a>
@@ -339,6 +353,7 @@ document.write(`
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install/index.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Resources &amp; References</span></p>
 <ul>
@@ -427,7 +442,7 @@ document.write(`
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.1.1
+1.0.1
 </pre></div></div>
 </div>
 <section id="Load-the-Data">
@@ -589,12 +604,12 @@ Name: mpg, dtype: float64
         <span class="p">(</span>
             <span class="s2">&quot;genetic_feature_synthesis&quot;</span><span class="p">,</span>
             <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
-                <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-                <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-                <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-                <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+            <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.035</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">),</span>
         <span class="p">(</span>
@@ -623,10 +638,10 @@ Name: mpg, dtype: float64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Creating new features...:  28%|███████████████████████▌                                                            | 28/100 [00:04&lt;00:12,  5.87it/s]
-Pruning feature space...: 100%|██████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 467.50it/s]
-Creating new features...:  28%|███████████████████████▌                                                            | 28/100 [00:04&lt;00:12,  5.84it/s]
-Optimising feature selection...:  56%|███████████████████████████████████████████▋                                  | 28/50 [00:06&lt;00:05,  4.30it/s]
+Creating new features...:  74%|███████████▊    | 74/100 [00:15&lt;00:05,  4.75it/s]
+Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 498.46it/s]
+Creating new features...:  74%|███████████▊    | 74/100 [00:15&lt;00:05,  4.74it/s]
+Optimising feature selection...:  52%|█████▏    | 26/50 [00:05&lt;00:05,  4.39it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -645,8 +660,8 @@ Optimising feature selection...:  56%|██████████████
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([11.44700795, 35.29908224, 26.6428252 , 25.54690644, 27.91071012,
-       19.73099147, 36.26329007, 24.88007496, 30.18340972, 22.15965234])
+array([13.23930437, 35.40219719, 27.26035025, 26.25423477, 28.24773002,
+       19.10148319, 36.15024042, 23.33185658, 31.19121816, 22.29169501])
 </pre></div></div>
 </div>
 <section id="Accessing-Featuristic-Inside-the-Pipeline">
@@ -693,33 +708,33 @@ array([11.44700795, 35.29908224, 26.6428252 , 25.54690644, 27.91071012,
   <tbody>
     <tr>
       <th>0</th>
-      <td>feature_0</td>
-      <td>-((abs((square((model_year - cos(cylinders))) ...</td>
-      <td>-0.911341</td>
+      <td>feature_1</td>
+      <td>abs(abs(abs((abs(abs(abs(abs(abs(abs(abs(abs(a...</td>
+      <td>-0.874683</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>feature_1</td>
-      <td>abs((square(abs(((-(cos(square(displacement)))...</td>
-      <td>-0.906715</td>
+      <td>feature_8</td>
+      <td>abs(abs(((cos(((abs(horsepower) / weight) - (s...</td>
+      <td>-0.847227</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>feature_2</td>
-      <td>abs(((square(abs(((-(cos(square(displacement))...</td>
-      <td>-0.904685</td>
+      <td>feature_4</td>
+      <td>abs(abs((abs(abs(abs(abs(abs(abs(abs(abs(abs(a...</td>
+      <td>-0.860441</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>feature_3</td>
-      <td>abs((((square(abs(((-(cos(square(displacement)...</td>
-      <td>-0.903028</td>
+      <td>feature_5</td>
+      <td>abs(abs(abs(abs(abs((((cube(horsepower) / (cub...</td>
+      <td>-0.852704</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>feature_4</td>
-      <td>((square(square(abs(model_year))) / abs(displa...</td>
-      <td>-0.896680</td>
+      <td>feature_0</td>
+      <td>abs(abs((model_year / abs(weight))))</td>
+      <td>-0.880479</td>
     </tr>
   </tbody>
 </table>

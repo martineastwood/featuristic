@@ -450,7 +450,7 @@ document.write(`
         <span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">population_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">max_generations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span>
-        <span class="n">tournament_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">tournament_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">crossover_proba</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.85</span><span class="p">,</span>
         <span class="n">parsimony_coefficient</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
         <span class="n">early_termination_iters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
@@ -485,8 +485,8 @@ document.write(`
 
 <span class="sd">        tournament_size : int</span>
 <span class="sd">            The size of the tournament for selection. The larger the tournament size,</span>
-<span class="sd">            the more likely it is to select the best program, but the longer it will</span>
-<span class="sd">            take.</span>
+<span class="sd">            the more likely it is to select the best program, but the more computation</span>
+<span class="sd">            it will take.</span>
 
 <span class="sd">        crossover_proba : float</span>
 <span class="sd">            The probability of crossover mutation between selected parents in each</span>

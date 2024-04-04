@@ -9,28 +9,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Tuning the Genetic Feature Synthesis &#8212; Featuristic  documentation</title>
-  
-  
-  
+
+
+
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
-  
+
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 <link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
-  
+
   <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
-  
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
@@ -50,34 +50,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
-  
-  
+
+
   <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-  
-  
+
+
   <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
-  
+
   <div id="pst-scroll-pixel-helper"></div>
-  
+
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
     Back to top
   </button>
 
-  
+
   <input type="checkbox"
           class="sidebar-toggle"
           name="__primary"
           id="__primary"/>
   <label class="overlay overlay-primary" for="__primary"></label>
-  
+
   <input type="checkbox"
           class="sidebar-toggle"
           name="__secondary"
           id="__secondary"/>
   <label class="overlay overlay-secondary" for="__secondary"></label>
-  
+
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
@@ -98,84 +98,91 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-  
+
     <header class="bd-header navbar navbar-expand-lg bd-navbar">
 <div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
     <span class="fa-solid fa-bars"></span>
   </label>
-  
-  
+
+
   <div class="col-lg-3 navbar-header-items__start">
-    
+
       <div class="navbar-item">
 
-  
+
 
 <a class="navbar-brand logo" href="../index.html">
-  
-  
-  
-  
-  
-    
-    
-      
-    
-    
+
+
+
+
+
+
+
+
+
+
     <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
     <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Featuristic  documentation - Home"/>`);</script>
-  
-  
+
+
 </a></div>
-    
+
   </div>
-  
+
   <div class="col-lg-9 navbar-header-items">
-    
+
     <div class="me-auto navbar-header-items__center">
-      
+
         <div class="navbar-item">
 <nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
-    
+
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../install/index.html">
                         Installation
                       </a>
                     </li>
-                
+
 
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="index.html">
                         Guides
                       </a>
                     </li>
-                
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+
 
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../release_notes.html">
                         Release Notes
                       </a>
                     </li>
-                
+
 
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../api_reference.html">
                         API Reference
                       </a>
                     </li>
-                
+
   </ul>
 </nav></div>
-      
+
     </div>
-    
-    
+
+
     <div class="navbar-header-items__end">
-      
+
         <div class="navbar-item navbar-persistent--container">
-          
+
 
  <script>
  document.write(`
@@ -187,8 +194,8 @@
  `);
  </script>
         </div>
-      
-      
+
+
         <div class="navbar-item">
 
 <script>
@@ -200,28 +207,28 @@ document.write(`
   </button>
 `);
 </script></div>
-      
+
         <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
     aria-label="Icon Links">
         <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
+
+
+
+
+
+
+
+
           <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
-      
+
     </div>
-    
+
   </div>
-  
-  
+
+
     <div class="navbar-persistent--mobile">
 
  <script>
@@ -234,72 +241,79 @@ document.write(`
  `);
  </script>
     </div>
-  
 
-  
+
+
     <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
       <span class="fa-solid fa-outdent"></span>
     </label>
-  
+
 </div>
 
     </header>
-  
+
 
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
-      
-      <div class="bd-sidebar-primary bd-sidebar">
-        
 
-  
+
+
+      <div class="bd-sidebar-primary bd-sidebar">
+
+
+
   <div class="sidebar-header-items sidebar-primary__section">
-    
-    
+
+
       <div class="sidebar-header-items__center">
-        
+
           <div class="navbar-item">
 <nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
-    
+
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../install/index.html">
                         Installation
                       </a>
                     </li>
-                
+
 
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="index.html">
                         Guides
                       </a>
                     </li>
-                
+
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+
 
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../release_notes.html">
                         Release Notes
                       </a>
                     </li>
-                
+
 
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../api_reference.html">
                         API Reference
                       </a>
                     </li>
-                
+
   </ul>
 </nav></div>
-        
+
       </div>
-    
-    
-    
+
+
+
       <div class="sidebar-header-items__end">
-        
+
           <div class="navbar-item">
 
 <script>
@@ -311,27 +325,27 @@ document.write(`
   </button>
 `);
 </script></div>
-        
+
           <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
     aria-label="Icon Links">
         <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
+
+
+
+
+
+
+
+
           <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
-        
+
       </div>
-    
+
   </div>
-  
+
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
 <h3><a href="../index.html">Table of Contents</a></h3>
@@ -339,6 +353,7 @@ document.write(`
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install/index.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Examples</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Resources &amp; References</span></p>
 <ul>
@@ -347,59 +362,59 @@ document.write(`
 </ul>
 </div>
     </div>
-  
-  
+
+
   <div class="sidebar-primary-items__end sidebar-primary__section">
   </div>
-  
+
   <div id="rtd-footer-container"></div>
 
 
       </div>
-      
+
       <main id="main-content" class="bd-main">
-        
-        
+
+
           <div class="bd-content">
             <div class="bd-article-container">
-              
+
               <div class="bd-header-article">
 <div class="header-article-items header-article__inner">
-  
+
     <div class="header-article-items__start">
-      
+
         <div class="header-article-item">
 
 
 
 <nav aria-label="Breadcrumb">
   <ul class="bd-breadcrumbs">
-    
+
     <li class="breadcrumb-item breadcrumb-home">
       <a href="../index.html" class="nav-link" aria-label="Home">
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    
+
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Guides</a></li>
-    
+
     <li class="breadcrumb-item active" aria-current="page">Tuning the...</li>
   </ul>
 </nav>
 </div>
-      
+
     </div>
-  
-  
+
+
 </div>
 </div>
-              
-              
-              
-                
+
+
+
+
 <div id="searchbox"></div>
                 <article class="bd-article">
-                  
+
   <section id="Tuning-the-Genetic-Feature-Synthesis">
 <h1>Tuning the Genetic Feature Synthesis<a class="headerlink" href="#Tuning-the-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h1>
 <p>There are several parameters that can be used to tune the genetic algorithms in Featuristic, which we’ll explore below with the <code class="docutils literal notranslate"><span class="pre">cars</span></code> dataset.</p>
@@ -530,27 +545,49 @@ Creating new features...:  60%|████████████████�
 <section id="Population-Size">
 <h2>Population Size<a class="headerlink" href="#Population-Size" title="Link to this heading"><span>#</span></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">population_size</span></code> refers to the number of individuals (or candidate solutions) present in each generation of the algorithm. Each individual represents a potential solution to the optimization problem being solved.</p>
-<p>The population size is a crucial parameter as it influences the diversity and exploration capability of the algorithm. A larger population size typically allows for more diverse solutions to be explored, potentially leading to a broader exploration of the solution space. However, larger populations also require more computational resources and may lead to slower convergence if not properly managed.</p>
+<p>The population size is an important parameter as it influences the diversity and exploration capability of the algorithm. A larger population size typically allows for more diverse solutions to be explored, potentially leading to a broader exploration of the solution space. However, larger populations also require more computational resources and may lead to slower convergence if not properly managed.</p>
 <p>Conversely, a smaller population size may lead to faster convergence but could suffer from premature convergence to local optima due to limited diversity.</p>
 <p>Choosing an appropriate population size is often a balancing act between exploration (diversity) and exploitation (convergence speed). It often depends on the specific problem being solved, computational resources available, and the desired balance between exploration and exploitation. Experimentation and tuning are typically required to determine the optimal population size for a given problem.</p>
+</section>
+<section id="Tournament-Size">
+<h2>Tournament Size<a class="headerlink" href="#Tournament-Size" title="Link to this heading"><span>#</span></a></h2>
+<p>In Featuristic’s genetic algorithms, the <code class="docutils literal notranslate"><span class="pre">tournament_size</span></code> parameter determines the number of individuals (candidate solutions) that participate in each tournament selection process. Tournament selection is a mechanism used to select individuals from the population for reproduction (crossover and mutation) based on their fitness scores (or objective function values).</p>
+<p>Here’s how it works:</p>
+<ul class="simple">
+<li><p>Randomly select a subset of individuals from the population with a size equal to the tournament size.</p></li>
+<li><p>Evaluate the fitness of each individual in the subset.</p></li>
+<li><p>Select the best individual (usually the one with the highest fitness) from the subset to proceed to the next generation.</p></li>
+<li><p>Repeat the process until a sufficient number of individuals are selected for reproduction to populate the next generation.</p></li>
+</ul>
+<p>The tournament size parameter influences the selection pressure within the genetic algorithm. A larger tournament size increases the likelihood of selecting the best individuals from each tournament, potentially leading to faster convergence towards optimal solutions. However, it also reduces the diversity of the selected individuals, which may hinder exploration of the solution space.</p>
+<p>Conversely, a smaller tournament size introduces more randomness into the selection process, allowing for greater diversity among selected individuals. This may enhance exploration but could also slow down convergence as the algorithm may struggle to consistently select the best individuals.</p>
+<p>Choosing an appropriate tournament size often involves trade-offs between exploration and exploitation. Experimentation and tuning are typically necessary to determine the optimal tournament size for a given problem and algorithm configuration.</p>
 </section>
 <section id="Objective-Function">
 <h2>Objective Function<a class="headerlink" href="#Objective-Function" title="Link to this heading"><span>#</span></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSelector</span></code> class takes a parameter called <code class="docutils literal notranslate"><span class="pre">objective_function</span></code>. This function is used by the genetic algorithm to quantify how well a particular candidate solution performs with respect to the problem being optimized.</p>
 <p>In the context of feature selection, where the aim is often to identify the most informative subset of features, the <code class="docutils literal notranslate"><span class="pre">objective_function</span></code> helps gauge how well a particular feature subset performs. By evaluating various feature combinations, the algorithm navigates towards solutions that exhibit superior performance in terms of the specified objectives.</p>
 <p>Given that feature selection typically precedes more resource-intensive tasks like model selection or hyperparameter optimization, employing a straightforward yet effective <code class="docutils literal notranslate"><span class="pre">objective_function</span></code> allows rapid identification of the most important features.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
 </section>
 </section>
 
 
                 </article>
-              
-              
-              
-              
-              
+
+
+
+
+
                 <footer class="prev-next-footer">
-                  
+
 <div class="prev-next-area">
     <a class="left-prev"
        href="sklearn.html"
@@ -572,11 +609,11 @@ Creating new features...:  60%|████████████████�
     </a>
 </div>
                 </footer>
-              
+
             </div>
-            
-            
-              
+
+
+
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
@@ -592,6 +629,7 @@ Creating new features...:  60%|████████████████�
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Max-Generations">Max Generations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Early-Termination">Early Termination</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Population-Size">Population Size</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Tournament-Size">Tournament Size</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Objective-Function">Objective Function</a></li>
 </ul>
   </nav></div>
@@ -606,36 +644,36 @@ Creating new features...:  60%|████████████████�
 </div>
 
 </div></div>
-              
-            
+
+
           </div>
           <footer class="bd-footer-content">
-            
+
           </footer>
-        
+
       </main>
     </div>
   </div>
-  
+
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
   <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
 <script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
-  
+
     <div class="footer-items__start">
-      
+
         <div class="footer-item">
 
   <p class="copyright">
-    
+
       © Copyright 2024, Martin Eastwood.
       <br/>
-    
+
   </p>
 </div>
-      
+
         <div class="footer-item">
 
   <p class="sphinx-version">
@@ -643,20 +681,20 @@ Creating new features...:  60%|████████████████�
     <br/>
   </p>
 </div>
-      
+
     </div>
-  
-  
-  
+
+
+
     <div class="footer-items__end">
-      
+
         <div class="footer-item">
 <p class="theme-version">
   Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
 </p></div>
-      
+
     </div>
-  
+
 </div>
 
   </footer>
