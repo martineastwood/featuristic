@@ -4,9 +4,9 @@ Release Notes
 v1.0.1 April 7, 2024
 ====================
 
-- **Enhacements:**
-    - Set default tournament to 10 for GeneticFeatureSynthesis class
+- **Changes:**
     - Added `tournament_size` parameter to GeneticFeatureSelection class and set default to 10
+    - Set default tournament size to 10 for GeneticFeatureSynthesis class
 - **Documentation:**
     - Updated README.md example
     - Updated example notebooks
