@@ -8,7 +8,7 @@ version = "1.0.1"
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#summary
-description = "An open source library using genetic algorithms for automated feature engineering and feature selection"
+description = "Genetic algorithms for automated feature engineering and feature selection"
 
 
 # This is an optional longer description of your project that represents
