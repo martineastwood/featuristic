@@ -36,7 +36,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         num_features: int = 10,
         population_size: int = 100,
         max_generations: int = 25,
-        tournament_size: int = 3,
+        tournament_size: int = 10,
         crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
@@ -71,8 +71,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         tournament_size : int
             The size of the tournament for selection. The larger the tournament size,
-            the more likely it is to select the best program, but the longer it will
-            take.
+            the more likely it is to select the best program, but the more computation
+            it will take.
 
         crossover_proba : float
             The probability of crossover mutation between selected parents in each

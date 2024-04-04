@@ -17,10 +17,16 @@ class BasePopulation:
     ----------
     population_size : int
         The size of the population.
+
     feature_count : int
         The number of features in the dataset.
+
+    tournament_size : int, optional
+        The number of individuals to select for the tournament, by default 10.
+
     crossover_proba : float, optional
         The probability of crossover, by default 0.9.
+
     mutation_proba : float, optional
         The probability of mutation, by default 0.1.
     """
@@ -29,6 +35,7 @@ class BasePopulation:
         self,
         population_size: int,
         feature_count: int,
+        tournament_size: int = 10,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
     ):
@@ -36,6 +43,7 @@ class BasePopulation:
         self.feature_count = feature_count
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
+        self.tournament_size = tournament_size
 
         self.population = None
         self._initialize_population()
@@ -204,6 +212,7 @@ class SerialPopulation(BasePopulation):
         self,
         population_size: int,
         feature_count: int,
+        tournament_size: int = 10,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
     ):
@@ -224,6 +233,7 @@ class SerialPopulation(BasePopulation):
         super().__init__(
             population_size,
             feature_count,
+            tournament_size,
             crossover_proba,
             mutation_proba,
         )
@@ -261,6 +271,7 @@ class ParallelPopulation(BasePopulation):
         self,
         population_size: int,
         feature_count: int,
+        tournament_size: int = 10,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         n_jobs: int = -1,
@@ -284,6 +295,7 @@ class ParallelPopulation(BasePopulation):
         super().__init__(
             population_size,
             feature_count,
+            tournament_size,
             crossover_proba,
             mutation_proba,
         )

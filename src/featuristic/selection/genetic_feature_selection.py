@@ -29,6 +29,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         objective_function: Callable,
         population_size: int = 50,
         max_generations: int = 100,
+        tournament_size: int = 10,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         early_termination_iters: int = 15,
@@ -77,6 +78,8 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         self.early_termination_iters = early_termination_iters
         self.early_termination_counter = 0
+
+        self.tournament_size = tournament_size
 
         self.history = []
 
@@ -157,6 +160,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             self.population = SerialPopulation(
                 self.population_size,
                 self.num_genes,
+                self.tournament_size,
                 self.crossover_proba,
                 self.mutation_proba,
             )
@@ -164,6 +168,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             self.population = ParallelPopulation(
                 self.population_size,
                 self.num_genes,
+                self.tournament_size,
                 self.crossover_proba,
                 self.mutation_proba,
                 self.n_jobs,
