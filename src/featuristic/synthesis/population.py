@@ -9,7 +9,6 @@ import pandas as pd
 from joblib import Parallel, cpu_count, delayed
 
 from .program import random_prog, select_random_node, node_count
-from .symbolic_functions import SymbolicFunction
 
 
 class BasePopulation:
@@ -21,7 +20,7 @@ class BasePopulation:
     def __init__(
         self,
         population_size: int,
-        operations: List[SymbolicFunction],
+        operations: List,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
     ):
@@ -245,7 +244,7 @@ class SerialPopulation(BasePopulation):
     def __init__(
         self,
         population_size: int,
-        operations: List[SymbolicFunction],
+        operations: List,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
     ):
@@ -345,7 +344,7 @@ class ParallelPopulation(BasePopulation):
     def __init__(
         self,
         population_size: int,
-        operations: List[SymbolicFunction],
+        operations: List,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
         n_jobs: int = -1,

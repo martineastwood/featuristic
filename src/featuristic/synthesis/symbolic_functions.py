@@ -144,43 +144,9 @@ def sqrt(a):
     return np.sqrt(np.abs(a))
 
 
-class SymbolicFunction:
-    """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
-    """
-
-    def __init__(self, func: Callable, arg_count: int, format_str: str, name: str):
-        """
-        Initialize the SymbolicFunction class.
-
-        Parameters
-        ----------
-        func : function
-            The function to use.
-
-        arg_count : int
-            The number of arguments the function takes.
-
-        format_str : str
-            The format string for the function.
-        """
-        self.func = func
-        self.arg_count = arg_count
-        self.format_str = format_str
-        self.name = name
-
-    def __call__(self, *args):
-        return self.func(*args)
-
-    def __str__(self):
-        return self.format_str
-
-
 class SymbolicAdd:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic addition function.
     """
 
     def __init__(self):
@@ -212,8 +178,7 @@ class SymbolicAdd:
 
 class SymbolicSubtract:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic subtraction function.
     """
 
     def __init__(self):
@@ -245,8 +210,7 @@ class SymbolicSubtract:
 
 class SymbolicMultiply:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic multiplication function.
     """
 
     def __init__(self):
@@ -278,8 +242,8 @@ class SymbolicMultiply:
 
 class SymbolicDivide:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic division function. Note that is performs a safe addition
+    by avoiding division by zero.
     """
 
     def __init__(self):
@@ -311,8 +275,7 @@ class SymbolicDivide:
 
 class SymbolicAbs:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic absolute value function.
     """
 
     def __init__(self):
@@ -344,8 +307,7 @@ class SymbolicAbs:
 
 class SymbolicNegate:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic negate function. It works by multiplying the input by -1.
     """
 
     def __init__(self):
@@ -377,8 +339,7 @@ class SymbolicNegate:
 
 class SymbolicSin:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic sine function.
     """
 
     def __init__(self):
@@ -410,8 +371,7 @@ class SymbolicSin:
 
 class SymbolicCos:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic cosine function.
     """
 
     def __init__(self):
@@ -443,8 +403,7 @@ class SymbolicCos:
 
 class SymbolicTan:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic tangent function.
     """
 
     def __init__(self):
@@ -476,8 +435,7 @@ class SymbolicTan:
 
 class SymbolicSqrt:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic square root function.
     """
 
     def __init__(self):
@@ -509,8 +467,7 @@ class SymbolicSqrt:
 
 class SymbolicSquare:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic square function.
     """
 
     def __init__(self):
@@ -542,8 +499,7 @@ class SymbolicSquare:
 
 class SymbolicCube:
     """
-    An internal class used to represent the symbolic functions used to generate new
-    features by the GeneticFeatureGenerator class.
+    The symbolic cube function.
     """
 
     def __init__(self):
@@ -573,50 +529,52 @@ class SymbolicCube:
         return self.format_str
 
 
-# class SymbolicAddConstant:
-#     """
-#     An internal class used to represent the symbolic functions used to generate new
-#     features by the GeneticFeatureGenerator class.
-#     """
+class SymbolicAddConstant:
+    """
+    The symbolic addition function. It works by adding a random constant to the input
+    between -1000 and 1000. Note that this function can be useful where their is an
+    offset in the data. However, it can lead to overfitting.
+    """
 
-#     def __init__(self):
-#         """
-#         Initialize the SymbolicFunction class.
-#         """
+    def __init__(self):
+        """
+        Initialize the SymbolicFunction class.
+        """
 
-#         self.random_constant = np.random.uniform(-1000, 1000)
-#         self.arg_count = 1
-#         self.format_str = f"add_constant({self.random_constant} + {{}})"
-#         self.name = "add_constant"
+        self.random_constant = np.random.uniform(-1000, 1000)
+        self.arg_count = 1
+        self.format_str = f"add_constant({self.random_constant} + {{}})"
+        self.name = "add_constant"
 
-#     def __call__(self, x):
-#         return self.random_constant + x
+    def __call__(self, x):
+        return self.random_constant + x
 
-#     def __str__(self):
-#         return self.format_str
+    def __str__(self):
+        return self.format_str
 
 
-# class SymbolicMulConstant:
-#     """
-#     An internal class used to represent the symbolic functions used to generate new
-#     features by the GeneticFeatureGenerator class.
-#     """
+class SymbolicMulConstant:
+    """
+    The symbolic multiplication function. It works by multiplying the input by a random
+    constant between -1000 and 1000. Note that this function can be useful where their
+    is an offset in the data. However, it can lead to overfitting.
+    """
 
-#     def __init__(self):
-#         """
-#         Initialize the SymbolicFunction class.
-#         """
+    def __init__(self):
+        """
+        Initialize the SymbolicFunction class.
+        """
 
-#         self.random_constant = np.random.uniform(-1000, 1000)
-#         self.arg_count = 1
-#         self.format_str = f"mul_constant({self.random_constant} + {{}})"
-#         self.name = "mul_constant"
+        self.random_constant = np.random.uniform(-1000, 1000)
+        self.arg_count = 1
+        self.format_str = f"mul_constant({self.random_constant} + {{}})"
+        self.name = "mul_constant"
 
-#     def __call__(self, x):
-#         return self.random_constant * x
+    def __call__(self, x):
+        return self.random_constant * x
 
-#     def __str__(self):
-#         return self.format_str
+    def __str__(self):
+        return self.format_str
 
 
 operations = [
@@ -632,12 +590,48 @@ operations = [
     SymbolicSin,
     SymbolicCos,
     SymbolicTan,
+    SymbolicMulConstant,
+    SymbolicAddConstant,
 ]
 
 
-def list_operations() -> List[str]:
+class CustomSymbolicFunction:
     """
-    List the available operations.
+    The base class for creating custom symbolic functions.
+    """
+
+    def __init__(self, func: Callable, arg_count: int, name: str, format_str: str):
+        """
+        Initialize the CustomSymbolicFunction class.
+
+        Parameters
+        ----------
+        func : function
+            The function to use.
+
+        arg_count : int
+            The number of arguments the function takes.
+
+        format_str : str
+            The format string for the function. Must be a valid python format string,
+            for example, "({} + {})" or "abs({})" and needs to have the same number of
+            placeholders as the number of arguments the function takes.
+        """
+        self.func = func
+        self.arg_count = arg_count
+        self.format_str = format_str
+        self.name = name
+
+    def __call__(self, *args):
+        return self.func(*args)
+
+    def __str__(self):
+        return self.format_str
+
+
+def list_symbolic_functions() -> List[str]:
+    """
+    List all the available built-in symbolic functions.
 
     Returns
     -------

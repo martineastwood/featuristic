@@ -5,10 +5,10 @@ from typing import List
 import numpy as np
 import pandas as pd
 
-from .symbolic_functions import SymbolicFunction
+from .symbolic_functions import CustomSymbolicFunction
 
 
-def random_prog(depth: int, X: pd.DataFrame, operations: List[SymbolicFunction]):
+def random_prog(depth: int, X: pd.DataFrame, operations: List):
     """
     Generate a random program for symbolic regression.
 
@@ -24,7 +24,10 @@ def random_prog(depth: int, X: pd.DataFrame, operations: List[SymbolicFunction])
         The list of operations to use.
     """
     if np.random.randint(0, 10) >= depth * 2:
-        op = operations[np.random.randint(0, len(operations) - 1)]()
+        op = operations[np.random.randint(0, len(operations) - 1)]
+        if not isinstance(op, CustomSymbolicFunction):
+            op = op()
+
         return {
             "func": op,
             "children": [

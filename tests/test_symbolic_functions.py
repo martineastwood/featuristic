@@ -234,7 +234,7 @@ def test_symbolic_sqrt():
 
 
 def test_list_operations():
-    ops = ft.synthesis.symbolic_functions.list_operations()
+    ops = ft.synthesis.symbolic_functions.list_functions()
 
     assert len(ops) > 0
     assert all(isinstance(op, str) for op in ops)

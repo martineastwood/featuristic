@@ -13,7 +13,7 @@ from .fitness import fitness_pearson
 from .mrmr import MaxRelevanceMinRedundancy
 from .population import ParallelPopulation, SerialPopulation
 from .program import render_prog
-from .symbolic_functions import SymbolicFunction, operations
+from .symbolic_functions import CustomSymbolicFunction, operations
 from .preprocess import preprocess_data
 
 
@@ -23,7 +23,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
     features using a technique based on Symbolic Regression. This is done by initially
     building a population of naive random formulas that represent transformations of
     the input features. The population is then evolved over a number of generations
-    using genetic operators such as mutation and crossover to find the best programs
+    using genetic functions such as mutation and crossover to find the best programs
     that minimize a given fitness function. The best features are then identified using
     a Maximum Relevance Minimum Redundancy (mRMR) algorithm to find those features
     that are most correlated with the target variable while being least correlated with
@@ -32,7 +32,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        functions: Union[List[SymbolicFunction] | None] = None,
         num_features: int = 10,
         population_size: int = 100,
         max_generations: int = 25,
@@ -40,6 +39,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
+        functions: Union[List[str] | None] = None,
+        custom_functions: Union[List[CustomSymbolicFunction] | None] = None,
         return_all_features: bool = True,
         n_jobs: int = -1,
         pbar: bool = True,
@@ -50,10 +51,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         Args
         ----
-        functions : list
-            The list of functions to use in the programs. If `None` then all the
-            built-in functions are used.
-
         num_features : int
             The number of best features to generate. Internally, `3 * num_features`
             programs are generated and the
@@ -89,6 +86,15 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             If the best score does not improve for this number of generations, then the
             algorithm will terminate early.
 
+        functions : list
+            The list of functions to use in the programs. If `None` then all the
+            built-in functions are used. The functions must be the names of the
+            functions returned by the `list_symbolic_functions` method.
+
+        custom_functions : list
+            A list of custom functions to use in the programs. Each custom function
+            must be an instance of the `CustomSymbolicFunction` class.
+
         return_all_features : bool
             Whether to return all the features generated or just the best features.
 
@@ -105,7 +111,22 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         if functions is None:
             self.functions = operations
         else:
-            self.functions = functions
+            self.functions = []
+            for func in functions:
+                found = False
+                for op in operations:
+                    if op().name == func:
+                        self.functions.append(op)
+                        found = True
+                        break
+                if not found:
+                    raise ValueError(
+                        f"Function '{func}' not found in symbolic operations"
+                    )
+
+        if custom_functions is not None:
+            for func in custom_functions:
+                self.functions.append(func)
 
         self.population_size = population_size
         self.max_generations = max_generations
