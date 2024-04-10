@@ -1,6 +1,0 @@
-﻿featuristic.synthesis.list\_operations
-======================================
-
-.. currentmodule:: featuristic.synthesis
-
-.. autofunction:: list_operations

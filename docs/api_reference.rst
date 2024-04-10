@@ -14,8 +14,8 @@ Genetic Feature Generation
     :toctree: generated/
 
     GeneticFeatureSynthesis
-    SymbolicFunction
-    list_operations
+    CustomSymbolicFunction
+    list_symbolic_functions
 
 
 Genetic Feature Selection
@@ -23,7 +23,7 @@ Genetic Feature Selection
 .. currentmodule:: featuristic.selection
 
 .. autosummary::
-    :toctree: generated/   
+    :toctree: generated/
 
     GeneticFeatureSelector
 
@@ -33,8 +33,7 @@ Datasets
 .. currentmodule:: featuristic.datasets
 
 .. autosummary::
-    :toctree: generated/   
+    :toctree: generated/
 
     fetch_cars_dataset
     fetch_wine_dataset
-

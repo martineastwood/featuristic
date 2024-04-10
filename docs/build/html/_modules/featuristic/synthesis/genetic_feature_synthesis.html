@@ -423,7 +423,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">.mrmr</span> <span class="kn">import</span> <span class="n">MaxRelevanceMinRedundancy</span>
 <span class="kn">from</span> <span class="nn">.population</span> <span class="kn">import</span> <span class="n">ParallelPopulation</span><span class="p">,</span> <span class="n">SerialPopulation</span>
 <span class="kn">from</span> <span class="nn">.program</span> <span class="kn">import</span> <span class="n">render_prog</span>
-<span class="kn">from</span> <span class="nn">.symbolic_functions</span> <span class="kn">import</span> <span class="n">SymbolicFunction</span><span class="p">,</span> <span class="n">operations</span>
+<span class="kn">from</span> <span class="nn">.symbolic_functions</span> <span class="kn">import</span> <span class="n">CustomSymbolicFunction</span><span class="p">,</span> <span class="n">operations</span>
 <span class="kn">from</span> <span class="nn">.preprocess</span> <span class="kn">import</span> <span class="n">preprocess_data</span>
 
 
@@ -435,7 +435,7 @@ document.write(`
 <span class="sd">    features using a technique based on Symbolic Regression. This is done by initially</span>
 <span class="sd">    building a population of naive random formulas that represent transformations of</span>
 <span class="sd">    the input features. The population is then evolved over a number of generations</span>
-<span class="sd">    using genetic operators such as mutation and crossover to find the best programs</span>
+<span class="sd">    using genetic functions such as mutation and crossover to find the best programs</span>
 <span class="sd">    that minimize a given fitness function. The best features are then identified using</span>
 <span class="sd">    a Maximum Relevance Minimum Redundancy (mRMR) algorithm to find those features</span>
 <span class="sd">    that are most correlated with the target variable while being least correlated with</span>
@@ -446,7 +446,6 @@ document.write(`
 <a class="viewcode-back" href="../../../generated/featuristic.synthesis.GeneticFeatureSynthesis.html#featuristic.synthesis.GeneticFeatureSynthesis.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">functions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">SymbolicFunction</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">population_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">max_generations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span>
@@ -454,6 +453,8 @@ document.write(`
         <span class="n">crossover_proba</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.85</span><span class="p">,</span>
         <span class="n">parsimony_coefficient</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span>
         <span class="n">early_termination_iters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+        <span class="n">functions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">custom_functions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">CustomSymbolicFunction</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">return_all_features</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">pbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -464,10 +465,6 @@ document.write(`
 
 <span class="sd">        Args</span>
 <span class="sd">        ----</span>
-<span class="sd">        functions : list</span>
-<span class="sd">            The list of functions to use in the programs. If `None` then all the</span>
-<span class="sd">            built-in functions are used.</span>
-
 <span class="sd">        num_features : int</span>
 <span class="sd">            The number of best features to generate. Internally, `3 * num_features`</span>
 <span class="sd">            programs are generated and the</span>
@@ -503,6 +500,15 @@ document.write(`
 <span class="sd">            If the best score does not improve for this number of generations, then the</span>
 <span class="sd">            algorithm will terminate early.</span>
 
+<span class="sd">        functions : list</span>
+<span class="sd">            The list of functions to use in the programs. If `None` then all the</span>
+<span class="sd">            built-in functions are used. The functions must be the names of the</span>
+<span class="sd">            functions returned by the `list_symbolic_functions` method.</span>
+
+<span class="sd">        custom_functions : list</span>
+<span class="sd">            A list of custom functions to use in the programs. Each custom function</span>
+<span class="sd">            must be an instance of the `CustomSymbolicFunction` class.</span>
+
 <span class="sd">        return_all_features : bool</span>
 <span class="sd">            Whether to return all the features generated or just the best features.</span>
 
@@ -519,7 +525,22 @@ document.write(`
         <span class="k">if</span> <span class="n">functions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">operations</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">functions</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">op</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">func</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Function &#39;</span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">&#39; not found in symbolic operations&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">custom_functions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">custom_functions</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">population_size</span> <span class="o">=</span> <span class="n">population_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_generations</span> <span class="o">=</span> <span class="n">max_generations</span>

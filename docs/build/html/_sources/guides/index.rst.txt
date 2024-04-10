@@ -7,3 +7,4 @@ Guides
    sklearn
    tuning
    computational_performance
+   custom_symbolic_functions

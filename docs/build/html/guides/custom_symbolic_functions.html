@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Using Featuristic With scikit-learn Pipelines &#8212; Featuristic  documentation</title>
+    <title>Creating Custom Symbolic Functions for Use in the Genetic Feature Synthesis &#8212; Featuristic  documentation</title>
 
 
 
@@ -42,11 +42,11 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/sklearn';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/custom_symbolic_functions';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tuning the Genetic Feature Synthesis" href="tuning.html" />
-    <link rel="prev" title="Guides" href="index.html" />
+    <link rel="next" title="Examples" href="../examples/index.html" />
+    <link rel="prev" title="Computational Performance" href="computational_performance.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -398,7 +398,7 @@ document.write(`
 
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Guides</a></li>
 
-    <li class="breadcrumb-item active" aria-current="page">Using...</li>
+    <li class="breadcrumb-item active" aria-current="page">Creating...</li>
   </ul>
 </nav>
 </div>
@@ -415,11 +415,9 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
 
-  <section id="Using-Featuristic-With-scikit-learn-Pipelines">
-<h1>Using Featuristic With scikit-learn Pipelines<a class="headerlink" href="#Using-Featuristic-With-scikit-learn-Pipelines" title="Link to this heading"><span>#</span></a></h1>
-<p>Featuristic is compatible with scikit-learn’s powerful <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> class. This functionality allows you to organize and apply a sequence of data processing steps effortlessly within scikit-learn. With the <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>, you can chain together various transformers provided by Featuristic or other scikit-learn-compatible libraries.</p>
-<p>These transformers can include feature generation, feature selection, data scaling, and any other preprocessing steps required to prepare your data for modeling.</p>
-<p>By leveraging the <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> class in conjunction with Featuristic, you can streamline your data preprocessing workflow, ensuring consistency and reproducibility. This allows you to construct complex data processing pipelines with ease, and combine Featuristic with model development.</p>
+  <section id="Creating-Custom-Symbolic-Functions-for-Use-in-the-Genetic-Feature-Synthesis">
+<h1>Creating Custom Symbolic Functions for Use in the Genetic Feature Synthesis<a class="headerlink" href="#Creating-Custom-Symbolic-Functions-for-Use-in-the-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h1>
+<p>Featuristic allows you to control which symbolic functions are used within the Genetic Feature Synthesis process, and to create your custom functions too.</p>
 <p>Let’s take a look at a simple example using the <code class="docutils literal notranslate"><span class="pre">cars</span></code> dataset.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -430,6 +428,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
 <span class="kn">import</span> <span class="nn">featuristic</span> <span class="k">as</span> <span class="nn">ft</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
 
@@ -442,11 +441,12 @@ document.write(`
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.0.1
+1.1.0
 </pre></div></div>
 </div>
 <section id="Load-the-Data">
 <h2>Load the Data<a class="headerlink" href="#Load-the-Data" title="Link to this heading"><span>#</span></a></h2>
+<p>Let’s start off by downloading the <code class="docutils literal notranslate"><span class="pre">cars</span></code> dataset and splitting it into train and test datasets.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -566,9 +566,6 @@ document.write(`
 Name: mpg, dtype: float64
 </pre></div></div>
 </div>
-</section>
-<section id="Split-the-Data-in-Train-and-Test">
-<h2>Split the Data in Train and Test<a class="headerlink" href="#Split-the-Data-in-Train-and-Test" title="Link to this heading"><span>#</span></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -578,107 +575,283 @@ Name: mpg, dtype: float64
 </div>
 </div>
 </section>
-<section id="Objective-Function">
-<h2>Objective Function<a class="headerlink" href="#Objective-Function" title="Link to this heading"><span>#</span></a></h2>
-<p>We define a custom objective function to pass into the Genetic Feature Selection algorithm. The output of this will be minimized to find the optimal subset of features.</p>
-<div class="nbinput nblast docutils container">
+<section id="Controlling-which-Symbolic-Functions-are-Used-in-the-Genetic-Feature-Synthesis">
+<h2>Controlling which Symbolic Functions are Used in the Genetic Feature Synthesis<a class="headerlink" href="#Controlling-which-Symbolic-Functions-are-Used-in-the-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h2>
+<p>Now that we’ve got some data, let’s change the symbolic functions used to synthesise our new features from it. We’ll start off by listing all the functions already included with Featuristic.</p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
-    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s2">&quot;neg_mean_absolute_error&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="Fit-a-scikit-learn-Pipeline-Containing-Featuristic">
-<h2>Fit a scikit-learn Pipeline Containing Featuristic<a class="headerlink" href="#Fit-a-scikit-learn-Pipeline-Containing-Featuristic" title="Link to this heading"><span>#</span></a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
-    <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span>
-            <span class="s2">&quot;genetic_feature_synthesis&quot;</span><span class="p">,</span>
-            <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
-            <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-            <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-            <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-            <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.035</span><span class="p">,</span>
-            <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="s2">&quot;genetic_feature_selector&quot;</span><span class="p">,</span>
-            <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSelector</span><span class="p">(</span>
-                <span class="n">objective</span><span class="p">,</span>
-                <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-                <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-                <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-                <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">),</span>
-        <span class="p">(</span>
-            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
-            <span class="n">LinearRegression</span><span class="p">()</span>
-        <span class="p">)</span>
-    <span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ft</span><span class="o">.</span><span class="n">list_symbolic_functions</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-Creating new features...:  74%|███████████▊    | 74/100 [00:15&lt;00:05,  4.75it/s]
-Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 498.46it/s]
-Creating new features...:  74%|███████████▊    | 74/100 [00:15&lt;00:05,  4.74it/s]
-Optimising feature selection...:  52%|█████▏    | 26/50 [00:05&lt;00:05,  4.39it/s]
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-
-<span class="n">preds</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([13.23930437, 35.40219719, 27.26035025, 26.25423477, 28.24773002,
-       19.10148319, 36.15024042, 23.33185658, 31.19121816, 22.29169501])
+[&#39;add&#39;,
+ &#39;subtract&#39;,
+ &#39;mult&#39;,
+ &#39;div&#39;,
+ &#39;square&#39;,
+ &#39;cube&#39;,
+ &#39;abs&#39;,
+ &#39;negate&#39;,
+ &#39;sin&#39;,
+ &#39;cos&#39;,
+ &#39;tan&#39;,
+ &#39;mul_constant&#39;,
+ &#39;add_constant&#39;]
 </pre></div></div>
 </div>
-<section id="Accessing-Featuristic-Inside-the-Pipeline">
-<h3>Accessing Featuristic Inside the Pipeline<a class="headerlink" href="#Accessing-Featuristic-Inside-the-Pipeline" title="Link to this heading"><span>#</span></a></h3>
-<p>We can still access the individual Featuristic steps via the pipeline’s <code class="docutils literal notranslate"><span class="pre">named_steps</span></code> functionality. For example, to look at the formulas used for the feature engineering or to plot the genetic algorithm’s history.</p>
-<div class="nbinput docutils container">
+<p>All these functions are used by default, except the <code class="docutils literal notranslate"><span class="pre">mul_constant</span></code> and <code class="docutils literal notranslate"><span class="pre">add_constant</span></code> functions. These multiply or add a constant to create new features and can be useful where there is an offset in the data. However, they can also increase the chance of overfitting.</p>
+<p>For this example, let’s limit ourselves to only the <code class="docutils literal notranslate"><span class="pre">add</span></code>, <code class="docutils literal notranslate"><span class="pre">subtract</span></code>, <code class="docutils literal notranslate"><span class="pre">mult</span></code> and <code class="docutils literal notranslate"><span class="pre">div</span></code> symbolic functions.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">funcs_to_use</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;subtract&quot;</span><span class="p">,</span> <span class="s2">&quot;mult&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Next, let’s create some custom symbolic functions to use alongside the ones we selected above.</p>
+<p>We will do this by defining two <code class="docutils literal notranslate"><span class="pre">CustomSymbolicFunction</span></code> classes, one that returns the negative of the square of the input and one that returns the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> of the input.</p>
+<p>We will also need to define how many arguments each function takes, its name, and how to render its output to a string.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">arg_count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;negative_square&quot;</span>
+<span class="n">format_str</span> <span class="o">=</span> <span class="s2">&quot;negative_square(</span><span class="si">{}</span><span class="s2">)&quot;</span>
+
+<span class="n">negative_square</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">CustomSymbolicFunction</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">arg_count</span><span class="o">=</span><span class="n">arg_count</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="n">format_str</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;genetic_feature_synthesis&quot;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">func</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span>
+<span class="n">arg_count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;tanh&quot;</span>
+<span class="n">format_str</span> <span class="o">=</span> <span class="s2">&quot;tanh(</span><span class="si">{}</span><span class="s2">)&quot;</span>
 
-<span class="n">gfs</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">tanh</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">CustomSymbolicFunction</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">arg_count</span><span class="o">=</span><span class="n">arg_count</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="n">format_str</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Great, let’s check our new symbolic functions works as expected by passing in a column from a sample dataframe</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
+
+<span class="n">negative_square</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0   -1
+1   -4
+2   -9
+Name: a, dtype: int64
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tanh</span><span class="p">(</span><span class="n">test_df</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0    0.761594
+1    0.964028
+2    0.995055
+Name: a, dtype: float64
+</pre></div></div>
+</div>
+</section>
+<section id="Running-the-Genetic-Feature-Synthesis">
+<h2>Running the Genetic Feature Synthesis<a class="headerlink" href="#Running-the-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h2>
+<p>Now let’s run the Genetic Feature Synthesis with our newly defined symbolic functions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
+    <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">early_termination_iters</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.035</span><span class="p">,</span>
+    <span class="n">functions</span><span class="o">=</span><span class="n">funcs_to_use</span><span class="p">,</span>
+    <span class="n">custom_functions</span><span class="o">=</span><span class="p">[</span><span class="n">tanh</span><span class="p">,</span> <span class="n">negative_square</span><span class="p">],</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">features</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">features</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Creating new features...:  28%|████▍           | 28/100 [00:05&lt;00:13,  5.48it/s]
+Pruning feature space...: 100%|██████████████████| 5/5 [00:00&lt;00:00, 433.05it/s]
+Creating new features...:  28%|████▍           | 28/100 [00:05&lt;00:13,  5.31it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>displacement</th>
+      <th>cylinders</th>
+      <th>horsepower</th>
+      <th>weight</th>
+      <th>acceleration</th>
+      <th>model_year</th>
+      <th>origin</th>
+      <th>feature_9</th>
+      <th>feature_17</th>
+      <th>feature_18</th>
+      <th>feature_19</th>
+      <th>feature_20</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>122.0</td>
+      <td>4</td>
+      <td>86.0</td>
+      <td>2220</td>
+      <td>14.0</td>
+      <td>71</td>
+      <td>1</td>
+      <td>-202.833136</td>
+      <td>-150.335148</td>
+      <td>-159.745799</td>
+      <td>-162.266509</td>
+      <td>-159.913846</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>200.0</td>
+      <td>6</td>
+      <td>88.0</td>
+      <td>3060</td>
+      <td>17.1</td>
+      <td>81</td>
+      <td>1</td>
+      <td>-217.640025</td>
+      <td>-153.080140</td>
+      <td>-166.227119</td>
+      <td>-168.610009</td>
+      <td>-166.418846</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>302.0</td>
+      <td>8</td>
+      <td>129.0</td>
+      <td>3725</td>
+      <td>13.4</td>
+      <td>79</td>
+      <td>1</td>
+      <td>-161.086183</td>
+      <td>-109.831489</td>
+      <td>-123.601802</td>
+      <td>-125.521701</td>
+      <td>-123.800412</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>302.0</td>
+      <td>8</td>
+      <td>140.0</td>
+      <td>4294</td>
+      <td>16.0</td>
+      <td>72</td>
+      <td>1</td>
+      <td>-110.284540</td>
+      <td>-70.181071</td>
+      <td>-80.067690</td>
+      <td>-81.460172</td>
+      <td>-80.224344</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>120.0</td>
+      <td>4</td>
+      <td>97.0</td>
+      <td>2506</td>
+      <td>14.5</td>
+      <td>72</td>
+      <td>3</td>
+      <td>-188.034804</td>
+      <td>-139.124017</td>
+      <td>-147.698501</td>
+      <td>-149.993081</td>
+      <td>-147.849460</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>When we look at the formulas selected for our new features, we can see our custom <code class="docutils literal notranslate"><span class="pre">tanh</span></code> symbolic function has been used 😀</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -708,54 +881,38 @@ array([13.23930437, 35.40219719, 27.26035025, 26.25423477, 28.24773002,
   <tbody>
     <tr>
       <th>0</th>
-      <td>feature_1</td>
-      <td>abs(abs(abs((abs(abs(abs(abs(abs(abs(abs(abs(a...</td>
-      <td>-0.874683</td>
+      <td>feature_9</td>
+      <td>((((acceleration + (model_year + tanh(displace...</td>
+      <td>-0.863239</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>feature_8</td>
-      <td>abs(abs(((cos(((abs(horsepower) / weight) - (s...</td>
-      <td>-0.847227</td>
+      <td>feature_17</td>
+      <td>(((((model_year - cylinders) - cylinders) + mo...</td>
+      <td>-0.862401</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>feature_4</td>
-      <td>abs(abs((abs(abs(abs(abs(abs(abs(abs(abs(abs(a...</td>
-      <td>-0.860441</td>
+      <td>feature_18</td>
+      <td>(((((model_year - cylinders) + model_year) - c...</td>
+      <td>-0.861786</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>feature_5</td>
-      <td>abs(abs(abs(abs(abs((((cube(horsepower) / (cub...</td>
-      <td>-0.852704</td>
+      <td>feature_19</td>
+      <td>(((((model_year - cylinders) + tanh(displaceme...</td>
+      <td>-0.861776</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>feature_0</td>
-      <td>abs(abs((model_year / abs(weight))))</td>
-      <td>-0.880479</td>
+      <td>feature_20</td>
+      <td>(((((model_year - cylinders) + model_year) + t...</td>
+      <td>-0.861775</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/guides_sklearn_14_0.png" src="../_images/guides_sklearn_14_0.png" />
-</div>
-</div>
-</section>
 </section>
 </section>
 
@@ -770,20 +927,20 @@ array([13.23930437, 35.40219719, 27.26035025, 26.25423477, 28.24773002,
 
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="computational_performance.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Guides</p>
+        <p class="prev-next-title">Computational Performance</p>
       </div>
     </a>
     <a class="right-next"
-       href="tuning.html"
+       href="../examples/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Tuning the Genetic Feature Synthesis</p>
+        <p class="prev-next-title">Examples</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -806,19 +963,15 @@ array([13.23930437, 35.40219719, 27.26035025, 26.25423477, 28.24773002,
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Load-the-Data">Load the Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Split-the-Data-in-Train-and-Test">Split the Data in Train and Test</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Objective-Function">Objective Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Fit-a-scikit-learn-Pipeline-Containing-Featuristic">Fit a scikit-learn Pipeline Containing Featuristic</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Accessing-Featuristic-Inside-the-Pipeline">Accessing Featuristic Inside the Pipeline</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Controlling-which-Symbolic-Functions-are-Used-in-the-Genetic-Feature-Synthesis">Controlling which Symbolic Functions are Used in the Genetic Feature Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Running-the-Genetic-Feature-Synthesis">Running the Genetic Feature Synthesis</a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/guides/sklearn.ipynb.txt">
+    <a href="../_sources/guides/custom_symbolic_functions.ipynb.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

@@ -554,49 +554,9 @@ document.write(`
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="SymbolicFunction">
-<a class="viewcode-back" href="../../../generated/featuristic.synthesis.SymbolicFunction.html#featuristic.synthesis.SymbolicFunction">[docs]</a>
-<span class="k">class</span> <span class="nc">SymbolicFunction</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="SymbolicFunction.__init__">
-<a class="viewcode-back" href="../../../generated/featuristic.synthesis.SymbolicFunction.html#featuristic.synthesis.SymbolicFunction.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">arg_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">format_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the SymbolicFunction class.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        func : function</span>
-<span class="sd">            The function to use.</span>
-
-<span class="sd">        arg_count : int</span>
-<span class="sd">            The number of arguments the function takes.</span>
-
-<span class="sd">        format_str : str</span>
-<span class="sd">            The format string for the function.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">=</span> <span class="n">arg_count</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
-
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span></div>
-
-
-
 <span class="k">class</span> <span class="nc">SymbolicAdd</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic addition function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -628,8 +588,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicSubtract</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic subtraction function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -661,8 +620,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicMultiply</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic multiplication function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -694,8 +652,8 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicDivide</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic division function. Note that is performs a safe addition</span>
+<span class="sd">    by avoiding division by zero.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -727,8 +685,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicAbs</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic absolute value function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -760,8 +717,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicNegate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic negate function. It works by multiplying the input by -1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -793,8 +749,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicSin</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic sine function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -826,8 +781,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicCos</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic cosine function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -859,8 +813,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicTan</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic tangent function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -892,8 +845,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicSqrt</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic square root function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -925,8 +877,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicSquare</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic square function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -958,8 +909,7 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">SymbolicCube</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An internal class used to represent the symbolic functions used to generate new</span>
-<span class="sd">    features by the GeneticFeatureGenerator class.</span>
+<span class="sd">    The symbolic cube function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -989,50 +939,52 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span>
 
 
-<span class="c1"># class SymbolicAddConstant:</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     An internal class used to represent the symbolic functions used to generate new</span>
-<span class="c1">#     features by the GeneticFeatureGenerator class.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">SymbolicAddConstant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The symbolic addition function. It works by adding a random constant to the input</span>
+<span class="sd">    between -1000 and 1000. Note that this function can be useful where their is an</span>
+<span class="sd">    offset in the data. However, it can lead to overfitting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<span class="c1">#     def __init__(self):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Initialize the SymbolicFunction class.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the SymbolicFunction class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="c1">#         self.random_constant = np.random.uniform(-1000, 1000)</span>
-<span class="c1">#         self.arg_count = 1</span>
-<span class="c1">#         self.format_str = f&quot;add_constant({self.random_constant} + {{}})&quot;</span>
-<span class="c1">#         self.name = &quot;add_constant&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_constant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;add_constant(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">random_constant</span><span class="si">}</span><span class="s2"> + </span><span class="se">{{}}</span><span class="s2">)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;add_constant&quot;</span>
 
-<span class="c1">#     def __call__(self, x):</span>
-<span class="c1">#         return self.random_constant + x</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_constant</span> <span class="o">+</span> <span class="n">x</span>
 
-<span class="c1">#     def __str__(self):</span>
-<span class="c1">#         return self.format_str</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span>
 
 
-<span class="c1"># class SymbolicMulConstant:</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     An internal class used to represent the symbolic functions used to generate new</span>
-<span class="c1">#     features by the GeneticFeatureGenerator class.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">SymbolicMulConstant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The symbolic multiplication function. It works by multiplying the input by a random</span>
+<span class="sd">    constant between -1000 and 1000. Note that this function can be useful where their</span>
+<span class="sd">    is an offset in the data. However, it can lead to overfitting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<span class="c1">#     def __init__(self):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Initialize the SymbolicFunction class.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the SymbolicFunction class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="c1">#         self.random_constant = np.random.uniform(-1000, 1000)</span>
-<span class="c1">#         self.arg_count = 1</span>
-<span class="c1">#         self.format_str = f&quot;mul_constant({self.random_constant} + {{}})&quot;</span>
-<span class="c1">#         self.name = &quot;mul_constant&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_constant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;mul_constant(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">random_constant</span><span class="si">}</span><span class="s2"> + </span><span class="se">{{}}</span><span class="s2">)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;mul_constant&quot;</span>
 
-<span class="c1">#     def __call__(self, x):</span>
-<span class="c1">#         return self.random_constant * x</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_constant</span> <span class="o">*</span> <span class="n">x</span>
 
-<span class="c1">#     def __str__(self):</span>
-<span class="c1">#         return self.format_str</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span>
 
 
 <span class="n">operations</span> <span class="o">=</span> <span class="p">[</span>
@@ -1048,14 +1000,56 @@ document.write(`
     <span class="n">SymbolicSin</span><span class="p">,</span>
     <span class="n">SymbolicCos</span><span class="p">,</span>
     <span class="n">SymbolicTan</span><span class="p">,</span>
+    <span class="n">SymbolicMulConstant</span><span class="p">,</span>
+    <span class="n">SymbolicAddConstant</span><span class="p">,</span>
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="list_operations">
-<a class="viewcode-back" href="../../../generated/featuristic.synthesis.list_operations.html#featuristic.synthesis.list_operations">[docs]</a>
-<span class="k">def</span> <span class="nf">list_operations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="CustomSymbolicFunction">
+<a class="viewcode-back" href="../../../generated/featuristic.synthesis.CustomSymbolicFunction.html#featuristic.synthesis.CustomSymbolicFunction">[docs]</a>
+<span class="k">class</span> <span class="nc">CustomSymbolicFunction</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    List the available operations.</span>
+<span class="sd">    The base class for creating custom symbolic functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CustomSymbolicFunction.__init__">
+<a class="viewcode-back" href="../../../generated/featuristic.synthesis.CustomSymbolicFunction.html#featuristic.synthesis.CustomSymbolicFunction.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">arg_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">format_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the CustomSymbolicFunction class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : function</span>
+<span class="sd">            The function to use.</span>
+
+<span class="sd">        arg_count : int</span>
+<span class="sd">            The number of arguments the function takes.</span>
+
+<span class="sd">        format_str : str</span>
+<span class="sd">            The format string for the function. Must be a valid python format string,</span>
+<span class="sd">            for example, &quot;({} + {})&quot; or &quot;abs({})&quot; and needs to have the same number of</span>
+<span class="sd">            placeholders as the number of arguments the function takes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">=</span> <span class="n">arg_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span></div>
+
+
+
+<div class="viewcode-block" id="list_symbolic_functions">
+<a class="viewcode-back" href="../../../generated/featuristic.synthesis.list_symbolic_functions.html#featuristic.synthesis.list_symbolic_functions">[docs]</a>
+<span class="k">def</span> <span class="nf">list_symbolic_functions</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all the available built-in symbolic functions.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
