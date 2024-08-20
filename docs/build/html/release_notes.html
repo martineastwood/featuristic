@@ -413,21 +413,20 @@ document.write(`
 <h1>Release Notes<a class="headerlink" href="#release-notes" title="Link to this heading"><span>#</span></a></h1>
 <section id="v1-1-0-april-10-2024">
 <h2>v1.1.0 April 10, 2024<a class="headerlink" href="#v1-1-0-april-10-2024" title="Link to this heading"><span>#</span></a></h2>
-<ul>
-<li><dl>
-<dt><strong>Changes:</strong></dt><dd><ul class="simple">
-<li><p>The <cite>functions</cite> parameter in the <cite>GeneticFeatureSynthesis</cite> class now accepts a list of strings representing the names of the functions to be used in the genetic</p></li>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Changes:</strong></dt><dd><ul>
+<li><p>The <cite>functions</cite> parameter in the <cite>GeneticFeatureSynthesis</cite> class now accepts a list of strings representing the names of the functions to be used in the genetic programming process. The default value is <cite>[‘add’, ‘sub’, ‘mul’, ‘div’, ‘square’, ‘cube’, ‘abs’ ‘negate’, ‘sin’, ‘cos’, ‘tan’]</cite>. The full list of built in functions can be found in the <cite>list_operations</cite> function.</p></li>
+<li><p>Added <cite>SymbolicMulConstant</cite> and <cite>SymbolicAddConstant</cite> symbolic functions. These can be useful where their is an offset to the data but are not currently used by default as there is a risk of overfitting where an offset is not present.</p></li>
+<li><p>Renamed <cite>list_operations</cite> to <cite>list_symbolic_functions</cite> for consistency</p></li>
+<li><p>Added <cite>CustomSymbolicFunction</cite> class to allow users to define their own symbolic functions to be used in the genetic feature synthesis process.</p></li>
+<li><p>Updated unit tests to reflect changes</p></li>
 </ul>
-<p>programming process. The default value is <cite>[‘add’, ‘sub’, ‘mul’, ‘div’, ‘square’, ‘cube’, ‘abs’ ‘negate’, ‘sin’, ‘cos’, ‘tan’]</cite>. The full list of built in functions can be found in the <cite>list_operations</cite> function.
-- Added <cite>SymbolicMulConstant</cite> and <cite>SymbolicAddConstant</cite> symbolic functions. These can be useful where their is an offset to the data but are not currently used by default as there is a risk of overfitting where an offset is not present.
-- Renamed <cite>list_operations</cite> to <cite>list_symbolic_functions</cite> for consistency
-- Added <cite>CustomSymbolicFunction</cite> class to allow users to define their own symbolic functions to be used in the genetic feature synthesis process.
-- Updated unit tests to reflect changes</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><strong>Documentation:</strong></dt><dd><ul class="simple">
+<dt><strong>Documentation:</strong></dt><dd><ul>
 <li><p>Added example showing use of custom symbolic functions.</p></li>
 </ul>
 </dd>
