@@ -4,6 +4,7 @@ from typing import List
 
 import pandas as pd
 from sklearn.feature_selection import f_classif, f_regression
+from sklearn.utils.multiclass import type_of_target
 from tqdm import tqdm
 
 # set the floor value for the correlation matrix
@@ -15,7 +16,7 @@ class MaxRelevanceMinRedundancy:
     Class for selecting most relevant features using the mrmr algorithm.
     """
 
-    def __init__(self, k: int = 6, problem_type: str = "regression", pbar=True):
+    def __init__(self, k: int = 6, pbar=True):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -24,24 +25,13 @@ class MaxRelevanceMinRedundancy:
         K : int (default=6)
             The number of features to select.
 
-        problem_type : str (default='regression')
-            The type of problem. Either 'regression' or 'classification'.
-
         pbar : bool (default=True)
             Whether to display a progress bar or not.
         """
         self.k = k
         self.selected_features = None
         self.pbar = pbar
-
-        if problem_type not in ["regression", "classification"]:
-            raise ValueError(
-                "Invalid type. Must be either 'regression' or 'classification'."
-            )
-        if problem_type == "regression":
-            self.metric = f_regression
-        else:
-            self.metric = f_classif
+        self.metric = None
 
     def fit(self, X: pd.DataFrame, y: pd.Series):
         """
@@ -59,6 +49,14 @@ class MaxRelevanceMinRedundancy:
         -------
         None
         """
+        if self.metric is None:
+            target_type = type_of_target(y)
+            if target_type in ("binary", "multiclass", "multiclass-multioutput"):
+                self.metric = f_classif
+            elif target_type in ("continuous", "continuous-multioutput"):
+                self.metric = f_regression
+            else:
+                raise ValueError(f"Unsupported target type: {target_type}")
         self.selected_features = self._mrmr(X, y)
 
     def transform(self, X: pd.DataFrame, y: pd.Series = None):
