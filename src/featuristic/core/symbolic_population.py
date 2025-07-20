@@ -11,7 +11,7 @@ from joblib import Parallel, cpu_count, delayed
 from featuristic.core.program import random_prog, select_random_node, node_count
 
 
-class BasePopulation:
+class BaseSymbolicPopulation:
     """
     A class to represent the population of symbolic programs in the
     genetic programming algorithm.
@@ -152,7 +152,7 @@ class BasePopulation:
         member_fitness = [(fitness[i], self.population[i]) for i in tournament_members]
         return min(member_fitness, key=lambda x: x[0])[1]
 
-    def _crossover(self, selected1: dict, selected2: dict) -> dict:
+    def _crossover(self, selected1: dict, selected2: dict, X: pd.DataFrame) -> dict:
         """
         Perform crossover mutation between two selected programs.
 
@@ -163,6 +163,9 @@ class BasePopulation:
 
         selected2 : dict
             The second selected program.
+
+        X : pd.DataFrame
+            The dataframe with the features.
 
         return
         ------
@@ -176,7 +179,7 @@ class BasePopulation:
         if "children" not in xover_point1 or not isinstance(
             xover_point1["children"], list
         ):
-            return self._mutate(offspring)
+            return self._mutate(offspring, X)
 
         child_count = len(xover_point1["children"])
         child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count)
@@ -232,7 +235,7 @@ class BasePopulation:
         parent1 = self._get_random_parent(fitness)
         if np.random.uniform() < self.crossover_prob:
             parent2 = self._get_random_parent(fitness)
-            return self._crossover(parent1, parent2)
+            return self._crossover(parent1, parent2, X)
 
         return self._mutate(parent1, X)
 
@@ -253,7 +256,7 @@ class BasePopulation:
         return self
 
 
-class SerialPopulation(BasePopulation):
+class SerialSymbolicPopulation(BaseSymbolicPopulation):
     """
     A class to represent the population of programs in the genetic programming algorithm where
     the programs are evaluated serially.
@@ -353,7 +356,7 @@ class SerialPopulation(BasePopulation):
         ]
 
 
-class ParallelPopulation(BasePopulation):
+class ParallelSymbolicPopulation(BaseSymbolicPopulation):
     """
     A class to represent the population of programs in the genetic programming algorithm where
     the programs are evaluated in parallel via joblib.

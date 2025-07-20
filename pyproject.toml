@@ -2,7 +2,7 @@
 name = "featuristic"
 
 # Versions should comply with PEP 440
-version = "1.1.0"
+version = "2.0.0"
 
 
 # This is a one-line description or tagline of what your project does. This
@@ -19,7 +19,7 @@ description = "Genetic algorithms for automated feature engineering and feature 
 #
 # This field corresponds to the "Description" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#description-optional
-readme = "readme.md" # Optional
+readme = "README.md" # Optional
 
 
 # Specify which Python versions you support. In contrast to the

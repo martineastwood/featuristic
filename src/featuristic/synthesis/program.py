@@ -5,38 +5,50 @@ from typing import List
 import numpy as np
 import pandas as pd
 
-from .symbolic_functions import CustomSymbolicFunction
+# from .symbolic_functions import CustomSymbolicFunction
 
 
-def random_prog(depth: int, X: pd.DataFrame, operations: List):
+def random_prog(
+    depth: int, X: pd.DataFrame, operations: List, max_depth: int = 3
+) -> dict:
     """
-    Generate a random program for symbolic regression.
+    Recursively generate a random symbolic program.
 
     Parameters
     ----------
     depth : int
-        The depth of the program.
+        Current depth in the tree.
 
     X : pd.DataFrame
-        The input data.
+        Input feature dataframe.
 
     operations : list
-        The list of operations to use.
+        List of symbolic function objects (not classes!).
+
+    max_depth : int
+        Maximum depth of the tree.
+
+    Returns
+    -------
+    dict
+        A program node (either terminal or function).
     """
-    if np.random.randint(0, 10) >= depth * 2:
-        op = operations[np.random.randint(0, len(operations) - 1)]
-        if not isinstance(op, CustomSymbolicFunction):
-            op = op()
+    if depth >= max_depth or np.random.rand() < 0.3:
+        return {"feature_name": X.columns[np.random.randint(0, X.shape[1])]}
 
-        return {
-            "func": op,
-            "children": [
-                random_prog(depth + 1, X, operations) for _ in range(op.arg_count)
-            ],
-            "format_str": op.format_str,
-        }
+    op = operations[
+        np.random.randint(len(operations))
+    ]  # already an instance, not a class
 
-    return {"feature_name": X.columns[np.random.randint(0, X.shape[1] - 1)]}
+    return {
+        "func": op.func,
+        "arity": op.arity,
+        "format_str": op.format_str,
+        "name": op.name,
+        "children": [
+            random_prog(depth + 1, X, operations, max_depth) for _ in range(op.arity)
+        ],
+    }
 
 
 def node_count(node: dict) -> int:
@@ -58,13 +70,12 @@ def node_count(node: dict) -> int:
     return sum((node_count(c) for c in node["children"]))
 
 
-def select_random_node(selected: dict, parent: dict, depth: int) -> dict:
+def select_random_node(selected: dict, parent: dict = None, depth: int = 0) -> dict:
     """
     Select a random node from the program.
 
     Parameters
     ----------
-
     selected : dict
         The current node.
 
@@ -79,15 +90,14 @@ def select_random_node(selected: dict, parent: dict, depth: int) -> dict:
     dict
         The selected node.
     """
-    if "children" not in selected:
-        return parent
+    if "children" not in selected or not selected["children"]:
+        return selected  # fallback to self if no children exist
 
     if np.random.randint(0, 10) < 2 * depth:
         return selected
 
     child_count = len(selected["children"])
-    child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count - 1)
-
+    child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count)
     return select_random_node(
         selected["children"][child_idx],
         selected,
