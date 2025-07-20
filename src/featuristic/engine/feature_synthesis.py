@@ -12,6 +12,8 @@ from tqdm import tqdm
 
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 from featuristic.core.preprocess import preprocess_data
+from featuristic.core.models import ProgramFitness
+from featuristic.fitness.registry import get_fitness
 
 # from featuristic.synthesis.symbolic_functions import CustomSymbolicFunction
 from featuristic.core.program import render_prog
@@ -53,7 +55,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         functions: Optional[Union[List[str], List[SymbolicFunction]]] = None,
         # custom_functions: Union[List[CustomSymbolicFunction] | None] = None,
         custom_functions: Optional[List[SymbolicFunction]] = None,
-        fitness_function: Optional[Callable] = None,
+        fitness_function: Optional[Union[str, Callable]] = None,
         return_all_features: bool = True,
         n_jobs: int = -1,
         pbar: bool = True,
@@ -158,7 +160,12 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.return_all_features = return_all_features
 
-        self.fitness_function = fitness_function or fitness_pearson
+        if isinstance(fitness_function, str):
+            self.fitness_function = get_fitness(fitness_function)
+        elif callable(fitness_function):
+            self.fitness_function = fitness_function
+        else:
+            self.fitness_function = get_fitness("pearson")
 
         self.verbose = verbose
 
@@ -173,11 +180,13 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
-            current_fitnesses = [x["fitness"] for x in self.hall_of_fame]
+            current_fitnesses = [x.fitness for x in self.hall_of_fame]
             if fit not in current_fitnesses:
-                self.hall_of_fame.append({"individual": individual, "fitness": fit})
+                self.hall_of_fame.append(
+                    ProgramFitness(fitness=fit, individual=individual)
+                )
 
-        self.hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
+        self.hall_of_fame.sort()
         self.hall_of_fame = self.hall_of_fame[: self.len_hall_of_fame]
 
     def _select_best_features(self, X: pd.DataFrame, y: pd.Series):
@@ -203,13 +212,13 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             self.crossover_proba,
         )
 
-        population.population = [x["individual"] for x in self.hall_of_fame]
+        population.population = [x.individual for x in self.hall_of_fame]
         features = pd.DataFrame(population.evaluate(X)).T
 
         features.columns = [f"feature_{i}" for i in range(self.len_hall_of_fame)]
 
         for i in range(self.len_hall_of_fame):
-            self.hall_of_fame[i]["name"] = f"feature_{i}"
+            self.hall_of_fame[i].name = f"feature_{i}"
 
         selected = (
             MaxRelevanceMinRedundancy(k=self.num_features, pbar=self.pbar)
@@ -350,9 +359,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.n_jobs,
             )
 
-        population.population = [x["individual"] for x in self.hall_of_fame]
+        population.population = [x.individual for x in self.hall_of_fame]
         output = pd.DataFrame(population.evaluate(X.reset_index(drop=True))).T
-        output.columns = [x["name"] for x in self.hall_of_fame]
+        output.columns = [x.name for x in self.hall_of_fame]
 
         if self.return_all_features:
             return pd.concat([X.reset_index(drop=True), output], axis=1)
@@ -394,9 +403,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         output = []
         for prog in self.hall_of_fame:
             tmp = {
-                "name": prog["name"],
-                "formula": render_prog(prog["individual"]),
-                "fitness": prog["fitness"],
+                "name": prog.name,
+                "formula": render_prog(prog.individual),
+                "fitness": prog.fitness,
             }
             output.append(tmp)
 

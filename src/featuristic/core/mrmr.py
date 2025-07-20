@@ -1,5 +1,3 @@
-"""Class for selecting most relevant features using the mrmr algorithm."""
-
 from typing import List
 
 import pandas as pd
@@ -7,48 +5,32 @@ from sklearn.feature_selection import f_classif, f_regression
 from sklearn.utils.multiclass import type_of_target
 from tqdm import tqdm
 
-# set the floor value for the correlation matrix
-FLOOR: float = 0.00001
+FLOOR: float = 1e-5  # Prevent division by zero and log(0)
 
 
 class MaxRelevanceMinRedundancy:
     """
-    Class for selecting most relevant features using the mrmr algorithm.
+    Selects k features that are maximally relevant to the target and minimally redundant.
     """
 
-    def __init__(self, k: int = 6, pbar=True):
+    def __init__(self, k: int = 6, pbar: bool = True):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
         Parameters
         ----------
-        K : int (default=6)
+        k : int (default=6)
             The number of features to select.
 
         pbar : bool (default=True)
             Whether to display a progress bar or not.
         """
         self.k = k
-        self.selected_features = None
         self.pbar = pbar
+        self.selected_features = None
         self.metric = None
 
     def fit(self, X: pd.DataFrame, y: pd.Series):
-        """
-        Fit the mRMR algorithm to the data.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            The dataframe with the features.
-
-        y : pd.Series
-            The target variable.
-
-        Returns
-        -------
-        None
-        """
         if self.metric is None:
             target_type = type_of_target(y)
             if target_type in ("binary", "multiclass", "multiclass-multioutput"):
@@ -57,9 +39,10 @@ class MaxRelevanceMinRedundancy:
                 self.metric = f_regression
             else:
                 raise ValueError(f"Unsupported target type: {target_type}")
+
         self.selected_features = self._mrmr(X, y)
 
-    def transform(self, X: pd.DataFrame, y: pd.Series = None):
+    def transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """
         Transform the data using the selected features.
 
@@ -78,7 +61,7 @@ class MaxRelevanceMinRedundancy:
         """
         return X[self.selected_features]
 
-    def fit_transform(self, X: pd.DataFrame, y: pd.Series):
+    def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
         """
         Fit the mRMR algorithm to the data and transform the data using the selected features.
 
@@ -100,7 +83,7 @@ class MaxRelevanceMinRedundancy:
 
     def _mrmr(self, X: pd.DataFrame, y: pd.Series) -> List[str]:
         """
-        Select the top n_features features using the mRMR algorithm.
+        Select the best features using the mRMR algorithm.
 
         Parameters
         ----------
@@ -112,38 +95,39 @@ class MaxRelevanceMinRedundancy:
 
         Returns
         -------
-        list
+        List[str]
             The list of selected features.
         """
-        # set the maximum number of features to select
-        k: int = min(self.k, X.shape[1])
-
         X = X.loc[:, X.nunique() > 1].dropna(axis=1)
 
-        # calculate the f-statistic and the correlation matrix
-        f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
-        corr = pd.DataFrame(FLOOR, index=X.columns, columns=X.columns)
+        k = min(self.k, X.shape[1])
+        if k == 0:
+            return []
 
-        # initialize list of selected features and list of excluded features
+        # 1. Compute relevance scores
+        f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
+
+        # 2. Precompute absolute correlation matrix (redundancy)
+        corr = X.corr().abs().clip(lower=FLOOR)
+        for col in corr.columns:
+            corr.loc[col, col] = FLOOR  # Avoid self-correlation = 1
+
         selected = []
         not_selected = X.columns.to_list()
 
         if self.pbar:
             pbar = tqdm(total=k, desc="Pruning feature space...")
 
-        # select the top K features
-        for i in range(k):
-            if i > 0:
-                last_selected = selected[-1]
-                corr.loc[not_selected, last_selected] = (
-                    X[not_selected].corrwith(X[last_selected]).abs().clip(FLOOR)
-                )
+        for _ in range(k):
+            if not selected:
+                # First round: no redundancy penalty
+                score = f_stat.loc[not_selected]
+            else:
+                # Compute score = relevance / average redundancy
+                redundancy = corr.loc[not_selected, selected].mean(axis=1).fillna(FLOOR)
+                score = f_stat.loc[not_selected] / redundancy
 
-            score = f_stat.loc[not_selected] / corr.loc[not_selected, selected].mean(
-                axis=1
-            ).fillna(FLOOR)
-
-            best = score.index[score.argmax()]
+            best = score.idxmax()
             selected.append(best)
             not_selected.remove(best)
 
