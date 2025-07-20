@@ -1,6 +1,6 @@
 # registry.py
 
-from typing import Callable, List, Dict, NamedTuple
+from typing import Callable, Dict, List, NamedTuple
 
 
 class SymbolicFunction(NamedTuple):

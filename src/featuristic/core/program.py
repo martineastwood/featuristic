@@ -1,10 +1,9 @@
 """Functions for manipulating the symbolic programs."""
 
 import random
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
-from typing import Dict, List
 
 
 def random_prog(

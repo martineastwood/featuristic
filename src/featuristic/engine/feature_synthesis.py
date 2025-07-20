@@ -1,31 +1,31 @@
 """Contains the SymbolicFeatureGenerator class."""
 
 import sys
-from typing import List, Union
-import matplotlib.pyplot as plt
+from typing import Callable, List, Optional, Union
+
 import matplotlib
+import matplotlib.pyplot as plt
 import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
-from featuristic.core.fitness import fitness_pearson
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
+from featuristic.core.preprocess import preprocess_data
+
+# from featuristic.synthesis.symbolic_functions import CustomSymbolicFunction
+from featuristic.core.program import render_prog
+from featuristic.core.registry import (
+    FUNCTION_REGISTRY,
+    SymbolicFunction,
+    get_symbolic_function,
+    list_symbolic_functions,
+)
 from featuristic.core.symbolic_population import (
     ParallelSymbolicPopulation,
     SerialSymbolicPopulation,
 )
-
-# from featuristic.synthesis.symbolic_functions import CustomSymbolicFunction
-from featuristic.core.program import render_prog
-from featuristic.core.preprocess import preprocess_data
-
-from featuristic.core.registry import (
-    FUNCTION_REGISTRY,
-    get_symbolic_function,
-    list_symbolic_functions,
-    SymbolicFunction,
-)
+from featuristic.fitness.pearson import fitness_pearson
 
 
 class FeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -50,9 +50,10 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
-        functions: Union[List[str] | None] = None,
+        functions: Optional[Union[List[str], List[SymbolicFunction]]] = None,
         # custom_functions: Union[List[CustomSymbolicFunction] | None] = None,
-        custom_functions=None,
+        custom_functions: Optional[List[SymbolicFunction]] = None,
+        fitness_function: Optional[Callable] = None,
         return_all_features: bool = True,
         n_jobs: int = -1,
         pbar: bool = True,
@@ -98,14 +99,17 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             If the best score does not improve for this number of generations, then the
             algorithm will terminate early.
 
-        functions : list
+        functions : list[str] | list[SymbolicFunction]
             The list of functions to use in the programs. If `None` then all the
             built-in functions are used. The functions must be the names of the
             functions returned by the `list_symbolic_functions` method.
 
-        custom_functions : list
+        custom_functions : list[SymbolicFunction]
             A list of custom functions to use in the programs. Each custom function
             must be an instance of the `CustomSymbolicFunction` class.
+
+        fitness_function : Callable
+            The fitness function to use to evaluate the programs.
 
         return_all_features : bool
             Whether to return all the features generated or just the best features.
@@ -154,7 +158,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.return_all_features = return_all_features
 
-        self.fitness_func = fitness_pearson
+        self.fitness_function = fitness_function or fitness_pearson
 
         self.verbose = verbose
 
@@ -263,7 +267,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             fitness = []
             prediction = self.population.evaluate(X_copy)
             score = self.population.compute_fitness(
-                self.fitness_func, self.parsimony_coefficient, prediction, y_copy
+                self.fitness_function, self.parsimony_coefficient, prediction, y_copy
             )
 
             for prog, score in zip(self.population.population, score):

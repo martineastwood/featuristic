@@ -8,10 +8,10 @@ by selecting optimal subsets of features.
 import sys
 from typing import Callable, Self, Union
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm

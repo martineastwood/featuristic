@@ -1,11 +1,11 @@
 """Fitness functions for measuring how well the features are performing"""
 
+import sys
 import warnings
 
 import numpy as np
 import pandas as pd
 import scipy
-import sys
 from scipy.stats import pearsonr
 
 from .program import node_count

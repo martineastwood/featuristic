@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, cpu_count, delayed
 
-from featuristic.core.program import random_prog, select_random_node, node_count
+from featuristic.core.program import node_count, random_prog, select_random_node
 
 
 class BaseSymbolicPopulation:

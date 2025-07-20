@@ -1,6 +1,7 @@
 # symbolic_builtins.py
 
 import numpy as np
+
 from .registry import register_symbolic_function
 
 
