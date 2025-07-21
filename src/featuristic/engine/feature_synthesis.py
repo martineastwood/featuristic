@@ -9,11 +9,13 @@ import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
+import numpy as np
 
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 from featuristic.core.preprocess import preprocess_data
 from featuristic.core.models import ProgramFitness
 from featuristic.fitness.registry import get_fitness
+from featuristic.core.program import node_count
 
 # from featuristic.synthesis.symbolic_functions import CustomSymbolicFunction
 from featuristic.core.program import render_prog
@@ -51,9 +53,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         tournament_size: int = 10,
         crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
+        adaptive_parsimony: bool = True,
         early_termination_iters: int = 15,
         functions: Optional[Union[List[str], List[SymbolicFunction]]] = None,
-        # custom_functions: Union[List[CustomSymbolicFunction] | None] = None,
         custom_functions: Optional[List[SymbolicFunction]] = None,
         fitness_function: Optional[Union[str, Callable]] = None,
         return_all_features: bool = True,
@@ -147,7 +149,11 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         self.tournament_size = tournament_size
         self.crossover_proba = crossover_proba
         self.num_features = num_features
+
         self.parsimony_coefficient = parsimony_coefficient
+        self._base_parsimony = parsimony_coefficient
+        self._initial_avg_size = None
+        self.adaptive_parsimony = adaptive_parsimony
 
         self.history = []
         self.hall_of_fame = []
@@ -275,6 +281,18 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         for gen in range(self.max_generations):
             fitness = []
             prediction = self.population.evaluate(X_copy)
+
+            if self._initial_avg_size is None:
+                self._initial_avg_size = np.mean(
+                    [node_count(p) for p in self.population.population]
+                )
+
+            if self.adaptive_parsimony and self._initial_avg_size > 0:
+                avg_size = np.mean([node_count(p) for p in self.population.population])
+                self.parsimony_coefficient = self._base_parsimony * (
+                    avg_size / self._initial_avg_size
+                )
+
             score = self.population.compute_fitness(
                 self.fitness_function, self.parsimony_coefficient, prediction, y_copy
             )
