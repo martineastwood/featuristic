@@ -10,6 +10,7 @@ from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 import numpy as np
+from sklearn.utils.multiclass import type_of_target
 
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 from featuristic.core.preprocess import preprocess_data
@@ -112,8 +113,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             A list of custom functions to use in the programs. Each custom function
             must be an instance of the `CustomSymbolicFunction` class.
 
-        fitness_function : Callable
-            The fitness function to use to evaluate the programs.
+        fitness_function : Callable | None
+            The fitness function to use to evaluate the programs. If `None`, then the
+            fitness function will be inferred based on the target type.
 
         return_all_features : bool
             Whether to return all the features generated or just the best features.
@@ -171,7 +173,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         elif callable(fitness_function):
             self.fitness_function = fitness_function
         else:
-            self.fitness_function = get_fitness("pearson")
+            self.fitness_function = None
 
         self.verbose = verbose
 
@@ -253,6 +255,15 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         X_copy, y_copy = preprocess_data(
             X.reset_index(drop=True), y.reset_index(drop=True)
         )
+
+        if self.fitness_function is None:
+            target_type = type_of_target(y_copy)
+            if target_type in ("binary", "multiclass"):
+                self.fitness_function = get_fitness("log_loss")
+            elif target_type in ("continuous", "continuous-multioutput"):
+                self.fitness_function = get_fitness("pearson")
+            else:
+                raise ValueError(f"Unsupported target type: {target_type}")
 
         # Initialize the population
         if self.n_jobs == 1:
