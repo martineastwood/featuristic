@@ -311,6 +311,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 "best_score": global_best,
                 "median_score": pd.Series(fitness).median(),
                 "best_program": render_prog(best_prog),
+                "parsimony": self.parsimony_coefficient,
             }
             self.history.append(results)
 
@@ -429,9 +430,14 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return pd.DataFrame(output)
 
-    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
+    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
         """
-        Plot the history of the fitness function.
+        Plot the history of the parsimony coefficient and fitness score over generations.
+
+        Args
+        ----
+        ax : matplotlib.axes._axes.Axes, optional
+            The axis to plot on.
 
         return
         ------
@@ -440,9 +446,61 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         if not self.fit_called:
             raise ValueError("Must call fit before plot_history")
 
-        if ax is None:
-            _, ax = plt.subplots()
-
         df = pd.DataFrame(self.history)
-        df.plot(x="generation", y=["best_score", "median_score"], ax=ax)
+
+        if ax is None:
+            fig, ax1 = plt.subplots()
+        else:
+            ax1 = ax
+            fig = ax.get_figure()
+
+        ax2 = ax1.twinx()
+
+        # Plot Parsimony Coefficient
+        ax1.plot(
+            df["generation"],
+            df["parsimony"],
+            color="tab:blue",
+            label="Parsimony Coefficient",
+        )
+        ax1.set_ylabel("Parsimony Coefficient", color="tab:blue")
+        ax1.tick_params(axis="y", labelcolor="tab:blue")
+
+        # Plot Fitness Score
+        ax2.plot(
+            df["generation"],
+            df["best_score"],
+            color="tab:orange",
+            label="Fitness Score",
+        )
+        ax2.set_ylabel("Fitness Score", color="tab:orange")
+        ax2.tick_params(axis="y", labelcolor="tab:orange")
+
+        # X-axis label and title
+        ax1.set_xlabel("Generation")
+        ax1.set_title("Parsimony and Fitness over Generations")
+
+        # Optional early stopping marker
+        if self.early_termination_counter >= self.early_termination_iters:
+            stop_gen = df["generation"].iloc[-1]
+            ax1.axvline(x=stop_gen, color="grey", linestyle="--", alpha=0.6)
+            ax1.text(
+                stop_gen,
+                ax1.get_ylim()[1],
+                "Early Stop",
+                color="grey",
+                verticalalignment="top",
+                horizontalalignment="right",
+                fontsize=8,
+            )
+
+        # Combine legends
+        lines, labels = [], []
+        for axis in [ax1, ax2]:
+            line, label = axis.get_legend_handles_labels()
+            lines.extend(line)
+            labels.extend(label)
+        ax1.legend(lines, labels, loc="upper right")
+
+        plt.tight_layout()
         plt.show()
