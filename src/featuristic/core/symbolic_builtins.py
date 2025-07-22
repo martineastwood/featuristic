@@ -1,6 +1,7 @@
 # symbolic_builtins.py
 
 import numpy as np
+import pandas as pd
 
 from .registry import register_symbolic_function
 
@@ -22,7 +23,10 @@ def mul(a, b):
 
 @register_symbolic_function(name="divide", arity=2, fmt="({} / {})")
 def div(a, b):
-    return np.where(b != 0, a / b, a)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        result = np.true_divide(a, b)
+        result[~np.isfinite(result)] = 1  # replace inf/nan with 1
+        return result
 
 
 @register_symbolic_function(name="negate", arity=1, fmt="-({})")
@@ -58,3 +62,46 @@ def cos(a):
 @register_symbolic_function(name="sqrt", arity=1, fmt="sqrt({})")
 def sqrt(a):
     return np.sqrt(np.abs(a))
+
+
+@register_symbolic_function(name="log", arity=1, fmt="log({})")
+def log(a):
+    with np.errstate(divide="ignore", invalid="ignore"):
+        result = np.log(np.abs(a) + 1e-5)
+        result[~np.isfinite(result)] = 0
+        return result
+
+
+@register_symbolic_function(name="exp", arity=1, fmt="exp({})")
+def exp_fn(x):
+    clipped = np.clip(x, -20, 20)
+    return (
+        pd.Series(np.exp(clipped), index=x.index).infer_objects(copy=False)
+        if isinstance(x, pd.Series)
+        else np.exp(clipped)
+    )
+
+
+@register_symbolic_function(name="min", arity=2, fmt="min({}, {})")
+def min_fn(a, b):
+    return np.minimum(a, b)
+
+
+@register_symbolic_function(name="max", arity=2, fmt="max({}, {})")
+def max_fn(a, b):
+    return np.maximum(a, b)
+
+
+@register_symbolic_function(name="clip", arity=3, fmt="clip({}, {}, {})")
+def clip_fn(x, min_val, max_val):
+    result = np.clip(x, min_val, max_val)
+    return (
+        pd.Series(result, index=x.index).infer_objects(copy=False)
+        if isinstance(x, pd.Series)
+        else result
+    )
+
+
+@register_symbolic_function(name="square", arity=1, fmt="square({})")
+def square_fn(x):
+    return np.square(x)

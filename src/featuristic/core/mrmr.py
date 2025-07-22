@@ -108,7 +108,7 @@ class MaxRelevanceMinRedundancy:
         f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
 
         # 2. Precompute absolute correlation matrix (redundancy)
-        corr = X.corr().abs().clip(lower=FLOOR)
+        corr = X.corr().abs().clip(lower=FLOOR).infer_objects(copy=False)
         for col in corr.columns:
             corr.loc[col, col] = FLOOR  # Avoid self-correlation = 1
 

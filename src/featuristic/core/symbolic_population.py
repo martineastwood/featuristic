@@ -125,11 +125,22 @@ class BaseSymbolicPopulation:
         pd.Series
             The predicted values.
         """
-        if "children" not in node:
-            return X[node["feature_name"]]
-        return pd.Series(
-            node["func"](*[self._evaluate_df(c, X) for c in node["children"]])
-        )
+        try:
+            if "children" not in node:
+                return X[node["feature_name"]]
+            result = node["func"](*[self._evaluate_df(c, X) for c in node["children"]])
+            result = (
+                result
+                if isinstance(result, pd.Series)
+                else pd.Series(result, index=X.index)
+            )
+
+            if result.isna().any() or np.isinf(result).any():
+                return pd.Series(np.zeros(len(X)))  # fallback to neutral output
+            return result
+
+        except Exception:
+            return pd.Series(np.zeros(len(X)))  # on any error, fallback
 
     def _get_random_parent(self, fitness: List[float]) -> dict:
         """

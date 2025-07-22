@@ -1,6 +1,7 @@
-import featuristic as ft
-import pandas as pd
 import numpy as np
+import pandas as pd
+
+import featuristic as ft
 
 
 def test_random_prog():

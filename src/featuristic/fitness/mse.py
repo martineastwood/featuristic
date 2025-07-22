@@ -1,7 +1,8 @@
 from sklearn.metrics import mean_squared_error
+
+from featuristic.core.program import node_count
 from featuristic.fitness.registry import register_fitness
 from featuristic.fitness.utils import is_invalid_prediction
-from featuristic.core.program import node_count
 
 
 @register_fitness("mse")

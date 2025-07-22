@@ -1,8 +1,8 @@
 from sklearn.metrics import r2_score
 
 from featuristic.core.program import node_count
-from featuristic.fitness.utils import is_invalid_prediction
 from featuristic.fitness.registry import register_fitness
+from featuristic.fitness.utils import is_invalid_prediction
 
 
 @register_fitness("r2")

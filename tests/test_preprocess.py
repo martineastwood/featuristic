@@ -1,5 +1,6 @@
-import featuristic as ft
 import pandas as pd
+
+import featuristic as ft
 
 
 def test_preprocess():

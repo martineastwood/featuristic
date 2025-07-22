@@ -1,7 +1,8 @@
-import featuristic as ft
 import numpy as np
 import pandas as pd
 from pytest import approx
+
+import featuristic as ft
 
 
 def test_symbolic_addition():

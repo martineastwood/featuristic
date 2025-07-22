@@ -4,6 +4,8 @@ import random
 from typing import Dict, List
 
 import numpy as np
+from sympy import simplify, sympify
+from sympy.core.sympify import SympifyError
 
 
 def random_prog(
@@ -82,3 +84,24 @@ def render_prog(node: Dict) -> str:
 
     child_strings = [render_prog(child) for child in node["children"]]
     return node["format_str"].format(*child_strings)
+
+
+def simplify_prog_str(expr: str) -> str:
+    """
+    Simplify a symbolic string expression using SymPy.
+
+    Parameters
+    ----------
+    expr : str
+        The raw expression string (e.g., '(a + a) * 1')
+
+    Returns
+    -------
+    str
+        A simplified version of the expression.
+    """
+    try:
+        simplified = simplify(sympify(expr, evaluate=True))
+        return str(simplified)
+    except SympifyError:
+        return expr

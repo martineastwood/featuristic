@@ -1,6 +1,7 @@
-import featuristic as ft
-import pytest
 import pandas as pd
+import pytest
+
+import featuristic as ft
 
 
 def test_gfs():

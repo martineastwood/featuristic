@@ -1,9 +1,10 @@
-import featuristic as ft
-import pytest
+import numpy as np
 import pandas as pd
+import pytest
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
-import numpy as np
+
+import featuristic as ft
 
 
 def objective_function(X, y):

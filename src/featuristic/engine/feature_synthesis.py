@@ -5,32 +5,24 @@ from typing import Callable, List, Optional, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
-from tqdm import tqdm
-import numpy as np
 from sklearn.utils.multiclass import type_of_target
+from tqdm import tqdm
 
+from featuristic.core.models import ProgramFitness
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 from featuristic.core.preprocess import preprocess_data
-from featuristic.core.models import ProgramFitness
-from featuristic.fitness.registry import get_fitness
-from featuristic.core.program import node_count
-
-# from featuristic.synthesis.symbolic_functions import CustomSymbolicFunction
-from featuristic.core.program import render_prog
-from featuristic.core.registry import (
-    FUNCTION_REGISTRY,
-    SymbolicFunction,
-    get_symbolic_function,
-    list_symbolic_functions,
-)
+from featuristic.core.program import node_count, render_prog, simplify_prog_str
+from featuristic.core.registry import FUNCTION_REGISTRY, SymbolicFunction
 from featuristic.core.symbolic_population import (
     ParallelSymbolicPopulation,
     SerialSymbolicPopulation,
 )
 from featuristic.fitness.pearson import fitness_pearson
+from featuristic.fitness.registry import get_fitness
 
 
 class FeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -131,7 +123,6 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             Whether to print out aditional information
         """
         if functions is None:
-            # Use all registered symbolic functions
             self.functions = list(FUNCTION_REGISTRY.values())
         else:
             self.functions = []
@@ -142,7 +133,6 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                     )
                 self.functions.append(FUNCTION_REGISTRY[name])
 
-        # Optional: support legacy or user-defined symbolic functions
         if custom_functions is not None:
             self.functions.extend(custom_functions)
 
@@ -162,7 +152,6 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         self.len_hall_of_fame = self.num_features * 5
 
         self.population = None
-
         self.early_termination_iters = early_termination_iters
         self.early_termination_counter = 0
 
@@ -338,12 +327,10 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             if self.pbar:
                 pbar.update(1)
 
-            # update the hall of fame with the best programs from the current generation
             self._update_hall_of_fame(fitness)
 
             self.population.evolve(fitness, X_copy)
 
-        # select the best features using mrmr
         self._select_best_features(X_copy, y_copy)
 
         if self.verbose:
@@ -351,7 +338,6 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             print(f"Best program: {render_prog(best_prog)}")
             print(f"Best score: {global_best}")
 
-        # we've successfully finished the fit
         self.fit_called = True
 
         return self
@@ -432,12 +418,16 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         output = []
         for prog in self.hall_of_fame:
-            tmp = {
-                "name": prog.name,
-                "formula": render_prog(prog.individual),
-                "fitness": prog.fitness,
-            }
-            output.append(tmp)
+            formula = render_prog(prog.individual)
+            simplified_formula = simplify_prog_str(formula)
+            output.append(
+                {
+                    "name": prog.name,
+                    "formula": simplified_formula,
+                    "raw_formula": formula,
+                    "fitness": prog.fitness,
+                }
+            )
 
         return pd.DataFrame(output)
 
@@ -467,7 +457,6 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         ax2 = ax1.twinx()
 
-        # Plot Parsimony Coefficient
         ax1.plot(
             df["generation"],
             df["parsimony"],
