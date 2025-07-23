@@ -29,11 +29,11 @@ An evolutionary feature engineering library based on symbolic regression and gen
 
 Featuristic is an automated feature engineering tool powered by **Evolutionary Feature Synthesis (EFS)**. It evolves symbolic mathematical expressions to discover **high-quality, interpretable features** from your raw data.
 
-✅ Symbolic programs
-✅ Genetic programming
-✅ Parsimony-aware fitness
-✅ Maximum Relevance Minimum Redundancy (mRMR)
-✅ Scikit-learn compatible
+- ✅ Symbolic programs
+- ✅ Genetic programming
+- ✅ Parsimony-aware fitness
+- ✅ Maximum Relevance Minimum Redundancy (mRMR)
+- ✅ Scikit-learn compatible
 
 ---
 
