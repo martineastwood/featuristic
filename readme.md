@@ -87,12 +87,12 @@ X_selected = fs.fit_transform(X, y)
 ```python
 from featuristic import FeatureSynthesis, FeatureSelector
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import log_loss
 
 # Define a selector objective
 def objective(X_subset, y):
-    from sklearn.linear_model import LogisticRegression
     clf = LogisticRegression(max_iter=500).fit(X_subset, y)
     probs = clf.predict_proba(X_subset)
     return log_loss(y, probs)
