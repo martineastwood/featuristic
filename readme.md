@@ -70,7 +70,7 @@ efs.plot_history()
 
 ---
 
-## 🧩 Also Included
+## 🧩 Also Included
 
 ### `FeatureSelector`
 
