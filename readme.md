@@ -17,7 +17,7 @@
 
 </div>
 
-[Featuristic](https://www.featuristic.co.uk/) # 🧬 Featuristic
+# 🧬 Featuristic
 
 **Breeding Smarter Features.**
 
