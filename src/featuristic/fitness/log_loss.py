@@ -12,9 +12,9 @@ def fitness_logloss(program, parsimony, y_true, y_pred):
         return float("inf")
     try:
         if hasattr(y_pred, "index"):
-            y_pred = y_pred.clip(1e-8, 1 - 1e-8).infer_objects(copy=False)
+            y_pred = y_pred.clip(1e-8, 1 - 1e-8).astype(np.float64)
         else:
-            y_pred = np.clip(y_pred, 1e-8, 1 - 1e-8)
+            y_pred = np.clip(y_pred, 1e-8, 1 - 1e-8).astype(np.float64)
         score = log_loss(y_true, y_pred)
     except Exception:
         return float("inf")

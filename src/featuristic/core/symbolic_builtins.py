@@ -74,9 +74,9 @@ def log(a):
 
 @register_symbolic_function(name="exp", arity=1, fmt="exp({})")
 def exp_fn(x):
-    clipped = np.clip(x, -20, 20)
+    clipped = np.clip(x, -20, 20).astype(np.float64)
     return (
-        pd.Series(np.exp(clipped), index=x.index).infer_objects(copy=False)
+        pd.Series(np.exp(clipped), index=x.index).astype(np.float64)
         if isinstance(x, pd.Series)
         else np.exp(clipped)
     )
@@ -94,9 +94,9 @@ def max_fn(a, b):
 
 @register_symbolic_function(name="clip", arity=3, fmt="clip({}, {}, {})")
 def clip_fn(x, min_val, max_val):
-    result = np.clip(x, min_val, max_val)
+    result = np.clip(x, min_val, max_val).astype(np.float64)
     return (
-        pd.Series(result, index=x.index).infer_objects(copy=False)
+        pd.Series(result, index=x.index).astype(np.float64)
         if isinstance(x, pd.Series)
         else result
     )

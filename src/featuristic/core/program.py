@@ -1,6 +1,5 @@
 """Functions for manipulating the symbolic programs."""
 
-import random
 from typing import Dict, List
 
 import numpy as np
@@ -14,10 +13,10 @@ def random_prog(
     """
     Recursively generate a random symbolic program.
     """
-    if depth >= max_depth or random.random() < 0.3:
-        return {"feature_name": random.choice(feature_names)}
+    if depth >= max_depth or np.random.rand() < 0.3:
+        return {"feature_name": feature_names[np.random.randint(len(feature_names))]}
 
-    op = random.choice(operations)
+    op = operations[np.random.randint(len(operations))]
 
     return {
         "func": op.func,

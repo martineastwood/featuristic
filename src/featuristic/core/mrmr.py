@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.feature_selection import f_classif, f_regression
 from sklearn.utils.multiclass import type_of_target
 from tqdm import tqdm
+import numpy as np
 
 FLOOR: float = 1e-5  # Prevent division by zero and log(0)
 
@@ -108,7 +109,7 @@ class MaxRelevanceMinRedundancy:
         f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
 
         # 2. Precompute absolute correlation matrix (redundancy)
-        corr = X.corr().abs().clip(lower=FLOOR).infer_objects(copy=False)
+        corr = X.corr().abs().clip(lower=FLOOR).astype(np.float64)
         for col in corr.columns:
             corr.loc[col, col] = FLOOR  # Avoid self-correlation = 1
 
