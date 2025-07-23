@@ -23,7 +23,6 @@
 
 An evolutionary feature engineering library based on symbolic regression and genetic programming for interpretable, high-performance models.
 
----
 
 ## 🚀 What is Featuristic?
 
@@ -35,7 +34,6 @@ Featuristic is an automated feature engineering tool powered by **Evolutionary F
 - ✅ Maximum Relevance Minimum Redundancy (mRMR)
 - ✅ Scikit-learn compatible
 
----
 
 ## 🔧 Installation
 
@@ -50,8 +48,6 @@ git clone https://github.com/martineastwood/featuristic.git
 cd featuristic
 pip install -e .
 ```
-
----
 
 ## 🧪 Quickstart
 
@@ -68,8 +64,6 @@ efs.get_feature_info()
 efs.plot_history()
 ```
 
----
-
 ## 🧩 Also Included
 
 ### `FeatureSelector`
@@ -83,15 +77,12 @@ fs = FeatureSelector(objective_function=my_cost_fn)
 X_selected = fs.fit_transform(X, y)
 ```
 
----
-
 ## 🔌 Works Seamlessly With Scikit-learn:
 
 - `Pipeline`, `GridSearchCV`, `cross_val_score`
 - scikit-learn models (RandomForest, XGBoost, etc.)
 - Custom fitness functions and symbolic ops
 
----
 
 ## 📚 Documentation
 
@@ -103,15 +94,12 @@ X_selected = fs.fit_transform(X, y)
 - Fitness customization
 - Use in sklearn pipelines
 
----
 
 ## 🧠 Why Use Featuristic?
 
 - ✅ Produces human-readable feature formulas
 - ✅ Supports classification & regression
 - ✅ Requires no domain-specific heuristics
-
----
 
 ## 🛠️ Contributing
 
