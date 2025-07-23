@@ -84,6 +84,29 @@ X_selected = fs.fit_transform(X, y)
 - Custom fitness functions and symbolic ops
 
 
+```python
+from featuristic import FeatureSynthesis, FeatureSelector
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import log_loss
+
+# Define a selector objective
+def objective(X_subset, y):
+    from sklearn.linear_model import LogisticRegression
+    clf = LogisticRegression(max_iter=500).fit(X_subset, y)
+    probs = clf.predict_proba(X_subset)
+    return log_loss(y, probs)
+
+pipeline = Pipeline([
+    ("synthesis", FeatureSynthesis(num_features=20, max_generations=25)),
+    ("select", FeatureSelector(objective_function=objective, max_generations=30)),
+    ("model", GradientBoostingClassifier())
+])
+
+pipeline.fit(X, y)
+```
+
+
 ## 📚 Documentation
 
 [👉 Read the full docs](https://www.featuristic.co.uk/)
