@@ -127,6 +127,11 @@ class MaxRelevanceMinRedundancy:
                 redundancy = corr.loc[not_selected, selected].mean(axis=1).fillna(FLOOR)
                 score = f_stat.loc[not_selected] / redundancy
 
+            score = score[
+                score.index.isin(not_selected)
+            ]  # filter to valid candidates only
+            if score.empty:
+                break
             best = score.idxmax()
             selected.append(best)
             not_selected.remove(best)
