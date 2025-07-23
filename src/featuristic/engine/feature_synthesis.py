@@ -10,7 +10,7 @@ import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.multiclass import type_of_target
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from featuristic.core.models import ProgramFitness
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
@@ -21,7 +21,6 @@ from featuristic.core.symbolic_population import (
     ParallelSymbolicPopulation,
     SerialSymbolicPopulation,
 )
-from featuristic.fitness.pearson import fitness_pearson
 from featuristic.fitness.registry import get_fitness
 
 
@@ -202,6 +201,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         ------
         None
         """
+        if not self.hall_of_fame:
+            return
+
         population = SerialSymbolicPopulation(
             len(self.hall_of_fame),
             self.functions,
@@ -275,7 +277,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         global_best = sys.maxsize
         best_prog = None
 
-        if self.pbar:
+        pbar = None
+        if self.pbar and self.n_jobs == 1:
             pbar = tqdm(total=self.max_generations, desc="Creating new features...")
 
         for gen in range(self.max_generations):
@@ -297,13 +300,13 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.fitness_function, self.parsimony_coefficient, prediction, y_copy
             )
 
-            for prog, score in zip(self.population.population, score):
-
-                fitness.append(score)
-                if score < global_best:
-                    global_best = score
+            improved = False
+            for prog, s in zip(self.population.population, score):
+                fitness.append(s)
+                if s < global_best:
+                    global_best = s
                     best_prog = prog
-                    self.early_termination_counter = 0
+                    improved = True
 
             # update the history
             results = {
@@ -315,21 +318,30 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             }
             self.history.append(results)
 
+            if improved:
+                self.early_termination_counter = 0
+            else:
+                self.early_termination_counter += 1
+
             # check for early termination
-            self.early_termination_counter += 1
             if self.early_termination_counter >= self.early_termination_iters:
                 if self.verbose:
                     print(
-                        f"Early termination at iter {gen}, best error: {global_best:10.6f}"
+                        f"Early termination at generation {gen}, "
+                        f"no improvement for {self.early_termination_iters} generations. "
+                        f"Best error: {global_best:10.6f}"
                     )
                 break
 
-            if self.pbar:
+            if pbar:
                 pbar.update(1)
 
             self._update_hall_of_fame(fitness)
 
             self.population.evolve(fitness, X_copy)
+
+        if pbar:
+            pbar.close()
 
         self._select_best_features(X_copy, y_copy)
 

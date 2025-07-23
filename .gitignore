@@ -170,3 +170,4 @@ cython_debug/
 copy_files.py
 chatgpt_combined_output.txt
 scratch.ipynb
+roadmap.md

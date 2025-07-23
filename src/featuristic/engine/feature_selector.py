@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from featuristic.core.binary_population import (
     ParallelBinaryPopulation,
@@ -70,47 +70,43 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
 
     def _init_population(self, feature_count: int):
         """Initialize the population class based on parallel setting."""
-        PopulationCls = (
-            SerialBinaryPopulation if self.n_jobs == 1 else ParallelBinaryPopulation
-        )
-        self.population = PopulationCls(
-            self.population_size,
-            feature_count,
-            self.tournament_size,
-            self.crossover_proba,
-            self.mutation_proba,
-            n_jobs=self.n_jobs,
-        )
+        if self.n_jobs == 1:
+            self.population = SerialBinaryPopulation(
+                self.population_size,
+                feature_count,
+                tournament_size=self.tournament_size,
+                crossover_proba=self.crossover_proba,
+                mutation_proba=self.mutation_proba,
+            )
+        else:
+            self.population = ParallelBinaryPopulation(
+                self.population_size,
+                feature_count,
+                tournament_size=self.tournament_size,
+                crossover_proba=self.crossover_proba,
+                mutation_proba=self.mutation_proba,
+                n_jobs=self.n_jobs,
+            )
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
         self.num_genes = X.shape[1]
         self._init_population(self.num_genes)
 
-        pbar = (
-            tqdm(total=self.max_generations, desc="Evolving feature selection")
-            if self.pbar
-            else None
-        )
+        pbar = None
+        if self.pbar and self.n_jobs == 1:
+            pbar = tqdm(total=self.max_generations, desc="Evolving feature selection")
 
         for generation in range(self.max_generations):
             scores = self.population.evaluate(self.objective_function, X, y)
 
-            for genome, score in zip(self.population.population, scores):
-                if score < self.best_cost:
-                    self.best_cost = score
-                    self.best_genome = genome
-                    self.early_termination_counter = 0
-                else:
-                    self.early_termination_counter += 1
-
-            if self.early_termination_counter >= self.early_termination_iters:
-                if self.verbose:
-                    print(
-                        f"Early stopping at generation {generation}, best score: {self.best_cost:.6f}"
-                    )
-                break
-
-            self.population.evolve(scores)
+            min_score_in_gen = np.min(scores)
+            if min_score_in_gen < self.best_cost:
+                self.best_cost = min_score_in_gen
+                best_genome_idx = np.argmin(scores)
+                self.best_genome = self.population.population[best_genome_idx]
+                self.early_termination_counter = 0
+            else:
+                self.early_termination_counter += 1
 
             self.history.append(
                 {
@@ -122,6 +118,15 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
 
             if pbar:
                 pbar.update(1)
+
+            if self.early_termination_counter >= self.early_termination_iters:
+                if self.verbose:
+                    print(
+                        f"Early stopping at generation {generation}, best score: {self.best_cost:.6f}"
+                    )
+                break
+
+            self.population.evolve(scores)
 
         if pbar:
             pbar.close()

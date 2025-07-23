@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, "../src")
 
 project = "Featuristic"
-copyright = "2024, Martin Eastwood"
+copyright = "2025, Martin Eastwood"
 author = "Martin Eastwood"
 
 # -- General configuration ---------------------------------------------------
@@ -26,7 +26,7 @@ extensions = [
     "sphinx.ext.githubpages",
 ]
 
-autosummary_generate = True
+# autosummary_generate = True
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
@@ -45,8 +45,8 @@ html_sidebars = {
 }
 
 html_theme_options = {
-    "pygment_light_style": "tango",
-    "pygment_dark_style": "monokai",
+    "pygments_light_style": "tango",
+    "pygments_dark_style": "monokai",
     "icon_links": [
         {
             "name": "GitHub",
@@ -55,7 +55,14 @@ html_theme_options = {
             "type": "fontawesome",
         },
     ],
+    # "navbar_end": ["theme-switcher", "search-field"],
+    # "navbar_start": ["logo"],
+    "navbar_center": [],
+    "navbar_align": "right",
+    # "external_links": [],
+    # "header_links_before_dropdown": [],
 }
+
 
 # autosummary_generate = ["api_reference.rst"]
 
