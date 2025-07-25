@@ -5,7 +5,7 @@ from featuristic.fitness.registry import register_fitness
 from featuristic.fitness.utils import is_invalid_prediction
 
 
-@register_fitness("kendall_tau")
+@register_fitness("kendall")
 def fitness_kendall(program, parsimony, y_true, y_pred):
     if is_invalid_prediction(y_true, y_pred):
         return float("inf")
