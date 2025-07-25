@@ -19,6 +19,24 @@ def extract_constants(node, constants=None, indices=None):
     return constants, indices
 
 
+def round_constants_in_tree(node: dict, precision: int = 3) -> None:
+    """
+    Recursively round all constants (value nodes) in a symbolic program tree.
+
+    Parameters
+    ----------
+    node : dict
+        A symbolic program node (part of the tree).
+    precision : int
+        Number of decimal places to round to.
+    """
+    if "value" in node:
+        node["value"] = round(node["value"], precision)
+    if "children" in node:
+        for child in node["children"]:
+            round_constants_in_tree(child, precision)
+
+
 def optimize_constants(prog, X, y, loss_fn=None, maxiter=100):
     consts, const_nodes = extract_constants(prog)
     if not consts:
@@ -46,6 +64,8 @@ def optimize_constants(prog, X, y, loss_fn=None, maxiter=100):
         )
 
     for i, val in enumerate(result.x):
-        const_nodes[i]["value"] = val
+        const_nodes[i]["value"] = round(val, 3)
+
+    round_constants_in_tree(prog, precision=3)
 
     return prog

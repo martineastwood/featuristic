@@ -22,9 +22,9 @@ from featuristic.core.symbolic_population import (
     SerialSymbolicPopulation,
 )
 from featuristic.fitness.registry import get_fitness
-from featuristic.core.optimizer import optimize_constants
+from featuristic.core.optimizer import optimize_constants, round_constants_in_tree
 
-PARSINOMY_STRENGTH = 1.5
+PARSINOMY_STRENGTH = 3.0
 
 
 class FeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -364,7 +364,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.fitness_function, self.parsimony_coefficient, prediction, y_copy
             )
 
-            top_n = 5
+            top_n = 10
             top_indices = np.argsort(score)[:top_n]
             for idx in top_indices:
                 prog = self.population.population[idx]
