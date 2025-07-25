@@ -26,6 +26,7 @@ class BaseSymbolicPopulation:
         crossover_prob: float = 0.75,
         min_constant_val: float = -10.0,  # New parameter
         max_constant_val: float = 10.0,  # New parameter
+        include_constants: bool = True,  # New parameter
     ):
         """
         Initialize the population.
@@ -44,6 +45,8 @@ class BaseSymbolicPopulation:
             The minimum value for ephemeral random constants.
         max_constant_val : float
             The maximum value for ephemeral random constants.
+        include_constants : bool
+            Whether to include ephemeral random constants in generated programs.
         """
         self.population_size = population_size
         self.operations = operations
@@ -52,6 +55,7 @@ class BaseSymbolicPopulation:
         self.crossover_prob = crossover_prob
         self.min_constant_val = min_constant_val  # Store for later use in mutation
         self.max_constant_val = max_constant_val  # Store for later use in mutation
+        self.include_constants = include_constants  # Store for later use in mutation
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
@@ -69,6 +73,7 @@ class BaseSymbolicPopulation:
                 self.operations,
                 min_constant_val=self.min_constant_val,  # Pass new parameters
                 max_constant_val=self.max_constant_val,  # Pass new parameters
+                include_constants=self.include_constants,  # Pass new parameter
             )
             for _ in range(self.population_size)
         ]
@@ -201,6 +206,7 @@ class BaseSymbolicPopulation:
                 self.operations,
                 min_constant_val=self.min_constant_val,
                 max_constant_val=self.max_constant_val,
+                include_constants=self.include_constants,
             )
 
         child_count = len(xover_point1["children"])
@@ -232,6 +238,7 @@ class BaseSymbolicPopulation:
                 self.operations,
                 min_constant_val=self.min_constant_val,
                 max_constant_val=self.max_constant_val,
+                include_constants=self.include_constants,
             )
 
         # Otherwise mutate one child
@@ -243,6 +250,7 @@ class BaseSymbolicPopulation:
             self.operations,
             min_constant_val=self.min_constant_val,
             max_constant_val=self.max_constant_val,
+            include_constants=self.include_constants,
         )
         return offspring
 
@@ -299,6 +307,7 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
         crossover_prob: float = 0.75,
         min_constant_val: float = -10.0,
         max_constant_val: float = 10.0,
+        include_constants: bool = True,
     ):
         """
         Initialize the population class.
@@ -317,6 +326,7 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
             crossover_prob,
             min_constant_val,
             max_constant_val,
+            include_constants,
         )
 
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
@@ -400,6 +410,7 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
         n_jobs: int = -1,
         min_constant_val: float = -10.0,
         max_constant_val: float = 10.0,
+        include_constants: bool = True,
     ):
         """
         Initialize the population class.
@@ -420,6 +431,7 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
             crossover_prob,
             min_constant_val,
             max_constant_val,
+            include_constants,
         )
         self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
 

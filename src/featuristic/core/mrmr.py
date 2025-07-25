@@ -99,7 +99,9 @@ class MaxRelevanceMinRedundancy:
         List[str]
             The list of selected features.
         """
+        # Drop duplicate columns to avoid duplicate feature selection errors
         X = X.loc[:, X.nunique() > 1].dropna(axis=1)
+        X = X.loc[:, ~X.T.duplicated()]
 
         k = min(self.k, X.shape[1])
         if k == 0:
@@ -107,6 +109,9 @@ class MaxRelevanceMinRedundancy:
 
         # 1. Compute relevance scores
         f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
+        # Remove features with NaN f_stat
+        f_stat = f_stat.dropna()
+        X = X[f_stat.index]
 
         # 2. Precompute absolute correlation matrix (redundancy)
         corr = X.corr().abs().clip(lower=FLOOR).astype(np.float64)
@@ -135,7 +140,8 @@ class MaxRelevanceMinRedundancy:
                 break
             best = score.idxmax()
             selected.append(best)
-            not_selected.remove(best)
+            if best in not_selected:
+                not_selected.remove(best)
 
             if self.pbar:
                 pbar.update(1)

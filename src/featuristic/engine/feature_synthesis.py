@@ -56,6 +56,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         verbose: bool = False,
         min_constant_val: float = -10.0,
         max_constant_val: float = 10.0,
+        include_constants: bool = True,
     ):
         """
         Initialize the EFS Feature Synthesis.
@@ -130,6 +131,11 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         max_constant_val : float
             The maximum value for ephemeral random constants generated during
             program creation. Default is 10.0.
+
+        include_constants : bool
+            Whether to include ephemeral random constants in the generated programs.
+            If False, programs will only use input features and functions without
+            any constant values. Default is True.
         """
         if functions is None:
             self.functions = list(FUNCTION_REGISTRY.values())
@@ -184,8 +190,13 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.pbar = pbar
 
+        if min_constant_val > max_constant_val:
+            raise ValueError(
+                "min_constant_val must be less than or equal to max_constant_val."
+            )
         self.min_constant_val = min_constant_val
         self.max_constant_val = max_constant_val
+        self.include_constants = include_constants
 
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
@@ -224,14 +235,24 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             self.crossover_proba,
             self.min_constant_val,
             self.max_constant_val,
+            self.include_constants,
         )
 
         population.population = [x.individual for x in self.hall_of_fame]
         features = pd.DataFrame(population.evaluate(X)).T
 
-        features.columns = [f"feature_{i}" for i in range(self.len_hall_of_fame)]
+        num_evaluated_features = features.shape[1]
+        features.columns = [f"feature_{i}" for i in range(num_evaluated_features)]
 
-        for i in range(self.len_hall_of_fame):
+        # Filter hall of fame to only include successfully evaluated features
+        successfully_evaluated_indices = features.columns.str.replace(
+            "feature_", ""
+        ).astype(int)
+        self.hall_of_fame = [
+            self.hall_of_fame[i] for i in successfully_evaluated_indices
+        ]
+
+        for i in range(len(self.hall_of_fame)):
             self.hall_of_fame[i].name = f"feature_{i}"
 
         selected = (
@@ -258,6 +279,10 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         ------
         returns self
         """
+        if X is None or y is None or X.empty or y.empty:
+            raise ValueError("Input features and target must not be empty.")
+        if X.isnull().all().all() or y.isnull().all():
+            raise ValueError("Input features and target must not be all NaN.")
         X_copy, y_copy = preprocess_data(
             X.reset_index(drop=True), y.reset_index(drop=True)
         )
@@ -280,6 +305,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.crossover_proba,
                 self.min_constant_val,
                 self.max_constant_val,
+                self.include_constants,
             ).initialize(X_copy)
         else:
             self.population = ParallelSymbolicPopulation(
@@ -290,6 +316,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.n_jobs,
                 self.min_constant_val,
                 self.max_constant_val,
+                self.include_constants,
             ).initialize(X_copy)
 
         # loss value to minimize
@@ -400,6 +427,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.crossover_proba,
                 self.min_constant_val,
                 self.max_constant_val,
+                self.include_constants,
             )
         else:
             population = ParallelSymbolicPopulation(
@@ -410,6 +438,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.n_jobs,
                 self.min_constant_val,
                 self.max_constant_val,
+                self.include_constants,
             )
 
         population.population = [x.individual for x in self.hall_of_fame]

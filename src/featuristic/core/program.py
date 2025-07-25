@@ -15,15 +15,26 @@ def random_prog(
     max_depth: int = 3,
     min_constant_val: float = -10.0,  # New parameter for min constant value
     max_constant_val: float = 10.0,  # New parameter for max constant value
+    include_constants: bool = True,  # New parameter to control constant inclusion
 ) -> dict:
     """
     Recursively generate a random symbolic program.
     """
     if depth >= max_depth or np.random.rand() < 0.3:
-        if np.random.rand() < 0.15 and len(feature_names) > 0:
-            return {
-                "feature_name": feature_names[np.random.randint(len(feature_names))]
-            }
+        if not include_constants or (
+            np.random.rand() <= 0.1 and len(feature_names) > 0
+        ):
+            # If constants are disabled, always return a feature
+            # Otherwise, return a feature with 10% probability if features are available
+            if len(feature_names) > 0:
+                return {
+                    "feature_name": feature_names[np.random.randint(len(feature_names))]
+                }
+            # If no features available and constants disabled, continue to create function
+            elif not include_constants:
+                pass  # Continue to function creation below
+            else:
+                return {"value": np.random.uniform(min_constant_val, max_constant_val)}
         else:
             return {"value": np.random.uniform(min_constant_val, max_constant_val)}
 
@@ -42,6 +53,7 @@ def random_prog(
                 max_depth,
                 min_constant_val,
                 max_constant_val,
+                include_constants,
             )
             for _ in range(op.arity)
         ],
