@@ -49,7 +49,7 @@ cd featuristic
 pip install -e .
 ```
 
-## 🧪 Quickstart
+## 🧪 Quickstart Example: Symbolic Feature Engineering with Featuristic
 
 ```python
 from featuristic import FeatureSynthesis
@@ -64,7 +64,7 @@ efs.get_feature_info()
 efs.plot_history()
 ```
 
-## 🧩 Also Included
+## 🧩 Also Included in Featuristic
 
 ### `FeatureSelector`
 
@@ -77,7 +77,7 @@ fs = FeatureSelector(objective_function=my_cost_fn)
 X_selected = fs.fit_transform(X, y)
 ```
 
-## 🔌 Works Seamlessly With Scikit-learn:
+## 🔌 Featuristic Works Seamlessly With Scikit-learn:
 
 - `Pipeline`, `GridSearchCV`, `cross_val_score`
 - scikit-learn models (RandomForest, XGBoost, etc.)
@@ -105,7 +105,6 @@ pipeline = Pipeline([
 
 pipeline.fit(X, y)
 ```
-
 
 ## 📚 Documentation
 

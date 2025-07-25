@@ -1,3 +1,4 @@
+# File: program.py
 """Functions for manipulating the symbolic programs."""
 
 from typing import Dict, List
@@ -8,13 +9,23 @@ from sympy.core.sympify import SympifyError
 
 
 def random_prog(
-    depth: int, feature_names: List[str], operations: List, max_depth: int = 3
+    depth: int,
+    feature_names: List[str],
+    operations: List,
+    max_depth: int = 3,
+    min_constant_val: float = -10.0,  # New parameter for min constant value
+    max_constant_val: float = 10.0,  # New parameter for max constant value
 ) -> dict:
     """
     Recursively generate a random symbolic program.
     """
     if depth >= max_depth or np.random.rand() < 0.3:
-        return {"feature_name": feature_names[np.random.randint(len(feature_names))]}
+        if np.random.rand() < 0.15 and len(feature_names) > 0:
+            return {
+                "feature_name": feature_names[np.random.randint(len(feature_names))]
+            }
+        else:
+            return {"value": np.random.uniform(min_constant_val, max_constant_val)}
 
     op = operations[np.random.randint(len(operations))]
 
@@ -24,7 +35,14 @@ def random_prog(
         "format_str": op.format_str,
         "name": op.name,
         "children": [
-            random_prog(depth + 1, feature_names, operations, max_depth)
+            random_prog(
+                depth + 1,
+                feature_names,
+                operations,
+                max_depth,
+                min_constant_val,
+                max_constant_val,
+            )
             for _ in range(op.arity)
         ],
     }
@@ -33,12 +51,10 @@ def random_prog(
 def node_count(node: dict) -> int:
     """
     Count the number of nodes in the program.
-
     Parameters
     ----------
     node : dict
         The program to count.
-
     Returns
     -------
     int
@@ -54,7 +70,9 @@ def select_random_node(current: dict, parent: dict = None, depth: int = 0) -> di
     Recursively select a random node in the program.
     Falls back to returning the current node if traversal ends early.
     """
-    if "children" not in current or not current["children"]:
+    if (
+        "children" not in current
+    ):  # This handles both feature and constant nodes as terminals
         return current
 
     if np.random.randint(0, 10) < 2 * depth:
@@ -67,12 +85,10 @@ def select_random_node(current: dict, parent: dict = None, depth: int = 0) -> di
 def render_prog(node: Dict) -> str:
     """
     Render a program into a string representation.
-
     Parameters
     ----------
     node : dict
         A dictionary representing a program node.
-
     Returns
     -------
     str
@@ -80,6 +96,8 @@ def render_prog(node: Dict) -> str:
     """
     if "feature_name" in node:
         return node["feature_name"]
+    if "value" in node:  # Handle constant nodes
+        return str(round(node["value"], 3))  # Round for cleaner display
 
     child_strings = [render_prog(child) for child in node["children"]]
     return node["format_str"].format(*child_strings)
@@ -88,7 +106,6 @@ def render_prog(node: Dict) -> str:
 def simplify_prog_str(expr: str) -> str:
     """
     Simplify a symbolic string expression using SymPy.
-
     Parameters
     ----------
     expr : str

@@ -1,3 +1,4 @@
+# File: symbolic_population.py
 """The population module contains the classes for the population of programs in the
 genetic programming algorithm."""
 
@@ -23,31 +24,38 @@ class BaseSymbolicPopulation:
         operations: List,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
+        min_constant_val: float = -10.0,  # New parameter
+        max_constant_val: float = 10.0,  # New parameter
     ):
         """
         Initialize the population.
-
         Args
         ----
         population_size : int
-            The size of the population. The larger the population, the more
+            The size of the population.
+            The larger the population, the more
             likely the algorithm will find a good solution, but the longer it
             will take to run.
-
         operations : list
-            The list of functions to use in the programs. These are the
+            The list of functions to use in the programs.
+            These are the
             functions that the algorithm can use to create the programs with.
+        min_constant_val : float
+            The minimum value for ephemeral random constants.
+        max_constant_val : float
+            The maximum value for ephemeral random constants.
         """
         self.population_size = population_size
         self.operations = operations
         self.population = None
         self.tournament_size = tournament_size
         self.crossover_prob = crossover_prob
+        self.min_constant_val = min_constant_val  # Store for later use in mutation
+        self.max_constant_val = max_constant_val  # Store for later use in mutation
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
         Setup the initial population with simple, random programs.
-
         Args
         ----
         X : pd.DataFrame
@@ -55,7 +63,13 @@ class BaseSymbolicPopulation:
         """
         self.feature_names = X.columns.tolist()
         self.population = [
-            random_prog(0, self.feature_names, self.operations)
+            random_prog(
+                0,
+                self.feature_names,
+                self.operations,
+                min_constant_val=self.min_constant_val,  # Pass new parameters
+                max_constant_val=self.max_constant_val,  # Pass new parameters
+            )
             for _ in range(self.population_size)
         ]
         return self
@@ -63,12 +77,10 @@ class BaseSymbolicPopulation:
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
         """
         Evaluate the population against the dataframe of features.
-
         Args
         ----
         X : pd.DataFrame
             The dataframe with the features.
-
         return
         ------
         list
@@ -85,22 +97,17 @@ class BaseSymbolicPopulation:
     ) -> List[float]:
         """
         Compute the fitness of the population.
-
         Args
         ----
 
         fitness_func : callable
             The fitness function to use.
-
         parsimony_coefficient : float
             The parsimony coefficient.
-
         prediction : list
             The predicted values.
-
         y : pd.Series
             The true values.
-
         return
         ------
         list
@@ -111,23 +118,24 @@ class BaseSymbolicPopulation:
     def _evaluate_df(self, node: dict, X: pd.DataFrame) -> pd.Series:
         """
         Evaluate the program against the dataframe of features.
-
         Args
         ----
         node : dict
             The program to evaluate.
-
         X : pd.DataFrame
             The dataframe with the features.
-
         return
         ------
         pd.Series
             The predicted values.
         """
         try:
-            if "children" not in node:
+            if "feature_name" in node:  # Handle feature node
                 return X[node["feature_name"]]
+            if "value" in node:  # Handle constant node
+                # Return a Series of the constant value, with the same index as X
+                return pd.Series(node["value"], index=X.index, dtype=np.float64)
+
             result = node["func"](*[self._evaluate_df(c, X) for c in node["children"]])
             result = (
                 result
@@ -145,12 +153,10 @@ class BaseSymbolicPopulation:
     def _get_random_parent(self, fitness: List[float]) -> dict:
         """
         Select a random parent from the population using tournament selection.
-
         Args
         ----
         fitness : list
             The fitness values of the population.
-
         return
         ------
         dict
@@ -166,18 +172,14 @@ class BaseSymbolicPopulation:
     def _crossover(self, selected1: dict, selected2: dict, X: pd.DataFrame) -> dict:
         """
         Perform crossover mutation between two selected programs.
-
         Args
         ----
         selected1 : dict
             The first selected program.
-
         selected2 : dict
             The second selected program.
-
         X : pd.DataFrame
             The dataframe with the features.
-
         return
         ------
         dict
@@ -187,10 +189,19 @@ class BaseSymbolicPopulation:
         xover_point1 = select_random_node(offspring, None, 0)
         xover_point2 = select_random_node(selected2, None, 0)
 
+        # Handle mutation of constant or feature nodes at xover_point1
         if "children" not in xover_point1 or not isinstance(
             xover_point1["children"], list
         ):
-            return self._mutate(offspring, X)
+            # If xover_point1 is a terminal (feature or constant), replace it entirely
+            # with a new random program (which could be a constant or feature or function)
+            return random_prog(
+                0,
+                self.feature_names,
+                self.operations,
+                min_constant_val=self.min_constant_val,
+                max_constant_val=self.max_constant_val,
+            )
 
         child_count = len(xover_point1["children"])
         child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count)
@@ -200,29 +211,38 @@ class BaseSymbolicPopulation:
     def _mutate(self, selected: dict, X: pd.DataFrame) -> dict:
         """
         Mutate the selected program by replacing a random node with a new random program.
-
         Args
         ----
         selected : dict
             The selected program to mutate.
-
         X : pd.DataFrame
             The dataframe with the features.
         """
         offspring = deepcopy(selected)
         mutate_point = select_random_node(offspring, None, 0)
 
-        # Replace entire node if it's terminal
+        # Replace entire node if it's terminal (feature or constant)
         if "children" not in mutate_point or not isinstance(
             mutate_point["children"], list
         ):
-            return random_prog(0, self.feature_names, self.operations)
+            # Replace terminal node with a new random program (which could be a feature, constant, or function)
+            return random_prog(
+                0,
+                self.feature_names,
+                self.operations,
+                min_constant_val=self.min_constant_val,
+                max_constant_val=self.max_constant_val,
+            )
 
         # Otherwise mutate one child
         child_count = len(mutate_point["children"])
         child_idx = 0 if child_count <= 1 else np.random.randint(0, child_count)
         mutate_point["children"][child_idx] = random_prog(
-            0, self.feature_names, self.operations
+            0,
+            self.feature_names,
+            self.operations,
+            min_constant_val=self.min_constant_val,
+            max_constant_val=self.max_constant_val,
         )
         return offspring
 
@@ -234,10 +254,8 @@ class BaseSymbolicPopulation:
         ----
         fitness : list
             The fitness values of the population.
-
         X : pd.DataFrame
             The dataframe with the features.
-
         return
         ------
         dict
@@ -246,19 +264,19 @@ class BaseSymbolicPopulation:
         parent1 = self._get_random_parent(fitness)
         if np.random.uniform() < self.crossover_prob:
             parent2 = self._get_random_parent(fitness)
+            # Pass min/max constant values to crossover as it might call random_prog
             return self._crossover(parent1, parent2, X)
 
+        # Pass min/max constant values to mutate as it will call random_prog
         return self._mutate(parent1, X)
 
     def evolve(self, fitness: List[float], X: pd.DataFrame) -> Self:
         """
         Evolve the population by creating a new generation of programs.
-
         Args
         ----
         fitness : list
             The fitness values of the population.
-
         X : pd.DataFrame
         """
         self.population = [
@@ -279,20 +297,27 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
         operations: List,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
+        min_constant_val: float = -10.0,
+        max_constant_val: float = 10.0,
     ):
         """
         Initialize the population class.
-
         Args
         ----
 
         population_size : int
             The size of the population.
-
         operations : list
             The list of functions to use in the programs.
         """
-        super().__init__(population_size, operations, tournament_size, crossover_prob)
+        super().__init__(
+            population_size,
+            operations,
+            tournament_size,
+            crossover_prob,
+            min_constant_val,
+            max_constant_val,
+        )
 
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
         """
@@ -309,22 +334,17 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
     ) -> List[float]:
         """
         Compute the fitness of the population.
-
         Args
         ----
 
         fitness_func : callable
             The fitness function to use.
-
         parsimony_coefficient : float
             The parsimony coefficient.
-
         prediction : list
             The predicted values.
-
         y : pd.Series
             The true values.
-
         return
         ------
         list
@@ -346,10 +366,8 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
         ----
         scores : list
             The fitness scores.
-
         parsimony_coefficient : float
             The parsimony coefficient.
-
         return
         ------
         list
@@ -380,30 +398,39 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
         n_jobs: int = -1,
+        min_constant_val: float = -10.0,
+        max_constant_val: float = 10.0,
     ):
         """
         Initialize the population class.
-
         Args
         ----
 
         population_size : int
             The size of the population.
-
         operations : list
             The list of functions to use in the programs.
-
         n_jobs : int
             The number of jobs to use in the parallel evaluation.
         """
-        super().__init__(population_size, operations, tournament_size, crossover_prob)
-        n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+        super().__init__(
+            population_size,
+            operations,
+            tournament_size,
+            crossover_prob,
+            min_constant_val,
+            max_constant_val,
+        )
+        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
 
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
         """
-        Evaluate the population against the current program. This is done in parallel.
+        Evaluate the population against the current program.
+        This is done in parallel.
         """
-        return Parallel(n_jobs=cpu_count())(
+        return Parallel(
+            n_jobs=self.n_jobs
+        )(  # Use self.n_jobs instead of cpu_count() directly
             delayed(self._evaluate_df)(prog, X) for prog in self.population
         )
 
@@ -416,28 +443,23 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
     ) -> List[float]:
         """
         Compute the fitness of the population.
-
         Args
         ----
 
         fitness_func : callable
             The fitness function to use.
-
         parsimony_coefficient : float
             The parsimony coefficient.
-
         prediction : list
             The predicted values.
-
         y : pd.Series
             The true values.
-
         return
         ------
         list
             The fitness of the population.
         """
-        return Parallel(n_jobs=cpu_count())(
+        return Parallel(n_jobs=self.n_jobs)(  # Use self.n_jobs
             delayed(fitness_func)(prog, parsimony_coefficient, y, pred)
             for prog, pred in zip(self.population, prediction)
         )
@@ -447,15 +469,12 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
     ) -> List[float]:
         """
         Apply the parsimony coefficient to the fitness scores.
-
         Args
         ----
         scores : list
             The fitness scores.
-
         parsimony_coefficient : float
             The parsimony coefficient.
-
         return
         ------
         list
@@ -467,7 +486,7 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
             loss = loss / penalty
             return -loss
 
-        return Parallel(n_jobs=cpu_count())(
+        return Parallel(n_jobs=self.n_jobs)(  # Use self.n_jobs
             delayed(_parsimony_coefficient)(score, prog)
             for score, prog in zip(scores, self.population)
         )

@@ -100,8 +100,3 @@ def clip_fn(x, min_val, max_val):
         if isinstance(x, pd.Series)
         else result
     )
-
-
-@register_symbolic_function(name="square", arity=1, fmt="square({})")
-def square_fn(x):
-    return np.square(x)

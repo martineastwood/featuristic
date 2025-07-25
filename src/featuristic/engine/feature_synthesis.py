@@ -54,6 +54,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         n_jobs: int = -1,
         pbar: bool = True,
         verbose: bool = False,
+        min_constant_val: float = -10.0,
+        max_constant_val: float = 10.0,
     ):
         """
         Initialize the EFS Feature Synthesis.
@@ -120,6 +122,14 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         verbose : bool
             Whether to print out aditional information
+
+        min_constant_val : float
+            The minimum value for ephemeral random constants generated during
+            program creation. Default is -10.0.
+
+        max_constant_val : float
+            The maximum value for ephemeral random constants generated during
+            program creation. Default is 10.0.
         """
         if functions is None:
             self.functions = list(FUNCTION_REGISTRY.values())
@@ -174,6 +184,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.pbar = pbar
 
+        self.min_constant_val = min_constant_val
+        self.max_constant_val = max_constant_val
+
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
             current_fitnesses = [x.fitness for x in self.hall_of_fame]
@@ -209,6 +222,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             self.functions,
             self.tournament_size,
             self.crossover_proba,
+            self.min_constant_val,
+            self.max_constant_val,
         )
 
         population.population = [x.individual for x in self.hall_of_fame]
@@ -263,6 +278,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.functions,
                 self.tournament_size,
                 self.crossover_proba,
+                self.min_constant_val,
+                self.max_constant_val,
             ).initialize(X_copy)
         else:
             self.population = ParallelSymbolicPopulation(
@@ -271,11 +288,15 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.tournament_size,
                 self.crossover_proba,
                 self.n_jobs,
+                self.min_constant_val,
+                self.max_constant_val,
             ).initialize(X_copy)
 
         # loss value to minimize
         global_best = sys.maxsize
-        best_prog = None
+        best_prog = self.population.population[
+            0
+        ]  # Initialize to first program to avoid None
 
         pbar = None
         if self.pbar and self.n_jobs == 1:
@@ -377,6 +398,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.functions,
                 self.tournament_size,
                 self.crossover_proba,
+                self.min_constant_val,
+                self.max_constant_val,
             )
         else:
             population = ParallelSymbolicPopulation(
@@ -385,6 +408,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.tournament_size,
                 self.crossover_proba,
                 self.n_jobs,
+                self.min_constant_val,
+                self.max_constant_val,
             )
 
         population.population = [x.individual for x in self.hall_of_fame]
