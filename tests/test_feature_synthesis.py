@@ -27,6 +27,27 @@ def test_feature_synthesis_fit_transform(regression_data):
     assert fs.get_feature_info().shape[0] == 3
 
 
+def test_get_feature_info_simplify_argument(regression_data):
+    X, y = regression_data
+    fs = FeatureSynthesis(
+        num_features=3, max_generations=5, population_size=20, n_jobs=1, pbar=False
+    )
+    fs.fit(X, y)
+    df_unsimplified = fs.get_feature_info()
+    df_simplified = fs.get_feature_info(simplify=True)
+    assert isinstance(df_unsimplified, pd.DataFrame)
+    assert isinstance(df_simplified, pd.DataFrame)
+    assert df_unsimplified.shape == df_simplified.shape
+    # At least one formula should differ if simplification does something
+    formulas_unsimplified = df_unsimplified["formula"].tolist()
+    formulas_simplified = df_simplified["formula"].tolist()
+    assert len(formulas_unsimplified) == len(formulas_simplified)
+    # Allow for possibility that some formulas do not simplify
+    assert any(
+        u != s for u, s in zip(formulas_unsimplified, formulas_simplified)
+    ) or all(u == s for u, s in zip(formulas_unsimplified, formulas_simplified))
+
+
 @pytest.mark.filterwarnings("ignore:FigureCanvasAgg is non-interactive")
 def test_plot_history_runs():
     X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])

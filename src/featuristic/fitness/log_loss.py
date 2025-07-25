@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics import log_loss
 
-from featuristic.core.program import node_count
+from featuristic.core.program import weighted_node_count
 from featuristic.fitness.registry import register_fitness
 from featuristic.fitness.utils import is_invalid_prediction
 
@@ -18,5 +18,5 @@ def fitness_logloss(program, parsimony, y_true, y_pred):
         score = log_loss(y_true, y_pred)
     except Exception:
         return float("inf")
-    penalty = node_count(program) ** parsimony
+    penalty = weighted_node_count(program) ** parsimony
     return score * penalty

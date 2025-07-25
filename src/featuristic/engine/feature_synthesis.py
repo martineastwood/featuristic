@@ -22,6 +22,9 @@ from featuristic.core.symbolic_population import (
     SerialSymbolicPopulation,
 )
 from featuristic.fitness.registry import get_fitness
+from featuristic.core.optimizer import optimize_constants
+
+PARSINOMY_STRENGTH = 1.5
 
 
 class FeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -57,6 +60,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         min_constant_val: float = -10.0,
         max_constant_val: float = 10.0,
         include_constants: bool = True,
+        optimize_constants: bool = True,
+        constant_optimization_maxiter: int = 100,
     ):
         """
         Initialize the EFS Feature Synthesis.
@@ -136,6 +141,12 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             Whether to include ephemeral random constants in the generated programs.
             If False, programs will only use input features and functions without
             any constant values. Default is True.
+
+        optimize_constants : bool
+            Whether to optimize the constants in the generated programs. Default is True.
+
+        constant_optimization_maxiter : int
+            The maximum number of iterations for the constant optimization. Default is 100.
         """
         if functions is None:
             self.functions = list(FUNCTION_REGISTRY.values())
@@ -197,6 +208,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         self.min_constant_val = min_constant_val
         self.max_constant_val = max_constant_val
         self.include_constants = include_constants
+
+        self.optimize_constants = optimize_constants
+        self.constant_optimization_maxiter = constant_optimization_maxiter
 
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
@@ -340,10 +354,32 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
             if self.adaptive_parsimony and self._initial_avg_size > 0:
                 avg_size = np.mean([node_count(p) for p in self.population.population])
-                self.parsimony_coefficient = self._base_parsimony * (
-                    avg_size / self._initial_avg_size
+                self.parsimony_coefficient = (
+                    self._base_parsimony
+                    * (avg_size / self._initial_avg_size)
+                    * PARSINOMY_STRENGTH
                 )
 
+            score = self.population.compute_fitness(
+                self.fitness_function, self.parsimony_coefficient, prediction, y_copy
+            )
+
+            top_n = 5
+            top_indices = np.argsort(score)[:top_n]
+            for idx in top_indices:
+                prog = self.population.population[idx]
+                loss_fn = lambda y_true, y_pred: self.fitness_function(
+                    prog, self.parsimony_coefficient, y_true, y_pred
+                )
+                self.population.population[idx] = optimize_constants(
+                    prog,
+                    X,
+                    y,
+                    loss_fn=loss_fn,
+                    maxiter=self.constant_optimization_maxiter,
+                )
+
+            prediction = self.population.evaluate(X_copy)
             score = self.population.compute_fitness(
                 self.fitness_function, self.parsimony_coefficient, prediction, y_copy
             )
@@ -470,7 +506,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         self.fit(X, y)
         return self.transform(X, y)
 
-    def get_feature_info(self) -> pd.DataFrame:
+    def get_feature_info(self, simplify: bool = True) -> pd.DataFrame:
         """
         Get the information about the best programs found.
 
@@ -485,7 +521,10 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         output = []
         for prog in self.hall_of_fame:
             formula = render_prog(prog.individual)
-            simplified_formula = simplify_prog_str(formula)
+            if simplify:
+                simplified_formula = simplify_prog_str(formula)
+            else:
+                simplified_formula = formula
             output.append(
                 {
                     "name": prog.name,

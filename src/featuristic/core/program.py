@@ -4,8 +4,10 @@
 from typing import Dict, List
 
 import numpy as np
+import pandas as pd
 from sympy import simplify, sympify
 from sympy.core.sympify import SympifyError
+from featuristic.core.registry import FUNCTION_REGISTRY
 
 
 def random_prog(
@@ -77,6 +79,31 @@ def node_count(node: dict) -> int:
     return sum((node_count(c) for c in node["children"]))
 
 
+def weighted_node_count(node: dict, const_weight: float = 1.25) -> int:
+    """
+    Count nodes in a program tree with optional heavier weight for constants.
+
+    Parameters
+    ----------
+    node : dict
+        A symbolic expression tree node.
+    const_weight : float
+        The weight to assign to constant leaf nodes.
+
+    Returns
+    -------
+    int
+        Weighted count of nodes.
+    """
+    if "value" in node:
+        return const_weight
+    if "children" not in node:
+        return 1  # Feature or operation
+    return 1 + sum(
+        weighted_node_count(child, const_weight) for child in node["children"]
+    )
+
+
 def select_random_node(current: dict, parent: dict = None, depth: int = 0) -> dict:
     """
     Recursively select a random node in the program.
@@ -133,3 +160,14 @@ def simplify_prog_str(expr: str) -> str:
         return str(simplified)
     except SympifyError:
         return expr
+
+
+def evaluate_prog(prog, X):
+    if "value" in prog:
+        return pd.Series(prog["value"], index=X.index)
+    if "feature" in prog:
+        return X.iloc[:, prog["feature"]]
+    if "op" in prog:
+        func = FUNCTION_REGISTRY[prog["op"]]
+        args = [evaluate_prog(c, X) for c in prog["children"]]
+        return func(*args)

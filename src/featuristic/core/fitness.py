@@ -8,7 +8,7 @@ import pandas as pd
 import scipy
 from scipy.stats import pearsonr
 
-from .program import node_count
+from .program import weighted_node_count
 
 
 def fitness_pearson(
@@ -44,6 +44,6 @@ def fitness_pearson(
             return sys.maxsize
 
         loss = abs(pearsonr(y_true, y_pred).statistic)
-        penalty = node_count(program) ** parsimony
+        penalty = weighted_node_count(program) ** parsimony
         loss /= penalty
         return -loss
