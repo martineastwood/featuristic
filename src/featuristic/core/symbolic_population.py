@@ -1,5 +1,5 @@
 # File: symbolic_population.py
-"""The population module contains the classes for the population of programs in the
+"""The population module contains the class for the population of programs in the
 genetic programming algorithm."""
 
 from copy import deepcopy
@@ -9,13 +9,13 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, cpu_count, delayed
 
-from featuristic.core.program import node_count, random_prog, select_random_node
+from featuristic.core.program import random_prog, select_random_node
 
 
-class BaseSymbolicPopulation:
+class SymbolicPopulation:
     """
     A class to represent the population of symbolic programs in the
-    genetic programming algorithm.
+    genetic programming algorithm. Supports both serial and parallel processing.
     """
 
     def __init__(
@@ -24,6 +24,7 @@ class BaseSymbolicPopulation:
         operations: List,
         tournament_size: int = 3,
         crossover_prob: float = 0.75,
+        n_jobs: int = 1,
         min_constant_val: float = -10.0,
         max_constant_val: float = 10.0,
         include_constants: bool = True,
@@ -33,12 +34,20 @@ class BaseSymbolicPopulation:
     ):
         """
         Initialize the population.
+
         Args
         ----
         population_size : int
             The size of the population.
         operations : list
             The list of functions to use in the programs.
+        tournament_size : int
+            The size of the tournament for parent selection.
+        crossover_prob : float
+            Probability of crossover vs mutation.
+        n_jobs : int
+            Number of parallel jobs to run. If n_jobs=1, processing is done serially.
+            If n_jobs=-1, all CPUs are used.
         min_constant_val : float
             The minimum value for ephemeral random constants.
         max_constant_val : float
@@ -57,12 +66,14 @@ class BaseSymbolicPopulation:
         self.population = None
         self.tournament_size = tournament_size
         self.crossover_prob = crossover_prob
+        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
         self.min_constant_val = min_constant_val
         self.max_constant_val = max_constant_val
         self.include_constants = include_constants
         self.const_prob = const_prob
         self.stop_prob = stop_prob
         self.max_depth = max_depth
+        self.feature_names = None
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
@@ -88,8 +99,14 @@ class BaseSymbolicPopulation:
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
         """
         Evaluate the population against the dataframe of features.
+        Uses parallel processing if n_jobs > 1, otherwise serial.
         """
-        raise NotImplementedError
+        if self.n_jobs > 1:
+            return Parallel(n_jobs=self.n_jobs)(
+                delayed(self._evaluate_df)(prog, X) for prog in self.population
+            )
+        else:
+            return [self._evaluate_df(prog, X) for prog in self.population]
 
     def compute_fitness(
         self,
@@ -100,8 +117,18 @@ class BaseSymbolicPopulation:
     ) -> List[float]:
         """
         Compute the fitness of the population.
+        Uses parallel processing if n_jobs > 1, otherwise serial.
         """
-        raise NotImplementedError
+        if self.n_jobs > 1:
+            return Parallel(n_jobs=self.n_jobs)(
+                delayed(fitness_func)(prog, parsimony_coefficient, y, pred)
+                for prog, pred in zip(self.population, prediction)
+            )
+        else:
+            return [
+                fitness_func(prog, parsimony_coefficient, y, pred)
+                for prog, pred in zip(self.population, prediction)
+            ]
 
     def _evaluate_df(self, node: dict, X: pd.DataFrame) -> pd.Series:
         """
@@ -217,10 +244,18 @@ class BaseSymbolicPopulation:
         return self
 
 
-class SerialSymbolicPopulation(BaseSymbolicPopulation):
+# For backward compatibility
+class BaseSymbolicPopulation(SymbolicPopulation):
     """
-    A class to represent the population of programs in the genetic programming algorithm where
-    the programs are evaluated serially.
+    Alias for SymbolicPopulation for backward compatibility.
+    """
+
+    pass
+
+
+class SerialSymbolicPopulation(SymbolicPopulation):
+    """
+    Alias for SymbolicPopulation with n_jobs=1 for backward compatibility.
     """
 
     def __init__(
@@ -241,34 +276,19 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
             operations,
             tournament_size,
             crossover_prob,
-            min_constant_val,
-            max_constant_val,
-            include_constants,
-            const_prob,
-            stop_prob,
-            max_depth,
+            n_jobs=1,  # Force serial processing
+            min_constant_val=min_constant_val,
+            max_constant_val=max_constant_val,
+            include_constants=include_constants,
+            const_prob=const_prob,
+            stop_prob=stop_prob,
+            max_depth=max_depth,
         )
 
-    def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
-        return [self._evaluate_df(prog, X) for prog in self.population]
 
-    def compute_fitness(
-        self,
-        fitness_func: Callable,
-        parsimony_coefficient: float,
-        prediction,
-        y: pd.Series,
-    ) -> List[float]:
-        return [
-            fitness_func(prog, parsimony_coefficient, y, pred)
-            for prog, pred in zip(self.population, prediction)
-        ]
-
-
-class ParallelSymbolicPopulation(BaseSymbolicPopulation):
+class ParallelSymbolicPopulation(SymbolicPopulation):
     """
-    A class to represent the population of programs in the genetic programming algorithm where
-    the programs are evaluated in parallel via joblib.
+    Alias for SymbolicPopulation with n_jobs > 1 for backward compatibility.
     """
 
     def __init__(
@@ -290,28 +310,11 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
             operations,
             tournament_size,
             crossover_prob,
-            min_constant_val,
-            max_constant_val,
-            include_constants,
-            const_prob,
-            stop_prob,
-            max_depth,
-        )
-        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
-
-    def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
-        return Parallel(n_jobs=self.n_jobs)(
-            delayed(self._evaluate_df)(prog, X) for prog in self.population
-        )
-
-    def compute_fitness(
-        self,
-        fitness_func: Callable,
-        parsimony_coefficient: float,
-        prediction,
-        y: pd.Series,
-    ) -> List[float]:
-        return Parallel(n_jobs=self.n_jobs)(
-            delayed(fitness_func)(prog, parsimony_coefficient, y, pred)
-            for prog, pred in zip(self.population, prediction)
+            n_jobs=n_jobs,  # Use specified n_jobs or -1 (all CPUs)
+            min_constant_val=min_constant_val,
+            max_constant_val=max_constant_val,
+            include_constants=include_constants,
+            const_prob=const_prob,
+            stop_prob=stop_prob,
+            max_depth=max_depth,
         )

@@ -16,10 +16,7 @@ from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm.auto import tqdm
 
-from featuristic.core.binary_population import (
-    ParallelBinaryPopulation,
-    SerialBinaryPopulation,
-)
+from featuristic.core.binary_population import BinaryPopulation
 
 
 class FeatureSelector(BaseEstimator, TransformerMixin):
@@ -69,24 +66,15 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         self.is_fitted_ = False
 
     def _init_population(self, feature_count: int):
-        """Initialize the population class based on parallel setting."""
-        if self.n_jobs == 1:
-            self.population = SerialBinaryPopulation(
-                self.population_size,
-                feature_count,
-                tournament_size=self.tournament_size,
-                crossover_proba=self.crossover_proba,
-                mutation_proba=self.mutation_proba,
-            )
-        else:
-            self.population = ParallelBinaryPopulation(
-                self.population_size,
-                feature_count,
-                tournament_size=self.tournament_size,
-                crossover_proba=self.crossover_proba,
-                mutation_proba=self.mutation_proba,
-                n_jobs=self.n_jobs,
-            )
+        """Initialize the population class."""
+        self.population = BinaryPopulation(
+            self.population_size,
+            feature_count,
+            tournament_size=self.tournament_size,
+            crossover_proba=self.crossover_proba,
+            mutation_proba=self.mutation_proba,
+            n_jobs=self.n_jobs,
+        )
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
         self.num_genes = X.shape[1]

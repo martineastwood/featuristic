@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from featuristic.core.binary_population import SerialBinaryPopulation
+from featuristic.core.binary_population import BinaryPopulation
 from featuristic import FeatureSynthesis
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 
@@ -21,7 +21,7 @@ def dummy_cost(X, y):
 def setup_population():
     def _setup(seed):
         set_seed(seed)
-        pop = SerialBinaryPopulation(population_size=10, feature_count=5)
+        pop = BinaryPopulation(population_size=10, feature_count=5)
         return pop
 
     return _setup

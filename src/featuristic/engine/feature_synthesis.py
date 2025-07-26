@@ -17,10 +17,7 @@ from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 from featuristic.core.preprocess import preprocess_data
 from featuristic.core.program import node_count, render_prog, simplify_prog_str
 from featuristic.core.registry import FUNCTION_REGISTRY, SymbolicFunction
-from featuristic.core.symbolic_population import (
-    ParallelSymbolicPopulation,
-    SerialSymbolicPopulation,
-)
+from featuristic.core.symbolic_population import SymbolicPopulation
 from featuristic.fitness.registry import get_fitness
 from featuristic.core.optimizer import optimize_constants
 
@@ -258,17 +255,18 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         if not self.hall_of_fame:
             return
 
-        population = SerialSymbolicPopulation(
+        population = SymbolicPopulation(
             len(self.hall_of_fame),
             self.functions,
             self.tournament_size,
             self.crossover_proba,
-            self.min_constant_val,
-            self.max_constant_val,
-            self.include_constants,
-            self.const_prob,
-            self.stop_prob,
-            self.max_depth,
+            n_jobs=1,  # Use serial processing for feature selection
+            min_constant_val=self.min_constant_val,
+            max_constant_val=self.max_constant_val,
+            include_constants=self.include_constants,
+            const_prob=self.const_prob,
+            stop_prob=self.stop_prob,
+            max_depth=self.max_depth,
         )
 
         population.population = [x.individual for x in self.hall_of_fame]
@@ -330,33 +328,19 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 raise ValueError(f"Unsupported target type: {target_type}")
 
         # Initialize the population
-        if self.n_jobs == 1:
-            self.population = SerialSymbolicPopulation(
-                self.population_size,
-                self.functions,
-                self.tournament_size,
-                self.crossover_proba,
-                self.min_constant_val,
-                self.max_constant_val,
-                self.include_constants,
-                self.const_prob,
-                self.stop_prob,
-                self.max_depth,
-            ).initialize(X_copy)
-        else:
-            self.population = ParallelSymbolicPopulation(
-                self.population_size,
-                self.functions,
-                self.tournament_size,
-                self.crossover_proba,
-                self.n_jobs,
-                self.min_constant_val,
-                self.max_constant_val,
-                self.include_constants,
-                self.const_prob,
-                self.stop_prob,
-                self.max_depth,
-            ).initialize(X_copy)
+        self.population = SymbolicPopulation(
+            self.population_size,
+            self.functions,
+            self.tournament_size,
+            self.crossover_proba,
+            n_jobs=self.n_jobs,
+            min_constant_val=self.min_constant_val,
+            max_constant_val=self.max_constant_val,
+            include_constants=self.include_constants,
+            const_prob=self.const_prob,
+            stop_prob=self.stop_prob,
+            max_depth=self.max_depth,
+        ).initialize(X_copy)
 
         # loss value to minimize
         global_best = float("inf")
@@ -480,33 +464,19 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         if not self.fit_called:
             raise ValueError("Must call fit before transform")
 
-        if self.n_jobs == 1:
-            population = SerialSymbolicPopulation(
-                len(self.hall_of_fame),
-                self.functions,
-                self.tournament_size,
-                self.crossover_proba,
-                self.min_constant_val,
-                self.max_constant_val,
-                self.include_constants,
-                self.const_prob,
-                self.stop_prob,
-                self.max_depth,
-            )
-        else:
-            population = ParallelSymbolicPopulation(
-                len(self.hall_of_fame),
-                self.functions,
-                self.tournament_size,
-                self.crossover_proba,
-                self.n_jobs,
-                self.min_constant_val,
-                self.max_constant_val,
-                self.include_constants,
-                self.const_prob,
-                self.stop_prob,
-                self.max_depth,
-            )
+        population = SymbolicPopulation(
+            len(self.hall_of_fame),
+            self.functions,
+            self.tournament_size,
+            self.crossover_proba,
+            n_jobs=self.n_jobs,
+            min_constant_val=self.min_constant_val,
+            max_constant_val=self.max_constant_val,
+            include_constants=self.include_constants,
+            const_prob=self.const_prob,
+            stop_prob=self.stop_prob,
+            max_depth=self.max_depth,
+        )
 
         population.population = [x.individual for x in self.hall_of_fame]
         output = pd.DataFrame(population.evaluate(X.reset_index(drop=True))).T
