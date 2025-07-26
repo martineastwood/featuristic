@@ -4,8 +4,6 @@ Binary population for Evolutionary Feature Synthesis (EFS).
 Defines population classes for feature selection using binary genetic representations.
 """
 
-import copy
-import sys
 from abc import ABC, abstractmethod
 from typing import Callable, List, Tuple
 
@@ -54,7 +52,7 @@ class BaseBinaryPopulation(ABC):
         self, cost_func: Callable, X: pd.DataFrame, y: pd.Series, genome: np.ndarray
     ) -> float:
         if genome.sum() == 0:
-            return sys.maxsize
+            return float("inf")
         return cost_func(X.loc[:, genome == 1], y)
 
     def _selection(self, scores: List[float], k: int = 3) -> np.ndarray:

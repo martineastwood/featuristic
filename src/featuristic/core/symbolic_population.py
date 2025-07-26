@@ -29,6 +29,7 @@ class BaseSymbolicPopulation:
         include_constants: bool = True,
         const_prob: float = 0.15,
         stop_prob: float = 0.6,
+        max_depth: int = 3,
     ):
         """
         Initialize the population.
@@ -48,6 +49,8 @@ class BaseSymbolicPopulation:
             Probability of generating a constant leaf node.
         stop_prob : float
             Probability to stop growing the program (make a leaf).
+        max_depth : int
+            The maximum depth of the programs.
         """
         self.population_size = population_size
         self.operations = operations
@@ -59,6 +62,7 @@ class BaseSymbolicPopulation:
         self.include_constants = include_constants
         self.const_prob = const_prob
         self.stop_prob = stop_prob
+        self.max_depth = max_depth
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
@@ -75,6 +79,7 @@ class BaseSymbolicPopulation:
                 include_constants=self.include_constants,
                 const_prob=self.const_prob,
                 stop_prob=self.stop_prob,
+                max_depth=self.max_depth,
             )
             for _ in range(self.population_size)
         ]
@@ -229,6 +234,7 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
         include_constants: bool = True,
         const_prob: float = 0.15,
         stop_prob: float = 0.6,
+        max_depth: int = 3,
     ):
         super().__init__(
             population_size,
@@ -240,6 +246,7 @@ class SerialSymbolicPopulation(BaseSymbolicPopulation):
             include_constants,
             const_prob,
             stop_prob,
+            max_depth,
         )
 
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
@@ -276,6 +283,7 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
         include_constants: bool = True,
         const_prob: float = 0.15,
         stop_prob: float = 0.6,
+        max_depth: int = 3,
     ):
         super().__init__(
             population_size,
@@ -287,6 +295,7 @@ class ParallelSymbolicPopulation(BaseSymbolicPopulation):
             include_constants,
             const_prob,
             stop_prob,
+            max_depth,
         )
         self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
 

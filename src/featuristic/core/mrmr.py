@@ -146,4 +146,6 @@ class MaxRelevanceMinRedundancy:
             if self.pbar:
                 pbar.update(1)
 
+        pbar.close()
+
         return selected

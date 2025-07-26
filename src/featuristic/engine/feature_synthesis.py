@@ -43,10 +43,10 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
     def __init__(
         self,
         num_features: int = 10,
-        population_size: int = 100,
+        population_size: int = 50,
         max_generations: int = 25,
-        tournament_size: int = 10,
-        crossover_proba: float = 0.85,
+        tournament_size: int = 7,
+        crossover_proba: float = 0.75,
         parsimony_coefficient: float = 0.001,
         adaptive_parsimony: bool = True,
         early_termination_iters: int = 15,
@@ -63,7 +63,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         optimize_constants: bool = True,
         constant_optimization_maxiter: int = 100,
         const_prob: float = 0.15,
-        stop_prob: float = 0.6,
+        stop_prob: float = 0.8,
+        max_depth: int = 3,
     ):
         """
         Initialize the EFS Feature Synthesis.
@@ -149,6 +150,15 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
 
         constant_optimization_maxiter : int
             The maximum number of iterations for the constant optimization. Default is 100.
+
+        const_prob : float
+            The probability of generating a constant leaf node.
+
+        stop_prob : float
+            The probability of stopping the program generation.
+
+        max_depth : int
+            The maximum depth of the programs.
         """
         if functions is None:
             self.functions = list(FUNCTION_REGISTRY.values())
@@ -214,6 +224,10 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         self.optimize_constants = optimize_constants
         self.constant_optimization_maxiter = constant_optimization_maxiter
 
+        self.const_prob = const_prob
+        self.stop_prob = stop_prob
+        self.max_depth = max_depth
+
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
             current_fitnesses = [x.fitness for x in self.hall_of_fame]
@@ -252,6 +266,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             self.min_constant_val,
             self.max_constant_val,
             self.include_constants,
+            self.const_prob,
+            self.stop_prob,
+            self.max_depth,
         )
 
         population.population = [x.individual for x in self.hall_of_fame]
@@ -322,6 +339,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.min_constant_val,
                 self.max_constant_val,
                 self.include_constants,
+                self.const_prob,
+                self.stop_prob,
+                self.max_depth,
             ).initialize(X_copy)
         else:
             self.population = ParallelSymbolicPopulation(
@@ -333,10 +353,13 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.min_constant_val,
                 self.max_constant_val,
                 self.include_constants,
+                self.const_prob,
+                self.stop_prob,
+                self.max_depth,
             ).initialize(X_copy)
 
         # loss value to minimize
-        global_best = sys.maxsize
+        global_best = float("inf")
         best_prog = self.population.population[
             0
         ]  # Initialize to first program to avoid None
@@ -366,7 +389,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.fitness_function, self.parsimony_coefficient, prediction, y_copy
             )
 
-            top_n = 10
+            top_n = 100
             top_indices = np.argsort(score)[:top_n]
             for idx in top_indices:
                 prog = self.population.population[idx]
@@ -466,6 +489,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.min_constant_val,
                 self.max_constant_val,
                 self.include_constants,
+                self.const_prob,
+                self.stop_prob,
+                self.max_depth,
             )
         else:
             population = ParallelSymbolicPopulation(
@@ -477,6 +503,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                 self.min_constant_val,
                 self.max_constant_val,
                 self.include_constants,
+                self.const_prob,
+                self.stop_prob,
+                self.max_depth,
             )
 
         population.population = [x.individual for x in self.hall_of_fame]

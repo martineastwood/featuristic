@@ -35,13 +35,13 @@ def fitness_pearson(
     with warnings.catch_warnings(record=True) as _:
         warnings.simplefilter("ignore", category=scipy.stats.NearConstantInputWarning)
         if y_pred.isna().any():
-            return sys.maxsize
+            return float("inf")
 
         if np.isinf(y_pred).any():
-            return sys.maxsize
+            return float("inf")
 
         if np.ptp(y_true) == 0 or np.ptp(y_pred) == 0:
-            return sys.maxsize
+            return float("inf")
 
         loss = abs(pearsonr(y_true, y_pred).statistic)
         penalty = weighted_node_count(program) ** parsimony

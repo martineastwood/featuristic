@@ -63,7 +63,7 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         self.selected_columns = None
 
         self.best_genome = None
-        self.best_cost = sys.maxsize
+        self.best_cost = float("inf")
         self.early_termination_counter = 0
         self.history = []
         self.is_fitted_ = False

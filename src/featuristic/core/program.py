@@ -170,12 +170,36 @@ def simplify_prog_str(expr: str) -> str:
         return expr
 
 
-def evaluate_prog(prog, X):
-    if "value" in prog:
-        return pd.Series(prog["value"], index=X.index)
-    if "feature" in prog:
-        return X.iloc[:, prog["feature"]]
-    if "op" in prog:
-        func = FUNCTION_REGISTRY[prog["op"]]
-        args = [evaluate_prog(c, X) for c in prog["children"]]
-        return func(*args)
+from typing import Any, Dict
+import pandas as pd
+
+
+def evaluate_prog(node: Dict[str, Any], X: pd.DataFrame) -> pd.Series:
+    """
+    Recursively evaluate a program tree against the DataFrame X.
+    Supports:
+      - {"value": float}         → constant leaf
+      - {"feature_name": str}    → column lookup
+      - {"func": Callable, "children": [...]} → apply function to child Series
+    """
+    # 1) Constant leaf
+    if "value" in node:
+        return pd.Series(node["value"], index=X.index, dtype=float)
+
+    # 2) Feature leaf
+    if "feature_name" in node:
+        return X[node["feature_name"]]
+
+    # 3) Function node
+    args = [evaluate_prog(child, X) for child in node["children"]]
+    result = node["func"](*args)
+
+    # 4) Ensure a Series comes back, with no NaN/inf
+    if not isinstance(result, pd.Series):
+        result = pd.Series(result, index=X.index, dtype=float)
+
+    # 5) Fallback on invalid values
+    if result.isna().any() or (result == float("inf")).any():
+        return pd.Series(0.0, index=X.index)
+
+    return result
