@@ -10,38 +10,42 @@ from sympy.core.sympify import SympifyError
 from featuristic.core.registry import FUNCTION_REGISTRY
 
 
+import numpy as np
+
+
 def random_prog(
     depth: int,
     feature_names: List[str],
     operations: List,
     max_depth: int = 3,
-    min_constant_val: float = -10.0,  # New parameter for min constant value
-    max_constant_val: float = 10.0,  # New parameter for max constant value
-    include_constants: bool = True,  # New parameter to control constant inclusion
+    min_constant_val: float = -10.0,
+    max_constant_val: float = 10.0,
+    include_constants: bool = True,
+    const_prob: float = 0.15,
+    stop_prob: float = 0.6,
 ) -> dict:
     """
-    Recursively generate a random symbolic program.
+    Recursively generate a random symbolic program, with a clearer leaf-vs-branch decision.
     """
-    if depth >= max_depth or np.random.rand() < 0.3:
-        if not include_constants or (
-            np.random.rand() <= 0.1 and len(feature_names) > 0
-        ):
-            # If constants are disabled, always return a feature
-            # Otherwise, return a feature with 10% probability if features are available
-            if len(feature_names) > 0:
-                return {
-                    "feature_name": feature_names[np.random.randint(len(feature_names))]
-                }
-            # If no features available and constants disabled, continue to create function
-            elif not include_constants:
-                pass  # Continue to function creation below
-            else:
+    # 1) Should we make a leaf?
+    if depth >= max_depth or np.random.rand() < stop_prob:
+        # --- Leaf: either a constant or a feature
+        # If there are no features, force a constant (or fail if disallowed)
+        if not feature_names:
+            if include_constants:
                 return {"value": np.random.uniform(min_constant_val, max_constant_val)}
-        else:
+            else:
+                raise ValueError("No features to pick and constants disabled")
+
+        # Otherwise, sample constant vs. feature
+        if include_constants and np.random.rand() < const_prob:
             return {"value": np.random.uniform(min_constant_val, max_constant_val)}
+        else:
+            feat = feature_names[np.random.randint(len(feature_names))]
+            return {"feature_name": feat}
 
+    # 2) Otherwise grow a function node
     op = operations[np.random.randint(len(operations))]
-
     return {
         "func": op.func,
         "arity": op.arity,
@@ -56,6 +60,8 @@ def random_prog(
                 min_constant_val,
                 max_constant_val,
                 include_constants,
+                const_prob,
+                stop_prob,
             )
             for _ in range(op.arity)
         ],
@@ -65,10 +71,12 @@ def random_prog(
 def node_count(node: dict) -> int:
     """
     Count the number of nodes in the program.
+
     Parameters
     ----------
     node : dict
         The program to count.
+
     Returns
     -------
     int

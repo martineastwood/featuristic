@@ -22,7 +22,7 @@ from featuristic.core.symbolic_population import (
     SerialSymbolicPopulation,
 )
 from featuristic.fitness.registry import get_fitness
-from featuristic.core.optimizer import optimize_constants, round_constants_in_tree
+from featuristic.core.optimizer import optimize_constants
 
 PARSINOMY_STRENGTH = 3.0
 
@@ -62,6 +62,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         include_constants: bool = True,
         optimize_constants: bool = True,
         constant_optimization_maxiter: int = 100,
+        const_prob: float = 0.15,
+        stop_prob: float = 0.6,
     ):
         """
         Initialize the EFS Feature Synthesis.
