@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from featuristic.core.binary_population import BinaryPopulation
-from featuristic import FeatureSynthesis
+from featuristic import GeneticFeatureSynthesis
 from featuristic.core.mrmr import MaxRelevanceMinRedundancy
 
 SEED = 42
@@ -61,22 +61,22 @@ def test_feature_synthesis_reproducibility():
     X2, y2 = create_dummy_data()
 
     set_seed(SEED)
-    fs1 = FeatureSynthesis(
+    fs1 = GeneticFeatureSynthesis(
         num_features=3,
         population_size=20,
         max_generations=5,
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
     )
     out1 = fs1.fit_transform(X1, y1)
 
     set_seed(SEED)
-    fs2 = FeatureSynthesis(
+    fs2 = GeneticFeatureSynthesis(
         num_features=3,
         population_size=20,
         max_generations=5,
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
     )
     out2 = fs2.fit_transform(X2, y2)
 
@@ -102,14 +102,14 @@ def test_mrmr_reproducibility():
     X2, y2 = create_dummy_data()
 
     set_seed(SEED)
-    mrmr1 = MaxRelevanceMinRedundancy(k=5, pbar=False)
+    mrmr1 = MaxRelevanceMinRedundancy(k=5, show_progress_bar=False)
     mrmr1.fit(X1, y1)
-    selected1 = mrmr1.selected_features.copy()
+    selected1 = mrmr1.selected_features_.copy()
 
     set_seed(SEED)
-    mrmr2 = MaxRelevanceMinRedundancy(k=5, pbar=False)
+    mrmr2 = MaxRelevanceMinRedundancy(k=5, show_progress_bar=False)
     mrmr2.fit(X2, y2)
-    selected2 = mrmr2.selected_features.copy()
+    selected2 = mrmr2.selected_features_.copy()
 
     assert selected1 == selected2
 
@@ -129,7 +129,7 @@ def test_feature_selection_reproducibility():
     X2, y2 = create_dummy_data_selection()
 
     set_seed(SEED)
-    fs1 = FeatureSynthesis(
+    fs1 = GeneticFeatureSynthesis(
         num_features=3,
         population_size=20,
         max_generations=5,
@@ -137,13 +137,13 @@ def test_feature_selection_reproducibility():
         crossover_proba=0.8,
         parsimony_coefficient=0.001,
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
     )
     fs1.fit(X1, y1)
     info1 = fs1.get_feature_info()
 
     set_seed(SEED)
-    fs2 = FeatureSynthesis(
+    fs2 = GeneticFeatureSynthesis(
         num_features=3,
         population_size=20,
         max_generations=5,
@@ -151,7 +151,7 @@ def test_feature_selection_reproducibility():
         crossover_proba=0.8,
         parsimony_coefficient=0.001,
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
     )
     fs2.fit(X2, y2)
     info2 = fs2.get_feature_info()

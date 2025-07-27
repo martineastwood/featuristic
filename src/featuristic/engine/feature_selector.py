@@ -1,12 +1,6 @@
-"""
-EFSFeatureSelector: Evolutionary Feature Synthesis for Feature Selection.
+"""GeneticFeatureSelector uses evolutionary search to select feature subsets."""
 
-Uses evolutionary search over binary genomes to minimize an objective function
-by selecting optimal subsets of features.
-"""
-
-import sys
-from typing import Callable, Self, Union
+from typing import Callable, List, Optional, Self
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -19,12 +13,51 @@ from tqdm.auto import tqdm
 from featuristic.core.binary_population import BinaryPopulation
 
 
-class FeatureSelector(BaseEstimator, TransformerMixin):
+class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
     """
-    Evolutionary Feature Synthesis (EFS) for feature selection.
+    Selects features using a evolutionary feature selection algorithm.
 
-    Uses binary genome evolution to discover subsets of features that minimize
-    a user-defined objective function.
+    This transformer uses a binary-encoded evolutionary algorithm to find an optimal
+    subset of features that minimizes a given objective function.
+
+    Parameters
+    ----------
+    objective_function : callable
+        A function to minimize. It must accept three arguments:
+        (X: pd.DataFrame, y: pd.Series, columns: List[str])
+        and return a single float value.
+    population_size : int, optional
+        Number of individuals in the population, by default 50.
+    max_generations : int, optional
+        Maximum number of generations to evolve, by default 100.
+    tournament_size : int, optional
+        Number of individuals to select for tournament, by default 10.
+    crossover_proba : float, optional
+        Probability of crossover, by default 0.9.
+    mutation_proba : float, optional
+        Probability of mutation, by default 0.1.
+    early_termination_iters : int, optional
+        Number of generations with no improvement to trigger early stopping,
+        by default 15.
+    n_jobs : int, optional
+        Number of CPU cores to use, by default -1 (all available).
+    pbar : bool, optional
+        Whether to display a progress bar, by default True.
+    verbose : bool, optional
+        Whether to print progress messages, by default False.
+
+    Attributes
+    ----------
+    best_genome_ : np.ndarray
+        The best genome found by the algorithm.
+    best_cost_ : float
+        The best cost found by the algorithm.
+    history_ : List[dict]
+        A list of dictionaries containing the history of the evolution.
+    is_fitted_ : bool
+        Whether the transformer has been fitted.
+    selected_columns_ : List[str]
+        The names of the selected columns.
     """
 
     def __init__(
@@ -55,19 +88,19 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         self.pbar = pbar
         self.verbose = verbose
 
-        self.population = None
-        self.num_genes = None
-        self.selected_columns = None
+        self.population_ = None
+        self.num_genes_ = None
+        self.selected_columns_ = None
 
-        self.best_genome = None
-        self.best_cost = float("inf")
-        self.early_termination_counter = 0
-        self.history = []
+        self.best_genome_ = None
+        self.best_cost_ = float("inf")
+        self.early_termination_counter_ = 0
+        self.history_ = []
         self.is_fitted_ = False
 
     def _init_population(self, feature_count: int):
         """Initialize the population class."""
-        self.population = BinaryPopulation(
+        self.population_ = BinaryPopulation(
             self.population_size,
             feature_count,
             tournament_size=self.tournament_size,
@@ -77,29 +110,44 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         )
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
-        self.num_genes = X.shape[1]
-        self._init_population(self.num_genes)
+        """
+        Fit the genetic feature selector.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            The training input samples.
+        y : pd.Series
+            The target values.
+
+        Returns
+        -------
+        Self
+            The fitted transformer.
+        """
+        self.num_genes_ = X.shape[1]
+        self._init_population(self.num_genes_)
 
         pbar = None
-        if self.pbar and self.n_jobs == 1:
+        if self.pbar:
             pbar = tqdm(total=self.max_generations, desc="Evolving feature selection")
 
         for generation in range(self.max_generations):
-            scores = self.population.evaluate(self.objective_function, X, y)
+            scores = self.population_.evaluate(self.objective_function, X, y)
 
             min_score_in_gen = np.min(scores)
-            if min_score_in_gen < self.best_cost:
-                self.best_cost = min_score_in_gen
+            if min_score_in_gen < self.best_cost_:
+                self.best_cost_ = min_score_in_gen
                 best_genome_idx = np.argmin(scores)
-                self.best_genome = self.population.population[best_genome_idx]
-                self.early_termination_counter = 0
+                self.best_genome_ = self.population_.population[best_genome_idx]
+                self.early_termination_counter_ = 0
             else:
-                self.early_termination_counter += 1
+                self.early_termination_counter_ += 1
 
-            self.history.append(
+            self.history_.append(
                 {
                     "generation": generation,
-                    "best_score": self.best_cost,
+                    "best_score": self.best_cost_,
                     "median_score": float(np.median(scores)),
                 }
             )
@@ -107,34 +155,76 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
             if pbar:
                 pbar.update(1)
 
-            if self.early_termination_counter >= self.early_termination_iters:
+            if self.early_termination_counter_ >= self.early_termination_iters:
                 if self.verbose:
                     print(
-                        f"Early stopping at generation {generation}, best score: {self.best_cost:.6f}"
+                        f"Early stopping at generation {generation}, best score: {self.best_cost_:.6f}"
                     )
                 break
 
-            self.population.evolve(scores)
+            self.population_.evolve(scores)
 
         if pbar:
             pbar.close()
 
         self.is_fitted_ = True
-        self.selected_columns = X.columns[self.best_genome == 1]
+        self.selected_columns_ = X.columns[self.best_genome_ == 1]
         return self
 
-    def transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> pd.DataFrame:
+        """
+        Transform the data to select the best features.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            The input samples.
+        y : pd.Series, optional
+            The target values, by default None.
+
+        Returns
+        -------
+        pd.DataFrame
+            The transformed data with selected features.
+        """
         if not self.is_fitted_:
             raise RuntimeError("You must call fit() before transform().")
-        return X[self.selected_columns]
+        return X[self.selected_columns_]
 
     def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+        """
+        Fit the transformer and transform the data.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            The training input samples.
+        y : pd.Series
+            The target values.
+
+        Returns
+        -------
+        pd.DataFrame
+            The transformed data with selected features.
+        """
         self.fit(X, y)
         return self.transform(X, y)
 
-    def plot_history(self, ax: Union[matplotlib.axes.Axes, None] = None):
+    def plot_history(
+        self, ax: Optional[matplotlib.axes.Axes] = None
+    ) -> matplotlib.axes.Axes:
         """
-        Plot best and median fitness score over generations.
+        Plot the best and median fitness scores over generations.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes, optional
+            The axes to plot on. If None, a new figure and axes are created.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes with the plot.
         """
         if not self.is_fitted_:
             raise RuntimeError("Call fit() before plot_history().")
@@ -142,7 +232,7 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
         if ax is None:
             _, ax = plt.subplots()
 
-        pd.DataFrame(self.history).plot(
+        pd.DataFrame(self.history_).plot(
             x="generation", y=["best_score", "median_score"], ax=ax
         )
-        plt.show()
+        return ax

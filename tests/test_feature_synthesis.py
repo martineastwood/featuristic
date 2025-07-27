@@ -5,7 +5,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-from featuristic import FeatureSynthesis
+from featuristic import GeneticFeatureSynthesis
 
 
 @pytest.fixture
@@ -17,7 +17,7 @@ def regression_data():
 
 def test_feature_synthesis_fit_transform(regression_data):
     X, y = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=3,
         max_generations=5,
         population_size=20,
@@ -33,7 +33,7 @@ def test_feature_synthesis_fit_transform(regression_data):
 
 def test_get_feature_info_simplify_argument(regression_data):
     X, y = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=3,
         max_generations=5,
         population_size=20,
@@ -61,7 +61,7 @@ def test_plot_history_runs():
     X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])
     y = X["x0"] + X["x1"] * 2 - X["x2"]
 
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=2,
         max_generations=3,
         population_size=10,
@@ -100,7 +100,7 @@ def test_min_max_constant_bounds(regression_data):
     """Test that constants are within min/max bounds."""
     X, y = regression_data
     min_val, max_val = -2.5, 1.5
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=5,
         max_generations=5,
         population_size=20,
@@ -121,7 +121,7 @@ def test_min_max_constant_bounds(regression_data):
 def test_include_constants_true_generates_constants(regression_data):
     """Test that constants are present when include_constants=True."""
     X, y = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=5,
         max_generations=10,  # Increased generations for more evolution
         population_size=30,  # Increased population size
@@ -145,7 +145,7 @@ def test_min_greater_than_max_constant_raises(regression_data):
     import pytest
 
     with pytest.raises((ValueError, AssertionError)):
-        FeatureSynthesis(
+        GeneticFeatureSynthesis(
             num_features=3,
             max_generations=2,
             population_size=5,
@@ -159,7 +159,7 @@ def test_min_greater_than_max_constant_raises(regression_data):
 
 def test_invalid_input_data_raises():
     """Test fitting on empty DataFrame and DataFrame with NaNs raises error."""
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=2,
         max_generations=2,
         population_size=5,
@@ -183,7 +183,7 @@ def test_invalid_input_data_raises():
 def test_no_constants(regression_data):
     """Test that no constants are generated when include_constants=False"""
     X, y = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=5,
         max_generations=5,
         population_size=20,
@@ -202,7 +202,7 @@ def test_no_constants(regression_data):
 def test_single_input_feature():
     X = pd.DataFrame(np.random.randn(100, 1), columns=["x0"])
     y = X["x0"] * 3
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=1,
         max_generations=2,
         population_size=5,
@@ -218,7 +218,7 @@ def test_single_input_feature():
 def test_categorical_input_raises():
     X = pd.DataFrame({"cat": ["a", "b", "c", "a", "c"] * 20})
     y = np.arange(100)
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=1,
         max_generations=2,
         population_size=5,
@@ -235,7 +235,7 @@ def test_boundary_population_generation_values(regression_data):
     X, y = regression_data
     # Avoid pop_size=1, which is not supported by tournament selection logic
     for pop_size, gens in [(2, 1), (50, 1), (2, 5)]:
-        fs = FeatureSynthesis(
+        fs = GeneticFeatureSynthesis(
             num_features=1,
             max_generations=gens,
             population_size=pop_size,
@@ -248,7 +248,7 @@ def test_boundary_population_generation_values(regression_data):
 
 def test_parallel_jobs(regression_data):
     X, y = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=2,
         max_generations=2,
         population_size=5,
@@ -262,7 +262,7 @@ def test_parallel_jobs(regression_data):
 
 def test_transform_without_fit_raises(regression_data):
     X, _ = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=2,
         max_generations=2,
         population_size=5,
@@ -277,7 +277,7 @@ def test_transform_without_fit_raises(regression_data):
 
 def test_transform_shape_mismatch(regression_data):
     X, y = regression_data
-    fs = FeatureSynthesis(
+    fs = GeneticFeatureSynthesis(
         num_features=2,
         max_generations=2,
         population_size=5,

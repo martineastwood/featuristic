@@ -1,6 +1,5 @@
-"""Contains the SymbolicFeatureGenerator class."""
+"""Contains the GeneticFeatureSynthesis class."""
 
-import sys
 from typing import Callable, List, Optional, Union
 
 import matplotlib
@@ -24,9 +23,9 @@ from featuristic.core.optimizer import optimize_constants
 PARSINOMY_STRENGTH = 3.0
 
 
-class FeatureSynthesis(BaseEstimator, TransformerMixin):
+class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
     """
-    The FeatureSynthesis class uses genetic programming to generate new
+    The GeneticFeatureSynthesis class uses genetic programming to generate new
     features using a technique based on Symbolic Regression. This is done by initially
     building a population of naive random formulas that represent transformations of
     the input features. The population is then evolved over a number of generations
@@ -64,7 +63,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         max_depth: int = 3,
     ):
         """
-        Initialize the EFS Feature Synthesis.
+        Initialize the GeneticFeatureSynthesis.
 
         Args
         ----

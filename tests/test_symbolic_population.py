@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
-
 from featuristic.core.symbolic_population import SymbolicPopulation
-from featuristic.fitness.pearson import fitness_pearson
 from featuristic.core.registry import get_symbolic_function
+
+from featuristic.fitness.pearson import fitness_pearson
 
 add = get_symbolic_function("add")
 mul = get_symbolic_function("multiply")
@@ -22,11 +22,6 @@ def extract_constants_from_program(program):
 
 def test_population_include_constants_flag():
     """Test population respects include_constants flag."""
-    import pandas as pd
-    import numpy as np
-    from featuristic.core.symbolic_population import SymbolicPopulation
-    from featuristic.core.registry import get_symbolic_function
-
     X = pd.DataFrame({"a": np.linspace(0, 10, 10), "b": np.linspace(10, 0, 10)})
     funcs = [get_symbolic_function("add")]
     pop_no_const = SymbolicPopulation(

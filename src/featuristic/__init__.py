@@ -2,7 +2,7 @@
 
 from .core.registry import define_symbolic_function, list_symbolic_functions
 from .datasets import fetch_cars_dataset, fetch_wine_dataset
-from .engine.feature_selector import FeatureSelector
-from .engine.feature_synthesis import FeatureSynthesis
+from .engine.feature_selector import GeneticFeatureSelector
+from .engine.feature_synthesis import GeneticFeatureSynthesis
 from .fitness.registry import list_fitness_functions, register_fitness
 from .version import __version__
