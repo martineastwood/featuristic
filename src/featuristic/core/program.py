@@ -198,8 +198,8 @@ def evaluate_prog(node: Dict[str, Any], X: pd.DataFrame) -> pd.Series:
     if not isinstance(result, pd.Series):
         result = pd.Series(result, index=X.index, dtype=float)
 
-    # 5) Fallback on invalid values
-    if result.isna().any() or (result == float("inf")).any():
-        return pd.Series(0.0, index=X.index)
+    # 5) Handle invalid values
+    if result.isna().any() or np.isinf(result).any():
+        return pd.Series(np.zeros(len(X)), index=X.index)
 
     return result

@@ -37,7 +37,9 @@ def round_constants_in_tree(node: dict, precision: int = 3) -> None:
             round_constants_in_tree(child, precision)
 
 
-def optimize_constants(prog, X, y, loss_fn=None, maxiter=100):
+def optimize_constants(
+    prog, X, y, loss_fn=None, maxiter=100, min_val=-10.0, max_val=10.0
+):
     consts, const_nodes = extract_constants(prog)
     if not consts:
         return prog
@@ -60,11 +62,22 @@ def optimize_constants(prog, X, y, loss_fn=None, maxiter=100):
             category=RuntimeWarning,
         )
         result = minimize(
-            objective, consts, method="L-BFGS-B", options={"maxiter": maxiter}
+            objective,
+            consts,
+            method="L-BFGS-B",
+            bounds=[(min_val, max_val) for _ in consts],
+            options={"maxiter": maxiter},
         )
 
     for i, val in enumerate(result.x):
-        const_nodes[i]["value"] = round(val, 3)
+        # Round the value but ensure it stays within bounds
+        rounded_val = round(val, 3)
+        # Clamp to bounds if rounding pushed it outside
+        if rounded_val < min_val:
+            rounded_val = min_val
+        elif rounded_val > max_val:
+            rounded_val = max_val
+        const_nodes[i]["value"] = rounded_val
 
     round_constants_in_tree(prog, precision=3)
 

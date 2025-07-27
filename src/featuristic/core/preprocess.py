@@ -1,4 +1,4 @@
-""" Preprocessing functions for data synthesis. """
+"""Preprocessing functions for data synthesis."""
 
 from typing import Tuple
 
@@ -15,10 +15,6 @@ def preprocess_data(X: pd.DataFrame, y: pd.Series) -> Tuple[pd.DataFrame, pd.Ser
         The input data.
     y : pd.Series, default=None
         The target data.
-    drop_na : bool, default=True
-        Whether to drop rows with missing values.
-    drop_low_variance : bool, default=True
-        Whether to drop features with low variance.
 
     Returns
     -------

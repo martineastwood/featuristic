@@ -182,6 +182,7 @@ class SymbolicPopulation:
                 include_constants=self.include_constants,
                 const_prob=self.const_prob,
                 stop_prob=self.stop_prob,
+                max_depth=self.max_depth,
             )
 
         child_count = len(xover_point1["children"])
@@ -208,6 +209,7 @@ class SymbolicPopulation:
                 include_constants=self.include_constants,
                 const_prob=self.const_prob,
                 stop_prob=self.stop_prob,
+                max_depth=self.max_depth,
             )
 
         child_count = len(mutate_point["children"])
@@ -221,6 +223,7 @@ class SymbolicPopulation:
             include_constants=self.include_constants,
             const_prob=self.const_prob,
             stop_prob=self.stop_prob,
+            max_depth=self.max_depth,
         )
         return offspring
 

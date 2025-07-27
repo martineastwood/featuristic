@@ -63,7 +63,18 @@ def test_mrmr_all_duplicate_columns():
     X = pd.DataFrame({"a": np.arange(100), "b": np.arange(100), "c": np.arange(100)})
     y = X["a"]
     mrmr = MaxRelevanceMinRedundancy(k=2, pbar=False)
-    mrmr.fit(X, y)
+
+    # Suppress the expected warning when dealing with duplicate columns
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            message="invalid value encountered in divide",
+            category=RuntimeWarning,
+        )
+        mrmr.fit(X, y)
+
     # All features are perfectly correlated with y, so f_regression returns NaN for all.
     assert mrmr.selected_features == []
 

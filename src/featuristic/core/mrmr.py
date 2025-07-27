@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable, Tuple, Optional
 
 import pandas as pd
 from sklearn.feature_selection import f_classif, f_regression
@@ -28,8 +28,10 @@ class MaxRelevanceMinRedundancy:
         """
         self.k = k
         self.pbar = pbar
-        self.selected_features = None
-        self.metric = None
+        self.selected_features: List[str] = None
+        self.metric: Optional[
+            Callable[[pd.DataFrame, pd.Series], Tuple[np.ndarray, np.ndarray]]
+        ] = None
 
     def fit(self, X: pd.DataFrame, y: pd.Series):
         if self.metric is None:
@@ -121,6 +123,7 @@ class MaxRelevanceMinRedundancy:
         selected = []
         not_selected = X.columns.to_list()
 
+        pbar = None
         if self.pbar:
             pbar = tqdm(total=k, desc="Pruning feature space...")
 
@@ -133,9 +136,7 @@ class MaxRelevanceMinRedundancy:
                 redundancy = corr.loc[not_selected, selected].mean(axis=1).fillna(FLOOR)
                 score = f_stat.loc[not_selected] / redundancy
 
-            score = score[
-                score.index.isin(not_selected)
-            ]  # filter to valid candidates only
+            # Score is already filtered to not_selected items
             if score.empty:
                 break
             best = score.idxmax()
@@ -146,8 +147,7 @@ class MaxRelevanceMinRedundancy:
             if self.pbar:
                 pbar.update(1)
 
-        if self.pbar:
-            if not isinstance(self.pbar, bool):
-                self.pbar.close()
+        if pbar is not None:
+            pbar.close()
 
         return selected

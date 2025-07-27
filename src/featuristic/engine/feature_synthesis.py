@@ -386,6 +386,8 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
                     y,
                     loss_fn=loss_fn,
                     maxiter=self.constant_optimization_maxiter,
+                    min_val=self.min_constant_val,
+                    max_val=self.max_constant_val,
                 )
 
             prediction = self.population.evaluate(X_copy)

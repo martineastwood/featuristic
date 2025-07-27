@@ -4,7 +4,7 @@ Binary population for Evolutionary Feature Synthesis (EFS).
 Defines population class for feature selection using binary genetic representations.
 """
 
-from typing import Callable, List, Tuple, Self
+from typing import Callable, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -137,11 +137,14 @@ class BinaryPopulation:
         np.ndarray
             The selected individual.
         """
-        selection_ix = np.random.randint(len(self.population))
-        for ix in np.random.randint(0, len(self.population), k - 1):
-            if scores[ix] < scores[selection_ix]:
-                selection_ix = ix
-        return self.population[selection_ix]
+        # Select k random indices for the tournament
+        tournament_indices = np.random.randint(0, len(self.population), k)
+        # Find the index with the best (lowest) score in the tournament
+        best_ix = tournament_indices[0]
+        for ix in tournament_indices[1:]:
+            if scores[ix] < scores[best_ix]:
+                best_ix = ix
+        return self.population[best_ix]
 
     def _mutate(self, genome: np.ndarray) -> np.ndarray:
         """
@@ -186,7 +189,7 @@ class BinaryPopulation:
             c2 = np.concatenate([parent2[:pt], parent1[pt:]])
         return c1, c2
 
-    def evolve(self, fitness: List[float]) -> Self:
+    def evolve(self, fitness: List[float]) -> "BinaryPopulation":
         """
         Evolve the population by creating a new generation through selection,
         crossover, and mutation.

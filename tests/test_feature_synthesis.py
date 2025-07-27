@@ -111,11 +111,12 @@ def test_include_constants_true_generates_constants(regression_data):
     X, y = regression_data
     fs = FeatureSynthesis(
         num_features=5,
-        max_generations=5,
-        population_size=20,
+        max_generations=10,  # Increased generations for more evolution
+        population_size=30,  # Increased population size
         n_jobs=1,
         pbar=False,
         include_constants=True,
+        const_prob=0.3,  # Increased probability of generating constants
     )
     fs.fit(X, y)
     found = False
