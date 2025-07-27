@@ -14,7 +14,7 @@ class MaxRelevanceMinRedundancy:
     Selects k features that are maximally relevant to the target and minimally redundant.
     """
 
-    def __init__(self, k: int = 6, pbar: bool = True):
+    def __init__(self, k: int = 6, show_progress_bar: bool = True):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -23,17 +23,29 @@ class MaxRelevanceMinRedundancy:
         k : int (default=6)
             The number of features to select.
 
-        pbar : bool (default=True)
-            Whether to display a progress bar or not.
+        show_progress_bar : bool (default=True)
+            Whether to display a progress bar using tqdm.
         """
         self.k = k
-        self.pbar = pbar
-        self.selected_features: List[str] = None
+        self.show_progress_bar = show_progress_bar
+        self.selected_features_: List[str] = None
         self.metric: Optional[
             Callable[[pd.DataFrame, pd.Series], Tuple[np.ndarray, np.ndarray]]
         ] = None
 
     def fit(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Fit the mRMR selector to the data.
+
+        This method identifies the optimal set of features based on the mRMR criteria.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The target variable.
+        """
         if self.metric is None:
             target_type = type_of_target(y)
             if target_type in ("binary", "multiclass", "multiclass-multioutput"):
@@ -43,7 +55,7 @@ class MaxRelevanceMinRedundancy:
             else:
                 raise ValueError(f"Unsupported target type: {target_type}")
 
-        self.selected_features = self._mrmr(X, y)
+        self.selected_features_ = self._mrmr(X, y)
 
     def transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """
@@ -54,19 +66,19 @@ class MaxRelevanceMinRedundancy:
         X : pd.DataFrame
             The dataframe with the features.
 
-        y : pd.Series
-            The target variable. Not used in this function.
+        y : pd.Series, optional
+            The target variable. Not used in this function, kept for API consistency.
 
         Returns
         -------
         pd.DataFrame
             The dataframe with the selected features.
         """
-        return X[self.selected_features]
+        return X[self.selected_features_]
 
     def fit_transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
         """
-        Fit the mRMR algorithm to the data and transform the data using the selected features.
+        Fit the mRMR algorithm and transform the data.
 
         Parameters
         ----------
@@ -84,70 +96,89 @@ class MaxRelevanceMinRedundancy:
         self.fit(X, y)
         return self.transform(X)
 
-    def _mrmr(self, X: pd.DataFrame, y: pd.Series) -> List[str]:
-        """
-        Select the best features using the mRMR algorithm.
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            The dataframe with the features.
-
-        y : pd.Series
-            The target variable.
-
-        Returns
-        -------
-        List[str]
-            The list of selected features.
-        """
-        # Drop duplicate columns to avoid duplicate feature selection errors
-        X = X.loc[:, X.nunique() > 1].dropna(axis=1)
+    def _preprocess_data(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Preprocesses the data by removing unsuitable columns."""
+        # Drop duplicate columns
         X = X.loc[:, ~X.T.duplicated()]
+        # Drop columns with only one unique value and rows with NaN
+        X = X.loc[:, X.nunique() > 1].dropna(axis=1)
+        return X
 
-        k = min(self.k, X.shape[1])
+    def _calculate_relevance(self, X: pd.DataFrame, y: pd.Series) -> pd.Series:
+        """Calculates the relevance of each feature to the target."""
+        f_stat, _ = self.metric(X, y)
+        relevance = pd.Series(f_stat, index=X.columns)
+        relevance = relevance.replace([np.inf, -np.inf], np.finfo(np.float64).max)
+        # f_regression can return NaN for perfectly correlated features.
+        # We treat this as maximum relevance.
+        relevance = relevance.fillna(np.finfo(np.float64).max)
+        return relevance
+
+    def _calculate_redundancy_matrix(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Calculates the redundancy matrix between features."""
+        corr = X.corr().abs().clip(lower=FLOOR)
+        np.fill_diagonal(corr.values, 0)  # Set self-correlation to 0
+        return corr
+
+    def _select_features(
+        self, relevance: pd.Series, redundancy_matrix: pd.DataFrame, num_features: int
+    ) -> List[str]:
+        """Selects the best features based on relevance and redundancy."""
+        k = min(self.k, num_features)
         if k == 0:
             return []
-
-        # 1. Compute relevance scores
-        f_stat = pd.Series(self.metric(X, y)[0], index=X.columns)
-        # Remove features with NaN f_stat
-        f_stat = f_stat.dropna()
-        X = X[f_stat.index]
-
-        # 2. Precompute absolute correlation matrix (redundancy)
-        corr = X.corr().abs().clip(lower=FLOOR).astype(np.float64)
-        for col in corr.columns:
-            corr.loc[col, col] = FLOOR  # Avoid self-correlation = 1
-
+        features = relevance.index.to_list()
         selected = []
-        not_selected = X.columns.to_list()
 
-        pbar = None
-        if self.pbar:
-            pbar = tqdm(total=k, desc="Pruning feature space...")
+        if not features:
+            return []
 
-        for _ in range(k):
-            if not selected:
-                # First round: no redundancy penalty
-                score = f_stat.loc[not_selected]
-            else:
-                # Compute score = relevance / average redundancy
-                redundancy = corr.loc[not_selected, selected].mean(axis=1).fillna(FLOOR)
-                score = f_stat.loc[not_selected] / redundancy
+        # Select the first feature based on the highest relevance
+        first_feature = relevance.idxmax()
+        selected.append(first_feature)
+        features.remove(first_feature)
 
-            # Score is already filtered to not_selected items
-            if score.empty:
-                break
-            best = score.idxmax()
-            selected.append(best)
-            if best in not_selected:
-                not_selected.remove(best)
+        with tqdm(
+            total=k, desc="Pruning feature space...", disable=not self.show_progress_bar
+        ) as pbar:
+            pbar.update(1)
+            for _ in range(min(k - 1, len(features))):
+                scores = pd.Series(index=features, dtype=float)
+                for feature in features:
+                    # Calculate the redundancy of the feature with the already selected features
+                    redundancy = redundancy_matrix.loc[feature, selected].mean()
+                    # The score is the relevance divided by the redundancy
+                    scores[feature] = relevance[feature] / (redundancy + FLOOR)
 
-            if self.pbar:
+                best = scores.idxmax()
+                selected.append(best)
+                features.remove(best)
                 pbar.update(1)
 
-        if pbar is not None:
-            pbar.close()
-
         return selected
+
+    def _mrmr(self, X: pd.DataFrame, y: pd.Series) -> List[str]:
+        """
+        Selects the best features using the mRMR algorithm.
+
+        This method orchestrates the feature selection process by:
+        1. Preprocessing the data.
+        2. Calculating feature relevance.
+        3. Calculating feature redundancy.
+        4. Iteratively selecting features that maximize relevance and minimize redundancy.
+        """
+        X = self._preprocess_data(X)
+
+        if X.empty:
+            return []
+
+        relevance = self._calculate_relevance(X, y)
+        X = X[relevance.index]
+
+        redundancy_matrix = self._calculate_redundancy_matrix(X)
+
+        selected_features = self._select_features(
+            relevance, redundancy_matrix, X.shape[1]
+        )
+
+        return selected_features

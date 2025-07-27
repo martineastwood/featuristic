@@ -52,7 +52,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         fitness_function: Optional[Union[str, Callable]] = None,
         return_all_features: bool = True,
         n_jobs: int = -1,
-        pbar: bool = True,
+        show_progress_bar: bool = True,
         verbose: bool = False,
         min_constant_val: float = -10.0,
         max_constant_val: float = 10.0,
@@ -123,7 +123,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             The number of parallel jobs to run. If `-1`, use all available cores else
             uses n_jobs. If `n_jobs=1`, then the computation is done in serial.
 
-        pbar: bool
+        show_progress_bar: bool
             Whether to show a progress bar.
 
         verbose : bool
@@ -208,7 +208,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         else:
             self.n_jobs = n_jobs
 
-        self.pbar = pbar
+        self.show_progress_bar = show_progress_bar
 
         if min_constant_val > max_constant_val:
             raise ValueError(
@@ -287,7 +287,9 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
             self.hall_of_fame[i].name = f"feature_{i}"
 
         selected = (
-            MaxRelevanceMinRedundancy(k=self.num_features, pbar=self.pbar)
+            MaxRelevanceMinRedundancy(
+                k=self.num_features, show_progress_bar=self.show_progress_bar
+            )
             .fit_transform(features, y)
             .columns
         )
@@ -349,7 +351,7 @@ class FeatureSynthesis(BaseEstimator, TransformerMixin):
         ]  # Initialize to first program to avoid None
 
         pbar = None
-        if self.pbar and self.n_jobs == 1:
+        if self.show_progress_bar and self.n_jobs == 1:
             pbar = tqdm(total=self.max_generations, desc="Creating new features...")
 
         for gen in range(self.max_generations):

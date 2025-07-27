@@ -18,7 +18,11 @@ def regression_data():
 def test_feature_synthesis_fit_transform(regression_data):
     X, y = regression_data
     fs = FeatureSynthesis(
-        num_features=3, max_generations=5, population_size=20, n_jobs=1, pbar=False
+        num_features=3,
+        max_generations=5,
+        population_size=20,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     Xt = fs.fit_transform(X, y)
     assert isinstance(Xt, pd.DataFrame)
@@ -30,7 +34,11 @@ def test_feature_synthesis_fit_transform(regression_data):
 def test_get_feature_info_simplify_argument(regression_data):
     X, y = regression_data
     fs = FeatureSynthesis(
-        num_features=3, max_generations=5, population_size=20, n_jobs=1, pbar=False
+        num_features=3,
+        max_generations=5,
+        population_size=20,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     fs.fit(X, y)
     df_unsimplified = fs.get_feature_info()
@@ -54,7 +62,11 @@ def test_plot_history_runs():
     y = X["x0"] + X["x1"] * 2 - X["x2"]
 
     fs = FeatureSynthesis(
-        num_features=2, max_generations=3, population_size=10, n_jobs=1, pbar=False
+        num_features=2,
+        max_generations=3,
+        population_size=10,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     fs.fit(X, y)
 
@@ -93,7 +105,7 @@ def test_min_max_constant_bounds(regression_data):
         max_generations=5,
         population_size=20,
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
         include_constants=True,
         min_constant_val=min_val,
         max_constant_val=max_val,
@@ -114,7 +126,7 @@ def test_include_constants_true_generates_constants(regression_data):
         max_generations=10,  # Increased generations for more evolution
         population_size=30,  # Increased population size
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
         include_constants=True,
         const_prob=0.3,  # Increased probability of generating constants
     )
@@ -138,7 +150,7 @@ def test_min_greater_than_max_constant_raises(regression_data):
             max_generations=2,
             population_size=5,
             n_jobs=1,
-            pbar=False,
+            show_progress_bar=False,
             include_constants=True,
             min_constant_val=10,
             max_constant_val=-10,
@@ -148,7 +160,11 @@ def test_min_greater_than_max_constant_raises(regression_data):
 def test_invalid_input_data_raises():
     """Test fitting on empty DataFrame and DataFrame with NaNs raises error."""
     fs = FeatureSynthesis(
-        num_features=2, max_generations=2, population_size=5, n_jobs=1, pbar=False
+        num_features=2,
+        max_generations=2,
+        population_size=5,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     import numpy as np
     import pandas as pd
@@ -172,7 +188,7 @@ def test_no_constants(regression_data):
         max_generations=5,
         population_size=20,
         n_jobs=1,
-        pbar=False,
+        show_progress_bar=False,
         include_constants=False,
     )
     fs.fit(X, y)
@@ -187,7 +203,11 @@ def test_single_input_feature():
     X = pd.DataFrame(np.random.randn(100, 1), columns=["x0"])
     y = X["x0"] * 3
     fs = FeatureSynthesis(
-        num_features=1, max_generations=2, population_size=5, n_jobs=1, pbar=False
+        num_features=1,
+        max_generations=2,
+        population_size=5,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     Xt = fs.fit_transform(X, y)
     assert isinstance(Xt, pd.DataFrame)
@@ -199,7 +219,11 @@ def test_categorical_input_raises():
     X = pd.DataFrame({"cat": ["a", "b", "c", "a", "c"] * 20})
     y = np.arange(100)
     fs = FeatureSynthesis(
-        num_features=1, max_generations=2, population_size=5, n_jobs=1, pbar=False
+        num_features=1,
+        max_generations=2,
+        population_size=5,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     import pytest
 
@@ -216,7 +240,7 @@ def test_boundary_population_generation_values(regression_data):
             max_generations=gens,
             population_size=pop_size,
             n_jobs=1,
-            pbar=False,
+            show_progress_bar=False,
         )
         Xt = fs.fit_transform(X, y)
         assert isinstance(Xt, pd.DataFrame)
@@ -225,7 +249,11 @@ def test_boundary_population_generation_values(regression_data):
 def test_parallel_jobs(regression_data):
     X, y = regression_data
     fs = FeatureSynthesis(
-        num_features=2, max_generations=2, population_size=5, n_jobs=2, pbar=False
+        num_features=2,
+        max_generations=2,
+        population_size=5,
+        n_jobs=2,
+        show_progress_bar=False,
     )
     Xt = fs.fit_transform(X, y)
     # Output includes original + generated features
@@ -235,7 +263,11 @@ def test_parallel_jobs(regression_data):
 def test_transform_without_fit_raises(regression_data):
     X, _ = regression_data
     fs = FeatureSynthesis(
-        num_features=2, max_generations=2, population_size=5, n_jobs=1, pbar=False
+        num_features=2,
+        max_generations=2,
+        population_size=5,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     import pytest
 
@@ -246,7 +278,11 @@ def test_transform_without_fit_raises(regression_data):
 def test_transform_shape_mismatch(regression_data):
     X, y = regression_data
     fs = FeatureSynthesis(
-        num_features=2, max_generations=2, population_size=5, n_jobs=1, pbar=False
+        num_features=2,
+        max_generations=2,
+        population_size=5,
+        n_jobs=1,
+        show_progress_bar=False,
     )
     fs.fit(X, y)
     X_bad = pd.DataFrame(np.random.randn(10, 2), columns=["x0", "x1"])
