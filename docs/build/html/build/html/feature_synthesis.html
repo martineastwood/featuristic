@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>🧩 FeatureSynthesis &#8212; Featuristic  documentation</title>
+    <title>🧩 Genetic Feature Synthesis &#8212; Featuristic  documentation</title>
 
 
 
@@ -239,8 +239,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">🚀 Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../feature_synthesis.html">🧩 FeatureSynthesis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../feature_selector.html">🧰 FeatureSelector: Evolutionary Feature Subset Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_synthesis.html">🧩 Genetic Feature Synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_selector.html">🧰 Genetic Feature Selector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fitness.html">🧮 Fitness Functions in Feature Synthesis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../custom_functions.html">🛠️ Creating Custom Symbolic Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../scikitlearn.html">🔌 Using Featuristic in scikit-learn Pipelines</a></li>
@@ -283,7 +283,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">🧩 FeatureSynthesis</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">🧩 Genetic Feature Synthesis</span></li>
   </ul>
 </nav>
 </div>
@@ -300,9 +300,9 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
 
-  <section id="🧩-FeatureSynthesis">
-<h1>🧩 FeatureSynthesis<a class="headerlink" href="#🧩-FeatureSynthesis" title="Link to this heading"><span>#</span></a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">FeatureSynthesis</span></code> class is the main interface for generating new symbolic features using <strong>Evolutionary Feature Synthesis (EFS)</strong>.</p>
+  <section id="🧩-Genetic-Feature-Synthesis">
+<h1>🧩 Genetic Feature Synthesis<a class="headerlink" href="#🧩-Genetic-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code> class is the main interface for generating new symbolic features using <strong>Genetic Feature Synthesis (GFS)</strong>.</p>
 <p>It acts as a scikit-learn-compatible transformer (<code class="docutils literal notranslate"><span class="pre">fit</span></code>, <code class="docutils literal notranslate"><span class="pre">transform</span></code>, <code class="docutils literal notranslate"><span class="pre">fit_transform</span></code>) that automatically evolves <strong>interpretable mathematical expressions</strong> from your input features and selects the best ones based on predictive performance.</p>
 <hr class="docutils" />
 <section id="🔧-Parameters">
@@ -312,68 +312,137 @@
 <tr class="row-odd"><th class="head"><p>Argument</p></th>
 <th class="head"><p>Type</p></th>
 <th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_features</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Number of features to return after synthesis and selection</p></td>
+<td><p>The number of best features to generate. Internally, <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">num_features</span></code> programs are generated, and the best
+<code class="docutils literal notranslate"><span class="pre">num_features</span></code> are selected via Maximum Relevance Minimum Redundancy (mRMR).</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">population_size</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Number of symbolic programs in each generation</p></td>
+<td><p>The number of programs in each generation. A larger population increases the likelihood of finding a good solution but
+also increases computation time.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_generations</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Maximum number of generations to run</p></td>
+<td><p>The maximum number of generations to run. More generations can lead to better solutions but will take longer.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">25</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tournament_size</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Size of the tournament for parent selection</p></td>
+<td><p>The size of the tournament for parent selection. A larger size increases the chance of selecting fitter programs but
+requires more computation.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">7</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">crossover_proba</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code> (0–1)</p></td>
-<td><p>Probability of crossover between selected parents</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code> (0-1)</p></td>
+<td><p>The probability of crossover mutation occurring between selected parents in each generation.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.75</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
-<td><p>Controls how strongly large programs are penalized</p></td>
+<td><p>Controls the penalty for larger programs. Higher values encourage smaller, more interpretable features by penalizing
+complexity. This helps prevent “bloat”.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.001</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adaptive_parsimony</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Whether to adapt parsimony over generations based on average program size</p></td>
+<td><p>Whether to dynamically adjust the parsimony coefficient over generations based on the average program size. This can help
+manage complexity as evolution progresses.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">early_termination_iters</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Stop early if no improvement after this many generations</p></td>
+<td><p>If the best score does not improve for this number of consecutive generations, the algorithm will terminate early.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">15</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">functions</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">List[str]</span></code> or <code class="docutils literal notranslate"><span class="pre">List[SymbolicFunction]</span></code></p></td>
-<td><p>Functions used to construct expressions (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;log&quot;</span></code>)</p></td>
+<td><p>A list of functions to use when constructing symbolic programs. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all built-in functions are used. Functions
+must be names returned by <code class="docutils literal notranslate"><span class="pre">list_symbolic_functions</span></code>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (all built-in)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">custom_functions</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">List[SymbolicFunction]</span></code></p></td>
-<td><p>User-defined symbolic functions (optional)</p></td>
+<td><p>A list of user-defined custom functions to include in the programs. Each function must be an instance of the
+<code class="docutils literal notranslate"><span class="pre">CustomSymbolicFunction</span></code> class.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fitness_function</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">Callable</span></code></p></td>
-<td><p>Fitness metric to optimize (<code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code>, etc.)</p></td>
+<td><p>The metric used to evaluate the fitness of programs (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code>). If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the
+fitness function is inferred based on the target type (e.g., Pearson correlation for regression, Log Loss for
+classification).</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (inferred)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">return_all_features</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Whether to return original features along with synthesized ones</p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method will return both the original input features and the newly synthesized features. If
+<code class="docutils literal notranslate"><span class="pre">False</span></code>, only the synthesized features will be returned.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">n_jobs</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Number of CPU cores to use (<code class="docutils literal notranslate"><span class="pre">-1</span></code> = all cores)</p></td>
+<td><p>The number of CPU cores to use for parallel processing. Set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> to use all available cores. If <code class="docutils literal notranslate"><span class="pre">1</span></code>, computations
+run serially.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> (all cores)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pbar</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">show_progress_bar</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Whether to show a progress bar during evolution</p></td>
+<td><p>Whether to display a progress bar during the evolutionary process.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
-<td><p>Print generation progress and best programs</p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, additional information, such as generation progress and the best program found in each generation, will be
+printed.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_constant_val</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>The minimum value for ephemeral random constants generated within programs.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-10.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_constant_val</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>The maximum value for ephemeral random constants generated within programs.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10.0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">include_constants</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Whether to allow the generation of ephemeral random constants in the symbolic programs. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, programs will only
+use input features and functions.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">optimize_constants</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>Whether to optimize the constant values within the generated programs using a numerical optimization routine.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">constant_optimization_maxiter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>The maximum number of iterations for the constant optimization process.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">const_prob</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>The probability of generating a constant leaf node during program creation.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.15</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stop_prob</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>The probability of stopping the program generation when building new programs (influences program size and depth).</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.8</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>The maximum allowed depth of the generated symbolic programs. Deeper programs can be more complex.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -451,16 +520,16 @@
 <hr class="docutils" />
 <section id="📝-Example">
 <h2>📝 Example<a class="headerlink" href="#📝-Example" title="Link to this heading"><span>#</span></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesis</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneticFeatureSynthesis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_wine_dataset</span>
 
 <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fetch_wine_dataset</span><span class="p">()</span>
 
-<span class="n">efs</span> <span class="o">=</span> <span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">X_new</span> <span class="o">=</span> <span class="n">efs</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">gfs</span> <span class="o">=</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">gfs</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-<span class="n">efs</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
-<span class="n">efs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+<span class="n">gfs</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+<span class="n">gfs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>

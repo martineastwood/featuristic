@@ -47,7 +47,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'quickstart';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="🧩 FeatureSynthesis" href="feature_synthesis.html" />
+    <link rel="next" title="🧩 Genetic Feature Synthesis" href="feature_synthesis.html" />
     <link rel="prev" title="What is Featuristic?" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -241,8 +241,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">🚀 Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">🧩 FeatureSynthesis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="feature_selector.html">🧰 FeatureSelector: Evolutionary Feature Subset Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">🧩 Genetic Feature Synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selector.html">🧰 Genetic Feature Selector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fitness.html">🧮 Fitness Functions in Feature Synthesis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_functions.html">🛠️ Creating Custom Symbolic Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scikitlearn.html">🔌 Using Featuristic in scikit-learn Pipelines</a></li>
@@ -304,11 +304,11 @@
 
   <section id="🚀-Quickstart">
 <h1>🚀 Quickstart<a class="headerlink" href="#🚀-Quickstart" title="Link to this heading"><span>#</span></a></h1>
-<p>This guide walks you through using <strong>Evolutionary Feature Synthesis (EFS)</strong> to automatically generate interpretable features from tabular data.</p>
+<p>This guide walks you through using <strong>Genetic Feature Synthesis (GFS)</strong> to automatically generate interpretable features from tabular data.</p>
 <p>By the end, you’ll:</p>
 <ul class="simple">
 <li><p>Load a dataset</p></li>
-<li><p>Run symbolic feature synthesis</p></li>
+<li><p>Run genetic feature synthesis</p></li>
 <li><p>Extract and visualize new features</p></li>
 <li><p>Integrate with your ML pipeline</p></li>
 </ul>
@@ -334,16 +334,16 @@
 </section>
 <section id="🧬-Step-2:-Run-Evolutionary-Feature-Synthesis">
 <h2>🧬 Step 2: Run Evolutionary Feature Synthesis<a class="headerlink" href="#🧬-Step-2:-Run-Evolutionary-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesis</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneticFeatureSynthesis</span>
 
-<span class="n">efs</span> <span class="o">=</span> <span class="n">FeatureSynthesis</span><span class="p">(</span>
+<span class="n">gfs</span> <span class="o">=</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
     <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">max_generations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
     <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">X_new</span> <span class="o">=</span> <span class="n">efs</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">gfs</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This will evolve symbolic expressions over 20 generations and return a new dataset with 5 synthesized features.</p>
@@ -351,7 +351,7 @@
 <hr class="docutils" />
 <section id="🔍-Step-3:-Explore-Synthesized-Features">
 <h2>🔍 Step 3: Explore Synthesized Features<a class="headerlink" href="#🔍-Step-3:-Explore-Synthesized-Features" title="Link to this heading"><span>#</span></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">efs</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span><span class="o">.</span><span class="n">get_feature_info</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>You’ll get a table like:</p>
@@ -382,7 +382,7 @@
 <hr class="docutils" />
 <section id="📈-Step-4:-Visualize-Evolution-History">
 <h2>📈 Step 4: Visualize Evolution History<a class="headerlink" href="#📈-Step-4:-Visualize-Evolution-History" title="Link to this heading"><span>#</span></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">efs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This plots the fitness score and parsimony coefficient across generations:</p>
@@ -415,7 +415,7 @@
 <h2>✅ Summary<a class="headerlink" href="#✅-Summary" title="Link to this heading"><span>#</span></a></h2>
 <p>You’ve just:</p>
 <ul class="simple">
-<li><p>Generated symbolic features using EFS</p></li>
+<li><p>Generated symbolic features using GFS</p></li>
 <li><p>Viewed their formulas and fitness scores</p></li>
 <li><p>Visualized the evolutionary process</p></li>
 <li><p>Integrated them into a scikit-learn workflow</p></li>
@@ -447,7 +447,7 @@
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">🧩 FeatureSynthesis</p>
+        <p class="prev-next-title">🧩 Genetic Feature Synthesis</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

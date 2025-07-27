@@ -41,7 +41,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         by default 15.
     n_jobs : int, optional
         Number of CPU cores to use, by default -1 (all available).
-    pbar : bool, optional
+    show_progress_bar : bool, optional
         Whether to display a progress bar, by default True.
     verbose : bool, optional
         Whether to print progress messages, by default False.
@@ -70,7 +70,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         mutation_proba: float = 0.1,
         early_termination_iters: int = 15,
         n_jobs: int = -1,
-        pbar: bool = True,
+        show_progress_bar: bool = True,
         verbose: bool = False,
     ):
         if not callable(objective_function):
@@ -85,7 +85,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         self.early_termination_iters = early_termination_iters
 
         self.n_jobs = cpu_count() if n_jobs == -1 else min(n_jobs, cpu_count())
-        self.pbar = pbar
+        self.show_progress_bar = show_progress_bar
         self.verbose = verbose
 
         self.population_ = None
@@ -129,7 +129,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         self._init_population(self.num_genes_)
 
         pbar = None
-        if self.pbar:
+        if self.show_progress_bar:
             pbar = tqdm(total=self.max_generations, desc="Evolving feature selection")
 
         for generation in range(self.max_generations):
@@ -152,7 +152,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
                 }
             )
 
-            if pbar:
+            if self.show_progress_bar:
                 pbar.update(1)
 
             if self.early_termination_counter_ >= self.early_termination_iters:
@@ -164,7 +164,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
             self.population_.evolve(scores)
 
-        if pbar:
+        if self.show_progress_bar:
             pbar.close()
 
         self.is_fitted_ = True

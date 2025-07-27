@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>🧰 FeatureSelector: Evolutionary Feature Subset Selection &#8212; Featuristic  documentation</title>
+    <title>🧰 Genetic Feature Selector &#8212; Featuristic  documentation</title>
 
 
 
@@ -239,8 +239,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">🚀 Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../feature_synthesis.html">🧩 FeatureSynthesis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../feature_selector.html">🧰 FeatureSelector: Evolutionary Feature Subset Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_synthesis.html">🧩 Genetic Feature Synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_selector.html">🧰 Genetic Feature Selector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fitness.html">🧮 Fitness Functions in Feature Synthesis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../custom_functions.html">🛠️ Creating Custom Symbolic Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../scikitlearn.html">🔌 Using Featuristic in scikit-learn Pipelines</a></li>
@@ -283,7 +283,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">🧰 FeatureSelector: Evolutionary Feature Subset Selection</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">🧰 Genetic Feature Selector</span></li>
   </ul>
 </nav>
 </div>
@@ -300,9 +300,9 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
 
-  <section id="🧰-FeatureSelector:-Evolutionary-Feature-Subset-Selection">
-<h1>🧰 FeatureSelector: Evolutionary Feature Subset Selection<a class="headerlink" href="#🧰-FeatureSelector:-Evolutionary-Feature-Subset-Selection" title="Link to this heading"><span>#</span></a></h1>
-<p>The FeatureSelector class performs <strong>feature selection</strong> using binary genetic evolution. It searches for the optimal subset of features that <strong>minimizes a user-defined objective function</strong>.</p>
+  <section id="🧰-Genetic-Feature-Selector">
+<h1>🧰 Genetic Feature Selector<a class="headerlink" href="#🧰-Genetic-Feature-Selector" title="Link to this heading"><span>#</span></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSelector</span></code> class performs <strong>feature selection</strong> using binary genetic evolution. It searches for the optimal subset of features that <strong>minimizes a user-defined objective function</strong>.</p>
 <p>This is a powerful alternative to wrapper-based or greedy feature selection techniques like RFE or SelectKBest - especially useful when feature interactions and nonlinearity matter.</p>
 <hr class="docutils" />
 <section id="How-It-Works">
@@ -395,7 +395,7 @@
 <hr class="docutils" />
 <section id="📝-Example">
 <h2>📝 Example<a class="headerlink" href="#📝-Example" title="Link to this heading"><span>#</span></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSelector</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneticFeatureSelector</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span>
 
@@ -406,7 +406,7 @@
     <span class="k">return</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
 
 <span class="c1"># Initialize the selector</span>
-<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">GeneticFeatureSelector</span><span class="p">(</span>
     <span class="n">objective_function</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
     <span class="n">population_size</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
     <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
@@ -435,7 +435,7 @@
 <td><p>✅</p></td>
 </tr>
 <tr class="row-odd"><td><p>You want to <strong>generate new symbolic features</strong></p></td>
-<td><p>❌ Use <code class="docutils literal notranslate"><span class="pre">FeatureSynthesis</span></code></p></td>
+<td><p>❌ Use <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>You want to optimize any custom metric or model</p></td>
 <td><p>✅</p></td>

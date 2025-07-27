@@ -239,8 +239,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">🚀 Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../feature_synthesis.html">🧩 FeatureSynthesis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../feature_selector.html">🧰 FeatureSelector: Evolutionary Feature Subset Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../feature_synthesis.html">🧩 Genetic Feature Synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../feature_selector.html">🧰 Genetic Feature Selector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fitness.html">🧮 Fitness Functions in Feature Synthesis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom_functions.html">🛠️ Creating Custom Symbolic Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scikitlearn.html">🔌 Using Featuristic in scikit-learn Pipelines</a></li>
@@ -302,8 +302,8 @@
 
   <section id="🧮-Fitness-Functions-in-Feature-Synthesis">
 <h1>🧮 Fitness Functions in Feature Synthesis<a class="headerlink" href="#🧮-Fitness-Functions-in-Feature-Synthesis" title="Link to this heading"><span>#</span></a></h1>
-<p>In FeatureSynthesis, fitness functions are used to evaluate how well each symbolic program (i.e., candidate feature) models the target variable.</p>
-<p>The better a program’s prediction on the target y, the lower its fitness score. FeatureSynthesis minimizes this score during evolution, so lower = better.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code>, fitness functions are used to evaluate how well each symbolic program (i.e., candidate feature) models the target variable.</p>
+<p>The better a program’s prediction on the target y, the lower its fitness score. <code class="docutils literal notranslate"><span class="pre">GeneticFeatureSynthesis</span></code> minimizes this score during evolution, so lower = better.</p>
 <hr class="docutils" />
 <section id="🧪-What-Is-a-Fitness-Function?">
 <h2>🧪 What Is a Fitness Function?<a class="headerlink" href="#🧪-What-Is-a-Fitness-Function?" title="Link to this heading"><span>#</span></a></h2>
@@ -325,7 +325,7 @@
 <section id="📚-Built-in-Fitness-Functions">
 <h2>📚 Built-in Fitness Functions<a class="headerlink" href="#📚-Built-in-Fitness-Functions" title="Link to this heading"><span>#</span></a></h2>
 <p>You can choose a fitness function by name:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">fitness_function</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">fitness_function</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or pass a custom callable.</p>
@@ -350,7 +350,7 @@
 <td><p>Regression</p></td>
 <td><p>Minimize Mean Squared Error</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;mutual_info&quot;</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;mutual&quot;</span></code></p></td>
 <td><p>Regression</p></td>
 <td><p>Maximize mutual information</p></td>
 </tr>
@@ -358,7 +358,7 @@
 <td><p>Regression / Ranking</p></td>
 <td><p>Maximize rank-order correlation</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;kendall_tau&quot;</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;kendall&quot;</span></code></p></td>
 <td><p>Regression / Ranking</p></td>
 <td><p>Maximize Kendall’s tau correlation</p></td>
 </tr>
@@ -383,9 +383,6 @@
 <section id="✂️-Parsimony-Penalty">
 <h2>✂️ Parsimony Penalty<a class="headerlink" href="#✂️-Parsimony-Penalty" title="Link to this heading"><span>#</span></a></h2>
 <p>To avoid bloated or overly complex symbolic formulas, every fitness function is automatically adjusted using a parsimony coefficient:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>adjusted_fitness = raw_score / (program_size ** parsimony)
-</pre></div>
-</div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">program_size</span></code> = number of nodes in the symbolic program</p></li>
@@ -409,7 +406,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Rank or monotonic outputs</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;spearman&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kendall_tau&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;spearman&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kendall&quot;</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Classification (binary)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;f1&quot;</span></code></p></td>
@@ -434,7 +431,7 @@
     <span class="n">penalty</span> <span class="o">=</span> <span class="n">node_count</span><span class="p">(</span><span class="n">program</span><span class="p">)</span> <span class="o">**</span> <span class="n">parsimony</span>
     <span class="k">return</span> <span class="n">score</span> <span class="o">*</span> <span class="n">penalty</span>
 
-<span class="n">efs</span> <span class="o">=</span> <span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">fitness_function</span><span class="o">=</span><span class="n">my_fitness</span><span class="p">)</span>
+<span class="n">gfs</span> <span class="o">=</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">fitness_function</span><span class="o">=</span><span class="n">my_fitness</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -450,7 +447,7 @@
 </pre></div>
 </div>
 <p>Then use it like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">fitness_function</span><span class="o">=</span><span class="s2">&quot;mad&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">fitness_function</span><span class="o">=</span><span class="s2">&quot;mad&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -464,7 +461,7 @@
 <li><p>Apply early stopping when no improvement occurs</p></li>
 </ul>
 <p>You can monitor this visually using:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">efs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Which shows fitness scores and parsimony dynamics per generation.</p>

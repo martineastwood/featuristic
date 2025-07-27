@@ -239,8 +239,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">🚀 Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../feature_synthesis.html">🧩 FeatureSynthesis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../feature_selector.html">🧰 FeatureSelector: Evolutionary Feature Subset Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../feature_synthesis.html">🧩 Genetic Feature Synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../feature_selector.html">🧰 Genetic Feature Selector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fitness.html">🧮 Fitness Functions in Feature Synthesis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom_functions.html">🛠️ Creating Custom Symbolic Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scikitlearn.html">🔌 Using Featuristic in scikit-learn Pipelines</a></li>
@@ -313,13 +313,13 @@
 <h2>✅ Basic Pipeline Example<a class="headerlink" href="#✅-Basic-Pipeline-Example" title="Link to this heading"><span>#</span></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneticFeatureSynthesis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_wine_dataset</span>
 
 <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fetch_wine_dataset</span><span class="p">()</span>
 
 <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
-    <span class="p">(</span><span class="s2">&quot;efs&quot;</span><span class="p">,</span> <span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;gfs&quot;</span><span class="p">,</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
     <span class="p">(</span><span class="s2">&quot;clf&quot;</span><span class="p">,</span> <span class="n">RandomForestClassifier</span><span class="p">())</span>
 <span class="p">])</span>
 
@@ -346,7 +346,7 @@
     <span class="n">pipeline</span><span class="p">,</span>
     <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;clf__n_estimators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span>
-        <span class="s2">&quot;efs__num_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+        <span class="s2">&quot;gfs__num_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
     <span class="p">},</span>
     <span class="n">cv</span><span class="o">=</span><span class="mi">3</span>
 <span class="p">)</span>
@@ -360,7 +360,7 @@
 <section id="🔗-Combining-Synthesis-+-Selection">
 <h2>🔗 Combining Synthesis + Selection<a class="headerlink" href="#🔗-Combining-Synthesis-+-Selection" title="Link to this heading"><span>#</span></a></h2>
 <p>To first generate new features, then filter them down:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesis</span><span class="p">,</span> <span class="n">FeatureSelector</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">,</span> <span class="n">GeneticFeatureSelector</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_loss</span>
@@ -373,8 +373,8 @@
     <span class="k">return</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
 
 <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
-    <span class="p">(</span><span class="s2">&quot;synthesis&quot;</span><span class="p">,</span> <span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">25</span><span class="p">)),</span>
-    <span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="n">FeatureSelector</span><span class="p">(</span><span class="n">objective_function</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;synthesis&quot;</span><span class="p">,</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">25</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="n">GeneticFeatureSelector</span><span class="p">(</span><span class="n">objective_function</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span> <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
     <span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">GradientBoostingClassifier</span><span class="p">())</span>
 <span class="p">])</span>
 
@@ -391,11 +391,11 @@
 <section id="💾-Saving-&amp;-Reusing-Pipelines">
 <h2>💾 Saving &amp; Reusing Pipelines<a class="headerlink" href="#💾-Saving-&-Reusing-Pipelines" title="Link to this heading"><span>#</span></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
-<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="s2">&quot;efs_pipeline.pkl&quot;</span><span class="p">)</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="s2">&quot;gfs_pipeline.pkl&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>later</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loaded</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;efs_pipeline.pkl&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loaded</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;gfs_pipeline.pkl&quot;</span><span class="p">)</span>
 <span class="n">loaded</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
 </pre></div>
 </div>

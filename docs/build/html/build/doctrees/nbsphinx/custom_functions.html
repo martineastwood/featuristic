@@ -239,8 +239,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">🚀 Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../feature_synthesis.html">🧩 FeatureSynthesis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../feature_selector.html">🧰 FeatureSelector: Evolutionary Feature Subset Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../feature_synthesis.html">🧩 Genetic Feature Synthesis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../feature_selector.html">🧰 Genetic Feature Selector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fitness.html">🧮 Fitness Functions in Feature Synthesis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom_functions.html">🛠️ Creating Custom Symbolic Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scikitlearn.html">🔌 Using Featuristic in scikit-learn Pipelines</a></li>
@@ -338,10 +338,10 @@
 </ul>
 </section>
 <hr class="docutils" />
-<section id="✅-Using-It-in-FeatureSynthesis">
-<h2>✅ Using It in FeatureSynthesis<a class="headerlink" href="#✅-Using-It-in-FeatureSynthesis" title="Link to this heading"><span>#</span></a></h2>
+<section id="✅-Using-It-in-Genetic-FeatureSynthesis">
+<h2>✅ Using It in Genetic FeatureSynthesis<a class="headerlink" href="#✅-Using-It-in-Genetic-FeatureSynthesis" title="Link to this heading"><span>#</span></a></h2>
 <p>Once defined, pass the function to your synthesis instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">efs</span> <span class="o">=</span> <span class="n">FeatureSynthesis</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gfs</span> <span class="o">=</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span>
     <span class="n">custom_functions</span><span class="o">=</span><span class="p">[</span><span class="n">inv</span><span class="p">],</span>
     <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
@@ -361,7 +361,7 @@
     <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 <span class="p">)</span>
 
-<span class="n">efs</span> <span class="o">=</span> <span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">custom_functions</span><span class="o">=</span><span class="p">[</span><span class="n">safe_log</span><span class="p">])</span>
+<span class="n">gfs</span> <span class="o">=</span> <span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">custom_functions</span><span class="o">=</span><span class="p">[</span><span class="n">safe_log</span><span class="p">])</span>
 </pre></div>
 </div>
 </section>
@@ -387,7 +387,7 @@
 </pre></div>
 </div>
 <p>Now “cube_root” is available globally via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FeatureSynthesis</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cube_root&quot;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">GeneticFeatureSynthesis</span><span class="p">(</span><span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cube_root&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </section>
@@ -497,7 +497,7 @@
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#🧱-What-Is-a-Symbolic-Function?">🧱 What Is a Symbolic Function?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#✍️-Defining-a-Custom-Function">✍️ Defining a Custom Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#✅-Using-It-in-FeatureSynthesis">✅ Using It in FeatureSynthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#✅-Using-It-in-Genetic-FeatureSynthesis">✅ Using It in Genetic FeatureSynthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#📦-Example:-Clipped-Log-Function">📦 Example: Clipped Log Function</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#🔍-Tips-for-Writing-Safe-Functions">🔍 Tips for Writing Safe Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#🧠-Advanced:-Pre-registering-Functions">🧠 Advanced: Pre-registering Functions</a></li>
