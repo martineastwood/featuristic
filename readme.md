@@ -26,7 +26,7 @@ An evolutionary feature engineering library based on symbolic regression and gen
 
 ## 🚀 What is Featuristic?
 
-Featuristic is an automated feature engineering tool powered by **Evolutionary Feature Synthesis (EFS)**. It evolves symbolic mathematical expressions to discover **high-quality, interpretable features** from your raw data.
+Featuristic is an automated feature engineering tool powered by **Genetic Feature Synthesis (GFS)**. It evolves symbolic mathematical expressions to discover **high-quality, interpretable features** from your raw data.
 
 - ✅ Symbolic programs
 - ✅ Genetic programming
@@ -52,16 +52,16 @@ pip install -e .
 ## 🧪 Quickstart Example: Symbolic Feature Engineering with Featuristic
 
 ```python
-from featuristic import FeatureSynthesis
+from featuristic import GeneticFeatureSynthesis
 from featuristic.datasets import fetch_wine_dataset
 
 X, y = fetch_wine_dataset()
 
-efs = FeatureSynthesis(num_features=5, max_generations=30)
-X_new = efs.fit_transform(X, y)
+gfs = GeneticFeatureSynthesis(num_features=5, max_generations=30)
+X_new = gfs.fit_transform(X, y)
 
-efs.get_feature_info()
-efs.plot_history()
+gfs.get_feature_info()
+gfs.plot_history()
 ```
 
 ## 🧩 Also Included in Featuristic
@@ -85,7 +85,7 @@ X_selected = fs.fit_transform(X, y)
 
 
 ```python
-from featuristic import FeatureSynthesis, FeatureSelector
+from featuristic import GeneticFeatureSynthesis, GeneticFeatureSelector
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
@@ -98,8 +98,8 @@ def objective(X_subset, y):
     return log_loss(y, probs)
 
 pipeline = Pipeline([
-    ("synthesis", FeatureSynthesis(num_features=20, max_generations=25)),
-    ("select", FeatureSelector(objective_function=objective, max_generations=30)),
+    ("synthesis", GeneticFeatureSynthesis(num_features=20, max_generations=25)),
+    ("select", GeneticFeatureSelector(objective_function=objective, max_generations=30)),
     ("model", GradientBoostingClassifier())
 ])
 

@@ -1,6 +1,6 @@
 """GeneticFeatureSelector uses evolutionary search to select feature subsets."""
 
-from typing import Callable, List, Optional, Self
+from typing import Callable, Optional, Self
 
 import matplotlib
 import matplotlib.pyplot as plt

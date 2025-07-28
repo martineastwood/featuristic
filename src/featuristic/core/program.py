@@ -1,16 +1,11 @@
 # File: program.py
 """Functions for manipulating the symbolic programs."""
 
-from typing import Dict, List
-
+from typing import Dict, List, Any
 import numpy as np
 import pandas as pd
 from sympy import simplify, sympify
 from sympy.core.sympify import SympifyError
-from featuristic.core.registry import FUNCTION_REGISTRY
-
-
-import numpy as np
 
 
 def random_prog(
@@ -25,7 +20,33 @@ def random_prog(
     stop_prob: float = 0.6,
 ) -> dict:
     """
-    Recursively generate a random symbolic program, with a clearer leaf-vs-branch decision.
+    Generate a random symbolic program.
+
+    Parameters
+    ----------
+    depth : int
+        The current depth of the program in the tree structure.
+    feature_names : List[str]
+        List of feature names available for use as leaf nodes.
+    operations : List
+        List of operations available for use as internal nodes.
+    max_depth : int, optional
+        The maximum allowed depth of the program (default is 3).
+    min_constant_val : float, optional
+        The minimum value for generated constants (default is -10.0).
+    max_constant_val : float, optional
+        The maximum value for generated constants (default is 10.0).
+    include_constants : bool, optional
+        Whether to include constants as leaf nodes (default is True).
+    const_prob : float, optional
+        The probability of generating a constant as a leaf node (default is 0.15).
+    stop_prob : float, optional
+        The probability of stopping the program generation at a leaf node (default is 0.6).
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the generated symbolic program.
     """
     # 1) Should we make a leaf?
     if depth >= max_depth or np.random.rand() < stop_prob:
@@ -114,9 +135,23 @@ def weighted_node_count(node: dict, const_weight: float = 1.25) -> int:
 
 def select_random_node(current: dict, parent: dict = None, depth: int = 0) -> dict:
     """
-    Recursively select a random node in the program.
-    Falls back to returning the current node if traversal ends early.
+    Randomly select a node from a symbolic expression tree.
+
+    Parameters
+    ----------
+    current : dict
+        The current node in the symbolic expression tree.
+    parent : dict, optional
+        The parent node of the current node.
+    depth : int, optional
+        The current depth in the tree, used to adjust selection probability.
+
+    Returns
+    -------
+    dict
+        The randomly selected node from the tree.
     """
+
     if (
         "children" not in current
     ):  # This handles both feature and constant nodes as terminals
@@ -168,10 +203,6 @@ def simplify_prog_str(expr: str) -> str:
         return str(simplified)
     except SympifyError:
         return expr
-
-
-from typing import Any, Dict
-import pandas as pd
 
 
 def evaluate_prog(node: Dict[str, Any], X: pd.DataFrame) -> pd.Series:

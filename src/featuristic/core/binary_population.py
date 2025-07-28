@@ -1,5 +1,5 @@
 """
-Binary population for Evolutionary Feature Synthesis (EFS).
+Binary population for Genetic Feature Synthesis (GFS).
 
 Defines population class for feature selection using binary genetic representations.
 """
@@ -161,8 +161,9 @@ class BinaryPopulation:
             The mutated genome.
         """
         mask = np.random.rand(len(genome)) < self.mutation_proba
-        genome[mask] ^= 1
-        return genome
+        new = genome.copy()
+        new[mask] ^= 1
+        return new
 
     def _crossover(
         self, parent1: np.ndarray, parent2: np.ndarray

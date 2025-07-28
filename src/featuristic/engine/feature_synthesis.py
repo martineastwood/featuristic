@@ -540,7 +540,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return pd.DataFrame(output)
 
-    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
+    def plot_history(
+        self, ax: Union[matplotlib.axes._axes.Axes, None] = None
+    ) -> matplotlib.axes._axes.Axes:
         """
         Plot the history of the parsimony coefficient and fitness score over generations.
 
@@ -551,7 +553,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return
         ------
-        None
+        matplotlib.axes._axes.Axes
+            The axis with the history plot.
         """
         if not self.fit_called:
             raise ValueError("Must call fit before plot_history")
@@ -559,10 +562,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         df = pd.DataFrame(self.history)
 
         if ax is None:
-            fig, ax1 = plt.subplots()
+            _, ax1 = plt.subplots()
         else:
             ax1 = ax
-            fig = ax.get_figure()
 
         ax2 = ax1.twinx()
 
@@ -611,5 +613,4 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             labels.extend(label)
         ax1.legend(lines, labels, loc="upper right")
 
-        plt.tight_layout()
-        plt.show()
+        return ax1
