@@ -37,3 +37,11 @@ def test_evolve_improves_population(dummy_data):
     fitness = pop.evaluate(dummy_cost, X, y)
     pop.evolve(fitness)
     assert not np.array_equal(pop.population, initial_pop)
+
+
+def test_evolve_odd_population_size(dummy_data):
+    X, y = dummy_data
+    pop = BinaryPopulation(population_size=11, feature_count=10)
+    fitness = pop.evaluate(dummy_cost, X, y)
+    pop.evolve(fitness)
+    assert pop.population.shape[0] == 11

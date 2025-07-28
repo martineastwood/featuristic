@@ -210,9 +210,16 @@ class BinaryPopulation:
             for _ in range(self.population_size)
         ]
         children = []
-        for i in range(0, self.population_size - 1, 2):
+        for i in range(
+            0, self.population_size // 2 * 2, 2
+        ):  # Ensure even number of iterations
             p1, p2 = selected[i], selected[i + 1]
             for c in self._crossover(p1, p2):
                 children.append(self._mutate(c))
-        self.population = children
+
+        if self.population_size % 2 != 0:
+            # If population size is odd, add the last selected individual (mutated)
+            children.append(self._mutate(selected[self.population_size - 1]))
+
+        self.population = np.array(children)
         return self

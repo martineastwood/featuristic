@@ -70,10 +70,30 @@ def test_plot_history_runs():
     )
     fs.fit(X, y)
 
-    try:
-        fs.plot_history()
-    except Exception as e:
-        assert False, f"plot_history raised an exception: {e}"
+    ax = fs.plot_history()
+    assert isinstance(ax, matplotlib.axes._axes.Axes)
+
+
+@pytest.mark.filterwarnings("ignore:FigureCanvasAgg is non-interactive")
+def test_plot_history_with_ax():
+    import matplotlib.pyplot as plt
+
+    X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])
+    y = X["x0"] + X["x1"] * 2 - X["x2"]
+
+    fs = GeneticFeatureSynthesis(
+        num_features=2,
+        max_generations=3,
+        population_size=10,
+        n_jobs=1,
+        show_progress_bar=False,
+    )
+    fs.fit(X, y)
+
+    fig, ax = plt.subplots()
+    ax_returned = fs.plot_history(ax=ax)
+    assert ax_returned is ax
+    assert len(ax.lines) > 0
 
 
 def contains_constant(program):
