@@ -313,8 +313,13 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         """
         if X is None or y is None or X.empty or y.empty:
             raise ValueError("Input features and target must not be empty.")
+
         if X.isnull().all().all() or y.isnull().all():
             raise ValueError("Input features and target must not be all NaN.")
+
+        if X.select_dtypes(include=np.number).shape[1] != X.shape[1]:
+            raise ValueError("All columns in X must be numeric.")
+
         X_copy, y_copy = preprocess_data(
             X.reset_index(drop=True), y.reset_index(drop=True)
         )
@@ -540,11 +545,11 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return pd.DataFrame(output)
 
-    def plot_history(
+    def plot_parsimony_history(
         self, ax: Union[matplotlib.axes._axes.Axes, None] = None
     ) -> matplotlib.axes._axes.Axes:
         """
-        Plot the history of the parsimony coefficient and fitness score over generations.
+        Plot the history of the parsimony coefficient over generations.
 
         Args
         ----
@@ -554,50 +559,35 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         return
         ------
         matplotlib.axes._axes.Axes
-            The axis with the history plot.
+            The axis with the parsimony history plot.
         """
         if not self.fit_called:
-            raise ValueError("Must call fit before plot_history")
+            raise ValueError("Must call fit before plot_parsimony_history")
 
         df = pd.DataFrame(self.history)
 
         if ax is None:
-            _, ax1 = plt.subplots()
-        else:
-            ax1 = ax
+            _, ax = plt.subplots()
 
-        ax2 = ax1.twinx()
-
-        ax1.plot(
+        ax.plot(
             df["generation"],
             df["parsimony"],
             color="tab:blue",
             label="Parsimony Coefficient",
         )
-        ax1.set_ylabel("Parsimony Coefficient", color="tab:blue")
-        ax1.tick_params(axis="y", labelcolor="tab:blue")
-
-        # Plot Fitness Score
-        ax2.plot(
-            df["generation"],
-            df["best_score"],
-            color="tab:orange",
-            label="Fitness Score",
-        )
-        ax2.set_ylabel("Fitness Score", color="tab:orange")
-        ax2.tick_params(axis="y", labelcolor="tab:orange")
-
-        # X-axis label and title
-        ax1.set_xlabel("Generation")
-        ax1.set_title("Parsimony and Fitness over Generations")
+        ax.set_ylabel("Parsimony Coefficient", color="tab:blue")
+        ax.tick_params(axis="y", labelcolor="tab:blue")
+        ax.set_xlabel("Generation")
+        ax.set_title("Parsimony over Generations")
+        ax.legend(loc="upper right")
 
         # Optional early stopping marker
         if self.early_termination_counter >= self.early_termination_iters:
             stop_gen = df["generation"].iloc[-1]
-            ax1.axvline(x=stop_gen, color="grey", linestyle="--", alpha=0.6)
-            ax1.text(
+            ax.axvline(x=stop_gen, color="grey", linestyle="--", alpha=0.6)
+            ax.text(
                 stop_gen,
-                ax1.get_ylim()[1],
+                ax.get_ylim()[1],
                 "Early Stop",
                 color="grey",
                 verticalalignment="top",
@@ -605,12 +595,61 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 fontsize=8,
             )
 
-        # Combine legends
-        lines, labels = [], []
-        for axis in [ax1, ax2]:
-            line, label = axis.get_legend_handles_labels()
-            lines.extend(line)
-            labels.extend(label)
-        ax1.legend(lines, labels, loc="upper right")
+        return ax
 
-        return ax1
+    def plot_fitness_history(
+        self, ax: Union[matplotlib.axes._axes.Axes, None] = None
+    ) -> matplotlib.axes._axes.Axes:
+        """
+        Plot the history of the fitness score over generations.
+
+        Args
+        ----
+        ax : matplotlib.axes._axes.Axes, optional
+            The axis to plot on.
+
+        return
+        ------
+        matplotlib.axes._axes.Axes
+            The axis with the fitness history plot.
+        """
+        if not self.fit_called:
+            raise ValueError("Must call fit before plot_fitness_history")
+
+        df = pd.DataFrame(self.history)
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        ax.plot(
+            df["generation"],
+            df["best_score"],
+            label="Best Fitness Score",
+        )
+        ax.plot(
+            df["generation"],
+            df["median_score"],
+            label="Median Fitness Score",
+            linestyle="--",
+        )
+        ax.set_ylabel("Fitness Score", color="tab:orange")
+        ax.tick_params(axis="y", labelcolor="tab:orange")
+        ax.set_xlabel("Generation")
+        ax.set_title("Fitness over Generations")
+        ax.legend(loc="upper right")
+
+        # Optional early stopping marker
+        if self.early_termination_counter >= self.early_termination_iters:
+            stop_gen = df["generation"].iloc[-1]
+            ax.axvline(x=stop_gen, color="grey", linestyle="--", alpha=0.6)
+            ax.text(
+                stop_gen,
+                ax.get_ylim()[1],
+                "Early Stop",
+                color="grey",
+                verticalalignment="top",
+                horizontalalignment="right",
+                fontsize=8,
+            )
+
+        return ax

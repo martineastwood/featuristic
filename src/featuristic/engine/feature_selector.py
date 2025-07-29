@@ -232,7 +232,21 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         if ax is None:
             _, ax = plt.subplots()
 
-        pd.DataFrame(self.history_).plot(
-            x="generation", y=["best_score", "median_score"], ax=ax
+        history_df = pd.DataFrame(self.history_)
+        ax.plot(
+            history_df["generation"],
+            history_df["best_score"],
+            linestyle="-",
+            label="Best Score",
         )
+        ax.plot(
+            history_df["generation"],
+            history_df["median_score"],
+            linestyle="--",
+            label="Median Score",
+        )
+        ax.set_title("Fitness Score History")
+        ax.set_xlabel("generation")
+        ax.set_ylabel("score")
+        ax.legend()
         return ax

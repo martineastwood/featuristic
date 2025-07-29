@@ -7,6 +7,23 @@ from featuristic.core.program import evaluate_prog
 
 
 def extract_constants(node, constants=None, indices=None):
+    """
+    Recursively extract constants (value nodes) from a symbolic program tree.
+
+    Parameters
+    ----------
+    node : dict
+        A symbolic program node (part of the tree).
+    constants : list, optional
+        List to store the extracted constants.
+    indices : list, optional
+        List to store the indices of the constants.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the list of constants and their indices.
+    """
     if constants is None:
         constants = []
         indices = []
