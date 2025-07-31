@@ -3,7 +3,7 @@
 genetic programming algorithm."""
 
 from copy import deepcopy
-from typing import Callable, List, Self
+from typing import Callable, List, Optional, Self
 
 import numpy as np
 import pandas as pd
@@ -31,6 +31,7 @@ class SymbolicPopulation:
         const_prob: float = 0.15,
         stop_prob: float = 0.6,
         max_depth: int = 3,
+        rng: Optional[np.random.Generator] = None,
     ):
         """
         Initialize the population.
@@ -74,6 +75,7 @@ class SymbolicPopulation:
         self.stop_prob = stop_prob
         self.max_depth = max_depth
         self.feature_names = None
+        self.rng = np.random.default_rng() if rng is None else rng
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
@@ -91,6 +93,7 @@ class SymbolicPopulation:
                 const_prob=self.const_prob,
                 stop_prob=self.stop_prob,
                 max_depth=self.max_depth,
+                rng=self.rng,
             )
             for _ in range(self.population_size)
         ]
@@ -156,7 +159,7 @@ class SymbolicPopulation:
         Select a random parent from the population using tournament selection.
         """
         tournament_members = [
-            np.random.randint(0, self.population_size)
+            self.rng.integers(0, self.population_size)
             for _ in range(self.tournament_size)
         ]
         member_fitness = [(fitness[i], self.population[i]) for i in tournament_members]
@@ -167,8 +170,8 @@ class SymbolicPopulation:
         Perform crossover mutation between two selected programs.
         """
         offspring = deepcopy(selected1)
-        xover_point1 = select_random_node(offspring, None, 0)
-        xover_point2 = select_random_node(selected2, None, 0)
+        xover_point1 = select_random_node(offspring, None, 0, rng=self.rng)
+        xover_point2 = select_random_node(selected2, None, 0, rng=self.rng)
 
         if "children" not in xover_point1 or not isinstance(
             xover_point1["children"], list
@@ -183,10 +186,11 @@ class SymbolicPopulation:
                 const_prob=self.const_prob,
                 stop_prob=self.stop_prob,
                 max_depth=self.max_depth,
+                rng=self.rng,
             )
 
         child_count = len(xover_point1["children"])
-        idx = 0 if child_count <= 1 else np.random.randint(0, child_count)
+        idx = 0 if child_count <= 1 else self.rng.integers(0, child_count)
         xover_point1["children"][idx] = xover_point2
         return offspring
 
@@ -195,7 +199,7 @@ class SymbolicPopulation:
         Mutate the selected program by replacing a random node.
         """
         offspring = deepcopy(selected)
-        mutate_point = select_random_node(offspring, None, 0)
+        mutate_point = select_random_node(offspring, None, 0, rng=self.rng)
 
         if "children" not in mutate_point or not isinstance(
             mutate_point["children"], list
@@ -210,10 +214,11 @@ class SymbolicPopulation:
                 const_prob=self.const_prob,
                 stop_prob=self.stop_prob,
                 max_depth=self.max_depth,
+                rng=self.rng,
             )
 
         child_count = len(mutate_point["children"])
-        idx = 0 if child_count <= 1 else np.random.randint(0, child_count)
+        idx = 0 if child_count <= 1 else self.rng.integers(0, child_count)
         mutate_point["children"][idx] = random_prog(
             0,
             self.feature_names,
@@ -224,6 +229,7 @@ class SymbolicPopulation:
             const_prob=self.const_prob,
             stop_prob=self.stop_prob,
             max_depth=self.max_depth,
+            rng=self.rng,
         )
         return offspring
 
@@ -232,7 +238,7 @@ class SymbolicPopulation:
         Get the offspring of two parents using crossover or mutation.
         """
         parent1 = self._get_random_parent(fitness)
-        if np.random.rand() < self.crossover_prob:
+        if self.rng.random() < self.crossover_prob:
             parent2 = self._get_random_parent(fitness)
             return self._crossover(parent1, parent2, X)
         return self._mutate(parent1, X)

@@ -72,11 +72,13 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         n_jobs: int = -1,
         show_progress_bar: bool = True,
         verbose: bool = False,
+        rng: Optional[np.random.Generator] = None,
     ):
         if not callable(objective_function):
             raise ValueError("objective_function must be a callable")
 
         self.objective_function = objective_function
+        self.rng = rng
         self.population_size = population_size
         self.max_generations = max_generations
         self.tournament_size = tournament_size
@@ -107,6 +109,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             crossover_proba=self.crossover_proba,
             mutation_proba=self.mutation_proba,
             n_jobs=self.n_jobs,
+            rng=self.rng,
         )
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:

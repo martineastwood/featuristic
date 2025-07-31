@@ -14,7 +14,12 @@ class MaxRelevanceMinRedundancy:
     Selects k features that are maximally relevant to the target and minimally redundant.
     """
 
-    def __init__(self, k: int = 6, show_progress_bar: bool = True):
+    def __init__(
+        self,
+        k: int = 6,
+        show_progress_bar: bool = True,
+        rng: Optional[np.random.Generator] = None,
+    ):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -25,6 +30,9 @@ class MaxRelevanceMinRedundancy:
 
         show_progress_bar : bool (default=True)
             Whether to display a progress bar using tqdm.
+
+        rng : Optional[np.random.Generator] (default=None)
+            Random number generator. If None, a new one will be created.
         """
         self.k = k
         self.show_progress_bar = show_progress_bar
@@ -32,6 +40,7 @@ class MaxRelevanceMinRedundancy:
         self.metric: Optional[
             Callable[[pd.DataFrame, pd.Series], Tuple[np.ndarray, np.ndarray]]
         ] = None
+        self.rng = rng if rng is not None else np.random.default_rng()
 
     def fit(self, X: pd.DataFrame, y: pd.Series):
         """
@@ -134,7 +143,9 @@ class MaxRelevanceMinRedundancy:
             return []
 
         # Select the first feature based on the highest relevance
-        first_feature = relevance.idxmax()
+        # If there are multiple features with the same max relevance, pick one randomly
+        max_relevance_features = relevance[relevance == relevance.max()].index.tolist()
+        first_feature = self.rng.choice(max_relevance_features)
         selected.append(first_feature)
         features.remove(first_feature)
 
@@ -150,7 +161,9 @@ class MaxRelevanceMinRedundancy:
                     # The score is the relevance divided by the redundancy
                     scores[feature] = relevance[feature] / (redundancy + FLOOR)
 
-                best = scores.idxmax()
+                # If there are multiple features with the same max score, pick one randomly
+                best_candidates = scores[scores == scores.max()].index.tolist()
+                best = self.rng.choice(best_candidates)
                 selected.append(best)
                 features.remove(best)
                 pbar.update(1)

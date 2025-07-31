@@ -4,7 +4,7 @@ Binary population for Genetic Feature Synthesis (GFS).
 Defines population class for feature selection using binary genetic representations.
 """
 
-from typing import Callable, List, Tuple
+from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -27,6 +27,7 @@ class BinaryPopulation:
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         n_jobs: int = 1,
+        rng: Optional[np.random.Generator] = None,
     ):
         """
         Initialize the binary population.
@@ -53,13 +54,14 @@ class BinaryPopulation:
         self.mutation_proba = mutation_proba
         self.tournament_size = tournament_size
         self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+        self.rng = rng if rng is not None else np.random.default_rng()
         self.population = None
 
         self._initialize_population()
 
     def _initialize_population(self) -> None:
         """Initialize the population with random binary genomes."""
-        self.population = np.random.choice(
+        self.population = self.rng.choice(
             [0, 1], size=(self.population_size, self.feature_count)
         )
 
@@ -138,7 +140,7 @@ class BinaryPopulation:
             The selected individual.
         """
         # Select k random indices for the tournament
-        tournament_indices = np.random.randint(0, len(self.population), k)
+        tournament_indices = self.rng.integers(0, len(self.population), size=k)
         # Find the index with the best (lowest) score in the tournament
         best_ix = tournament_indices[0]
         for ix in tournament_indices[1:]:
@@ -160,7 +162,7 @@ class BinaryPopulation:
         np.ndarray
             The mutated genome.
         """
-        mask = np.random.rand(len(genome)) < self.mutation_proba
+        mask = self.rng.random(len(genome)) < self.mutation_proba
         new = genome.copy()
         new[mask] ^= 1
         return new
@@ -184,8 +186,8 @@ class BinaryPopulation:
             The two children resulting from crossover.
         """
         c1, c2 = parent1.copy(), parent2.copy()
-        if np.random.rand() < self.crossover_proba:
-            pt = np.random.randint(1, len(parent1) - 1)
+        if self.rng.random() < self.crossover_proba:
+            pt = self.rng.integers(1, len(parent1) - 1)
             c1 = np.concatenate([parent1[:pt], parent2[pt:]])
             c2 = np.concatenate([parent2[:pt], parent1[pt:]])
         return c1, c2

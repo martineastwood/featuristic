@@ -61,6 +61,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         const_prob: float = 0.15,
         stop_prob: float = 0.8,
         max_depth: int = 3,
+        rng: Optional[np.random.Generator] = None,
     ):
         """
         Initialize the GeneticFeatureSynthesis.
@@ -223,6 +224,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.const_prob = const_prob
         self.stop_prob = stop_prob
         self.max_depth = max_depth
+        self.rng = np.random.default_rng() if rng is None else rng
 
     def _update_hall_of_fame(self, fitness: List[float]):
         for individual, fit in zip(self.population.population, fitness):
@@ -266,6 +268,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             const_prob=self.const_prob,
             stop_prob=self.stop_prob,
             max_depth=self.max_depth,
+            rng=self.rng,
         )
 
         population.population = [x.individual for x in self.hall_of_fame]
@@ -287,7 +290,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         selected = (
             MaxRelevanceMinRedundancy(
-                k=self.num_features, show_progress_bar=self.show_progress_bar
+                k=self.num_features,
+                show_progress_bar=self.show_progress_bar,
+                rng=self.rng,
             )
             .fit_transform(features, y)
             .columns
@@ -346,6 +351,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             const_prob=self.const_prob,
             stop_prob=self.stop_prob,
             max_depth=self.max_depth,
+            rng=self.rng,
         ).initialize(X_copy)
 
         # loss value to minimize
@@ -484,6 +490,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             const_prob=self.const_prob,
             stop_prob=self.stop_prob,
             max_depth=self.max_depth,
+            rng=self.rng,
         )
 
         population.population = [x.individual for x in self.hall_of_fame]
@@ -528,7 +535,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             raise ValueError("Must call fit before get_feature_info")
 
         output = []
-        for prog in self.hall_of_fame:
+        # Process hall_of_fame in a deterministic order based on name
+        # This ensures consistent DataFrame output for reproducibility tests
+        sorted_hall_of_fame = sorted(self.hall_of_fame, key=lambda x: x.name)
+        for prog in sorted_hall_of_fame:
             formula = render_prog(prog.individual)
             if simplify:
                 simplified_formula = simplify_prog_str(formula)

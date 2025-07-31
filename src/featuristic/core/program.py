@@ -1,7 +1,7 @@
 # File: program.py
 """Functions for manipulating the symbolic programs."""
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import numpy as np
 import pandas as pd
 from sympy import simplify, sympify
@@ -18,6 +18,7 @@ def random_prog(
     include_constants: bool = True,
     const_prob: float = 0.15,
     stop_prob: float = 0.6,
+    rng: Optional[np.random.Generator] = None,
 ) -> dict:
     """
     Generate a random symbolic program.
@@ -48,25 +49,27 @@ def random_prog(
     dict
         A dictionary representation of the generated symbolic program.
     """
+    _rng = np.random.default_rng() if rng is None else rng
+
     # 1) Should we make a leaf?
-    if depth >= max_depth or np.random.rand() < stop_prob:
+    if depth >= max_depth or _rng.random() < stop_prob:
         # --- Leaf: either a constant or a feature
         # If there are no features, force a constant (or fail if disallowed)
         if not feature_names:
             if include_constants:
-                return {"value": np.random.uniform(min_constant_val, max_constant_val)}
+                return {"value": _rng.uniform(min_constant_val, max_constant_val)}
             else:
                 raise ValueError("No features to pick and constants disabled")
 
         # Otherwise, sample constant vs. feature
-        if include_constants and np.random.rand() < const_prob:
-            return {"value": np.random.uniform(min_constant_val, max_constant_val)}
+        if include_constants and _rng.random() < const_prob:
+            return {"value": _rng.uniform(min_constant_val, max_constant_val)}
         else:
-            feat = feature_names[np.random.randint(len(feature_names))]
+            feat = feature_names[_rng.integers(len(feature_names))]
             return {"feature_name": feat}
 
     # 2) Otherwise grow a function node
-    op = operations[np.random.randint(len(operations))]
+    op = operations[_rng.integers(len(operations))]
     return {
         "func": op.func,
         "arity": op.arity,
@@ -83,6 +86,7 @@ def random_prog(
                 include_constants,
                 const_prob,
                 stop_prob,
+                rng=_rng,
             )
             for _ in range(op.arity)
         ],
@@ -133,7 +137,12 @@ def weighted_node_count(node: dict, const_weight: float = 1.25) -> int:
     )
 
 
-def select_random_node(current: dict, parent: dict = None, depth: int = 0) -> dict:
+def select_random_node(
+    current: dict,
+    parent: dict = None,
+    depth: int = 0,
+    rng: Optional[np.random.Generator] = None,
+) -> dict:
     """
     Randomly select a node from a symbolic expression tree.
 
@@ -152,16 +161,20 @@ def select_random_node(current: dict, parent: dict = None, depth: int = 0) -> di
         The randomly selected node from the tree.
     """
 
+    _rng = np.random.default_rng() if rng is None else rng
+
     if (
         "children" not in current
     ):  # This handles both feature and constant nodes as terminals
         return current
 
-    if np.random.randint(0, 10) < 2 * depth:
+    if _rng.integers(0, 10) < 2 * depth:
         return current
 
-    child_idx = np.random.randint(0, len(current["children"]))
-    return select_random_node(current["children"][child_idx], current, depth + 1)
+    child_idx = _rng.integers(0, len(current["children"]))
+    return select_random_node(
+        current["children"][child_idx], current, depth + 1, rng=_rng
+    )
 
 
 def render_prog(node: Dict) -> str:
