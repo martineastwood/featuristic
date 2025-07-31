@@ -146,7 +146,7 @@ class SymbolicPopulation:
             result = (
                 result
                 if isinstance(result, pd.Series)
-                else pd.Series(result, index=X.index)
+                else pd.Series(result, index=X.index, dtype=np.float64)
             )
             if result.isna().any() or np.isinf(result).any():
                 return pd.Series(np.zeros(len(X)))
