@@ -57,7 +57,7 @@ def test_get_feature_info_simplify_argument(regression_data):
 
 
 @pytest.mark.filterwarnings("ignore:FigureCanvasAgg is non-interactive")
-def test_plot_history_runs():
+def test_plot_fitness_history_runs():
     X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])
     y = X["x0"] + X["x1"] * 2 - X["x2"]
 
@@ -70,12 +70,12 @@ def test_plot_history_runs():
     )
     fs.fit(X, y)
 
-    ax = fs.plot_history()
+    ax = fs.plot_fitness_history()
     assert isinstance(ax, matplotlib.axes._axes.Axes)
 
 
 @pytest.mark.filterwarnings("ignore:FigureCanvasAgg is non-interactive")
-def test_plot_history_with_ax():
+def test_plot_fitness_history_with_ax():
     import matplotlib.pyplot as plt
 
     X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])
@@ -91,7 +91,47 @@ def test_plot_history_with_ax():
     fs.fit(X, y)
 
     fig, ax = plt.subplots()
-    ax_returned = fs.plot_history(ax=ax)
+    ax_returned = fs.plot_fitness_history(ax=ax)
+    assert ax_returned is ax
+    assert len(ax.lines) > 0
+
+
+@pytest.mark.filterwarnings("ignore:FigureCanvasAgg is non-interactive")
+def test_plot_parsimony_history_runs():
+    X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])
+    y = X["x0"] + X["x1"] * 2 - X["x2"]
+
+    fs = GeneticFeatureSynthesis(
+        num_features=2,
+        max_generations=3,
+        population_size=10,
+        n_jobs=1,
+        show_progress_bar=False,
+    )
+    fs.fit(X, y)
+
+    ax = fs.plot_parsimony_history()
+    assert isinstance(ax, matplotlib.axes._axes.Axes)
+
+
+@pytest.mark.filterwarnings("ignore:FigureCanvasAgg is non-interactive")
+def test_plot_parsimony_history_with_ax():
+    import matplotlib.pyplot as plt
+
+    X = pd.DataFrame(np.random.randn(100, 5), columns=[f"x{i}" for i in range(5)])
+    y = X["x0"] + X["x1"] * 2 - X["x2"]
+
+    fs = GeneticFeatureSynthesis(
+        num_features=2,
+        max_generations=3,
+        population_size=10,
+        n_jobs=1,
+        show_progress_bar=False,
+    )
+    fs.fit(X, y)
+
+    fig, ax = plt.subplots()
+    ax_returned = fs.plot_parsimony_history(ax=ax)
     assert ax_returned is ax
     assert len(ax.lines) > 0
 
