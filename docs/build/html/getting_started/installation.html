@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Installation &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/installation';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start Guide" href="quickstart.html" />
+    <link rel="prev" title="Welcome to Featuristic" href="../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-from-pypi-recommended">Install from PyPI (Recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-from-source">Install from Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-from-pre-built-wheels">Install from Pre-built Wheels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-installation">Development Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker-installation">Docker Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#platform-specific-notes">Platform-Specific Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Installation</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"><span>#</span></a></h1>
+<p>Installing Featuristic is straightforward. Choose the method that best fits your needs.</p>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#install-from-pypi-recommended" id="id1">Install from PyPI (Recommended)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#verify-installation" id="id2">Verify Installation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#install-from-source" id="id3">Install from Source</a></p>
+<ul>
+<li><p><a class="reference internal" href="#prerequisites" id="id4">Prerequisites</a></p></li>
+<li><p><a class="reference internal" href="#installation-steps" id="id5">Installation Steps</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#install-from-pre-built-wheels" id="id6">Install from Pre-built Wheels</a></p></li>
+<li><p><a class="reference internal" href="#development-installation" id="id7">Development Installation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#building-the-rust-extension" id="id8">Building the Rust Extension</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#docker-installation" id="id9">Docker Installation</a></p></li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id10">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#rust-installation-issues" id="id11">Rust Installation Issues</a></p></li>
+<li><p><a class="reference internal" href="#build-failures" id="id12">Build Failures</a></p></li>
+<li><p><a class="reference internal" href="#python-version-issues" id="id13">Python Version Issues</a></p></li>
+<li><p><a class="reference internal" href="#import-errors" id="id14">Import Errors</a></p></li>
+<li><p><a class="reference internal" href="#permission-errors" id="id15">Permission Errors</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#platform-specific-notes" id="id16">Platform-Specific Notes</a></p>
+<ul>
+<li><p><a class="reference internal" href="#apple-silicon-m1-m2-m3" id="id17">Apple Silicon (M1/M2/M3)</a></p></li>
+<li><p><a class="reference internal" href="#windows" id="id18">Windows</a></p></li>
+<li><p><a class="reference internal" href="#linux" id="id19">Linux</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#next-steps" id="id20">Next Steps</a></p></li>
+</ul>
+</nav>
+<section id="install-from-pypi-recommended">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Install from PyPI (Recommended)</a><a class="headerlink" href="#install-from-pypi-recommended" title="Link to this heading"><span>#</span></a></h2>
+<p>The easiest way to install Featuristic is using pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>featuristic
+</pre></div>
+</div>
+<p>This will install the latest stable release from PyPI, including pre-compiled binaries for your platform.</p>
+<p><strong>Requirements:</strong></p>
+<ul class="simple">
+<li><p>Python 3.8 or higher</p></li>
+<li><p>NumPy &gt;= 1.25.0</p></li>
+<li><p>Pandas &gt;= 2.0.0</p></li>
+<li><p>scikit-learn &gt;= 1.4.0</p></li>
+<li><p>Matplotlib &gt;= 3.0.0</p></li>
+</ul>
+<section id="verify-installation">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">Verify Installation</a><a class="headerlink" href="#verify-installation" title="Link to this heading"><span>#</span></a></h3>
+<p>To verify your installation, run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">featuristic</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">featuristic</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You should see the version number printed without any errors.</p>
+</section>
+</section>
+<section id="install-from-source">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Install from Source</a><a class="headerlink" href="#install-from-source" title="Link to this heading"><span>#</span></a></h2>
+<p>Installing from source allows you to access the latest development features but requires the Rust toolchain.</p>
+<section id="prerequisites">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Rust Toolchain:</strong></p>
+<p>Featuristic uses Rust for performance-critical code (5-20x speedup). You need to install Rust first:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span>https://sh.rustup.rs<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+</pre></div>
+</div>
+<p>Or visit <a class="reference external" href="https://rustup.rs/">https://rustup.rs/</a> for platform-specific instructions.</p>
+<p><strong>Build Dependencies:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install maturin (Rust-Python build tool)</span>
+pip<span class="w"> </span>install<span class="w"> </span>maturin
+</pre></div>
+</div>
+</section>
+<section id="installation-steps">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Installation Steps</a><a class="headerlink" href="#installation-steps" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone the repository</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/martineastwood/featuristic.git
+<span class="nb">cd</span><span class="w"> </span>featuristic
+
+<span class="c1"># Build and install in development mode</span>
+maturin<span class="w"> </span>develop<span class="w"> </span>--release
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--release</span></code> flag enables optimizations for production use. Omit it for faster compilation during development.</p>
+</section>
+</section>
+<section id="install-from-pre-built-wheels">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Install from Pre-built Wheels</a><a class="headerlink" href="#install-from-pre-built-wheels" title="Link to this heading"><span>#</span></a></h2>
+<p>Pre-built wheels are available for common platforms (Linux, macOS, Windows) and Python versions. These are installed automatically when using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">featuristic</span></code>.</p>
+<p>If you need a specific version or platform:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">featuristic</span><span class="o">==</span><span class="m">2</span>.0.0
+</pre></div>
+</div>
+</section>
+<section id="development-installation">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Development Installation</a><a class="headerlink" href="#development-installation" title="Link to this heading"><span>#</span></a></h2>
+<p>If you want to contribute to Featuristic or modify the source code:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone the repository</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/martineastwood/featuristic.git
+<span class="nb">cd</span><span class="w"> </span>featuristic
+
+<span class="c1"># Create a virtual environment (recommended)</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># On Windows: .venv\Scripts\activate</span>
+
+<span class="c1"># Install in development mode with all dev dependencies</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+</pre></div>
+</div>
+<p>This installs:</p>
+<ul class="simple">
+<li><p>The package in editable mode</p></li>
+<li><p>Development tools (black, pylint, pytest, etc.)</p></li>
+<li><p>Documentation tools (Sphinx, nbsphinx, pydata-sphinx_theme)</p></li>
+</ul>
+<section id="building-the-rust-extension">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Building the Rust Extension</a><a class="headerlink" href="#building-the-rust-extension" title="Link to this heading"><span>#</span></a></h3>
+<p>After modifying Rust code, you need to rebuild:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Development build (faster compilation)</span>
+maturin<span class="w"> </span>develop
+
+<span class="c1"># Release build (optimized, slower compilation)</span>
+maturin<span class="w"> </span>develop<span class="w"> </span>--release
+</pre></div>
+</div>
+<p>Or use the provided Makefile:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>build
+</pre></div>
+</div>
+</section>
+</section>
+<section id="docker-installation">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Docker Installation</a><a class="headerlink" href="#docker-installation" title="Link to this heading"><span>#</span></a></h2>
+<p>For containerized environments, use the provided Dockerfile:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build the image</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>featuristic<span class="w"> </span>.
+
+<span class="c1"># Run in a container</span>
+docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>featuristic
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading"><span>#</span></a></h2>
+<section id="rust-installation-issues">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Rust Installation Issues</a><a class="headerlink" href="#rust-installation-issues" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Problem:</strong> <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">not</span> <span class="pre">found</span></code></p>
+<p><strong>Solution:</strong> Make sure Rust is installed and in your PATH:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check Rust installation</span>
+cargo<span class="w"> </span>--version
+rustc<span class="w"> </span>--version
+
+<span class="c1"># If not found, reinstall or add to PATH</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.cargo/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="build-failures">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Build Failures</a><a class="headerlink" href="#build-failures" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Problem:</strong> Compilation fails with <code class="docutils literal notranslate"><span class="pre">linking</span> <span class="pre">with</span> <span class="pre">cc</span> <span class="pre">failed</span></code></p>
+<p><strong>Solution:</strong> Install system-level build dependencies:</p>
+<p><strong>macOS:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xcode-select<span class="w"> </span>--install
+</pre></div>
+</div>
+<p><strong>Ubuntu/Debian:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>build-essential
+</pre></div>
+</div>
+<p><strong>Fedora/RHEL:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>gcc<span class="w"> </span>gcc-c++
+</pre></div>
+</div>
+</section>
+<section id="python-version-issues">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Python Version Issues</a><a class="headerlink" href="#python-version-issues" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Problem:</strong> <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">version</span> <span class="pre">not</span> <span class="pre">supported</span></code></p>
+<p><strong>Solution:</strong> Featuristic requires Python 3.8+. Check your version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>--version
+
+<span class="c1"># If using Python 2.x, use python3 instead</span>
+python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>featuristic
+</pre></div>
+</div>
+</section>
+<section id="import-errors">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Import Errors</a><a class="headerlink" href="#import-errors" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Problem:</strong> <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">dynamic</span> <span class="pre">module</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">define</span> <span class="pre">init</span> <span class="pre">function</span></code></p>
+<p><strong>Solution:</strong> The Rust extension wasn’t built properly. Rebuild from source:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>uninstall<span class="w"> </span>featuristic
+<span class="nb">cd</span><span class="w"> </span>featuristic
+maturin<span class="w"> </span>develop<span class="w"> </span>--release
+</pre></div>
+</div>
+</section>
+<section id="permission-errors">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Permission Errors</a><a class="headerlink" href="#permission-errors" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Problem:</strong> <code class="docutils literal notranslate"><span class="pre">Permission</span> <span class="pre">denied</span></code> when installing</p>
+<p><strong>Solution:</strong> Use a virtual environment (recommended) or user installation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Option 1: Use virtual environment (RECOMMENDED)</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>featuristic
+
+<span class="c1"># Option 2: User installation (alternative)</span>
+pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>featuristic
+</pre></div>
+</div>
+</section>
+</section>
+<section id="platform-specific-notes">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Platform-Specific Notes</a><a class="headerlink" href="#platform-specific-notes" title="Link to this heading"><span>#</span></a></h2>
+<section id="apple-silicon-m1-m2-m3">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Apple Silicon (M1/M2/M3)</a><a class="headerlink" href="#apple-silicon-m1-m2-m3" title="Link to this heading"><span>#</span></a></h3>
+<p>Apple Silicon Macs work perfectly. Just ensure you have:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install Rust for ARM64</span>
+curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span>https://sh.rustup.rs<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Install normally</span>
+pip<span class="w"> </span>install<span class="w"> </span>featuristic
+</pre></div>
+</div>
+</section>
+<section id="windows">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Windows</a><a class="headerlink" href="#windows" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Requirements:</strong></p>
+<ul class="simple">
+<li><p>Microsoft Visual C++ 14.0 or greater (for Rust)</p></li>
+<li><p>Rust installer from <a class="reference external" href="https://rustup.rs/">https://rustup.rs/</a></p></li>
+</ul>
+<p><strong>Installation:</strong></p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># Install Rust</span>
+<span class="c"># Download and run rustup-init.exe from https://rustup.rs/</span>
+
+<span class="c"># Install Featuristic</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">featuristic</span>
+</pre></div>
+</div>
+</section>
+<section id="linux">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Linux</a><a class="headerlink" href="#linux" title="Link to this heading"><span>#</span></a></h3>
+<p>Most Linux distributions work out of the box. Ensure you have:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Debian/Ubuntu</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3-dev<span class="w"> </span>python3-pip<span class="w"> </span>build-essential
+
+<span class="c1"># Fedora/RHEL</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>python3-devel<span class="w"> </span>python3-pip<span class="w"> </span>gcc<span class="w"> </span>gcc-c++
+
+<span class="c1"># Install Featuristic</span>
+pip3<span class="w"> </span>install<span class="w"> </span>featuristic
+</pre></div>
+</div>
+</section>
+</section>
+<section id="next-steps">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Next Steps</a><a class="headerlink" href="#next-steps" title="Link to this heading"><span>#</span></a></h2>
+<p>Now that you have Featuristic installed, check out:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="quickstart.html"><span class="doc">Quick Start Guide</span></a> - Get started in 5 minutes</p></li>
+<li><p><a class="reference internal" href="next_steps.html"><span class="doc">Next Steps</span></a> - Choose your learning path</p></li>
+<li><p><a class="reference internal" href="../user_guide/feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Deep dive into feature synthesis</p></li>
+<li><p><a class="reference internal" href="../user_guide/feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a> - Evolutionary feature selection</p></li>
+</ul>
+<p>Still having issues? <a class="reference external" href="https://github.com/martineastwood/featuristic/issues">Check the GitHub issues</a> or <a class="reference external" href="https://github.com/martineastwood/featuristic/issues/new">open a new issue</a>.</p>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to Featuristic</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="quickstart.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Quick Start Guide</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-from-pypi-recommended">Install from PyPI (Recommended)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-installation">Verify Installation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-from-source">Install from Source</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-steps">Installation Steps</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-from-pre-built-wheels">Install from Pre-built Wheels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development-installation">Development Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-rust-extension">Building the Rust Extension</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-installation">Docker Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rust-installation-issues">Rust Installation Issues</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-failures">Build Failures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-version-issues">Python Version Issues</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#import-errors">Import Errors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#permission-errors">Permission Errors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform-specific-notes">Platform-Specific Notes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apple-silicon-m1-m2-m3">Apple Silicon (M1/M2/M3)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#windows">Windows</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linux">Linux</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next Steps</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/getting_started/installation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

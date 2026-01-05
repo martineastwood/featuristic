@@ -1,0 +1,20 @@
+[package]
+name = "featuristic"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "featuristic"
+crate-type = ["cdylib"]
+
+[dependencies]
+featuristic-core = { path = "../featuristic-core" }
+pyo3 = { workspace = true }
+numpy = { workspace = true }
+ndarray = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+rand_chacha = { workspace = true }
+
+[features]
+default = ["pyo3/extension-module"]

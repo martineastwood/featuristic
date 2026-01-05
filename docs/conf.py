@@ -17,19 +17,38 @@ author = "Martin Eastwood"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "nbsphinx",
+    # "nbsphinx",  # Removed: migrating to RST format
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
     "sphinx.ext.githubpages",
+    "sphinx.ext.mathjax",  # Added: for mathematical formulas
+    "sphinx_design",  # Added: for modern UI components (cards, grids, dropdowns)
 ]
 
-# autosummary_generate = True
+# Autosummary configuration
+# Disabled: generating stubs for classes that Sphinx can't import
+autosummary_generate = []  # Empty list = don't generate stubs automatically
+autosummary_imported_members = True
+
+# Intersphinx mapping for external links
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/docs/", None),
+    "sklearn": ("https://scikit-learn.org/stable/", None),
+}
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "**.ipynb_checkpoints",
+    "*.ipynb",
+]
 
 master_doc = "index"
 

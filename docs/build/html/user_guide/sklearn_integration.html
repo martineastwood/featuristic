@@ -1,0 +1,1190 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Scikit-learn Integration &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/sklearn_integration';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Scikit-learn Integration</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="scikit-learn-integration">
+<h1>Scikit-learn Integration<a class="headerlink" href="#scikit-learn-integration" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#basic-pipeline-usage" id="id2">Basic Pipeline Usage</a></p>
+<ul>
+<li><p><a class="reference internal" href="#simple-pipeline" id="id3">Simple Pipeline</a></p></li>
+<li><p><a class="reference internal" href="#pipeline-with-multiple-steps" id="id4">Pipeline with Multiple Steps</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#cross-validation" id="id5">Cross-Validation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basic-cross-validation" id="id6">Basic Cross-Validation</a></p></li>
+<li><p><a class="reference internal" href="#cross-validation-with-stratified-k-fold" id="id7">Cross-Validation with Stratified K-Fold</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#hyperparameter-tuning" id="id8">Hyperparameter Tuning</a></p>
+<ul>
+<li><p><a class="reference internal" href="#grid-search" id="id9">Grid Search</a></p></li>
+<li><p><a class="reference internal" href="#random-search" id="id10">Random Search</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#feature-union" id="id11">Feature Union</a></p>
+<ul>
+<li><p><a class="reference internal" href="#combining-multiple-feature-transformers" id="id12">Combining Multiple Feature Transformers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#synthesis-selection-pipeline" id="id13">Synthesis + Selection Pipeline</a></p>
+<ul>
+<li><p><a class="reference internal" href="#create-then-select-features" id="id14">Create then Select Features</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#custom-transformers-in-pipelines" id="id15">Custom Transformers in Pipelines</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creating-custom-transformers" id="id16">Creating Custom Transformers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#serialization" id="id17">Serialization</a></p>
+<ul>
+<li><p><a class="reference internal" href="#saving-and-loading-pipelines" id="id18">Saving and Loading Pipelines</a></p></li>
+<li><p><a class="reference internal" href="#versioning-and-metadata" id="id19">Versioning and Metadata</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices" id="id20">Best Practices</a></p>
+<ul>
+<li><p><a class="reference internal" href="#always-use-pipelines" id="id21">1. <strong>Always use pipelines</strong></a></p></li>
+<li><p><a class="reference internal" href="#set-random-state-for-reproducibility" id="id22">2. <strong>Set random_state for reproducibility</strong></a></p></li>
+<li><p><a class="reference internal" href="#use-cross-validation-for-hyperparameter-tuning" id="id23">3. <strong>Use cross-validation for hyperparameter tuning</strong></a></p></li>
+<li><p><a class="reference internal" href="#separate-synthesis-from-evaluation" id="id24">4. <strong>Separate synthesis from evaluation</strong></a></p></li>
+<li><p><a class="reference internal" href="#document-your-pipeline" id="id25">5. <strong>Document your pipeline</strong></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#real-world-examples" id="id26">Real-World Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#example-1-complete-ml-workflow" id="id27">Example 1: Complete ML Workflow</a></p></li>
+<li><p><a class="reference internal" href="#example-2-classification-pipeline" id="id28">Example 2: Classification Pipeline</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id29">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-pipeline-is-very-slow" id="id30">Problem: Pipeline is very slow</a></p></li>
+<li><p><a class="reference internal" href="#problem-memory-error-during-grid-search" id="id31">Problem: Memory error during grid search</a></p></li>
+<li><p><a class="reference internal" href="#problem-can-t-serialize-pipeline" id="id32">Problem: Can’t serialize pipeline</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#what-s-next" id="id33">What’s Next</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id34">Summary</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading"><span>#</span></a></h2>
+<p>FeatureSynthesizer and FeatureSelector provide <strong>full scikit-learn compatibility</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fit()</span></code>, <code class="docutils literal notranslate"><span class="pre">transform()</span></code>, <code class="docutils literal notranslate"><span class="pre">fit_transform()</span></code> methods</p></li>
+<li><p>Works with <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>, <code class="docutils literal notranslate"><span class="pre">GridSearchCV</span></code>, <code class="docutils literal notranslate"><span class="pre">cross_val_score</span></code></p></li>
+<li><p>Supports <code class="docutils literal notranslate"><span class="pre">joblib</span></code> serialization</p></li>
+<li><p>Compatible with all sklearn estimators</p></li>
+</ul>
+</section>
+<section id="basic-pipeline-usage">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Basic Pipeline Usage</a><a class="headerlink" href="#basic-pipeline-usage" title="Link to this heading"><span>#</span></a></h2>
+<section id="simple-pipeline">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Simple Pipeline</a><a class="headerlink" href="#simple-pipeline" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c1"># Create pipeline</span>
+<span class="linenos"> 9</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+<span class="linenos">10</span>    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+<span class="linenos">11</span>        <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="linenos">12</span>        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="linenos">13</span>        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">14</span>    <span class="p">)),</span>
+<span class="linenos">15</span>    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+<span class="linenos">16</span>        <span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="linenos">17</span>        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">18</span>    <span class="p">))</span>
+<span class="linenos">19</span><span class="p">])</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="c1"># Fit pipeline</span>
+<span class="linenos">22</span><span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="c1"># Make predictions</span>
+<span class="linenos">25</span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="c1"># Evaluate</span>
+<span class="linenos">28</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+<span class="linenos">29</span><span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="linenos">30</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R²: </span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pipeline-with-multiple-steps">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Pipeline with Multiple Steps</a><a class="headerlink" href="#pipeline-with-multiple-steps" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cross-validation">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Cross-Validation</a><a class="headerlink" href="#cross-validation" title="Link to this heading"><span>#</span></a></h2>
+<section id="basic-cross-validation">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Basic Cross-Validation</a><a class="headerlink" href="#basic-cross-validation" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="c1"># 5-fold cross-validation</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">X</span><span class="p">,</span>  <span class="c1"># Full dataset</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R²: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (+/- </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="cross-validation-with-stratified-k-fold">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Cross-Validation with Stratified K-Fold</a><a class="headerlink" href="#cross-validation-with-stratified-k-fold" title="Link to this heading"><span>#</span></a></h3>
+<p>For classification:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">StratifiedKFold</span>
+
+<span class="n">cv_strategy</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="n">cv_strategy</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV Accuracy: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (+/- </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="hyperparameter-tuning">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Hyperparameter Tuning</a><a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"><span>#</span></a></h2>
+<section id="grid-search">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Grid Search</a><a class="headerlink" href="#grid-search" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridSearchCV</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+<span class="linenos"> 4</span>    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+<span class="linenos"> 5</span>    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">())</span>
+<span class="linenos"> 6</span><span class="p">])</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c1"># Define parameter grid</span>
+<span class="linenos"> 9</span><span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+<span class="linenos">10</span>    <span class="s1">&#39;synth__n_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+<span class="linenos">11</span>    <span class="s1">&#39;synth__generations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>
+<span class="linenos">12</span>    <span class="s1">&#39;synth__parsimony_coefficient&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span>
+<span class="linenos">13</span>    <span class="s1">&#39;model__alpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span>
+<span class="linenos">14</span><span class="p">}</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="c1"># Grid search</span>
+<span class="linenos">17</span><span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+<span class="linenos">18</span>    <span class="n">pipeline</span><span class="p">,</span>
+<span class="linenos">19</span>    <span class="n">param_grid</span><span class="p">,</span>
+<span class="linenos">20</span>    <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="linenos">21</span>    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+<span class="linenos">22</span>    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+<span class="linenos">23</span><span class="p">)</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best parameters: </span><span class="si">{</span><span class="n">grid</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">28</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best CV R²: </span><span class="si">{</span><span class="n">grid</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="c1"># Evaluate on test set</span>
+<span class="linenos">31</span><span class="n">test_r2</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="linenos">32</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">test_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="random-search">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Random Search</a><a class="headerlink" href="#random-search" title="Link to this heading"><span>#</span></a></h3>
+<p>For larger parameter spaces:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomizedSearchCV</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stats</span>
+
+<span class="c1"># Define distributions</span>
+<span class="n">param_distributions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;synth__n_features&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+    <span class="s1">&#39;synth__generations&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+    <span class="s1">&#39;synth__parsimony_coefficient&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span>
+    <span class="s1">&#39;model__alpha&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">loguniform</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">random_search</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">param_distributions</span><span class="p">,</span>
+    <span class="n">n_iter</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># Number of parameter settings sampled</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="n">random_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best parameters: </span><span class="si">{</span><span class="n">random_search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best CV R²: </span><span class="si">{</span><span class="n">random_search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="feature-union">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Feature Union</a><a class="headerlink" href="#feature-union" title="Link to this heading"><span>#</span></a></h2>
+<section id="combining-multiple-feature-transformers">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Combining Multiple Feature Transformers</a><a class="headerlink" href="#combining-multiple-feature-transformers" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureUnion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolynomialFeatures</span>
+
+<span class="c1"># Original features</span>
+<span class="n">original</span> <span class="o">=</span> <span class="s1">&#39;passthrough&#39;</span>
+
+<span class="c1"># FeatureSynthesizer</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">return_all_features</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Only new features</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Polynomial features</span>
+<span class="n">poly</span> <span class="o">=</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Combine feature transformers</span>
+<span class="n">combined_features</span> <span class="o">=</span> <span class="n">FeatureUnion</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">original</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">synth</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="n">poly</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Use in pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="n">combined_features</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="synthesis-selection-pipeline">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Synthesis + Selection Pipeline</a><a class="headerlink" href="#synthesis-selection-pipeline" title="Link to this heading"><span>#</span></a></h2>
+<section id="create-then-select-features">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Create then Select Features</a><a class="headerlink" href="#create-then-select-features" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span><span class="p">,</span> <span class="n">FeatureSelector</span>
+
+<span class="c1"># Define objective for selection</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">selection_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cross-validated MSE&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+        <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;neg_mean_squared_error&#39;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># Minimize negative MSE</span>
+
+<span class="c1"># Create pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># Create many features</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+        <span class="n">objective_function</span><span class="o">=</span><span class="n">selection_objective</span><span class="p">,</span>
+        <span class="n">max_generations</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;select&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">selected_features_</span><span class="p">)</span><span class="si">}</span><span class="s2"> features&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="custom-transformers-in-pipelines">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Custom Transformers in Pipelines</a><a class="headerlink" href="#custom-transformers-in-pipelines" title="Link to this heading"><span>#</span></a></h2>
+<section id="creating-custom-transformers">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Creating Custom Transformers</a><a class="headerlink" href="#creating-custom-transformers" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomFeatureTransformer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom feature engineering&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Learn parameters from data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">means_</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="c1"># Apply transformation</span>
+        <span class="k">return</span> <span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">means_</span>
+
+<span class="c1"># Use in pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="n">CustomFeatureTransformer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="serialization">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Serialization</a><a class="headerlink" href="#serialization" title="Link to this heading"><span>#</span></a></h2>
+<section id="saving-and-loading-pipelines">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Saving and Loading Pipelines</a><a class="headerlink" href="#saving-and-loading-pipelines" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+
+<span class="c1"># Train pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Save pipeline</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="s1">&#39;feature_pipeline.pkl&#39;</span><span class="p">)</span>
+
+<span class="c1"># Later: Load pipeline</span>
+<span class="n">loaded_pipeline</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;feature_pipeline.pkl&#39;</span><span class="p">)</span>
+
+<span class="c1"># Make predictions</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">loaded_pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="versioning-and-metadata">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Versioning and Metadata</a><a class="headerlink" href="#versioning-and-metadata" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="c1"># Train pipeline</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Save with metadata</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;model_type&#39;</span><span class="p">:</span> <span class="s1">&#39;FeatureSynthesizer + RandomForest&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;training_date&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+    <span class="s1">&#39;n_features&#39;</span><span class="p">:</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;synth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">n_features</span><span class="p">,</span>
+    <span class="s1">&#39;generations&#39;</span><span class="p">:</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;synth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">generations</span><span class="p">,</span>
+    <span class="s1">&#39;train_r2&#39;</span><span class="p">:</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">),</span>
+    <span class="s1">&#39;test_r2&#39;</span><span class="p">:</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># Save pipeline and metadata</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="s1">&#39;pipeline.pkl&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pipeline_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Load with metadata</span>
+<span class="n">loaded_pipeline</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;pipeline.pkl&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pipeline_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">loaded_metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model trained on: </span><span class="si">{</span><span class="n">loaded_metadata</span><span class="p">[</span><span class="s1">&#39;training_date&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">loaded_metadata</span><span class="p">[</span><span class="s1">&#39;test_r2&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Best Practices</a><a class="headerlink" href="#best-practices" title="Link to this heading"><span>#</span></a></h2>
+<section id="always-use-pipelines">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">1. <strong>Always use pipelines</strong></a><a class="headerlink" href="#always-use-pipelines" title="Link to this heading"><span>#</span></a></h3>
+<p>Prevents data leakage and ensures reproducibility:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ BAD: Data leakage</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_aug</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># ✅ GOOD: No leakage</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># ✅ BEST: Use pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">())</span>
+<span class="p">])</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-random-state-for-reproducibility">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">2. <strong>Set random_state for reproducibility</strong></a><a class="headerlink" href="#set-random-state-for-reproducibility" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>  <span class="c1"># Reproducible evolution</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">))</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="use-cross-validation-for-hyperparameter-tuning">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">3. <strong>Use cross-validation for hyperparameter tuning</strong></a><a class="headerlink" href="#use-cross-validation-for-hyperparameter-tuning" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Use sufficient folds</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="separate-synthesis-from-evaluation">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">4. <strong>Separate synthesis from evaluation</strong></a><a class="headerlink" href="#separate-synthesis-from-evaluation" title="Link to this heading"><span>#</span></a></h3>
+<p>When tuning, don’t refit FeatureSynthesizer for each CV split:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Fit FeatureSynthesizer once</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Tune model on augmented features</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]}</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">Ridge</span><span class="p">(),</span> <span class="n">param_grid</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="document-your-pipeline">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">5. <strong>Document your pipeline</strong></a><a class="headerlink" href="#document-your-pipeline" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Feature Engineering Pipeline</span>
+
+<span class="sd">Steps:</span>
+<span class="sd">1. FeatureSynthesizer: Creates 10 symbolic features</span>
+<span class="sd">   - n_features=10</span>
+<span class="sd">   - generations=30</span>
+<span class="sd">   - fitness=mse</span>
+<span class="sd">   - parsimony_coefficient=0.005</span>
+
+<span class="sd">2. RandomForest: Final model</span>
+<span class="sd">   - n_estimators=100</span>
+<span class="sd">   - max_depth=10</span>
+
+<span class="sd">Performance:</span>
+<span class="sd">- CV R²: 0.87 ± 0.03</span>
+<span class="sd">- Test R²: 0.89</span>
+
+<span class="sd">Trained on: 2025-01-05</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="real-world-examples">
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">Real-World Examples</a><a class="headerlink" href="#real-world-examples" title="Link to this heading"><span>#</span></a></h2>
+<section id="example-1-complete-ml-workflow">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Example 1: Complete ML Workflow</a><a class="headerlink" href="#example-1-complete-ml-workflow" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_california_housing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">GridSearchCV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">GradientBoostingRegressor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+
+<span class="c1"># Load data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">fetch_california_housing</span><span class="p">()</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">target</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Create pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">GradientBoostingRegressor</span><span class="p">(</span>
+        <span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">))</span>
+<span class="p">])</span>
+
+<span class="c1"># Hyperparameter tuning</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;synth__n_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+    <span class="s1">&#39;synth__generations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
+    <span class="s1">&#39;model__learning_rate&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+    <span class="s1">&#39;model__max_depth&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Evaluate</span>
+<span class="n">test_r2</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best CV R²: </span><span class="si">{</span><span class="n">grid</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">test_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best params: </span><span class="si">{</span><span class="n">grid</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Save</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">,</span> <span class="s1">&#39;housing_pipeline.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-classification-pipeline">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Example 2: Classification Pipeline</a><a class="headerlink" href="#example-2-classification-pipeline" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">classification_report</span>
+
+<span class="c1"># Generate classification data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">n_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Classification pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">fitness</span><span class="o">=</span><span class="s1">&#39;f1&#39;</span><span class="p">,</span>  <span class="c1"># F1 for classification</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">class_weight</span><span class="o">=</span><span class="s1">&#39;balanced&#39;</span>
+    <span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Evaluate</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading"><span>#</span></a></h2>
+<section id="problem-pipeline-is-very-slow">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Problem: Pipeline is very slow</a><a class="headerlink" href="#problem-pipeline-is-very-slow" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Solutions:</strong></p>
+<ul class="simple">
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">n_features</span></code> and <code class="docutils literal notranslate"><span class="pre">generations</span></code></p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">n_jobs=-1</span></code> for parallelization</p></li>
+<li><p>Use randomized search instead of grid search</p></li>
+</ul>
+</section>
+<section id="problem-memory-error-during-grid-search">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Problem: Memory error during grid search</a><a class="headerlink" href="#problem-memory-error-during-grid-search" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Solution:</strong> Use <code class="docutils literal notranslate"><span class="pre">memory</span></code> parameter in joblib:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">mkdtemp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmtree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Memory</span>
+
+<span class="n">cachedir</span> <span class="o">=</span> <span class="n">mkdtemp</span><span class="p">()</span>
+<span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="n">cachedir</span><span class="o">=</span><span class="n">cachedir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">memory</span><span class="o">=</span><span class="n">memory</span>  <span class="c1"># Cache intermediate results</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">rmtree</span><span class="p">(</span><span class="n">cachedir</span><span class="p">)</span>  <span class="c1"># Clean up</span>
+</pre></div>
+</div>
+</section>
+<section id="problem-can-t-serialize-pipeline">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Problem: Can’t serialize pipeline</a><a class="headerlink" href="#problem-can-t-serialize-pipeline" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Causes:</strong> Custom objects without serialization</p>
+<p><strong>Solution:</strong> Ensure all components are serializable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ✅ GOOD: Built-in sklearn components</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="c1"># ❌ BAD: Lambda functions (not serializable)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">fitness</span><span class="o">=</span><span class="k">lambda</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">:</span> <span class="o">...</span>  <span class="c1"># Won&#39;t serialize!</span>
+    <span class="p">))</span>
+<span class="p">])</span>
+
+<span class="c1"># ✅ GOOD: Use registered function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.fitness.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_fitness</span>
+
+<span class="nd">@register_fitness</span><span class="p">(</span><span class="s2">&quot;my_metric&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;my_metric&quot;</span><span class="p">))</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Feature synthesis basics</p></li>
+<li><p><a class="reference internal" href="../api_reference/high_level_api.html"><span class="doc">High-Level API</span></a> - API reference</p></li>
+<li><p><a class="reference internal" href="fitness_functions.html"><span class="doc">Fitness Functions Guide</span></a> - Choosing fitness functions</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Key points:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Full sklearn compatibility</strong> - works with Pipeline, GridSearchCV, etc.</p></li>
+<li><p><strong>Prevent data leakage</strong> - always use pipelines</p></li>
+<li><p><strong>Serialization</strong> - save/load with joblib</p></li>
+<li><p><strong>Hyperparameter tuning</strong> - GridSearchCV, RandomizedSearchCV</p></li>
+<li><p><strong>Cross-validation</strong> - evaluate properly with CV</p></li>
+</ol>
+<p><strong>Best practice:</strong> Always wrap FeatureSynthesizer in a sklearn Pipeline for production use.</p>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-pipeline-usage">Basic Pipeline Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-pipeline">Simple Pipeline</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-with-multiple-steps">Pipeline with Multiple Steps</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-validation">Cross-Validation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-cross-validation">Basic Cross-Validation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-validation-with-stratified-k-fold">Cross-Validation with Stratified K-Fold</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperparameter-tuning">Hyperparameter Tuning</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grid-search">Grid Search</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#random-search">Random Search</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-union">Feature Union</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-multiple-feature-transformers">Combining Multiple Feature Transformers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-selection-pipeline">Synthesis + Selection Pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-then-select-features">Create then Select Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-transformers-in-pipelines">Custom Transformers in Pipelines</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-custom-transformers">Creating Custom Transformers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serialization">Serialization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading-pipelines">Saving and Loading Pipelines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#versioning-and-metadata">Versioning and Metadata</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#always-use-pipelines">1. <strong>Always use pipelines</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-random-state-for-reproducibility">2. <strong>Set random_state for reproducibility</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cross-validation-for-hyperparameter-tuning">3. <strong>Use cross-validation for hyperparameter tuning</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#separate-synthesis-from-evaluation">4. <strong>Separate synthesis from evaluation</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#document-your-pipeline">5. <strong>Document your pipeline</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-examples">Real-World Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-complete-ml-workflow">Example 1: Complete ML Workflow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-classification-pipeline">Example 2: Classification Pipeline</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-pipeline-is-very-slow">Problem: Pipeline is very slow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-memory-error-during-grid-search">Problem: Memory error during grid search</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-can-t-serialize-pipeline">Problem: Can’t serialize pipeline</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/sklearn_integration.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

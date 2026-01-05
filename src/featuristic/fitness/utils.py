@@ -2,10 +2,15 @@ import numpy as np
 import pandas as pd
 
 
-def is_invalid_prediction(y_true: pd.Series, y_pred: pd.Series) -> bool:
+def is_invalid_prediction(y_true: np.ndarray, y_pred: np.ndarray) -> bool:
+    """
+    Check if predictions are invalid (NaN, Inf, or constant target).
+
+    Note: Constant predictions (PTP=0) are NOT considered invalid.
+    They will have high MSE but should be evaluated normally.
+    """
     return (
-        y_pred.isna().any()
+        np.isnan(y_pred).any()
         or np.isinf(y_pred).any()
-        or np.ptp(y_true) == 0
-        or np.ptp(y_pred) == 0
+        or np.ptp(y_true) == 0  # Only check if target is constant
     )

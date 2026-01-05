@@ -1,0 +1,1102 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Custom Symbolic Functions &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/custom_functions';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Custom Symbolic Functions</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="custom-symbolic-functions">
+<h1>Custom Symbolic Functions<a class="headerlink" href="#custom-symbolic-functions" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id6">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#current-limitations" id="id7">Current Limitations</a></p></li>
+<li><p><a class="reference internal" href="#built-in-functions-reference" id="id8">Built-in Functions Reference</a></p>
+<ul>
+<li><p><a class="reference internal" href="#arithmetic-operations" id="id9">Arithmetic Operations</a></p></li>
+<li><p><a class="reference internal" href="#trigonometric-functions" id="id10">Trigonometric Functions</a></p></li>
+<li><p><a class="reference internal" href="#exponential-and-logarithmic" id="id11">Exponential and Logarithmic</a></p></li>
+<li><p><a class="reference internal" href="#power-functions" id="id12">Power Functions</a></p></li>
+<li><p><a class="reference internal" href="#other-functions" id="id13">Other Functions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#using-built-in-functions" id="id14">Using Built-in Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#specifying-functions" id="id15">Specifying Functions</a></p></li>
+<li><p><a class="reference internal" href="#example-domain-specific-function-set" id="id16">Example: Domain-Specific Function Set</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#adding-custom-functions-in-rust" id="id17">Adding Custom Functions in Rust</a></p>
+<ul>
+<li><p><a class="reference internal" href="#step-by-step-guide" id="id18">Step-by-Step Guide</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices-for-custom-functions" id="id19">Best Practices for Custom Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#function-properties" id="id20">1. <strong>Function Properties</strong></a></p></li>
+<li><p><a class="reference internal" href="#error-handling" id="id21">2. <strong>Error Handling</strong></a></p></li>
+<li><p><a class="reference internal" href="#performance-considerations" id="id22">3. <strong>Performance Considerations</strong></a></p></li>
+<li><p><a class="reference internal" href="#documentation" id="id23">4. <strong>Documentation</strong></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#examples-of-domain-specific-functions" id="id24">Examples of Domain-Specific Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#financial-functions" id="id25">Financial Functions</a></p></li>
+<li><p><a class="reference internal" href="#signal-processing" id="id26">Signal Processing</a></p></li>
+<li><p><a class="reference internal" href="#physics-engineering" id="id27">Physics/Engineering</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#testing-custom-functions" id="id28">Testing Custom Functions</a></p></li>
+<li><p><a class="reference internal" href="#alternatives-to-custom-functions" id="id29">Alternatives to Custom Functions</a></p></li>
+<li><p><a class="reference internal" href="#future-development" id="id30">Future Development</a></p></li>
+<li><p><a class="reference internal" href="#what-s-next" id="id31">What’s Next</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id32">Summary</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading"><span>#</span></a></h2>
+<p>FeatureSynthesizer includes a comprehensive set of built-in symbolic functions (add, subtract, multiply, divide, sin, cos, log, sqrt, etc.). However, you can extend this set with <strong>domain-specific functions</strong> for your use case.</p>
+<p><strong>Why Custom Functions?</strong></p>
+<ul class="simple">
+<li><p>Domain-specific operations (e.g., financial formulas)</p></li>
+<li><p>Problem-specific transformations (e.g., signal processing)</p></li>
+<li><p>Performance optimization (specialized calculations)</p></li>
+<li><p>Experimental new operations</p></li>
+</ul>
+<p><strong>Important:</strong> Custom functions currently require <strong>modifying Rust code</strong> and rebuilding the extension.</p>
+</section>
+<section id="current-limitations">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Current Limitations</a><a class="headerlink" href="#current-limitations" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>As of this version:</strong></p>
+<ul class="simple">
+<li><p>✅ Can use <strong>built-in functions</strong> by name</p></li>
+<li><p>✅ Can <strong>combine built-in functions</strong> in expressions</p></li>
+<li><p>❌ Cannot add custom functions from Python</p></li>
+<li><p>❌ Custom functions require <strong>Rust implementation</strong></p></li>
+</ul>
+<p><strong>Future plans:</strong></p>
+<ul class="simple">
+<li><p>Python-side custom function registration</p></li>
+<li><p>Plugin system for dynamic function loading</p></li>
+<li><p>User-contributed function library</p></li>
+</ul>
+</section>
+<section id="built-in-functions-reference">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Built-in Functions Reference</a><a class="headerlink" href="#built-in-functions-reference" title="Link to this heading"><span>#</span></a></h2>
+<section id="arithmetic-operations">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Arithmetic Operations</a><a class="headerlink" href="#arithmetic-operations" title="Link to this heading"><span>#</span></a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-text">Built-in Arithmetic Functions</span><a class="headerlink" href="#id1" title="Link to this table"><span>#</span></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>add</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+<td><p>Addition: <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>sub</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+<td><p>Subtraction: <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>mul</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+<td><p>Multiplication: <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>div</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/</span></code></p></td>
+<td><p>Division: <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">/</span> <span class="pre">b</span></code> (protected from division by zero)</p></td>
+</tr>
+<tr class="row-even"><td><p>neg</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-x</span></code></p></td>
+<td><p>Negation: <code class="docutils literal notranslate"><span class="pre">-x</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="trigonometric-functions">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Trigonometric Functions</a><a class="headerlink" href="#trigonometric-functions" title="Link to this heading"><span>#</span></a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id2">
+<caption><span class="caption-text">Built-in Trigonometric Functions</span><a class="headerlink" href="#id2" title="Link to this table"><span>#</span></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>sin</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sin(x)</span></code></p></td>
+<td><p>Sine: <code class="docutils literal notranslate"><span class="pre">sin(x)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>cos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cos(x)</span></code></p></td>
+<td><p>Cosine: <code class="docutils literal notranslate"><span class="pre">cos(x)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>tan</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tan(x)</span></code></p></td>
+<td><p>Tangent: <code class="docutils literal notranslate"><span class="pre">tan(x)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="exponential-and-logarithmic">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Exponential and Logarithmic</a><a class="headerlink" href="#exponential-and-logarithmic" title="Link to this heading"><span>#</span></a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id3">
+<caption><span class="caption-text">Built-in Exponential Functions</span><a class="headerlink" href="#id3" title="Link to this table"><span>#</span></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>exp</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">exp(x)</span></code></p></td>
+<td><p>Exponential: <code class="docutils literal notranslate"><span class="pre">e^x</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>log</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">log(x)</span></code></p></td>
+<td><p>Natural log: <code class="docutils literal notranslate"><span class="pre">ln(x)</span></code> (protected from log(0))</p></td>
+</tr>
+<tr class="row-even"><td><p>sqrt</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqrt(x)</span></code></p></td>
+<td><p>Square root: <code class="docutils literal notranslate"><span class="pre">√x</span></code> (protected from sqrt(negative))</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="power-functions">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Power Functions</a><a class="headerlink" href="#power-functions" title="Link to this heading"><span>#</span></a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id4">
+<caption><span class="caption-text">Built-in Power Functions</span><a class="headerlink" href="#id4" title="Link to this table"><span>#</span></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>square</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">x²</span></code></p></td>
+<td><p>Square: <code class="docutils literal notranslate"><span class="pre">x^2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>cube</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">x³</span></code></p></td>
+<td><p>Cube: <code class="docutils literal notranslate"><span class="pre">x^3</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="other-functions">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Other Functions</a><a class="headerlink" href="#other-functions" title="Link to this heading"><span>#</span></a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id5">
+<caption><span class="caption-text">Other Built-in Functions</span><a class="headerlink" href="#id5" title="Link to this table"><span>#</span></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>abs</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">|x|</span></code></p></td>
+<td><p>Absolute value: <code class="docutils literal notranslate"><span class="pre">|x|</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>min</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">min(a,</span> <span class="pre">b)</span></code></p></td>
+<td><p>Minimum: <code class="docutils literal notranslate"><span class="pre">min(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">max(a,</span> <span class="pre">b)</span></code></p></td>
+<td><p>Maximum: <code class="docutils literal notranslate"><span class="pre">max(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>clip</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clip(x,</span> <span class="pre">a,</span> <span class="pre">b)</span></code></p></td>
+<td><p>Clip: <code class="docutils literal notranslate"><span class="pre">clip(x,</span> <span class="pre">min,</span> <span class="pre">max)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="using-built-in-functions">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Using Built-in Functions</a><a class="headerlink" href="#using-built-in-functions" title="Link to this heading"><span>#</span></a></h2>
+<section id="specifying-functions">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Specifying Functions</a><a class="headerlink" href="#specifying-functions" title="Link to this heading"><span>#</span></a></h3>
+<p>Select which built-in functions to use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="c1"># Use all built-in functions (default)</span>
+<span class="n">synth_all</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># None = all built-ins</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># Use specific functions</span>
+<span class="n">synth_specific</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;sin&quot;</span><span class="p">,</span> <span class="s2">&quot;cos&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># Arithmetic only</span>
+<span class="n">synth_arith</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;square&quot;</span><span class="p">,</span> <span class="s2">&quot;cube&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># Trigonometric only</span>
+<span class="n">synth_trig</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sin&quot;</span><span class="p">,</span> <span class="s2">&quot;cos&quot;</span><span class="p">,</span> <span class="s2">&quot;tan&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-domain-specific-function-set">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Example: Domain-Specific Function Set</a><a class="headerlink" href="#example-domain-specific-function-set" title="Link to this heading"><span>#</span></a></h3>
+<p>For financial modeling (arithmetic + log):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">financial_functions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;exp&quot;</span><span class="p">,</span> <span class="s2">&quot;sqrt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;square&quot;</span><span class="p">,</span> <span class="s2">&quot;cube&quot;</span>
+<span class="p">]</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="n">financial_functions</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For signal processing (trigonometric):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">signal_functions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;sin&quot;</span><span class="p">,</span> <span class="s2">&quot;cos&quot;</span><span class="p">,</span> <span class="s2">&quot;tan&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span>
+<span class="p">]</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="n">signal_functions</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="adding-custom-functions-in-rust">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Adding Custom Functions in Rust</a><a class="headerlink" href="#adding-custom-functions-in-rust" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Note:</strong> This requires:</p>
+<ol class="arabic simple">
+<li><p>Rust toolchain installed</p></li>
+<li><p>Modifying source code in <code class="docutils literal notranslate"><span class="pre">rust/featuristic-core/src/builtins.rs</span></code></p></li>
+<li><p>Rebuilding the extension with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code></p></li>
+</ol>
+<section id="step-by-step-guide">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Step-by-Step Guide</a><a class="headerlink" href="#step-by-step-guide" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>1. Locate the built-ins file:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/featuristic
+ls<span class="w"> </span>rust/featuristic-core/src/builtins.rs
+</pre></div>
+</div>
+<p><strong>2. Add your function to ``builtins.rs``:</strong></p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="c1">// Example: Adding a &quot;sigmoid&quot; function</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="mf">1.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">).</span><span class="n">exp</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="c1">// Register the function</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">get_builtin</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">SymbolicOp</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// ... existing functions ...</span>
+<span class="w">        </span><span class="s">&quot;sigmoid&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">SymbolicOp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sigmoid&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="n">op_id</span><span class="p">:</span><span class="w"> </span><span class="mi">999</span><span class="p">,</span><span class="w">  </span><span class="c1">// Unique ID</span>
+<span class="w">            </span><span class="n">arity</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">     </span><span class="c1">// Number of arguments</span>
+<span class="w">            </span><span class="n">eval</span><span class="p">:</span><span class="w"> </span><span class="o">|</span><span class="n">args</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">                </span><span class="nb">Ok</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">}),</span>
+<span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>3. Rebuild the extension:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>build
+</pre></div>
+</div>
+<p><strong>4. Use your function:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;sigmoid&quot;</span><span class="p">],</span>  <span class="c1"># Your custom function!</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Full Example: Adding a ``relu`` function</strong></p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="c1">// In rust/featuristic-core/src/builtins.rs</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Register in get_builtin()</span>
+<span class="s">&quot;relu&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">SymbolicOp</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;relu&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">op_id</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="n">arity</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">eval</span><span class="p">:</span><span class="w"> </span><span class="o">|</span><span class="n">args</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">}),</span>
+</pre></div>
+</div>
+<p>Then rebuild and use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices-for-custom-functions">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">Best Practices for Custom Functions</a><a class="headerlink" href="#best-practices-for-custom-functions" title="Link to this heading"><span>#</span></a></h2>
+<section id="function-properties">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">1. <strong>Function Properties</strong></a><a class="headerlink" href="#function-properties" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p><strong>Arity</strong>: Number of arguments (0, 1, or 2)</p></li>
+<li><p><strong>Domain</strong>: Valid input range</p></li>
+<li><p><strong>Range</strong>: Output range</p></li>
+<li><p><strong>Derivative</strong>: Differentiability (for optimization)</p></li>
+</ul>
+</section>
+<section id="error-handling">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">2. <strong>Error Handling</strong></a><a class="headerlink" href="#error-handling" title="Link to this heading"><span>#</span></a></h3>
+<p>Protect against common errors:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">safe_log</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="mf">0.0</span><span class="w">  </span><span class="c1">// Return safe default</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">x</span><span class="p">.</span><span class="n">ln</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">safe_sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="mf">0.0</span><span class="w">  </span><span class="c1">// Return safe default</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">x</span><span class="p">.</span><span class="n">sqrt</span><span class="p">()</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-considerations">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">3. <strong>Performance Considerations</strong></a><a class="headerlink" href="#performance-considerations" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p>Avoid expensive operations in tight loops</p></li>
+<li><p>Consider numerical stability</p></li>
+<li><p>Test with synthetic data first</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">4. <strong>Documentation</strong></a><a class="headerlink" href="#documentation" title="Link to this heading"><span>#</span></a></h3>
+<p>Document your function thoroughly:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="sd">/// Exponential moving average</span>
+<span class="sd">///</span>
+<span class="sd">/// # Arguments</span>
+<span class="sd">/// * `x` - Current value</span>
+<span class="sd">/// * `alpha` - Smoothing factor (0, 1]</span>
+<span class="sd">///</span>
+<span class="sd">/// # Returns</span>
+<span class="sd">/// EMA value</span>
+<span class="sd">///</span>
+<span class="sd">/// # Example</span>
+<span class="sd">/// ```</span>
+<span class="sd">/// ema(1.0, 0.5) = 0.5</span>
+<span class="sd">/// ```</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">ema</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Implementation</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples-of-domain-specific-functions">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Examples of Domain-Specific Functions</a><a class="headerlink" href="#examples-of-domain-specific-functions" title="Link to this heading"><span>#</span></a></h2>
+<section id="financial-functions">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Financial Functions</a><a class="headerlink" href="#financial-functions" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="c1">// Black-Scholes-like function</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">black_scholes_call</span><span class="p">(</span><span class="n">s</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">sigma</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">d1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">ln</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sigma</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">sigma</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">sqrt</span><span class="p">());</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">d2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">sqrt</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">norm_cdf</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="p">).</span><span class="n">exp</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">norm_cdf</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="signal-processing">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Signal Processing</a><a class="headerlink" href="#signal-processing" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="c1">// Moving average</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">moving_average</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Simplified: assumes pre-computed window</span>
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">window</span>
+<span class="p">}</span>
+
+<span class="c1">// RMS (root mean square)</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">rms</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">).</span><span class="n">sqrt</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="physics-engineering">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Physics/Engineering</a><a class="headerlink" href="#physics-engineering" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="c1">// Kinetic energy: KE = 0.5 * m * v²</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">kinetic_energy</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">velocity</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="mf">0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mass</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">velocity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">velocity</span>
+<span class="p">}</span>
+
+<span class="c1">// Potential energy: PE = m * g * h</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">potential_energy</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">gravity</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mass</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">gravity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="testing-custom-functions">
+<h2><a class="toc-backref" href="#id28" role="doc-backlink">Testing Custom Functions</a><a class="headerlink" href="#testing-custom-functions" title="Link to this heading"><span>#</span></a></h2>
+<p>After adding a custom function:</p>
+<p><strong>1. Unit test in Rust:</strong></p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[cfg(test)]</span>
+<span class="k">mod</span><span class="w"> </span><span class="nn">tests</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">use</span><span class="w"> </span><span class="k">super</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cp">#[test]</span>
+<span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">test_sigmoid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="fm">assert!</span><span class="p">((</span><span class="n">sigmoid</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.5</span><span class="p">).</span><span class="n">abs</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1e-10</span><span class="p">);</span>
+<span class="w">        </span><span class="fm">assert!</span><span class="p">((</span><span class="n">sigmoid</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.7310585786300049</span><span class="p">).</span><span class="n">abs</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">1e-10</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>2. Integration test in Python:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="c1"># Create simple test data</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Simple interaction</span>
+
+<span class="c1"># Test with custom function</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">],</span>  <span class="c1"># Your custom function</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Check it works</span>
+<span class="k">assert</span> <span class="n">X_aug</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span>
+
+<span class="c1"># Inspect features</span>
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>3. Verify correctness:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">random_tree</span><span class="p">,</span> <span class="n">evaluate_tree</span>
+
+<span class="c1"># Generate a tree using your custom function</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">random_tree</span><span class="p">(</span>
+    <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span> <span class="s2">&quot;add&quot;</span><span class="p">],</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">],</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Test evaluation</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]})</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Manually verify the calculation</span>
+</pre></div>
+</div>
+</section>
+<section id="alternatives-to-custom-functions">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Alternatives to Custom Functions</a><a class="headerlink" href="#alternatives-to-custom-functions" title="Link to this heading"><span>#</span></a></h2>
+<p>If you can’t modify Rust code, consider these alternatives:</p>
+<p><strong>1. Post-processing in Python:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Synthesize features with built-ins</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;sqrt&quot;</span><span class="p">,</span> <span class="s2">&quot;log&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Apply custom transformation in Python</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_transform</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>  <span class="c1"># ReLU</span>
+
+<span class="n">X_custom</span> <span class="o">=</span> <span class="n">custom_transform</span><span class="p">(</span><span class="n">X_aug</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>2. Feature unions:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureUnion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionTransformer</span>
+
+<span class="c1"># Custom transformer</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoid_transform</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">X</span><span class="p">))</span>
+
+<span class="n">custom_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">sigmoid_transform</span><span class="p">)</span>
+
+<span class="c1"># Combine with FeatureSynthesizer</span>
+<span class="n">combined</span> <span class="o">=</span> <span class="n">FeatureUnion</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synth&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="o">...</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="n">custom_transformer</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>3. Custom objective function:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For FeatureSelector, use custom objective</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># Your custom logic</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">YourCustomModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">custom_scorer</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_subset</span><span class="p">))</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">custom_objective</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="future-development">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Future Development</a><a class="headerlink" href="#future-development" title="Link to this heading"><span>#</span></a></h2>
+<p>Planned features for easier custom function support:</p>
+<ul class="simple">
+<li><p><strong>Python-side registration</strong> - Add functions without touching Rust</p></li>
+<li><p><strong>Plugin system</strong> - Load functions from external modules</p></li>
+<li><p><strong>Function library</strong> - Community-contributed function collection</p></li>
+<li><p><strong>JIT compilation</strong> - Just-in-time compiled Python functions</p></li>
+</ul>
+<p>For now, built-in functions cover most use cases. Request specific functions on GitHub issues!</p>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id31" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Using built-in functions</p></li>
+<li><p><a class="reference internal" href="../api_reference/rust_functions.html"><span class="doc">Rust Functions</span></a> - Complete function list</p></li>
+<li><p><span class="xref std std-doc">../concepts/genetic_feature_synthesis</span> - How evolution works</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id32" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Key points:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Built-in functions</strong> cover most use cases (arithmetic, trigonometric, exponential, etc.)</p></li>
+<li><p><strong>Custom functions</strong> require Rust modification (advanced users only)</p></li>
+<li><p><strong>Select functions</strong> with the <code class="docutils literal notranslate"><span class="pre">functions</span></code> parameter</p></li>
+<li><p><strong>Test thoroughly</strong> after adding custom functions</p></li>
+<li><p><strong>Alternatives exist</strong> for Python-side transformations</p></li>
+</ol>
+<p><strong>Quick reference:</strong></p>
+<ul class="simple">
+<li><p><strong>Arithmetic</strong>: add, sub, mul, div, neg</p></li>
+<li><p><strong>Trigonometric</strong>: sin, cos, tan</p></li>
+<li><p><strong>Exponential</strong>: exp, log, sqrt</p></li>
+<li><p><strong>Power</strong>: square, cube</p></li>
+<li><p><strong>Other</strong>: abs, min, max, clip</p></li>
+</ul>
+<p>For most users, the built-in functions are sufficient. Custom functions are only needed for highly specialized domains.</p>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-limitations">Current Limitations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-functions-reference">Built-in Functions Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arithmetic-operations">Arithmetic Operations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trigonometric-functions">Trigonometric Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-and-logarithmic">Exponential and Logarithmic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#power-functions">Power Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-functions">Other Functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-built-in-functions">Using Built-in Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-functions">Specifying Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-domain-specific-function-set">Example: Domain-Specific Function Set</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-custom-functions-in-rust">Adding Custom Functions in Rust</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-by-step-guide">Step-by-Step Guide</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices-for-custom-functions">Best Practices for Custom Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#function-properties">1. <strong>Function Properties</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">2. <strong>Error Handling</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations">3. <strong>Performance Considerations</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">4. <strong>Documentation</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-domain-specific-functions">Examples of Domain-Specific Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#financial-functions">Financial Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-processing">Signal Processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-engineering">Physics/Engineering</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-custom-functions">Testing Custom Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alternatives-to-custom-functions">Alternatives to Custom Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#future-development">Future Development</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/custom_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

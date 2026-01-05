@@ -1,0 +1,21 @@
+[package]
+name = "featuristic-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+ndarray = { workspace = true }
+rayon = { workspace = true }
+rand = { workspace = true }
+rand_chacha = { workspace = true }
+serde = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+criterion = "0.5"
+
+# TODO: Add benchmarks in Phase 2
+# [[bench]]
+# name = "tree_evaluation"
+# harness = false

@@ -1,0 +1,634 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User Guide &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/index';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">User Guide</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"><span>#</span></a></h1>
+<p>Comprehensive tutorials and examples for using Featuristic.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#how-it-works">How It Works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#parameters-explained">Parameters Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#fitness-functions">Fitness Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#interpreting-results">Interpreting Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#integration-with-scikit-learn">Integration with Scikit-learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_synthesis.html#what-s-next">What’s Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#how-it-works">How It Works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#parameters-explained">Parameters Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#objective-functions">Objective Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#interpreting-results">Interpreting Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#integration-with-scikit-learn">Integration with Scikit-learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="feature_selection.html#what-s-next">What’s Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#the-core-insight">The Core Insight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#why-this-matters">Why This Matters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#test-case-1-complex-nonlinear-problem">Test Case 1: Complex Nonlinear Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#test-case-2-perfect-parabola">Test Case 2: Perfect Parabola</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#key-takeaways">Key Takeaways</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#mathematical-explanation">Mathematical Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#common-patterns">Common Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_regression_power.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="friedman_benchmark.html">Friedman #1 Benchmark</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#baseline-models">Baseline Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#feature-synthesis">Feature Synthesis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#analyzing-discovered-features">Analyzing Discovered Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#why-this-matters">Why This Matters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#parameter-recommendations">Parameter Recommendations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#understanding-results">Understanding Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#validation-strategy">Validation Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#when-to-use-this-benchmark">When to Use This Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="friedman_benchmark.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interpretability.html">Interpreting Discovered Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#the-key-advantage">The Key Advantage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#example-dataset">Example Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#method-1-simple-feature-inspection">Method 1: Simple Feature Inspection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#method-2-individual-feature-evaluation">Method 2: Individual Feature Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#method-3-correlation-analysis">Method 3: Correlation Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#method-4-model-based-interpretation">Method 4: Model-Based Interpretation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#method-5-domain-knowledge-validation">Method 5: Domain Knowledge Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#method-6-visualization">Method 6: Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#practical-tips">Practical Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#common-patterns">Common Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#real-world-example">Real-World Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#best-practices-summary">Best Practices Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpretability.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification with FeatureSynthesizer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#binary-classification-example">Binary Classification Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#results-comparison">Results Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#discovered-features">Discovered Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#choosing-classification-fitness-functions">Choosing Classification Fitness Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#multiclass-classification">Multiclass Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#imbalanced-classes">Imbalanced Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#parameters-for-classification">Parameters for Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#real-world-example">Real-World Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#common-issues">Common Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classification.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fitness_functions.html">Fitness Functions Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#choosing-the-right-fitness-function">Choosing the Right Fitness Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#parsimony-penalty">Parsimony Penalty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#custom-fitness-functions">Custom Fitness Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitness_functions.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sklearn_integration.html">Scikit-learn Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#basic-pipeline-usage">Basic Pipeline Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#cross-validation">Cross-Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#feature-union">Feature Union</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#synthesis-selection-pipeline">Synthesis + Selection Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#custom-transformers-in-pipelines">Custom Transformers in Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#real-world-examples">Real-World Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sklearn_integration.html#summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_functions.html">Custom Symbolic Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#current-limitations">Current Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#built-in-functions-reference">Built-in Functions Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#using-built-in-functions">Using Built-in Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#adding-custom-functions-in-rust">Adding Custom Functions in Rust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#best-practices-for-custom-functions">Best Practices for Custom Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#examples-of-domain-specific-functions">Examples of Domain-Specific Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#testing-custom-functions">Testing Custom Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#alternatives-to-custom-functions">Alternatives to Custom Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#future-development">Future Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_functions.html#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="core-concepts">
+<h2>Core Concepts<a class="headerlink" href="#core-concepts" title="Link to this heading"><span>#</span></a></h2>
+<dl class="simple">
+<dt><strong>Feature Synthesis</strong> (<a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a>):</dt><dd><ul class="simple">
+<li><p>Automatically generate new symbolic features</p></li>
+<li><p>Discover nonlinear relationships (interactions, polynomials, trigonometric)</p></li>
+<li><p>Use genetic programming to evolve interpretable expressions</p></li>
+<li><p>Class: <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>Feature Selection</strong> (<a class="reference internal" href="feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a>):</dt><dd><ul class="simple">
+<li><p>Select optimal feature subsets using evolutionary algorithms</p></li>
+<li><p>Define custom objective functions</p></li>
+<li><p>Handle correlated and redundant features</p></li>
+<li><p>Class: <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSelector</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>Linear Regression Power</strong> (<a class="reference internal" href="linear_regression_power.html"><span class="doc">Linear Regression Power</span></a>):</dt><dd><ul class="simple">
+<li><p>Understand the core value proposition</p></li>
+<li><p>See dramatic performance improvements</p></li>
+<li><p>Learn how feature engineering transforms simple models</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="advanced-topics">
+<h2>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Link to this heading"><span>#</span></a></h2>
+<dl class="simple">
+<dt><strong>Friedman Benchmark</strong> (<a class="reference internal" href="friedman_benchmark.html"><span class="doc">Friedman #1 Benchmark</span></a>):</dt><dd><ul class="simple">
+<li><p>Classic symbolic regression test</p></li>
+<li><p>Comparing tree-based vs. symbolic approaches</p></li>
+<li><p>Discovering mathematical relationships</p></li>
+</ul>
+</dd>
+<dt><strong>Interpretability</strong> (<a class="reference internal" href="interpretability.html"><span class="doc">Interpreting Discovered Features</span></a>):</dt><dd><ul class="simple">
+<li><p>Understanding discovered features</p></li>
+<li><p>6 methods for feature interpretation</p></li>
+<li><p>Domain knowledge validation</p></li>
+</ul>
+</dd>
+<dt><strong>Classification</strong> (<a class="reference internal" href="classification.html"><span class="doc">Classification with FeatureSynthesizer</span></a>):</dt><dd><ul class="simple">
+<li><p>Feature synthesis for classification</p></li>
+<li><p>Binary and multiclass problems</p></li>
+<li><p>Classification fitness functions</p></li>
+</ul>
+</dd>
+<dt><strong>Fitness Functions</strong> (<a class="reference internal" href="fitness_functions.html"><span class="doc">Fitness Functions Guide</span></a>):</dt><dd><ul class="simple">
+<li><p>Choosing the right fitness function</p></li>
+<li><p>Parsimony penalty and bloat control</p></li>
+<li><p>Custom fitness functions</p></li>
+</ul>
+</dd>
+<dt><strong>Scikit-learn Integration</strong> (<a class="reference internal" href="sklearn_integration.html"><span class="doc">Scikit-learn Integration</span></a>):</dt><dd><ul class="simple">
+<li><p>Pipeline usage</p></li>
+<li><p>Cross-validation</p></li>
+<li><p>Hyperparameter tuning</p></li>
+<li><p>Serialization</p></li>
+</ul>
+</dd>
+<dt><strong>Custom Functions</strong> (<a class="reference internal" href="custom_functions.html"><span class="doc">Custom Symbolic Functions</span></a>):</dt><dd><ul class="simple">
+<li><p>Built-in function reference</p></li>
+<li><p>Adding custom functions (requires Rust)</p></li>
+<li><p>Domain-specific operations</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="quick-links">
+<h2>Quick Links<a class="headerlink" href="#quick-links" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../getting_started/quickstart.html"><span class="doc">Quick Start Guide</span></a> - 5-minute quick start</p></li>
+<li><p><a class="reference internal" href="../api_reference/high_level_api.html"><span class="doc">High-Level API</span></a> - API reference</p></li>
+<li><p><span class="xref std std-doc">../concepts/genetic_feature_synthesis</span> - Genetic programming theory</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-concepts">Core Concepts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-topics">Advanced Topics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-links">Quick Links</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

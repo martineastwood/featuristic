@@ -1,0 +1,831 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Quick Start Guide &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/quickstart';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Feature Synthesis Tutorial" href="../user_guide/feature_synthesis.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-you-ll-learn">What You’ll Learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-1-create-load-your-dataset">Step 1: Create/Load Your Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-2-train-a-baseline-model-optional">Step 2: Train a Baseline Model (Optional)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-use-featuresynthesizer-to-create-new-features">Step 3: Use FeatureSynthesizer to Create New Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-4-combine-original-synthesized-features">Step 4: Combine Original + Synthesized Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-5-train-model-on-augmented-features">Step 5: Train Model on Augmented Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-6-compare-results">Step 6: Compare Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-7-inspect-discovered-features">Step 7: Inspect Discovered Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bonus-feature-importance-analysis">Bonus: Feature Importance Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-next">What’s Next?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-patterns">Common Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tips-for-success">Tips for Success</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Quick Start Guide</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="quick-start-guide">
+<h1>Quick Start Guide<a class="headerlink" href="#quick-start-guide" title="Link to this heading"><span>#</span></a></h1>
+<p>Get started with Featuristic in 5 minutes. This guide will walk you through the basic workflow of automated feature synthesis.</p>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-you-ll-learn" id="id1">What You’ll Learn</a></p></li>
+<li><p><a class="reference internal" href="#step-1-create-load-your-dataset" id="id2">Step 1: Create/Load Your Dataset</a></p></li>
+<li><p><a class="reference internal" href="#step-2-train-a-baseline-model-optional" id="id3">Step 2: Train a Baseline Model (Optional)</a></p></li>
+<li><p><a class="reference internal" href="#step-3-use-featuresynthesizer-to-create-new-features" id="id4">Step 3: Use FeatureSynthesizer to Create New Features</a></p></li>
+<li><p><a class="reference internal" href="#step-4-combine-original-synthesized-features" id="id5">Step 4: Combine Original + Synthesized Features</a></p></li>
+<li><p><a class="reference internal" href="#step-5-train-model-on-augmented-features" id="id6">Step 5: Train Model on Augmented Features</a></p></li>
+<li><p><a class="reference internal" href="#step-6-compare-results" id="id7">Step 6: Compare Results</a></p></li>
+<li><p><a class="reference internal" href="#step-7-inspect-discovered-features" id="id8">Step 7: Inspect Discovered Features</a></p></li>
+<li><p><a class="reference internal" href="#bonus-feature-importance-analysis" id="id9">Bonus: Feature Importance Analysis</a></p></li>
+<li><p><a class="reference internal" href="#what-s-next" id="id10">What’s Next?</a></p></li>
+<li><p><a class="reference internal" href="#common-patterns" id="id11">Common Patterns</a></p></li>
+<li><p><a class="reference internal" href="#tips-for-success" id="id12">Tips for Success</a></p></li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id13">Troubleshooting</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id14">Summary</a></p></li>
+</ul>
+</nav>
+<section id="what-you-ll-learn">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">What You’ll Learn</a><a class="headerlink" href="#what-you-ll-learn" title="Link to this heading"><span>#</span></a></h2>
+<p>In this guide, you’ll:</p>
+<ul class="simple">
+<li><p>Create a synthetic dataset with nonlinear relationships</p></li>
+<li><p>Use <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code> to automatically discover new features</p></li>
+<li><p>Combine original and synthesized features</p></li>
+<li><p>Train a model and compare performance</p></li>
+<li><p>Inspect the discovered features</p></li>
+</ul>
+<p><strong>Time:</strong> 5 minutes</p>
+</section>
+<section id="step-1-create-load-your-dataset">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Step 1: Create/Load Your Dataset</a><a class="headerlink" href="#step-1-create-load-your-dataset" title="Link to this heading"><span>#</span></a></h2>
+<p>For this example, we’ll create a synthetic dataset. In practice, you would load your own data using pandas.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1"># Create synthetic dataset with nonlinear relationships</span>
+<span class="linenos"> 6</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="linenos">10</span>    <span class="s1">&#39;feature_1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">11</span>    <span class="s1">&#39;feature_2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">12</span>    <span class="s1">&#39;feature_3&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">13</span>    <span class="s1">&#39;feature_4&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">14</span><span class="p">})</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="c1"># Target has nonlinear relationships</span>
+<span class="linenos">17</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+<span class="linenos">18</span>    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;feature_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;feature_2&#39;</span><span class="p">]</span> <span class="o">+</span>  <span class="c1"># Interaction</span>
+<span class="linenos">19</span>    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;feature_3&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>                <span class="c1"># Polynomial</span>
+<span class="linenos">20</span>    <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;feature_4&#39;</span><span class="p">])</span> <span class="o">+</span>           <span class="c1"># Trigonometric</span>
+<span class="linenos">21</span>    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>   <span class="c1"># Noise</span>
+<span class="linenos">22</span><span class="p">)</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="c1"># Split into train/test</span>
+<span class="linenos">25</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+<span class="linenos">26</span>    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">27</span><span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> samples, </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> features&quot;</span><span class="p">)</span>
+<span class="linenos">30</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training: </span><span class="si">{</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">31</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test: </span><span class="si">{</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Dataset: 1000 samples, 4 features
+Training: 800
+Test: 200
+</pre></div>
+</div>
+<p><strong>Key Point:</strong> The target variable <code class="docutils literal notranslate"><span class="pre">y</span></code> has nonlinear relationships that simple linear models cannot capture.</p>
+</section>
+<section id="step-2-train-a-baseline-model-optional">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Step 2: Train a Baseline Model (Optional)</a><a class="headerlink" href="#step-2-train-a-baseline-model-optional" title="Link to this heading"><span>#</span></a></h2>
+<p>Let’s establish a baseline performance metric using Random Forest on the original features:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="n">baseline_model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+<span class="linenos"> 5</span>    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="linenos"> 6</span>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos"> 7</span><span class="p">)</span>
+<span class="linenos"> 8</span><span class="n">baseline_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="n">baseline_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">baseline_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline R²: </span><span class="si">{</span><span class="n">baseline_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong> <code class="docutils literal notranslate"><span class="pre">R²</span> <span class="pre">≈</span> <span class="pre">0.85-0.90</span></code> (will vary slightly due to randomness)</p>
+</section>
+<section id="step-3-use-featuresynthesizer-to-create-new-features">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Step 3: Use FeatureSynthesizer to Create New Features</a><a class="headerlink" href="#step-3-use-featuresynthesizer-to-create-new-features" title="Link to this heading"><span>#</span></a></h2>
+<p>Now let Featuristic automatically discover useful features:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+<span class="linenos"> 4</span>    <span class="c1"># Basic parameters</span>
+<span class="linenos"> 5</span>    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>              <span class="c1"># Number of new features to create</span>
+<span class="linenos"> 6</span>    <span class="n">population_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>         <span class="c1"># Population size for genetic programming</span>
+<span class="linenos"> 7</span>    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>             <span class="c1"># Number of generations to evolve</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>    <span class="c1"># Fitness function (how to measure &quot;goodness&quot;)</span>
+<span class="linenos">10</span>    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>             <span class="c1"># Auto-detects mse/r2/log_loss/accuracy</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>    <span class="c1"># Optional parameters</span>
+<span class="linenos">13</span>    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>  <span class="c1"># Penalize complex trees</span>
+<span class="linenos">14</span>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="linenos">15</span>    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>                <span class="c1"># Show progress</span>
+<span class="linenos">16</span><span class="p">)</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="c1"># This will take 30-60 seconds</span>
+<span class="linenos">19</span><span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">20</span><span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created </span><span class="si">{</span><span class="n">X_train_aug</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> new features&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Auto-detected fitness function: mse
+Evolving population for 30 generations...
+Selected 10 features
+Best fitness: 0.123456
+Created 10 new features
+</pre></div>
+</div>
+<p><strong>Key Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">n_features</span></code> - How many new features to create (10 is a good start)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">population_size</span></code> - Genetic programming population (50-100 for most cases)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generations</span></code> - Evolution time (30-50 for quick, 100+ for thorough)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fitness</span></code> - “auto” detects mse (regression) or accuracy (classification)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> - Higher = simpler features (0.001-0.01 recommended)</p></li>
+</ul>
+</section>
+<section id="step-4-combine-original-synthesized-features">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Step 4: Combine Original + Synthesized Features</a><a class="headerlink" href="#step-4-combine-original-synthesized-features" title="Link to this heading"><span>#</span></a></h2>
+<p>Combine your original features with the newly synthesized ones:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">X_train_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_train_aug</span><span class="p">])</span>
+<span class="linenos">2</span><span class="n">X_test_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_test</span><span class="p">,</span> <span class="n">X_test_aug</span><span class="p">])</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Combined dataset: </span><span class="si">{</span><span class="n">X_train_combined</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> features&quot;</span><span class="p">)</span>
+<span class="linenos">5</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (</span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> original + </span><span class="si">{</span><span class="n">X_train_aug</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> synthesized)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Combined dataset: 14 features
+  (4 original + 10 synthesized)
+</pre></div>
+</div>
+<p><strong>Why Combine?</strong></p>
+<p>Original features provide the foundation. Synthesized features capture new patterns. Together, they give models the best of both worlds.</p>
+</section>
+<section id="step-5-train-model-on-augmented-features">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Step 5: Train Model on Augmented Features</a><a class="headerlink" href="#step-5-train-model-on-augmented-features" title="Link to this heading"><span>#</span></a></h2>
+<p>Now train the same model on the augmented dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">augmented_model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+<span class="linenos"> 2</span>    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="linenos"> 3</span>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos"> 4</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="n">augmented_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_combined</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="n">augmented_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span>
+<span class="linenos"> 7</span>    <span class="n">y_test</span><span class="p">,</span>
+<span class="linenos"> 8</span>    <span class="n">augmented_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_combined</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="p">)</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Augmented R²: </span><span class="si">{</span><span class="n">augmented_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong> <code class="docutils literal notranslate"><span class="pre">R²</span> <span class="pre">≈</span> <span class="pre">0.95-0.98</span></code> (significant improvement!)</p>
+</section>
+<section id="step-6-compare-results">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Step 6: Compare Results</a><a class="headerlink" href="#step-6-compare-results" title="Link to this heading"><span>#</span></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Baseline (original </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> features):     R² = </span><span class="si">{</span><span class="n">baseline_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">2</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Augmented (</span><span class="si">{</span><span class="n">X_train_combined</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> features): R² = </span><span class="si">{</span><span class="n">augmented_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">3</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Improvement:                                </span><span class="si">{</span><span class="n">augmented_r2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">baseline_r2</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Baseline (original 4 features):     R² = 0.8745
+Augmented (14 features):              R² = 0.9654
+Improvement:                         +0.0909
+</pre></div>
+</div>
+<p><strong>Success!</strong> Feature engineering improved performance by <strong>~9%</strong> (will vary based on dataset).</p>
+</section>
+<section id="step-7-inspect-discovered-features">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Step 7: Inspect Discovered Features</a><a class="headerlink" href="#step-7-inspect-discovered-features" title="Link to this heading"><span>#</span></a></h2>
+<p>One of Featuristic’s key advantages is <strong>interpretability</strong>. You can see exactly what features were created:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Top 5 synthesized features:&quot;</span><span class="p">)</span>
+<span class="linenos"> 4</span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+<span class="linenos"> 5</span>    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span>
+<span class="linenos"> 6</span>    <span class="n">depth</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span>
+<span class="linenos"> 7</span>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">10</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Complexity: depth=</span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2">, nodes=</span><span class="si">{</span><span class="n">nodes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Top 5 synthesized features:
+1. feature_1 * feature_2
+   Complexity: depth=3, nodes=5
+2. sin(feature_4)
+   Complexity: depth=2, nodes=3
+3. feature_3 ** 2
+   Complexity: depth=2, nodes=3
+...
+</pre></div>
+</div>
+<p><strong>Interpretation:</strong> The algorithm discovered the true relationships:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_1</span> <span class="pre">*</span> <span class="pre">feature_2</span></code> - Captured the interaction</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sin(feature_4)</span></code> - Captured the trigonometric pattern</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_3</span> <span class="pre">**</span> <span class="pre">2</span></code> - Captured the polynomial relationship</p></li>
+</ul>
+<p>These are <strong>human-readable mathematical expressions</strong>, not black-box transformations!</p>
+</section>
+<section id="bonus-feature-importance-analysis">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Bonus: Feature Importance Analysis</a><a class="headerlink" href="#bonus-feature-importance-analysis" title="Link to this heading"><span>#</span></a></h2>
+<p>See which features the model actually found most useful:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">importances</span> <span class="o">=</span> <span class="n">augmented_model</span><span class="o">.</span><span class="n">feature_importances_</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="c1"># Create feature names</span>
+<span class="linenos"> 4</span><span class="n">feature_names</span> <span class="o">=</span> <span class="p">(</span>
+<span class="linenos"> 5</span>    <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">+</span>
+<span class="linenos"> 6</span>    <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;synth_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_train_aug</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+<span class="linenos"> 7</span><span class="p">)</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="c1"># Sort by importance</span>
+<span class="linenos">10</span><span class="n">importance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="linenos">11</span>    <span class="s1">&#39;feature&#39;</span><span class="p">:</span> <span class="n">feature_names</span><span class="p">,</span>
+<span class="linenos">12</span>    <span class="s1">&#39;importance&#39;</span><span class="p">:</span> <span class="n">importances</span>
+<span class="linenos">13</span><span class="p">})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Top 10 most important features:&quot;</span><span class="p">)</span>
+<span class="linenos">16</span><span class="nb">print</span><span class="p">(</span><span class="n">importance_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Example Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Top 10 most important features:
+       feature  importance
+synth_1       0.3521
+synth_2       0.2134
+feature_3     0.1456
+synth_3       0.0987
+...
+</pre></div>
+</div>
+<p><strong>Use this to:</strong></p>
+<ul class="simple">
+<li><p>Understand which synthesized features are useful</p></li>
+<li><p>Remove features with near-zero importance</p></li>
+<li><p>Gain insights into the problem structure</p></li>
+</ul>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">What’s Next?</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<p>You’ve successfully automated feature engineering! Here are some next steps:</p>
+<p><strong>Try Different Parameters:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># More features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># More thorough search (slower)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">generations</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Simpler features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Explore Different Features:</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../user_guide/linear_regression_power.html"><span class="doc">Linear Regression Power</span></a> - See how feature engineering enables simple models to solve complex problems (+2400% improvement!)</p></li>
+<li><p><a class="reference internal" href="../user_guide/feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Deep dive into feature synthesis parameters</p></li>
+<li><p><a class="reference internal" href="../user_guide/feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a> - Evolutionary feature selection</p></li>
+<li><p><a class="reference internal" href="../examples/running_examples.html"><span class="doc">Code Examples</span></a> - More examples and use cases</p></li>
+</ul>
+<p><strong>Understand the Algorithms:</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api_reference/high_level_api.html"><span class="doc">High-Level API</span></a> - Complete API reference</p></li>
+</ul>
+</section>
+<section id="common-patterns">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Common Patterns</a><a class="headerlink" href="#common-patterns" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Always Use random_state:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Reproducible results</span>
+</pre></div>
+</div>
+<p><strong>Combine Original + Synthesized:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">X_aug</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Inspect Features:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="tips-for-success">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Tips for Success</a><a class="headerlink" href="#tips-for-success" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Start Small:</strong></p>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">n_features=10</span></code> and <code class="docutils literal notranslate"><span class="pre">generations=30</span></code> for initial experiments</p></li>
+<li><p>Increase once you know what works</p></li>
+</ul>
+<p><strong>Use Fitness=”auto”:</strong></p>
+<ul class="simple">
+<li><p>Automatically detects regression (mse/r2) vs classification (accuracy/log_loss)</p></li>
+<li><p>Remove ambiguity from fitness function selection</p></li>
+</ul>
+<p><strong>Check Complexity:</strong></p>
+<ul class="simple">
+<li><p>High <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (0.01) = simpler features</p></li>
+<li><p>Low <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (0.001) = more complex features</p></li>
+<li><p>Start with 0.001 and adjust based on results</p></li>
+</ul>
+<p><strong>Analyze Features:</strong></p>
+<ul class="simple">
+<li><p>Always inspect <code class="docutils literal notranslate"><span class="pre">get_programs()</span></code> to understand what was learned</p></li>
+<li><p>Use domain knowledge to validate features make sense</p></li>
+<li><p>Remove redundant or nonsensical features</p></li>
+</ul>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Problem:</strong> Features don’t improve performance</p>
+<p><strong>Solutions:</strong></p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">generations</span></code> to 50-100 for more thorough search</p></li>
+<li><p>Try different <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> values</p></li>
+<li><p>Check if your problem actually has nonlinear patterns</p></li>
+<li><p>Try different fitness functions</p></li>
+</ul>
+<p><strong>Problem:</strong> Evolution takes too long</p>
+<p><strong>Solutions:</strong></p>
+<ul class="simple">
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">population_size</span></code> (50 → 30)</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">generations</span></code> (50 → 25)</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">n_features</span></code> (20 → 10)</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">verbose=False</span></code> to disable progress output</p></li>
+</ul>
+<p><strong>Problem:</strong> Features are too complex</p>
+<p><strong>Solutions:</strong></p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (0.001 → 0.01)</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> if using custom tree initialization</p></li>
+<li><p>Inspect features and manually remove overly complex ones</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading"><span>#</span></a></h2>
+<p>You’ve learned:</p>
+<p>✓ How to create a dataset with nonlinear patterns
+✓ How to use <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code> to automatically discover features
+✓ How to combine original and synthesized features
+✓ How to train models and compare performance
+✓ How to interpret the discovered features</p>
+<p><strong>Key Takeaway:</strong> Featuristic automatically discovers mathematical relationships (x₁×x₂, sin(x), x², etc.) that improve model performance while remaining interpretable.</p>
+<p><strong>Next Steps:</strong> Continue learning with <a class="reference internal" href="../user_guide/linear_regression_power.html"><span class="doc">Linear Regression Power</span></a> or <a class="reference internal" href="next_steps.html"><span class="doc">Next Steps</span></a>.</p>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="installation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Installation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../user_guide/feature_synthesis.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Feature Synthesis Tutorial</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-ll-learn">What You’ll Learn</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-create-load-your-dataset">Step 1: Create/Load Your Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-train-a-baseline-model-optional">Step 2: Train a Baseline Model (Optional)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-use-featuresynthesizer-to-create-new-features">Step 3: Use FeatureSynthesizer to Create New Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-combine-original-synthesized-features">Step 4: Combine Original + Synthesized Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-train-model-on-augmented-features">Step 5: Train Model on Augmented Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-compare-results">Step 6: Compare Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-7-inspect-discovered-features">Step 7: Inspect Discovered Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-feature-importance-analysis">Bonus: Feature Importance Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-patterns">Common Patterns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-for-success">Tips for Success</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/getting_started/quickstart.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

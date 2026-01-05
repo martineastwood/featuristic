@@ -1,0 +1,1116 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Fitness Functions Guide &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/fitness_functions';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Fitness Functions Guide</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="fitness-functions-guide">
+<h1>Fitness Functions Guide<a class="headerlink" href="#fitness-functions-guide" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#choosing-the-right-fitness-function" id="id2">Choosing the Right Fitness Function</a></p>
+<ul>
+<li><p><a class="reference internal" href="#auto-detection-recommended" id="id3">Auto-Detection (Recommended)</a></p></li>
+<li><p><a class="reference internal" href="#regression-metrics" id="id4">Regression Metrics</a></p></li>
+<li><p><a class="reference internal" href="#classification-metrics" id="id5">Classification Metrics</a></p></li>
+<li><p><a class="reference internal" href="#decision-guide" id="id6">Decision Guide</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#parsimony-penalty" id="id7">Parsimony Penalty</a></p>
+<ul>
+<li><p><a class="reference internal" href="#what-is-parsimony" id="id8">What Is Parsimony?</a></p></li>
+<li><p><a class="reference internal" href="#setting-parsimony-coefficient" id="id9">Setting Parsimony Coefficient</a></p></li>
+<li><p><a class="reference internal" href="#adaptive-parsimony" id="id10">Adaptive Parsimony</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#custom-fitness-functions" id="id11">Custom Fitness Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creating-your-own-fitness-function" id="id12">Creating Your Own Fitness Function</a></p></li>
+<li><p><a class="reference internal" href="#custom-fitness-with-domain-logic" id="id13">Custom Fitness with Domain Logic</a></p></li>
+<li><p><a class="reference internal" href="#multi-objective-fitness" id="id14">Multi-Objective Fitness</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices" id="id15">Best Practices</a></p>
+<ul>
+<li><p><a class="reference internal" href="#start-with-auto-detection" id="id16">1. <strong>Start with auto-detection</strong></a></p></li>
+<li><p><a class="reference internal" href="#match-fitness-to-evaluation-metric" id="id17">2. <strong>Match fitness to evaluation metric</strong></a></p></li>
+<li><p><a class="reference internal" href="#consider-data-characteristics" id="id18">3. <strong>Consider data characteristics</strong></a></p></li>
+<li><p><a class="reference internal" href="#tune-parsimony-for-your-problem" id="id19">4. <strong>Tune parsimony for your problem</strong></a></p></li>
+<li><p><a class="reference internal" href="#validate-with-cross-validation" id="id20">5. <strong>Validate with cross-validation</strong></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id21">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-all-features-get-terrible-fitness" id="id22">Problem: All features get terrible fitness</a></p></li>
+<li><p><a class="reference internal" href="#problem-fitness-doesn-t-improve" id="id23">Problem: Fitness doesn’t improve</a></p></li>
+<li><p><a class="reference internal" href="#problem-custom-fitness-returns-wrong-scores" id="id24">Problem: Custom fitness returns wrong scores</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#examples" id="id25">Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#example-1-regression-with-different-fitness-functions" id="id26">Example 1: Regression with Different Fitness Functions</a></p></li>
+<li><p><a class="reference internal" href="#example-2-classification-with-class-imbalance" id="id27">Example 2: Classification with Class Imbalance</a></p></li>
+<li><p><a class="reference internal" href="#example-3-custom-fitness-for-time-series" id="id28">Example 3: Custom Fitness for Time Series</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#what-s-next" id="id29">What’s Next</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id30">Summary</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading"><span>#</span></a></h2>
+<p>Fitness functions evaluate how well each symbolic program models the target variable. During evolution, FeatureSynthesizer <strong>minimizes</strong> the fitness score, so <strong>lower = better</strong>.</p>
+<p><strong>Why Fitness Functions Matter:</strong></p>
+<ul class="simple">
+<li><p>Guide evolution toward useful features</p></li>
+<li><p>Determine what “good” means for your problem</p></li>
+<li><p>Balance accuracy with simplicity (parsimony)</p></li>
+<li><p>Can be customized for domain-specific needs</p></li>
+</ul>
+</section>
+<section id="choosing-the-right-fitness-function">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Choosing the Right Fitness Function</a><a class="headerlink" href="#choosing-the-right-fitness-function" title="Link to this heading"><span>#</span></a></h2>
+<section id="auto-detection-recommended">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Auto-Detection (Recommended)</a><a class="headerlink" href="#auto-detection-recommended" title="Link to this heading"><span>#</span></a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">fitness=&quot;auto&quot;</span></code> to let FeatureSynthesizer choose:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>  <span class="c1"># Auto-detect based on target type</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># Automatically selects:</span>
+<span class="c1"># - MSE for continuous targets (regression)</span>
+<span class="c1"># - Log Loss for binary classification</span>
+<span class="c1"># - Accuracy for multiclass classification</span>
+</pre></div>
+</div>
+</section>
+<section id="regression-metrics">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Regression Metrics</a><a class="headerlink" href="#regression-metrics" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>MSE (Mean Squared Error)</strong> - Default for regression:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, ∞)</p></li>
+<li><p><strong>Use for</strong>: General regression, most use cases</p></li>
+<li><p><strong>Note</strong>: Sensitive to outliers (squared error)</p></li>
+</ul>
+<p><strong>R² (R-Squared)</strong> - Explained variance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: (-∞, 1.0]</p></li>
+<li><p><strong>Use for</strong>: Model comparison, explained variance</p></li>
+<li><p><strong>Note</strong>: Returned as negative R² (lower is better)</p></li>
+</ul>
+<p><strong>Pearson Correlation</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, 1] (absolute value)</p></li>
+<li><p><strong>Use for</strong>: Linear relationships</p></li>
+<li><p><strong>Note</strong>: Sensitive to outliers</p></li>
+</ul>
+<p><strong>Spearman Correlation</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;spearman&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, 1] (absolute value)</p></li>
+<li><p><strong>Use for</strong>: Monotonic relationships, robust to outliers</p></li>
+<li><p><strong>Note</strong>: Non-parametric, rank-based</p></li>
+</ul>
+<p><strong>Kendall’s Tau</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;kendall&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, 1] (absolute value)</p></li>
+<li><p><strong>Use for</strong>: Small samples, ordinal data</p></li>
+<li><p><strong>Note</strong>: More robust than Spearman for small samples</p></li>
+</ul>
+<p><strong>Mutual Information</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mutual_info&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, ∞)</p></li>
+<li><p><strong>Use for</strong>: Non-linear dependencies, information theory</p></li>
+<li><p><strong>Note</strong>: Requires discrete data (binned internally)</p></li>
+</ul>
+</section>
+<section id="classification-metrics">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Classification Metrics</a><a class="headerlink" href="#classification-metrics" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Accuracy</strong> - Default for balanced classification:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, 1]</p></li>
+<li><p><strong>Use for</strong>: Balanced classification problems</p></li>
+<li><p><strong>Note</strong>: Not suitable for imbalanced classes</p></li>
+</ul>
+<p><strong>F1 Score</strong> - For imbalanced classification:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, 1]</p></li>
+<li><p><strong>Use for</strong>: Imbalanced binary classification</p></li>
+<li><p><strong>Note</strong>: Harmonic mean of precision and recall</p></li>
+</ul>
+<p><strong>Log Loss</strong> - Probabilistic classification:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;log_loss&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Range</strong>: [0, ∞)</p></li>
+<li><p><strong>Use for</strong>: Probabilistic classification, gradient-based optimization</p></li>
+<li><p><strong>Note</strong>: Heavily penalizes confident wrong predictions</p></li>
+</ul>
+</section>
+<section id="decision-guide">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Decision Guide</a><a class="headerlink" href="#decision-guide" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>For Regression:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Goal</p></th>
+<th class="head"><p>Recommended Fitness</p></th>
+<th class="head"><p>Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>General regression</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mse&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Outliers present</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;spearman&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;kendall&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Model comparison</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mse&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Non-linear dependencies</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mutual_info&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;spearman&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>For Classification:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Goal</p></th>
+<th class="head"><p>Recommended Fitness</p></th>
+<th class="head"><p>Alternative</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Balanced classes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;accuracy&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;f1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Imbalanced classes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;f1&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Probabilistic predictions</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;accuracy&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Binary classification</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;f1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;accuracy&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Multiclass</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;accuracy&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="parsimony-penalty">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Parsimony Penalty</a><a class="headerlink" href="#parsimony-penalty" title="Link to this heading"><span>#</span></a></h2>
+<section id="what-is-parsimony">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">What Is Parsimony?</a><a class="headerlink" href="#what-is-parsimony" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Parsimony</strong> = preference for simpler explanations (Occam’s Razor)</p>
+<p>In genetic programming, programs tend to grow larger (“bloat”) without improving accuracy. Parsimony penalty prevents this by:</p>
+<ol class="arabic simple">
+<li><p>Penalizing complex programs</p></li>
+<li><p>Encouraging simpler, more interpretable features</p></li>
+<li><p>Preventing overfitting</p></li>
+</ol>
+<p><strong>How It Works:</strong></p>
+<div class="math notranslate nohighlight">
+\[\text{Fitness}_{\text{final}} = \text{Fitness}_{\text{raw}} \times (1 + \text{node\_count})^{\text{parsimony}}\]</div>
+<ul class="simple">
+<li><p><strong>node_count</strong>: Number of nodes in the symbolic tree</p></li>
+<li><p><strong>parsimony</strong>: Coefficient controlling penalty strength</p></li>
+<li><p><strong>Higher parsimony</strong> → Stronger penalty for complexity</p></li>
+</ul>
+</section>
+<section id="setting-parsimony-coefficient">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Setting Parsimony Coefficient</a><a class="headerlink" href="#setting-parsimony-coefficient" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="c1"># Low penalty (allow complexity)</span>
+<span class="n">synth_low</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>  <span class="c1"># Default</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># Medium penalty (balanced)</span>
+<span class="n">synth_med</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># High penalty (very simple features)</span>
+<span class="n">synth_high</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Guidelines:</strong></p>
+<ul class="simple">
+<li><p><strong>0.001</strong>: Allow complex features (risk of overfitting)</p></li>
+<li><p><strong>0.005</strong>: Balanced (recommended starting point)</p></li>
+<li><p><strong>0.01</strong>: Strong simplicity preference</p></li>
+<li><p><strong>0.02+</strong>: Very simple features only</p></li>
+</ul>
+<p><strong>Example Impact:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Parsimony    Avg Depth    Avg Nodes    Example Features
+---------------------------------------------------------------
+0.001        4.2          12.3         sin(x1*x2) + x3^2 + log(x4)
+0.005        3.1          6.7          x1*x2 + x3
+0.01         2.3          4.1          x1 + x2
+</pre></div>
+</div>
+</section>
+<section id="adaptive-parsimony">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Adaptive Parsimony</a><a class="headerlink" href="#adaptive-parsimony" title="Link to this heading"><span>#</span></a></h3>
+<p>FeatureSynthesizer can automatically adjust parsimony:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">adaptive_parsimony</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Default</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="c1"># Automatically increases penalty if:</span>
+<span class="c1"># - Average program size grows too large</span>
+<span class="c1"># - Bloat is detected</span>
+</pre></div>
+</div>
+<p><strong>When to use:</strong></p>
+<ul class="simple">
+<li><p>✅ Most use cases (recommended)</p></li>
+<li><p>✅ Unknown optimal parsimony value</p></li>
+<li><p>❌ When you need precise control over complexity</p></li>
+</ul>
+</section>
+</section>
+<section id="custom-fitness-functions">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Custom Fitness Functions</a><a class="headerlink" href="#custom-fitness-functions" title="Link to this heading"><span>#</span></a></h2>
+<section id="creating-your-own-fitness-function">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Creating Your Own Fitness Function</a><a class="headerlink" href="#creating-your-own-fitness-function" title="Link to this heading"><span>#</span></a></h3>
+<p>You can define custom fitness functions for domain-specific needs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.fitness.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_fitness</span>
+
+<span class="nd">@register_fitness</span><span class="p">(</span><span class="s2">&quot;mae&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mae_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Absolute Error (lower is better)&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.fitness.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_invalid_prediction</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="c1"># Check for invalid predictions</span>
+    <span class="k">if</span> <span class="n">is_invalid_prediction</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Calculate MAE</span>
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+
+    <span class="c1"># Apply parsimony penalty if provided</span>
+    <span class="k">if</span> <span class="n">program</span> <span class="ow">and</span> <span class="n">parsimony</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">tree_node_count</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">tree_node_count</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
+        <span class="n">penalty</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nodes</span><span class="p">)</span> <span class="o">**</span> <span class="n">parsimony</span>
+        <span class="n">mae</span> <span class="o">*=</span> <span class="n">penalty</span>
+
+    <span class="k">return</span> <span class="n">mae</span>
+
+<span class="c1"># Use your custom fitness</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mae&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-fitness-with-domain-logic">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Custom Fitness with Domain Logic</a><a class="headerlink" href="#custom-fitness-with-domain-logic" title="Link to this heading"><span>#</span></a></h3>
+<p>Example: Business-specific metric</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@register_fitness</span><span class="p">(</span><span class="s2">&quot;business_metric&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">business_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom metric combining:</span>
+<span class="sd">    - MAE (prediction error)</span>
+<span class="sd">    - Asymmetric penalty (over-prediction worse than under-prediction)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="k">if</span> <span class="n">is_invalid_prediction</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="n">error</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span>
+
+    <span class="c1"># Asymmetric penalty</span>
+    <span class="c1"># Over-prediction (error &lt; 0) penalized 2x</span>
+    <span class="n">asymmetric_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">error</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">error</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">asymmetric_error</span><span class="p">))</span>
+
+    <span class="c1"># Parsimony penalty</span>
+    <span class="k">if</span> <span class="n">program</span> <span class="ow">and</span> <span class="n">parsimony</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">tree_node_count</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
+        <span class="n">penalty</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nodes</span><span class="p">)</span> <span class="o">**</span> <span class="n">parsimony</span>
+        <span class="n">mae</span> <span class="o">*=</span> <span class="n">penalty</span>
+
+    <span class="k">return</span> <span class="n">mae</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;business_metric&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="multi-objective-fitness">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Multi-Objective Fitness</a><a class="headerlink" href="#multi-objective-fitness" title="Link to this heading"><span>#</span></a></h3>
+<p>Combine multiple metrics:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@register_fitness</span><span class="p">(</span><span class="s2">&quot;weighted_objective&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_objective</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Weighted combination of MSE and MAE&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+
+    <span class="k">if</span> <span class="n">is_invalid_prediction</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="c1"># Weighted combination (70% MSE, 30% MAE)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">mse</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">mae</span>
+
+    <span class="c1"># Parsimony penalty</span>
+    <span class="k">if</span> <span class="n">program</span> <span class="ow">and</span> <span class="n">parsimony</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">tree_node_count</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
+        <span class="n">penalty</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nodes</span><span class="p">)</span> <span class="o">**</span> <span class="n">parsimony</span>
+        <span class="n">combined</span> <span class="o">*=</span> <span class="n">penalty</span>
+
+    <span class="k">return</span> <span class="n">combined</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;weighted_objective&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Best Practices</a><a class="headerlink" href="#best-practices" title="Link to this heading"><span>#</span></a></h2>
+<section id="start-with-auto-detection">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">1. <strong>Start with auto-detection</strong></a><a class="headerlink" href="#start-with-auto-detection" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="match-fitness-to-evaluation-metric">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">2. <strong>Match fitness to evaluation metric</strong></a><a class="headerlink" href="#match-fitness-to-evaluation-metric" title="Link to this heading"><span>#</span></a></h3>
+<p>If you evaluate with R², use <code class="docutils literal notranslate"><span class="pre">fitness=&quot;r2&quot;</span></code>.
+If you evaluate with F1, use <code class="docutils literal notranslate"><span class="pre">fitness=&quot;f1&quot;</span></code>.</p>
+</section>
+<section id="consider-data-characteristics">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">3. <strong>Consider data characteristics</strong></a><a class="headerlink" href="#consider-data-characteristics" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p><strong>Outliers?</strong> Use Spearman or Kendall instead of Pearson</p></li>
+<li><p><strong>Imbalanced?</strong> Use F1 instead of accuracy</p></li>
+<li><p><strong>Non-linear?</strong> Use mutual_info or Spearman</p></li>
+</ul>
+</section>
+<section id="tune-parsimony-for-your-problem">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">4. <strong>Tune parsimony for your problem</strong></a><a class="headerlink" href="#tune-parsimony-for-your-problem" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p><strong>Start</strong>: 0.005 (balanced)</p></li>
+<li><p><strong>If overfitting</strong>: Increase to 0.01 or higher</p></li>
+<li><p><strong>If underfitting</strong>: Decrease to 0.001 or lower</p></li>
+</ul>
+</section>
+<section id="validate-with-cross-validation">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">5. <strong>Validate with cross-validation</strong></a><a class="headerlink" href="#validate-with-cross-validation" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span>  <span class="c1"># Should match fitness!</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R²: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (+/- </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading"><span>#</span></a></h2>
+<section id="problem-all-features-get-terrible-fitness">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Problem: All features get terrible fitness</a><a class="headerlink" href="#problem-all-features-get-terrible-fitness" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Possible causes:</strong></p>
+<ol class="arabic simple">
+<li><p>Target has zero variance (constant values)</p></li>
+<li><p>Invalid predictions (NaN, Inf)</p></li>
+<li><p>Wrong fitness function for problem type</p></li>
+</ol>
+<p><strong>Debug:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Check target variance</span>
+<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Target has zero range!&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check for invalid values</span>
+<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Target contains NaN or Inf!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="problem-fitness-doesn-t-improve">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Problem: Fitness doesn’t improve</a><a class="headerlink" href="#problem-fitness-doesn-t-improve" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Solutions:</strong></p>
+<ul class="simple">
+<li><p>Try different fitness function</p></li>
+<li><p>Decrease parsimony coefficient</p></li>
+<li><p>Increase generations</p></li>
+<li><p>Check if target has signal (baseline model)</p></li>
+</ul>
+</section>
+<section id="problem-custom-fitness-returns-wrong-scores">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Problem: Custom fitness returns wrong scores</a><a class="headerlink" href="#problem-custom-fitness-returns-wrong-scores" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Debug your fitness function:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">debug_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y_true shape: </span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, y_pred shape: </span><span class="si">{</span><span class="n">y_pred</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y_true range: [</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y_pred range: [</span><span class="si">{</span><span class="n">y_pred</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_pred</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="n">score</span> <span class="o">=</span> <span class="n">your_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="p">,</span> <span class="n">parsimony</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fitness score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">score</span>
+
+<span class="c1"># Test with sample data</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">y_true_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">])</span>
+
+<span class="n">debug_fitness</span><span class="p">(</span><span class="n">y_true_test</span><span class="p">,</span> <span class="n">y_pred_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"><span>#</span></a></h2>
+<section id="example-1-regression-with-different-fitness-functions">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Example 1: Regression with Different Fitness Functions</a><a class="headerlink" href="#example-1-regression-with-different-fitness-functions" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_regression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">fitness_functions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="s2">&quot;pearson&quot;</span><span class="p">,</span> <span class="s2">&quot;spearman&quot;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">fitness_name</span> <span class="ow">in</span> <span class="n">fitness_functions</span><span class="p">:</span>
+    <span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">fitness</span><span class="o">=</span><span class="n">fitness_name</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">best_fitness</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;fitness&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fitness_name</span><span class="si">:</span><span class="s2">12s</span><span class="si">}</span><span class="s2"> Best fitness: </span><span class="si">{</span><span class="n">best_fitness</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-classification-with-class-imbalance">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Example 2: Classification with Class Imbalance</a><a class="headerlink" href="#example-2-classification-with-class-imbalance" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">f1_score</span><span class="p">,</span> <span class="n">accuracy_score</span>
+
+<span class="c1"># Imbalanced data (90% class 0, 10% class 1)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Compare accuracy vs F1</span>
+<span class="k">for</span> <span class="n">fitness_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">]:</span>
+    <span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">fitness</span><span class="o">=</span><span class="n">fitness_name</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Evaluate with both metrics</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_aug</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Simple threshold</span>
+    <span class="n">f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_aug</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Fitness: </span><span class="si">{</span><span class="n">fitness_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Accuracy: </span><span class="si">{</span><span class="n">acc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  F1:       </span><span class="si">{</span><span class="n">f1</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-3-custom-fitness-for-time-series">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Example 3: Custom Fitness for Time Series</a><a class="headerlink" href="#example-3-custom-fitness-for-time-series" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@register_fitness</span><span class="p">(</span><span class="s2">&quot;time_series_mae&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">time_series_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom fitness for time series:</span>
+<span class="sd">    - MAE for prediction error</span>
+<span class="sd">    - Extra penalty for large errors at recent time points</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="k">if</span> <span class="n">is_invalid_prediction</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Standard MAE</span>
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+
+    <span class="c1"># Weight recent errors more heavily</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>  <span class="c1"># Recent = 2x weight</span>
+    <span class="n">weighted_mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+
+    <span class="c1"># Combine (70% standard, 30% weighted)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">mae</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">weighted_mae</span>
+
+    <span class="c1"># Parsimony penalty</span>
+    <span class="k">if</span> <span class="n">program</span> <span class="ow">and</span> <span class="n">parsimony</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">tree_node_count</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
+        <span class="n">penalty</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nodes</span><span class="p">)</span> <span class="o">**</span> <span class="n">parsimony</span>
+        <span class="n">combined</span> <span class="o">*=</span> <span class="n">penalty</span>
+
+    <span class="k">return</span> <span class="n">combined</span>
+
+<span class="c1"># Use for time series forecasting</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;time_series_mae&quot;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api_reference/fitness_functions.html"><span class="doc">Fitness Functions</span></a> - Complete fitness function reference</p></li>
+<li><p><a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Feature synthesis tutorial</p></li>
+<li><p><a class="reference internal" href="classification.html"><span class="doc">Classification with FeatureSynthesizer</span></a> - Classification examples</p></li>
+<li><p><a class="reference internal" href="linear_regression_power.html"><span class="doc">Linear Regression Power</span></a> - Regression examples</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Key points:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Fitness functions guide evolution</strong> toward useful features</p></li>
+<li><p><strong>Auto-detection</strong> works well for most cases</p></li>
+<li><p><strong>Match fitness to your problem</strong> (regression vs. classification)</p></li>
+<li><p><strong>Parsimony prevents bloat</strong> and encourages simplicity</p></li>
+<li><p><strong>Custom fitness functions</strong> enable domain-specific optimization</p></li>
+</ol>
+<p><strong>Quick guide:</strong></p>
+<ul class="simple">
+<li><p><strong>Regression</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;mse&quot;</span></code> (default), <code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;pearson&quot;</span></code></p></li>
+<li><p><strong>Classification</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;accuracy&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;f1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code></p></li>
+<li><p><strong>Robust to outliers</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;spearman&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;kendall&quot;</span></code></p></li>
+<li><p><strong>Custom</strong>: Use <code class="docutils literal notranslate"><span class="pre">&#64;register_fitness</span></code> decorator</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-the-right-fitness-function">Choosing the Right Fitness Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#auto-detection-recommended">Auto-Detection (Recommended)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-metrics">Regression Metrics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classification-metrics">Classification Metrics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decision-guide">Decision Guide</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parsimony-penalty">Parsimony Penalty</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-parsimony">What Is Parsimony?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-parsimony-coefficient">Setting Parsimony Coefficient</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-parsimony">Adaptive Parsimony</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-fitness-functions">Custom Fitness Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-your-own-fitness-function">Creating Your Own Fitness Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-fitness-with-domain-logic">Custom Fitness with Domain Logic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-objective-fitness">Multi-Objective Fitness</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#start-with-auto-detection">1. <strong>Start with auto-detection</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#match-fitness-to-evaluation-metric">2. <strong>Match fitness to evaluation metric</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#consider-data-characteristics">3. <strong>Consider data characteristics</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tune-parsimony-for-your-problem">4. <strong>Tune parsimony for your problem</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-with-cross-validation">5. <strong>Validate with cross-validation</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-all-features-get-terrible-fitness">Problem: All features get terrible fitness</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-fitness-doesn-t-improve">Problem: Fitness doesn’t improve</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-custom-fitness-returns-wrong-scores">Problem: Custom fitness returns wrong scores</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-regression-with-different-fitness-functions">Example 1: Regression with Different Fitness Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-classification-with-class-imbalance">Example 2: Classification with Class Imbalance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-3-custom-fitness-for-time-series">Example 3: Custom Fitness for Time Series</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/fitness_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

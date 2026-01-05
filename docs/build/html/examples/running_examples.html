@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Code Examples &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/running_examples';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Development" href="../development/index.html" />
+    <link rel="prev" title="Rust Functions" href="../api_reference/rust_functions.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-examples">Available Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-examples">Running Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#learning-path">Learning Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-summary">Performance Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-patterns">Common Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-takeaways">Key Takeaways</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See Also</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Code Examples</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="code-examples">
+<h1>Code Examples<a class="headerlink" href="#code-examples" title="Link to this heading"><span>#</span></a></h1>
+<p>Comprehensive Python examples demonstrating FeatureSynthesizer and FeatureSelector capabilities.</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"><span>#</span></a></h2>
+<p>The examples directory contains executable Python scripts demonstrating:</p>
+<ul class="simple">
+<li><p><strong>Quick Start</strong> - Get started in 5 minutes</p></li>
+<li><p><strong>Feature Synthesis</strong> - Creating new symbolic features</p></li>
+<li><p><strong>Feature Selection</strong> - Selecting optimal feature subsets</p></li>
+<li><p><strong>Benchmarks</strong> - Comparing against standard tests</p></li>
+<li><p><strong>Interpretability</strong> - Understanding discovered features</p></li>
+<li><p><strong>Classification</strong> - Feature synthesis for classification</p></li>
+</ul>
+<p>All examples are ready to run and include detailed comments explaining the concepts.</p>
+</section>
+<section id="available-examples">
+<h2>Available Examples<a class="headerlink" href="#available-examples" title="Link to this heading"><span>#</span></a></h2>
+<section id="quick-start-04-quick-start-py">
+<h3>Quick Start (04_quick_start.py)<a class="headerlink" href="#quick-start-04-quick-start-py" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Purpose</strong>: Get started in 5 minutes</p>
+<p><strong>What it demonstrates</strong>:</p>
+<ul class="simple">
+<li><p>Complete workflow in under 100 lines</p></li>
+<li><p>Basic FeatureSynthesizer usage</p></li>
+<li><p>Model training and evaluation</p></li>
+<li><p>Feature importance analysis</p></li>
+</ul>
+<p><strong>Run it</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/04_quick_start.py
+</pre></div>
+</div>
+<p><strong>Best for</strong>: First-time users who want to see the basics quickly</p>
+<p><strong>Key Results</strong>:</p>
+<ul class="simple">
+<li><p>Shows baseline vs augmented performance</p></li>
+<li><p>Demonstrates feature importance</p></li>
+<li><p>Typical runtime: 30-60 seconds</p></li>
+</ul>
+<p><strong>See also</strong>: <a class="reference internal" href="../getting_started/quickstart.html"><span class="doc">Quick Start Guide</span></a></p>
+</section>
+<section id="linear-regression-power-01-linear-regression-power-py">
+<h3>Linear Regression Power (01_linear_regression_power.py)<a class="headerlink" href="#linear-regression-power-01-linear-regression-power-py" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Purpose</strong>: Demonstrate that feature engineering enables simple models to solve complex problems</p>
+<p><strong>What it demonstrates</strong>:</p>
+<ul class="simple">
+<li><p>Linear models fail on nonlinear problems without feature engineering</p></li>
+<li><p>FeatureSynthesizer creates x², sin(x), x₁×x₂ features</p></li>
+<li><p>Linear model + FeatureSynthesizer ≈ Random Forest performance</p></li>
+</ul>
+<p><strong>Run it</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/01_linear_regression_power.py
+</pre></div>
+</div>
+<p><strong>Best for</strong>: Understanding the core value proposition</p>
+<p><strong>Key Results</strong>:</p>
+<ul class="simple">
+<li><p>Test Case 1: R² improves from 0.03 to 0.68 (+2400%!)</p></li>
+<li><p>Test Case 2: R² improves from 0.01 to 0.999 (perfect parabola fit)</p></li>
+<li><p>Achieves ~90% of Random Forest performance with interpretable model</p></li>
+</ul>
+<p><strong>See also</strong>: <a class="reference internal" href="../user_guide/linear_regression_power.html"><span class="doc">Linear Regression Power</span></a></p>
+</section>
+<section id="feature-selection-demo-02-feature-selection-demo-py">
+<h3>Feature Selection Demo (02_feature_selection_demo.py)<a class="headerlink" href="#feature-selection-demo-02-feature-selection-demo-py" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Purpose</strong>: Demonstrate evolutionary feature subset selection</p>
+<p><strong>What it demonstrates</strong>:</p>
+<ul class="simple">
+<li><p>FeatureSelector with custom objective functions</p></li>
+<li><p>Cross-validation objectives</p></li>
+<li><p>Handling correlated features</p></li>
+<li><p>Complexity penalty objectives</p></li>
+</ul>
+<p><strong>Run it</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/02_feature_selection_demo.py
+</pre></div>
+</div>
+<p><strong>Best for</strong>: Learning when to use feature selection vs feature synthesis</p>
+<p><strong>Key Results</strong>:</p>
+<ul class="simple">
+<li><p>Reduces 100 features to ~10-15 most important</p></li>
+<li><p>Maintains or improves performance with fewer features</p></li>
+<li><p>Demonstrates custom objective functions</p></li>
+</ul>
+<p><strong>See also</strong>: <a class="reference internal" href="../user_guide/feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a></p>
+</section>
+<section id="friedman-benchmark-03-friedman-benchmark-py">
+<h3>Friedman Benchmark (03_friedman_benchmark.py)<a class="headerlink" href="#friedman-benchmark-03-friedman-benchmark-py" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Purpose</strong>: Classic symbolic regression benchmark</p>
+<p><strong>What it demonstrates</strong>:</p>
+<ul class="simple">
+<li><p>Standard test for symbolic regression algorithms</p></li>
+<li><p>Challenges tree-based models with sin(π×x₁×x₂) interaction</p></li>
+<li><p>Corrected feature ranges [0,1] (bug in original benchmark)</p></li>
+</ul>
+<p><strong>Run it</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/03_friedman_benchmark.py
+</pre></div>
+</div>
+<p><strong>Best for</strong>: Comparing against standard benchmarks</p>
+<p><strong>Key Results</strong>:</p>
+<ul class="simple">
+<li><p>Baseline (GradientBoosting): R² ≈ 0.85-0.91</p></li>
+<li><p>With FeatureSynthesizer: R² ≈ 0.92-0.95</p></li>
+<li><p>Discovers sin interaction and polynomial features</p></li>
+</ul>
+<p><strong>Why this matters</strong>: Friedman #1 is a standard test in symbolic regression literature</p>
+<p><strong>See also</strong>: <a class="reference internal" href="../user_guide/friedman_benchmark.html"><span class="doc">Friedman #1 Benchmark</span></a></p>
+</section>
+<section id="interpretability-05-interpretability-py">
+<h3>Interpretability (05_interpretability.py)<a class="headerlink" href="#interpretability-05-interpretability-py" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Purpose</strong>: Understanding and validating discovered features</p>
+<p><strong>What it demonstrates</strong>:</p>
+<ul class="simple">
+<li><p>6 methods for interpreting synthesized features:</p>
+<ol class="arabic simple">
+<li><p>Simple feature inspection</p></li>
+<li><p>Individual feature evaluation</p></li>
+<li><p>Correlation analysis</p></li>
+<li><p>Model-based interpretation</p></li>
+<li><p>Visual validation</p></li>
+<li><p>Domain knowledge validation</p></li>
+</ol>
+</li>
+</ul>
+<p><strong>Run it</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/05_interpretability.py
+</pre></div>
+</div>
+<p><strong>Best for</strong>: Learning how to understand what the algorithm discovered</p>
+<p><strong>Key Results</strong>:</p>
+<ul class="simple">
+<li><p>Shows how to examine feature expressions</p></li>
+<li><p>Validates features match domain knowledge</p></li>
+<li><p>Demonstrates feature importance analysis</p></li>
+</ul>
+<p><strong>See also</strong>: <a class="reference internal" href="../user_guide/interpretability.html"><span class="doc">Interpreting Discovered Features</span></a></p>
+</section>
+<section id="classification-06-classification-py">
+<h3>Classification (06_classification.py)<a class="headerlink" href="#classification-06-classification-py" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Purpose</strong>: Demonstrate FeatureSynthesizer works for classification</p>
+<p><strong>What it demonstrates</strong>:</p>
+<ul class="simple">
+<li><p>Auto-detects classification vs regression</p></li>
+<li><p>Creates features optimized for accuracy/F1/log loss</p></li>
+<li><p>LogisticRegression + FeatureSynthesizer ≈ Random Forest</p></li>
+</ul>
+<p><strong>Run it</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/06_classification.py
+</pre></div>
+</div>
+<p><strong>Best for</strong>: Understanding classification capabilities</p>
+<p><strong>Key Results</strong>:</p>
+<ul class="simple">
+<li><p>Baseline (LogisticRegression): 67.5% accuracy</p></li>
+<li><p>With FeatureSynthesizer: 92% accuracy (+28%)</p></li>
+<li><p>Demonstrates discriminative feature creation</p></li>
+</ul>
+<p><strong>See also</strong>: <a class="reference internal" href="../user_guide/classification.html"><span class="doc">Classification with FeatureSynthesizer</span></a></p>
+</section>
+</section>
+<section id="running-examples">
+<h2>Running Examples<a class="headerlink" href="#running-examples" title="Link to this heading"><span>#</span></a></h2>
+<p>All examples can be run directly from the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Navigate to examples directory</span>
+<span class="nb">cd</span><span class="w"> </span>/path/to/featuristic
+
+<span class="c1"># Run any example</span>
+python<span class="w"> </span>examples/04_quick_start.py
+python<span class="w"> </span>examples/01_linear_regression_power.py
+python<span class="w"> </span>examples/02_feature_selection_demo.py
+python<span class="w"> </span>examples/03_friedman_benchmark.py
+python<span class="w"> </span>examples/05_interpretability.py
+python<span class="w"> </span>examples/06_classification.py
+</pre></div>
+</div>
+<p><strong>Requirements</strong>:</p>
+<ul class="simple">
+<li><p>Python 3.8+</p></li>
+<li><p>featuristic installed (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">featuristic</span></code>)</p></li>
+<li><p>Dependencies: numpy, pandas, scikit-learn</p></li>
+<li><p>Optional: matplotlib (for some examples)</p></li>
+</ul>
+</section>
+<section id="learning-path">
+<h2>Learning Path<a class="headerlink" href="#learning-path" title="Link to this heading"><span>#</span></a></h2>
+<section id="i-m-new-to-featuresynthesizer">
+<h3>I’m new to FeatureSynthesizer…<a class="headerlink" href="#i-m-new-to-featuresynthesizer" title="Link to this heading"><span>#</span></a></h3>
+<ol class="arabic simple">
+<li><p>Start with <code class="file docutils literal notranslate"><span class="pre">04_quick_start.py</span></code> - Get started in 5 minutes</p></li>
+<li><p>Try <code class="file docutils literal notranslate"><span class="pre">01_linear_regression_power.py</span></code> - See the dramatic impact</p></li>
+<li><p>Run <code class="file docutils literal notranslate"><span class="pre">02_feature_selection_demo.py</span></code> - Learn feature selection</p></li>
+</ol>
+</section>
+<section id="i-want-to-understand-feature-selection">
+<h3>I want to understand feature selection…<a class="headerlink" href="#i-want-to-understand-feature-selection" title="Link to this heading"><span>#</span></a></h3>
+<p>Run: <code class="file docutils literal notranslate"><span class="pre">02_feature_selection_demo.py</span></code></p>
+</section>
+<section id="i-want-to-compare-against-benchmarks">
+<h3>I want to compare against benchmarks…<a class="headerlink" href="#i-want-to-compare-against-benchmarks" title="Link to this heading"><span>#</span></a></h3>
+<p>Run: <code class="file docutils literal notranslate"><span class="pre">03_friedman_benchmark.py</span></code></p>
+</section>
+<section id="i-need-to-interpret-my-results">
+<h3>I need to interpret my results…<a class="headerlink" href="#i-need-to-interpret-my-results" title="Link to this heading"><span>#</span></a></h3>
+<p>Run: <code class="file docutils literal notranslate"><span class="pre">05_interpretability.py</span></code></p>
+</section>
+<section id="i-have-a-classification-problem">
+<h3>I have a classification problem…<a class="headerlink" href="#i-have-a-classification-problem" title="Link to this heading"><span>#</span></a></h3>
+<p>Run: <code class="file docutils literal notranslate"><span class="pre">06_classification.py</span></code></p>
+</section>
+<section id="i-want-to-see-the-power-of-automated-feature-engineering">
+<h3>I want to see the power of automated feature engineering…<a class="headerlink" href="#i-want-to-see-the-power-of-automated-feature-engineering" title="Link to this heading"><span>#</span></a></h3>
+<p>Run: <code class="file docutils literal notranslate"><span class="pre">01_linear_regression_power.py</span></code></p>
+</section>
+</section>
+<section id="performance-summary">
+<h2>Performance Summary<a class="headerlink" href="#performance-summary" title="Link to this heading"><span>#</span></a></h2>
+<p>Expected performance improvements across examples:</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-text">Performance Summary</span><a class="headerlink" href="#id1" title="Link to this table"><span>#</span></a></caption>
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Example</p></th>
+<th class="head"><p>Baseline</p></th>
+<th class="head"><p>Augmented</p></th>
+<th class="head"><p>Improvement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Linear Regression (Test 1)</p></td>
+<td><p>R² = 0.03</p></td>
+<td><p>R² = 0.68</p></td>
+<td><p>+2400%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parabola Fitting (Test 2)</p></td>
+<td><p>R² = 0.01</p></td>
+<td><p>R² = 0.999</p></td>
+<td><p>+9900%</p></td>
+</tr>
+<tr class="row-even"><td><p>Friedman Benchmark</p></td>
+<td><p>R² = 0.90</p></td>
+<td><p>R² = 0.93</p></td>
+<td><p>+3%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Classification</p></td>
+<td><p>Acc = 67.5%</p></td>
+<td><p>Acc = 92%</p></td>
+<td><p>+28%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><em>Note: Results vary by random seed and parameters</em></p>
+</section>
+<section id="common-patterns">
+<h2>Common Patterns<a class="headerlink" href="#common-patterns" title="Link to this heading"><span>#</span></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Always use a random seed</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Combine original + synthesized features</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">X_train_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_train_aug</span><span class="p">])</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Use parsimony_coefficient to control complexity</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>  <span class="c1"># Higher = simpler features</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>Inspect discovered features</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="key-takeaways">
+<h2>Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading"><span>#</span></a></h2>
+<ol class="arabic simple">
+<li><p><strong>FeatureSynthesizer works for both regression and classification</strong></p></li>
+<li><p><strong>Simple models + good features ≈ complex models</strong></p></li>
+<li><p><strong>Features are interpretable</strong> (unlike neural networks)</p></li>
+<li><p><strong>Auto-detection of problem type</strong> (regression vs classification)</p></li>
+<li><p><strong>Reproducible results</strong> with <code class="docutils literal notranslate"><span class="pre">random_state</span></code></p></li>
+</ol>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"><span>#</span></a></h2>
+<p>After exploring these examples:</p>
+<ol class="arabic simple">
+<li><p><strong>Try your own dataset</strong>: Replace synthetic data with your real data</p></li>
+<li><p><strong>Experiment with parameters</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">n_features</span></code>: Try 5, 10, 20, 50</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">generations</span></code>: Try 25, 50, 100</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code>: Try 0.001, 0.005, 0.01</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fitness</span></code>: Try “mse”, “r2”, “accuracy”, “log_loss”</p></li>
+</ul>
+</li>
+<li><p><strong>Integrate into pipelines</strong>: Use with <code class="docutils literal notranslate"><span class="pre">sklearn.pipeline.Pipeline</span></code></p></li>
+<li><p><strong>Create custom fitness functions</strong>: See <a class="reference internal" href="../user_guide/fitness_functions.html"><span class="doc">Fitness Functions Guide</span></a></p></li>
+</ol>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../getting_started/quickstart.html"><span class="doc">Quick Start Guide</span></a> - 5-minute tutorial</p></li>
+<li><p><a class="reference internal" href="../user_guide/feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Feature synthesis guide</p></li>
+<li><p><a class="reference internal" href="../user_guide/feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a> - Feature selection guide</p></li>
+<li><p><a class="reference internal" href="../user_guide/linear_regression_power.html"><span class="doc">Linear Regression Power</span></a> - Core value proposition</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../api_reference/rust_functions.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Rust Functions</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../development/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Development</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-examples">Available Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start-04-quick-start-py">Quick Start (04_quick_start.py)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-regression-power-01-linear-regression-power-py">Linear Regression Power (01_linear_regression_power.py)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-selection-demo-02-feature-selection-demo-py">Feature Selection Demo (02_feature_selection_demo.py)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#friedman-benchmark-03-friedman-benchmark-py">Friedman Benchmark (03_friedman_benchmark.py)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretability-05-interpretability-py">Interpretability (05_interpretability.py)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classification-06-classification-py">Classification (06_classification.py)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-examples">Running Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-path">Learning Path</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#i-m-new-to-featuresynthesizer">I’m new to FeatureSynthesizer…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#i-want-to-understand-feature-selection">I want to understand feature selection…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#i-want-to-compare-against-benchmarks">I want to compare against benchmarks…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#i-need-to-interpret-my-results">I need to interpret my results…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#i-have-a-classification-problem">I have a classification problem…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#i-want-to-see-the-power-of-automated-feature-engineering">I want to see the power of automated feature engineering…</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-summary">Performance Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-patterns">Common Patterns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next Steps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/running_examples.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

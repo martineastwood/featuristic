@@ -107,23 +107,25 @@ dev = [
     "coveralls",
     "isort",
     "ipykernel",
-    "nbsphinx",
+    "maturin[patchelf]",   # For building Rust extension
+    "nbsphinx",  # Keeping temporarily during migration
     "pre-commit",
     "pydata_sphinx_theme",
     "pytest",
     "pylint",
+    "sphinx-design>=0.3.0",  # Added: for modern UI components in documentation
     "Sphinx",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src/"]
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
 
-
-# [build-system]
-# These are the assumed default build requirements from pip:
-# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
-# requires = ["setuptools>=43.0.0", "wheel"]
-# build-backend = "setuptools.build_meta"
+[tool.maturin]
+python-source = "src"
+manifest-path = "rust/featuristic-py/Cargo.toml"
+bindings = "pyo3"
+strip = true
 
 [project.urls]
 

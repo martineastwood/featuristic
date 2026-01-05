@@ -1,0 +1,1339 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Feature Selection Tutorial &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/feature_selection';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Linear Regression Power" href="linear_regression_power.html" />
+    <link rel="prev" title="Feature Synthesis Tutorial" href="feature_synthesis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Feature Selection Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-it-works">How It Works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters-explained">Parameters Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objective-functions">Objective Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpreting-results">Interpreting Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-with-scikit-learn">Integration with Scikit-learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-next">What’s Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Feature Selection Tutorial</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="feature-selection-tutorial">
+<h1>Feature Selection Tutorial<a class="headerlink" href="#feature-selection-tutorial" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p>
+<ul>
+<li><p><a class="reference internal" href="#feature-selection-vs-feature-synthesis" id="id2">Feature Selection vs. Feature Synthesis</a></p></li>
+<li><p><a class="reference internal" href="#when-to-use-feature-selection" id="id3">When to Use Feature Selection</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#how-it-works" id="id4">How It Works</a></p></li>
+<li><p><a class="reference internal" href="#basic-usage" id="id5">Basic Usage</a></p>
+<ul>
+<li><p><a class="reference internal" href="#complete-example" id="id6">Complete Example</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#parameters-explained" id="id7">Parameters Explained</a></p>
+<ul>
+<li><p><a class="reference internal" href="#essential-parameters" id="id8">Essential Parameters</a></p></li>
+<li><p><a class="reference internal" href="#evolutionary-parameters" id="id9">Evolutionary Parameters</a></p></li>
+<li><p><a class="reference internal" href="#stopping-criteria" id="id10">Stopping Criteria</a></p></li>
+<li><p><a class="reference internal" href="#performance-parameters" id="id11">Performance Parameters</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#objective-functions" id="id12">Objective Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#simple-mse-objective" id="id13">Simple MSE Objective</a></p></li>
+<li><p><a class="reference internal" href="#cross-validation-objective-recommended" id="id14">Cross-Validation Objective (Recommended)</a></p></li>
+<li><p><a class="reference internal" href="#complexity-penalized-objective" id="id15">Complexity-Penalized Objective</a></p></li>
+<li><p><a class="reference internal" href="#information-criterion-objective" id="id16">Information Criterion Objective</a></p></li>
+<li><p><a class="reference internal" href="#custom-business-logic" id="id17">Custom Business Logic</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#interpreting-results" id="id18">Interpreting Results</a></p>
+<ul>
+<li><p><a class="reference internal" href="#getting-selected-features" id="id19">Getting Selected Features</a></p></li>
+<li><p><a class="reference internal" href="#plotting-evolution-history" id="id20">Plotting Evolution History</a></p></li>
+<li><p><a class="reference internal" href="#understanding-convergence" id="id21">Understanding Convergence</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices" id="id22">Best Practices</a></p>
+<ul>
+<li><p><a class="reference internal" href="#choosing-parameters" id="id23">Choosing Parameters</a></p></li>
+<li><p><a class="reference internal" href="#designing-good-objectives" id="id24">Designing Good Objectives</a></p></li>
+<li><p><a class="reference internal" href="#handling-correlated-features" id="id25">Handling Correlated Features</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#integration-with-scikit-learn" id="id26">Integration with Scikit-learn</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pipelines" id="id27">Pipelines</a></p></li>
+<li><p><a class="reference internal" href="#combining-with-featuresynthesizer" id="id28">Combining with FeatureSynthesizer</a></p></li>
+<li><p><a class="reference internal" href="#grid-search" id="id29">Grid Search</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#examples" id="id30">Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#example-1-high-dimensional-dataset" id="id31">Example 1: High-Dimensional Dataset</a></p></li>
+<li><p><a class="reference internal" href="#example-2-handling-correlated-features" id="id32">Example 2: Handling Correlated Features</a></p></li>
+<li><p><a class="reference internal" href="#example-3-classification" id="id33">Example 3: Classification</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id34">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-no-features-selected" id="id35">Problem: No Features Selected</a></p></li>
+<li><p><a class="reference internal" href="#problem-slow-convergence" id="id36">Problem: Slow Convergence</a></p></li>
+<li><p><a class="reference internal" href="#problem-overfitting-to-training-data" id="id37">Problem: Overfitting to Training Data</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#what-s-next" id="id38">What’s Next</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Evolutionary Feature Selection</strong> automatically selects the optimal subset of features from your dataset using genetic algorithms.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSelector</span></code> class searches for feature combinations that minimize a user-defined objective function, making it ideal for:</p>
+<ul class="simple">
+<li><p>High-dimensional datasets (100+ features)</p></li>
+<li><p>Correlated or redundant features</p></li>
+<li><p>Custom selection criteria</p></li>
+<li><p>Model interpretability requirements</p></li>
+</ul>
+<p><strong>Why use Feature Selection?</strong></p>
+<ul class="simple">
+<li><p><strong>Dimensionality reduction</strong>: Fewer features = faster training, less memory</p></li>
+<li><p><strong>Better generalization</strong>: Removing noisy features reduces overfitting</p></li>
+<li><p><strong>Interpretability</strong>: Smaller feature sets are easier to understand</p></li>
+<li><p><strong>Custom objectives</strong>: Optimize ANY metric (cross-validation, AIC, BIC, etc.)</p></li>
+</ul>
+<section id="feature-selection-vs-feature-synthesis">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">Feature Selection vs. Feature Synthesis</a><a class="headerlink" href="#feature-selection-vs-feature-synthesis" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>FeatureSelector</strong> (<a class="reference internal" href="#"><span class="doc">Feature Selection Tutorial</span></a>):</dt><dd><ul class="simple">
+<li><p>Selects subset of <strong>existing</strong> features</p></li>
+<li><p>Removes redundant/noisy features</p></li>
+<li><p>Reduces dimensionality</p></li>
+<li><p>Use when you have <strong>too many features</strong></p></li>
+</ul>
+</dd>
+<dt><strong>FeatureSynthesizer</strong> (<a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a>):</dt><dd><ul class="simple">
+<li><p>Creates <strong>new</strong> symbolic features</p></li>
+<li><p>Discovers nonlinear relationships</p></li>
+<li><p>Increases dimensionality</p></li>
+<li><p>Use when you need <strong>better features</strong></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="when-to-use-feature-selection">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">When to Use Feature Selection</a><a class="headerlink" href="#when-to-use-feature-selection" title="Link to this heading"><span>#</span></a></h3>
+<p>✅ <strong>Use Feature Selection when:</strong></p>
+<ul class="simple">
+<li><p>You have 50+ features (especially 100+)</p></li>
+<li><p>Many features are correlated or redundant</p></li>
+<li><p>You need interpretable models</p></li>
+<li><p>Computational resources are limited</p></li>
+<li><p>You want to improve model generalization</p></li>
+</ul>
+<p>❌ <strong>Don’t use when:</strong></p>
+<ul class="simple">
+<li><p>You have very few features (&lt;10)</p></li>
+<li><p>All features are known to be important</p></li>
+<li><p>Features are already engineered and optimized</p></li>
+</ul>
+</section>
+</section>
+<section id="how-it-works">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">How It Works</a><a class="headerlink" href="#how-it-works" title="Link to this heading"><span>#</span></a></h2>
+<p>Feature Selection uses <strong>binary genetic evolution</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Initialization</strong>: Generate random binary chromosomes (each bit = feature on/off)</p></li>
+<li><p><strong>Evaluation</strong>: Score each chromosome using your objective function</p></li>
+<li><p><strong>Selection</strong>: Select best chromosomes via tournament selection</p></li>
+<li><p><strong>Evolution</strong>: Create new chromosomes via crossover and mutation</p></li>
+<li><p><strong>Iteration</strong>: Repeat for multiple generations</p></li>
+<li><p><strong>Return</strong>: Best feature subset found</p></li>
+</ol>
+<p><strong>Binary Chromosome Example:</strong></p>
+<p>For a dataset with 10 features, a chromosome might be:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[1, 0, 1, 1, 0, 0, 1, 0, 1, 0]
+ ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑  ↑
+ f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
+
+Selected features: f1, f3, f4, f7, f9 (5 features)
+</pre></div>
+</div>
+</section>
+<section id="basic-usage">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Link to this heading"><span>#</span></a></h2>
+<section id="complete-example">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Complete Example</a><a class="headerlink" href="#complete-example" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSelector</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+<span class="linenos"> 5</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 6</span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c1"># 1. Prepare your data</span>
+<span class="linenos"> 9</span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>  <span class="c1"># 100 features</span>
+<span class="linenos">10</span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>  <span class="c1"># Only first 5 matter</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="c1"># 2. Define objective function</span>
+<span class="linenos">15</span><span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="linenos">16</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">17</span><span class="sd">    Custom objective: Minimize negative cross-validated R²</span>
+<span class="linenos">18</span><span class="sd">    (Lower is better)</span>
+<span class="linenos">19</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">20</span>    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span>    <span class="c1"># Use 3-fold cross-validation</span>
+<span class="linenos">23</span>    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+<span class="linenos">24</span>        <span class="n">model</span><span class="p">,</span>
+<span class="linenos">25</span>        <span class="n">X_subset</span><span class="p">,</span>
+<span class="linenos">26</span>        <span class="n">y</span><span class="p">,</span>
+<span class="linenos">27</span>        <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="linenos">28</span>        <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+<span class="linenos">29</span>        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+<span class="linenos">30</span>    <span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span>    <span class="c1"># Return negative mean score (we want to MAXIMIZE R²)</span>
+<span class="linenos">33</span>    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="c1"># 3. Initialize FeatureSelector</span>
+<span class="linenos">36</span><span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+<span class="linenos">37</span>    <span class="n">objective_function</span><span class="o">=</span><span class="n">objective_function</span><span class="p">,</span>
+<span class="linenos">38</span>    <span class="n">population_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<span class="linenos">39</span>    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="linenos">40</span>    <span class="n">tournament_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="linenos">41</span>    <span class="n">crossover_proba</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="linenos">42</span>    <span class="n">mutation_proba</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="linenos">43</span>    <span class="n">early_stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="linenos">44</span>    <span class="n">early_stopping_patience</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="linenos">45</span>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="linenos">46</span>    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="linenos">47</span><span class="p">)</span>
+<span class="linenos">48</span>
+<span class="linenos">49</span><span class="c1"># 4. Fit and transform</span>
+<span class="linenos">50</span><span class="n">X_train_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">51</span><span class="n">X_test_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span><span class="c1"># 5. Use selected features</span>
+<span class="linenos">54</span><span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="linenos">55</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_selected</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">56</span><span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_selected</span><span class="p">))</span>
+<span class="linenos">57</span>
+<span class="linenos">58</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">59</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="p">)</span><span class="si">}</span><span class="s2"> features: </span><span class="si">{</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="parameters-explained">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Parameters Explained</a><a class="headerlink" href="#parameters-explained" title="Link to this heading"><span>#</span></a></h2>
+<section id="essential-parameters">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Essential Parameters</a><a class="headerlink" href="#essential-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl>
+<dt><strong>objective_function</strong> (callable, <strong>required</strong>)</dt><dd><p>Function to evaluate feature subsets.</p>
+<p><strong>Signature</strong>: <code class="docutils literal notranslate"><span class="pre">objective_function(X_subset,</span> <span class="pre">y)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code></p>
+<ul class="simple">
+<li><p><strong>Input</strong>: <code class="docutils literal notranslate"><span class="pre">X_subset</span></code> (selected features), <code class="docutils literal notranslate"><span class="pre">y</span></code> (target)</p></li>
+<li><p><strong>Output</strong>: Score (lower is better)</p></li>
+<li><p><strong>Must return</strong>: Float value</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span>
+    <span class="k">return</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_subset</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>population_size</strong> (int, default=50)</dt><dd><p>Number of binary chromosomes in each generation.</p>
+<ul class="simple">
+<li><p>Larger: More diversity, better solutions, slower</p></li>
+<li><p>Smaller: Faster, but may miss good solutions</p></li>
+<li><p>Typical range: 30-100</p></li>
+</ul>
+</dd>
+<dt><strong>max_generations</strong> (int, default=50)</dt><dd><p>Maximum number of generations to evolve.</p>
+<ul class="simple">
+<li><p>More generations: Better solutions, longer training</p></li>
+<li><p>Fewer generations: Faster, may not converge</p></li>
+<li><p>Typical range: 20-50</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="evolutionary-parameters">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Evolutionary Parameters</a><a class="headerlink" href="#evolutionary-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>tournament_size</strong> (int, default=10)</dt><dd><p>Size of tournament for parent selection.</p>
+<ul class="simple">
+<li><p>Larger: Stronger selection pressure (fitter parents)</p></li>
+<li><p>Smaller: More diversity, slower convergence</p></li>
+<li><p>Typical range: 5-15</p></li>
+</ul>
+</dd>
+<dt><strong>crossover_proba</strong> (float, default=0.9)</dt><dd><p>Probability of crossover between parents.</p>
+<ul class="simple">
+<li><p>Higher: More recombination, faster evolution</p></li>
+<li><p>Lower: More mutation-driven exploration</p></li>
+<li><p>Typical range: 0.7-0.95</p></li>
+</ul>
+</dd>
+<dt><strong>mutation_proba</strong> (float, default=0.1)</dt><dd><p>Probability of flipping each gene (bit).</p>
+<ul class="simple">
+<li><p>Higher: More exploration, slower convergence</p></li>
+<li><p>Lower: Faster convergence, risk of local optima</p></li>
+<li><p>Typical range: 0.05-0.2</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="stopping-criteria">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Stopping Criteria</a><a class="headerlink" href="#stopping-criteria" title="Link to this heading"><span>#</span></a></h3>
+<dl>
+<dt><strong>early_stopping</strong> (bool, default=True)</dt><dd><p>Enable early stopping if score plateaus.</p>
+</dd>
+<dt><strong>early_stopping_patience</strong> (int, default=10)</dt><dd><p>Generations to wait before early stopping.</p>
+<p>If best score doesn’t improve for this many generations, training stops.</p>
+</dd>
+</dl>
+</section>
+<section id="performance-parameters">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Performance Parameters</a><a class="headerlink" href="#performance-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>n_jobs</strong> (int, default=-1)</dt><dd><p>Number of CPU cores for parallel evaluation.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code>: Use all cores (recommended)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Serial execution</p></li>
+</ul>
+</dd>
+<dt><strong>show_progress_bar</strong> (bool, default=True)</dt><dd><p>Display progress during evolution.</p>
+</dd>
+<dt><strong>verbose</strong> (bool, default=True)</dt><dd><p>Print messages about evolution progress.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="objective-functions">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Objective Functions</a><a class="headerlink" href="#objective-functions" title="Link to this heading"><span>#</span></a></h2>
+<p>The objective function is <strong>the most important</strong> parameter—it defines what makes a feature subset “good”.</p>
+<section id="simple-mse-objective">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Simple MSE Objective</a><a class="headerlink" href="#simple-mse-objective" title="Link to this heading"><span>#</span></a></h3>
+<p>Fast, but may overfit:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">simple_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_subset</span><span class="p">))</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">simple_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="cross-validation-objective-recommended">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Cross-Validation Objective (Recommended)</a><a class="headerlink" href="#cross-validation-objective-recommended" title="Link to this heading"><span>#</span></a></h3>
+<p>More robust, prevents overfitting:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cv_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">X_subset</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">,</span>
+        <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Minimize negative R² (maximize R²)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="complexity-penalized-objective">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Complexity-Penalized Objective</a><a class="headerlink" href="#complexity-penalized-objective" title="Link to this heading"><span>#</span></a></h3>
+<p>Balances performance with simplicity:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">penalized_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Prediction error</span>
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_subset</span><span class="p">))</span>
+
+    <span class="c1"># Complexity penalty</span>
+    <span class="n">n_features</span> <span class="o">=</span> <span class="n">X_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">penalty</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">n_features</span>
+
+    <span class="k">return</span> <span class="n">mse</span> <span class="o">+</span> <span class="n">penalty</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">penalized_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="information-criterion-objective">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Information Criterion Objective</a><a class="headerlink" href="#information-criterion-objective" title="Link to this heading"><span>#</span></a></h3>
+<p>Use AIC or BIC for model selection:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">aic_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># AIC = n * log(MSE) + 2 * k</span>
+    <span class="c1"># where k = number of features</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_subset</span><span class="p">))</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">X_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">aic</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span>
+    <span class="k">return</span> <span class="n">aic</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">aic_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-business-logic">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Custom Business Logic</a><a class="headerlink" href="#custom-business-logic" title="Link to this heading"><span>#</span></a></h3>
+<p>Incorporate domain-specific constraints:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">business_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Use cross-validation</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">neg_r2</span> <span class="o">=</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="c1"># Penalty for expensive features</span>
+    <span class="c1"># Assume feature_names is defined globally</span>
+    <span class="n">expensive_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;feature_5&#39;</span><span class="p">,</span> <span class="s1">&#39;feature_10&#39;</span><span class="p">,</span> <span class="s1">&#39;feature_15&#39;</span><span class="p">]</span>
+    <span class="n">n_expensive</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">X_subset</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">expensive_features</span><span class="p">)</span>
+
+    <span class="n">penalty</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">n_expensive</span>
+
+    <span class="k">return</span> <span class="n">neg_r2</span> <span class="o">+</span> <span class="n">penalty</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">business_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="interpreting-results">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Interpreting Results</a><a class="headerlink" href="#interpreting-results" title="Link to this heading"><span>#</span></a></h2>
+<section id="getting-selected-features">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Getting Selected Features</a><a class="headerlink" href="#getting-selected-features" title="Link to this heading"><span>#</span></a></h3>
+<p>After fitting, access selected features:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Get selected feature names/indices</span>
+<span class="n">selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span><span class="si">}</span><span class="s2"> features:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">feat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get selection as boolean mask</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">support_</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mask: </span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get number of selected features</span>
+<span class="n">n_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">n_features_in_</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="n">n_selected</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> features&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plotting-evolution-history">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Plotting Evolution History</a><a class="headerlink" href="#plotting-evolution-history" title="Link to this heading"><span>#</span></a></h3>
+<p>Visualize the search process:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This shows:</p>
+<ul class="simple">
+<li><p><strong>Best score per generation</strong>: How the best solution improved</p></li>
+<li><p><strong>Median score per generation</strong>: Population diversity</p></li>
+<li><p><strong>Early stopping indicator</strong>: When training stopped</p></li>
+</ul>
+</section>
+<section id="understanding-convergence">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Understanding Convergence</a><a class="headerlink" href="#understanding-convergence" title="Link to this heading"><span>#</span></a></h3>
+<p>Check if the algorithm converged:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fit with verbose output</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">my_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Check if early stopping was triggered</span>
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">selector</span><span class="p">,</span> <span class="s1">&#39;n_iterations_&#39;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stopped after </span><span class="si">{</span><span class="n">selector</span><span class="o">.</span><span class="n">n_iterations_</span><span class="si">}</span><span class="s2"> generations&quot;</span><span class="p">)</span>
+
+<span class="c1"># If stopped early, solution likely converged</span>
+<span class="c1"># If ran all generations, try increasing max_generations</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Best Practices</a><a class="headerlink" href="#best-practices" title="Link to this heading"><span>#</span></a></h2>
+<section id="choosing-parameters">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Choosing Parameters</a><a class="headerlink" href="#choosing-parameters" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>For Small Datasets (&lt;50 features):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">tournament_size</span><span class="o">=</span><span class="mi">7</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For Large Datasets (100+ features):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>      <span class="c1"># Larger population</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>       <span class="c1"># More generations</span>
+    <span class="n">tournament_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>       <span class="c1"># Stronger selection</span>
+    <span class="n">early_stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>                 <span class="c1"># Parallelize</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For Quick Prototyping:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">simple_objective</span><span class="p">,</span>  <span class="c1"># Faster than CV</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="designing-good-objectives">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Designing Good Objectives</a><a class="headerlink" href="#designing-good-objectives" title="Link to this heading"><span>#</span></a></h3>
+<p>✅ <strong>DO:</strong></p>
+<ul class="simple">
+<li><p>Use cross-validation for robustness</p></li>
+<li><p>Include complexity penalties for interpretability</p></li>
+<li><p>Use domain knowledge when relevant</p></li>
+<li><p>Test objectives on small samples first</p></li>
+</ul>
+<p>❌ <strong>DON’T:</strong></p>
+<ul class="simple">
+<li><p>Use simple MSE without validation (overfits!)</p></li>
+<li><p>Make objectives too complex (slow optimization)</p></li>
+<li><p>Forget to handle edge cases (empty subsets, etc.)</p></li>
+</ul>
+<p>Example of robust objective:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">robust_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># Handle edge cases</span>
+    <span class="k">if</span> <span class="n">X_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Use cross-validation</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># Return negative mean score</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="handling-correlated-features">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Handling Correlated Features</a><a class="headerlink" href="#handling-correlated-features" title="Link to this heading"><span>#</span></a></h3>
+<p>FeatureSelector naturally handles correlated features by selecting representative subsets:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create highly correlated features</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">base_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">X_corr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;feature_1&#39;</span><span class="p">:</span> <span class="n">base_signal</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;feature_2&#39;</span><span class="p">:</span> <span class="n">base_signal</span> <span class="o">*</span> <span class="mf">0.95</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;feature_3&#39;</span><span class="p">:</span> <span class="n">base_signal</span> <span class="o">*</span> <span class="mf">1.05</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;feature_4&#39;</span><span class="p">:</span> <span class="n">base_signal</span> <span class="o">*</span> <span class="mf">0.9</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;feature_5&#39;</span><span class="p">:</span> <span class="n">base_signal</span> <span class="o">*</span> <span class="mf">1.1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">base_signal</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+<span class="c1"># FeatureSelector will pick minimal subset</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+
+<span class="n">X_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_corr</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Likely selects only 1-2 features from the correlated group</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="p">)</span><span class="si">}</span><span class="s2"> features: </span><span class="si">{</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration-with-scikit-learn">
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">Integration with Scikit-learn</a><a class="headerlink" href="#integration-with-scikit-learn" title="Link to this heading"><span>#</span></a></h2>
+<section id="pipelines">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Pipelines</a><a class="headerlink" href="#pipelines" title="Link to this heading"><span>#</span></a></h3>
+<p>Use FeatureSelector in sklearn pipelines:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;selector&#39;</span><span class="p">,</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+        <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+        <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Access selected features</span>
+<span class="n">selected_features</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;selector&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">selected_features_</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected: </span><span class="si">{</span><span class="n">selected_features</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="combining-with-featuresynthesizer">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Combining with FeatureSynthesizer</a><a class="headerlink" href="#combining-with-featuresynthesizer" title="Link to this heading"><span>#</span></a></h3>
+<p>First synthesize features, then select the best:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span><span class="p">,</span> <span class="n">FeatureSelector</span>
+
+<span class="c1"># Step 1: Synthesize new features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Select best subset</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_aug</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Train model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_selected</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="grid-search">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Grid Search</a><a class="headerlink" href="#grid-search" title="Link to this heading"><span>#</span></a></h3>
+<p>Tune hyperparameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;selector__population_size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+    <span class="s1">&#39;selector__max_generations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>
+    <span class="s1">&#39;selector__tournament_size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;selector&#39;</span><span class="p">,</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+        <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span>
+<span class="p">)</span>
+
+<span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best parameters: </span><span class="si">{</span><span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best CV R²: </span><span class="si">{</span><span class="n">grid_search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"><span>#</span></a></h2>
+<section id="example-1-high-dimensional-dataset">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Example 1: High-Dimensional Dataset</a><a class="headerlink" href="#example-1-high-dimensional-dataset" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_regression</span>
+
+<span class="c1"># Generate dataset with 100 features, only 10 informative</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;feature_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)])</span>
+
+<span class="c1"># Select features using cross-validation</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cv_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">early_stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="p">)</span><span class="si">}</span><span class="s2"> out of 100 features&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Features: </span><span class="si">{</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-handling-correlated-features">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Example 2: Handling Correlated Features</a><a class="headerlink" href="#example-2-handling-correlated-features" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create correlated features</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;var_1&#39;</span><span class="p">:</span> <span class="n">base</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s1">&#39;var_2&#39;</span><span class="p">:</span> <span class="n">base</span> <span class="o">*</span> <span class="mf">0.98</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s1">&#39;var_3&#39;</span><span class="p">:</span> <span class="n">base</span> <span class="o">*</span> <span class="mf">1.02</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s1">&#39;noise_1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+    <span class="s1">&#39;noise_2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+<span class="p">})</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.3</span>
+
+<span class="c1"># FeatureSelector will identify redundancy</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">cv_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected: </span><span class="si">{</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Likely selects only 1 of the 3 correlated vars</span>
+</pre></div>
+</div>
+</section>
+<section id="example-3-classification">
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Example 3: Classification</a><a class="headerlink" href="#example-3-classification" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="c1"># Generate classification data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Classification objective</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">classification_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">X_subset</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">,</span>
+        <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># Maximize accuracy</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">classification_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_selected</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Train final model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_selected</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_selected</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selector</span><span class="o">.</span><span class="n">selected_features_</span><span class="p">)</span><span class="si">}</span><span class="s2"> features&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading"><span>#</span></a></h2>
+<section id="problem-no-features-selected">
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">Problem: No Features Selected</a><a class="headerlink" href="#problem-no-features-selected" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: <code class="docutils literal notranslate"><span class="pre">selected_features_</span></code> is empty</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Check objective function returns valid scores</p></li>
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">population_size</span></code> and <code class="docutils literal notranslate"><span class="pre">max_generations</span></code></p></li>
+<li><p>Reduce mutation probability (too much randomness)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Debug objective function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">debug_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating </span><span class="si">{</span><span class="n">X_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> features...&quot;</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">my_objective</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">score</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+    <span class="n">objective_function</span><span class="o">=</span><span class="n">debug_objective</span><span class="p">,</span>
+    <span class="n">max_generations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="problem-slow-convergence">
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Problem: Slow Convergence</a><a class="headerlink" href="#problem-slow-convergence" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: Score doesn’t improve across generations</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">population_size</span></code> (more diversity)</p></li>
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">crossover_proba</span></code> (more recombination)</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">tournament_size</span></code> (less selection pressure)</p></li>
+<li><p>Try different objective function</p></li>
+</ul>
+</section>
+<section id="problem-overfitting-to-training-data">
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Problem: Overfitting to Training Data</a><a class="headerlink" href="#problem-overfitting-to-training-data" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: Great training score, poor test performance</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Use cross-validation in objective (essential!)</p></li>
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">cv</span></code> folds (3 → 5 → 10)</p></li>
+<li><p>Add complexity penalty to objective</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">max_generations</span></code> (less overfitting)</p></li>
+</ul>
+</section>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id38" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Create new symbolic features</p></li>
+<li><p><a class="reference internal" href="../api_reference/high_level_api.html"><span class="doc">High-Level API</span></a> - FeatureSelector API reference</p></li>
+<li><p><span class="xref std std-doc">../concepts/evolutionary_selection</span> - Genetic algorithm theory</p></li>
+<li><p><span class="xref std std-doc">../concepts/mrmr</span> - Maximum Relevance Minimum Redundancy</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="feature_synthesis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Feature Synthesis Tutorial</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="linear_regression_power.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Linear Regression Power</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-selection-vs-feature-synthesis">Feature Selection vs. Feature Synthesis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-feature-selection">When to Use Feature Selection</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How It Works</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example">Complete Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-explained">Parameters Explained</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#essential-parameters">Essential Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evolutionary-parameters">Evolutionary Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stopping-criteria">Stopping Criteria</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-parameters">Performance Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objective-functions">Objective Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-mse-objective">Simple MSE Objective</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-validation-objective-recommended">Cross-Validation Objective (Recommended)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complexity-penalized-objective">Complexity-Penalized Objective</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#information-criterion-objective">Information Criterion Objective</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-business-logic">Custom Business Logic</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-results">Interpreting Results</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-selected-features">Getting Selected Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-evolution-history">Plotting Evolution History</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-convergence">Understanding Convergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-parameters">Choosing Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#designing-good-objectives">Designing Good Objectives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#handling-correlated-features">Handling Correlated Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-scikit-learn">Integration with Scikit-learn</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelines">Pipelines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-with-featuresynthesizer">Combining with FeatureSynthesizer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grid-search">Grid Search</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-high-dimensional-dataset">Example 1: High-Dimensional Dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-handling-correlated-features">Example 2: Handling Correlated Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-3-classification">Example 3: Classification</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-no-features-selected">Problem: No Features Selected</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-slow-convergence">Problem: Slow Convergence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-overfitting-to-training-data">Problem: Overfitting to Training Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/feature_selection.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

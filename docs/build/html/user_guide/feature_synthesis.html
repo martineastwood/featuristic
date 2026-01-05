@@ -1,0 +1,1309 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Feature Synthesis Tutorial &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/feature_synthesis';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Feature Selection Tutorial" href="feature_selection.html" />
+    <link rel="prev" title="Quick Start Guide" href="../getting_started/quickstart.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Feature Synthesis Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-it-works">How It Works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters-explained">Parameters Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fitness-functions">Fitness Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpreting-results">Interpreting Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-with-scikit-learn">Integration with Scikit-learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-next">What’s Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Feature Synthesis Tutorial</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="feature-synthesis-tutorial">
+<h1>Feature Synthesis Tutorial<a class="headerlink" href="#feature-synthesis-tutorial" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p>
+<ul>
+<li><p><a class="reference internal" href="#when-to-use-feature-synthesis" id="id2">When to Use Feature Synthesis</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#how-it-works" id="id3">How It Works</a></p></li>
+<li><p><a class="reference internal" href="#basic-usage" id="id4">Basic Usage</a></p>
+<ul>
+<li><p><a class="reference internal" href="#complete-example" id="id5">Complete Example</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#parameters-explained" id="id6">Parameters Explained</a></p>
+<ul>
+<li><p><a class="reference internal" href="#essential-parameters" id="id7">Essential Parameters</a></p></li>
+<li><p><a class="reference internal" href="#evolutionary-parameters" id="id8">Evolutionary Parameters</a></p></li>
+<li><p><a class="reference internal" href="#tree-structure-parameters" id="id9">Tree Structure Parameters</a></p></li>
+<li><p><a class="reference internal" href="#advanced-parameters" id="id10">Advanced Parameters</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#fitness-functions" id="id11">Fitness Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#auto-detection-recommended" id="id12">Auto-Detection (Recommended)</a></p></li>
+<li><p><a class="reference internal" href="#manual-selection" id="id13">Manual Selection</a></p></li>
+<li><p><a class="reference internal" href="#custom-fitness-functions" id="id14">Custom Fitness Functions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#interpreting-results" id="id15">Interpreting Results</a></p>
+<ul>
+<li><p><a class="reference internal" href="#getting-discovered-programs" id="id16">Getting Discovered Programs</a></p></li>
+<li><p><a class="reference internal" href="#plotting-evolution-history" id="id17">Plotting Evolution History</a></p></li>
+<li><p><a class="reference internal" href="#evaluating-on-new-data" id="id18">Evaluating on New Data</a></p></li>
+<li><p><a class="reference internal" href="#feature-importance" id="id19">Feature Importance</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices" id="id20">Best Practices</a></p>
+<ul>
+<li><p><a class="reference internal" href="#choosing-parameters" id="id21">Choosing Parameters</a></p></li>
+<li><p><a class="reference internal" href="#preventing-overfitting" id="id22">Preventing Overfitting</a></p></li>
+<li><p><a class="reference internal" href="#handling-different-data-types" id="id23">Handling Different Data Types</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#integration-with-scikit-learn" id="id24">Integration with Scikit-learn</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pipelines" id="id25">Pipelines</a></p></li>
+<li><p><a class="reference internal" href="#feature-unions" id="id26">Feature Unions</a></p></li>
+<li><p><a class="reference internal" href="#grid-search" id="id27">Grid Search</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#troubleshooting" id="id28">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-poor-performance" id="id29">Problem: Poor Performance</a></p></li>
+<li><p><a class="reference internal" href="#problem-overfitting" id="id30">Problem: Overfitting</a></p></li>
+<li><p><a class="reference internal" href="#problem-slow-training" id="id31">Problem: Slow Training</a></p></li>
+<li><p><a class="reference internal" href="#problem-all-features-similar" id="id32">Problem: All Features Similar</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#examples" id="id33">Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#example-1-regression-with-interactions" id="id34">Example 1: Regression with Interactions</a></p></li>
+<li><p><a class="reference internal" href="#example-2-classification" id="id35">Example 2: Classification</a></p></li>
+<li><p><a class="reference internal" href="#example-3-time-series" id="id36">Example 3: Time Series</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#what-s-next" id="id37">What’s Next</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Genetic Feature Synthesis (GFS)</strong> is the core feature of Featuristic. It automatically generates new, interpretable mathematical features from your input data using genetic programming.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code> class acts as a scikit-learn-compatible transformer that:</p>
+<ul class="simple">
+<li><p>Evolves symbolic expressions (mathematical formulas) from your features</p></li>
+<li><p>Selects the best expressions using Maximum Relevance Minimum Redundancy (mRMR)</p></li>
+<li><p>Returns transformed features ready for machine learning</p></li>
+</ul>
+<p><strong>Why use Feature Synthesis?</strong></p>
+<ul class="simple">
+<li><p><strong>Automatic feature engineering</strong>: No manual trial-and-error</p></li>
+<li><p><strong>Interpretable results</strong>: Each feature is a mathematical formula you can read</p></li>
+<li><p><strong>Nonlinear discovery</strong>: Finds interactions (x₁×x₂), polynomials (x²), trigonometric (sin(x)), and more</p></li>
+<li><p><strong>Simple models + good features</strong>: Linear models become powerful when given good features</p></li>
+</ul>
+<section id="when-to-use-feature-synthesis">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">When to Use Feature Synthesis</a><a class="headerlink" href="#when-to-use-feature-synthesis" title="Link to this heading"><span>#</span></a></h3>
+<p>✅ <strong>Use Feature Synthesis when:</strong></p>
+<ul class="simple">
+<li><p>You have tabular data with numeric features</p></li>
+<li><p>Your target variable has complex, nonlinear relationships</p></li>
+<li><p>You want interpretable features (not black-box transformations)</p></li>
+<li><p>You’re using simple models (linear regression, logistic regression, etc.)</p></li>
+<li><p>You need to extract more signal from limited features</p></li>
+</ul>
+<p>❌ <strong>Don’t use when:</strong></p>
+<ul class="simple">
+<li><p>You have very few samples (&lt;100)</p></li>
+<li><p>All features are already highly engineered</p></li>
+<li><p>You only need black-box predictions (use deep learning or tree ensembles instead)</p></li>
+</ul>
+</section>
+</section>
+<section id="how-it-works">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">How It Works</a><a class="headerlink" href="#how-it-works" title="Link to this heading"><span>#</span></a></h2>
+<p>Feature Synthesis uses <strong>genetic programming</strong> to evolve symbolic expressions:</p>
+<ol class="arabic simple">
+<li><p><strong>Initialization</strong>: Generate random population of mathematical expressions (trees)</p></li>
+<li><p><strong>Evaluation</strong>: Score each expression using a fitness function (MSE, R², etc.)</p></li>
+<li><p><strong>Selection</strong>: Select best expressions via tournament selection</p></li>
+<li><p><strong>Evolution</strong>: Create new expressions via crossover and mutation</p></li>
+<li><p><strong>Filtering</strong>: Use mRMR to select final features (high relevance, low redundancy)</p></li>
+<li><p><strong>Transformation</strong>: Apply expressions to create new features</p></li>
+</ol>
+<p>The process repeats for multiple generations, evolving increasingly better expressions.</p>
+</section>
+<section id="basic-usage">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Link to this heading"><span>#</span></a></h2>
+<section id="complete-example">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Complete Example</a><a class="headerlink" href="#complete-example" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+<span class="linenos"> 5</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 6</span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c1"># 1. Prepare your data</span>
+<span class="linenos"> 9</span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="linenos">10</span>    <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="linenos">11</span>    <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="linenos">12</span>    <span class="s1">&#39;x3&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="linenos">13</span><span class="p">})</span>
+<span class="linenos">14</span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x3&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="c1"># 2. Initialize FeatureSynthesizer</span>
+<span class="linenos">19</span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+<span class="linenos">20</span>    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>              <span class="c1"># Number of features to generate</span>
+<span class="linenos">21</span>    <span class="n">population_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>         <span class="c1"># Population size for genetic programming</span>
+<span class="linenos">22</span>    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>             <span class="c1"># Number of generations to evolve</span>
+<span class="linenos">23</span>    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>              <span class="c1"># Fitness function (or &quot;auto&quot; for detection)</span>
+<span class="linenos">24</span>    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="c1"># Penalty for complexity</span>
+<span class="linenos">25</span>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">26</span><span class="p">)</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="c1"># 3. Fit and transform</span>
+<span class="linenos">29</span><span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">30</span><span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="c1"># 4. Use the new features</span>
+<span class="linenos">33</span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="linenos">34</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">35</span><span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_aug</span><span class="p">))</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="c1"># 5. Inspect discovered features</span>
+<span class="linenos">40</span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="linenos">41</span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+<span class="linenos">42</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (fitness: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;fitness&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="parameters-explained">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Parameters Explained</a><a class="headerlink" href="#parameters-explained" title="Link to this heading"><span>#</span></a></h2>
+<section id="essential-parameters">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Essential Parameters</a><a class="headerlink" href="#essential-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>n_features</strong> (int, default=10)</dt><dd><p>Number of new features to generate.</p>
+<ul class="simple">
+<li><p>Higher values: More expressive power, longer training time</p></li>
+<li><p>Lower values: Faster training, less risk of overfitting</p></li>
+<li><p>Typical range: 5-50</p></li>
+</ul>
+</dd>
+<dt><strong>population_size</strong> (int, default=50)</dt><dd><p>Number of programs in each generation.</p>
+<ul class="simple">
+<li><p>Larger populations: More diversity, better solutions, slower</p></li>
+<li><p>Smaller populations: Faster, but may miss good solutions</p></li>
+<li><p>Typical range: 30-100</p></li>
+</ul>
+</dd>
+<dt><strong>generations</strong> (int, default=25)</dt><dd><p>Number of generations to evolve.</p>
+<ul class="simple">
+<li><p>More generations: Better solutions, longer training</p></li>
+<li><p>Fewer generations: Faster, but may not converge</p></li>
+<li><p>Typical range: 20-50</p></li>
+</ul>
+</dd>
+<dt><strong>fitness</strong> (str or callable, default=”auto”)</dt><dd><p>Fitness function to evaluate programs.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>: Auto-detect based on target type (recommended)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;mse&quot;</span></code>: Mean Squared Error (regression)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;r2&quot;</span></code>: R-squared (regression)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;log_loss&quot;</span></code>: Log loss (classification)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;accuracy&quot;</span></code>: Accuracy (classification)</p></li>
+<li><p>Custom callable: Your own fitness function</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference internal" href="../api_reference/fitness_functions.html"><span class="doc">Fitness Functions</span></a> for all options.</p>
+<dl>
+<dt><strong>parsimony_coefficient</strong> (float, default=0.001)</dt><dd><p>Penalty for complex programs (prevents bloat).</p>
+<ul class="simple">
+<li><p>Higher values: Simpler, more interpretable features</p></li>
+<li><p>Lower values: More complex features, risk of overfitting</p></li>
+<li><p>Typical range: 0.001 to 0.01</p></li>
+</ul>
+<p>Formula: <code class="docutils literal notranslate"><span class="pre">score</span> <span class="pre">=</span> <span class="pre">raw_fitness</span> <span class="pre">×</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">node_count)</span> <span class="pre">**</span> <span class="pre">parsimony_coefficient</span></code></p>
+</dd>
+<dt><strong>selection_method</strong> (str, default=”mrmr”)</dt><dd><p>Method to select final features.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;mrmr&quot;</span></code>: Maximum Relevance Minimum Redundancy (recommended)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;best&quot;</span></code>: Select top features by fitness only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;random&quot;</span></code>: Random selection (for diversity)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="evolutionary-parameters">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Evolutionary Parameters</a><a class="headerlink" href="#evolutionary-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>tournament_size</strong> (int, default=7)</dt><dd><p>Size of tournament for parent selection.</p>
+<ul class="simple">
+<li><p>Larger: Stronger selection pressure (fitter parents)</p></li>
+<li><p>Smaller: More diversity, slower convergence</p></li>
+<li><p>Typical range: 5-10</p></li>
+</ul>
+</dd>
+<dt><strong>crossover_proba</strong> (float, default=0.75)</dt><dd><p>Probability of crossover between parents.</p>
+<ul class="simple">
+<li><p>Higher: More recombination, faster evolution</p></li>
+<li><p>Lower: More mutation-driven exploration</p></li>
+<li><p>Typical range: 0.6-0.9</p></li>
+</ul>
+</dd>
+<dt><strong>mutation_proba</strong> (float, default=0.25)</dt><dd><p>Probability of mutation per offspring.</p>
+<ul class="simple">
+<li><p>Higher: More exploration, slower convergence</p></li>
+<li><p>Lower: Faster convergence, risk of local optima</p></li>
+<li><p>Typical range: 0.1-0.4</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="tree-structure-parameters">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Tree Structure Parameters</a><a class="headerlink" href="#tree-structure-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>max_depth</strong> (int, default=3)</dt><dd><p>Maximum depth of symbolic trees.</p>
+<ul class="simple">
+<li><p>Deeper trees: More complex expressions</p></li>
+<li><p>Shallower trees: Simpler, more interpretable</p></li>
+<li><p>Typical range: 3-6</p></li>
+</ul>
+</dd>
+<dt><strong>functions</strong> (list of str, default=None)</dt><dd><p>Allowed functions in expressions.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: Use all built-in functions (default)</p></li>
+<li><p>Custom list: <code class="docutils literal notranslate"><span class="pre">[&quot;add&quot;,</span> <span class="pre">&quot;sub&quot;,</span> <span class="pre">&quot;mul&quot;,</span> <span class="pre">&quot;div&quot;,</span> <span class="pre">&quot;sin&quot;,</span> <span class="pre">&quot;cos&quot;]</span></code></p></li>
+<li><p>See <a class="reference internal" href="../api_reference/rust_functions.html"><span class="doc">Rust Functions</span></a> for all functions</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="advanced-parameters">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Advanced Parameters</a><a class="headerlink" href="#advanced-parameters" title="Link to this heading"><span>#</span></a></h3>
+<dl class="simple">
+<dt><strong>n_jobs</strong> (int, default=-1)</dt><dd><p>Number of CPU cores for parallel evaluation.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code>: Use all cores (recommended)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Serial execution</p></li>
+</ul>
+</dd>
+<dt><strong>early_stopping</strong> (bool, default=True)</dt><dd><p>Enable early stopping if fitness plateaus.</p>
+</dd>
+<dt><strong>early_stopping_patience</strong> (int, default=10)</dt><dd><p>Generations to wait before early stopping.</p>
+</dd>
+<dt><strong>return_all_features</strong> (bool, default=True)</dt><dd><p>Return both original and synthesized features.</p>
+</dd>
+<dt><strong>show_progress_bar</strong> (bool, default=True)</dt><dd><p>Display progress during evolution.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="fitness-functions">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Fitness Functions</a><a class="headerlink" href="#fitness-functions" title="Link to this heading"><span>#</span></a></h2>
+<section id="auto-detection-recommended">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Auto-Detection (Recommended)</a><a class="headerlink" href="#auto-detection-recommended" title="Link to this heading"><span>#</span></a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">fitness=&quot;auto&quot;</span></code> to automatically select the best fitness function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+
+<span class="c1"># Auto-detects:</span>
+<span class="c1"># - MSE for continuous targets (regression)</span>
+<span class="c1"># - Log Loss for binary classification</span>
+<span class="c1"># - Accuracy for multiclass classification</span>
+</pre></div>
+</div>
+</section>
+<section id="manual-selection">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Manual Selection</a><a class="headerlink" href="#manual-selection" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>For Regression:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mean Squared Error (default)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">)</span>
+
+<span class="c1"># R-squared (explained variance)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
+
+<span class="c1"># Pearson correlation</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For Classification:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Log Loss (recommended for binary)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;log_loss&quot;</span><span class="p">)</span>
+
+<span class="c1"># Accuracy (for balanced classes)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+
+<span class="c1"># F1 Score (for imbalanced classes)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;f1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For Correlation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Spearman rank correlation</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;spearman&quot;</span><span class="p">)</span>
+
+<span class="c1"># Kendall&#39;s tau</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;kendall&quot;</span><span class="p">)</span>
+
+<span class="c1"># Mutual information</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mutual_info&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-fitness-functions">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Custom Fitness Functions</a><a class="headerlink" href="#custom-fitness-functions" title="Link to this heading"><span>#</span></a></h3>
+<p>Define your own fitness function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.fitness.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_fitness</span>
+
+<span class="nd">@register_fitness</span><span class="p">(</span><span class="s2">&quot;mae&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mae_fitness</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parsimony</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mean Absolute Error (lower is better)&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">featuristic.fitness.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_invalid_prediction</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="k">if</span> <span class="n">is_invalid_prediction</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+
+    <span class="c1"># Apply parsimony penalty if provided</span>
+    <span class="k">if</span> <span class="n">program</span> <span class="ow">and</span> <span class="n">parsimony</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">tree_node_count</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">tree_node_count</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
+        <span class="n">penalty</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nodes</span><span class="p">)</span> <span class="o">**</span> <span class="n">parsimony</span>
+        <span class="n">mae</span> <span class="o">*=</span> <span class="n">penalty</span>
+
+    <span class="k">return</span> <span class="n">mae</span>
+
+<span class="c1"># Use custom fitness</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mae&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="fitness_functions.html"><span class="doc">Fitness Functions Guide</span></a> for details on custom fitness functions.</p>
+</section>
+</section>
+<section id="interpreting-results">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Interpreting Results</a><a class="headerlink" href="#interpreting-results" title="Link to this heading"><span>#</span></a></h2>
+<section id="getting-discovered-programs">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Getting Discovered Programs</a><a class="headerlink" href="#getting-discovered-programs" title="Link to this heading"><span>#</span></a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">get_programs()</span></code> to retrieve the evolved expressions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Expression: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Fitness: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;fitness&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Depth: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Nodes: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Feature 1:
+  Expression: (x1 * x2) + sin(x3)
+  Fitness: 0.0234
+  Depth: 3
+  Nodes: 7
+
+Feature 2:
+  Expression: square(x1) + log(abs(x2) + 1)
+  Fitness: 0.0456
+  Depth: 4
+  Nodes: 9
+</pre></div>
+</div>
+</section>
+<section id="plotting-evolution-history">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Plotting Evolution History</a><a class="headerlink" href="#plotting-evolution-history" title="Link to this heading"><span>#</span></a></h3>
+<p>Visualize the training process:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span><span class="o">.</span><span class="n">plot_history</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This shows:</p>
+<ul class="simple">
+<li><p><strong>Best fitness per generation</strong>: How the best program improved</p></li>
+<li><p><strong>Parsimony coefficient</strong>: How complexity penalty changed (if adaptive)</p></li>
+<li><p><strong>Early stopping indicator</strong>: When training stopped</p></li>
+</ul>
+</section>
+<section id="evaluating-on-new-data">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Evaluating on New Data</a><a class="headerlink" href="#evaluating-on-new-data" title="Link to this heading"><span>#</span></a></h3>
+<p>Transform new data using learned expressions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fit on training data</span>
+<span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Transform test data</span>
+<span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Transform new/unseen data</span>
+<span class="n">X_new_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="feature-importance">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Feature Importance</a><a class="headerlink" href="#feature-importance" title="Link to this heading"><span>#</span></a></h3>
+<p>Combine with scikit-learn’s feature importance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="c1"># Train model on augmented features</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Get feature importances</span>
+<span class="n">importances</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span>
+
+<span class="c1"># Print top features</span>
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">programs</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">importances</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Best Practices</a><a class="headerlink" href="#best-practices" title="Link to this heading"><span>#</span></a></h2>
+<section id="choosing-parameters">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Choosing Parameters</a><a class="headerlink" href="#choosing-parameters" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Start Simple:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Scale Up for Hard Problems:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>              <span class="c1"># More features</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>        <span class="c1"># Larger population</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>             <span class="c1"># More generations</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span><span class="c1"># Moderate complexity penalty</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For Quick Prototyping:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preventing-overfitting">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Preventing Overfitting</a><a class="headerlink" href="#preventing-overfitting" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p><strong>Use parsimony</strong>: Higher <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> encourages simplicity</p></li>
+<li><p><strong>Early stopping</strong>: Enable <code class="docutils literal notranslate"><span class="pre">early_stopping</span></code> to halt when fitness plateaus</p></li>
+<li><p><strong>Cross-validation</strong>: Evaluate on validation set, not just training fitness</p></li>
+<li><p><strong>Limit n_features</strong>: Don’t generate more features than you need</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="c1"># Fit FeatureSynthesizer</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Evaluate with cross-validation</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R²: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (+/- </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="handling-different-data-types">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Handling Different Data Types</a><a class="headerlink" href="#handling-different-data-types" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Numeric Features:</strong></p>
+<p>FeatureSynthesizer works best with numeric features. Convert categoricals:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># One-hot encode categoricals</span>
+<span class="n">X_encoded</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;category_col&#39;</span><span class="p">])</span>
+
+<span class="c1"># Or use target encoding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">category_encoders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TargetEncoder</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">TargetEncoder</span><span class="p">()</span>
+<span class="n">X_encoded</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Then apply FeatureSynthesizer</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">()</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_encoded</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Missing Values:</strong></p>
+<p>Handle missing values before synthesis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple imputation</span>
+<span class="n">X_filled</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Or use sklearn&#39;s SimpleImputer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.impute</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleImputer</span>
+<span class="n">imputer</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)</span>
+<span class="n">X_filled</span> <span class="o">=</span> <span class="n">imputer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Scaling:</strong></p>
+<p>No need to scale features—FeatureSynthesizer handles this internally.</p>
+</section>
+</section>
+<section id="integration-with-scikit-learn">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Integration with Scikit-learn</a><a class="headerlink" href="#integration-with-scikit-learn" title="Link to this heading"><span>#</span></a></h2>
+<section id="pipelines">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Pipelines</a><a class="headerlink" href="#pipelines" title="Link to this heading"><span>#</span></a></h3>
+<p>Use FeatureSynthesizer in sklearn pipelines:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ridge</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synthesizer&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+        <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+    <span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="feature-unions">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">Feature Unions</a><a class="headerlink" href="#feature-unions" title="Link to this heading"><span>#</span></a></h3>
+<p>Combine with original features:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureUnion</span>
+
+<span class="c1"># Original features</span>
+<span class="n">original_features</span> <span class="o">=</span> <span class="s1">&#39;passthrough&#39;</span>
+
+<span class="c1"># Synthesized features</span>
+<span class="n">synthesized_features</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">return_all_features</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Only return new features</span>
+<span class="p">)</span>
+
+<span class="c1"># Combine both</span>
+<span class="n">combined_features</span> <span class="o">=</span> <span class="n">FeatureUnion</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;original&#39;</span><span class="p">,</span> <span class="n">original_features</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;synthesized&#39;</span><span class="p">,</span> <span class="n">synthesized_features</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Use in pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="n">combined_features</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">())</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="grid-search">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Grid Search</a><a class="headerlink" href="#grid-search" title="Link to this heading"><span>#</span></a></h3>
+<p>Tune hyperparameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;synthesizer__n_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+    <span class="s1">&#39;synthesizer__generations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>
+    <span class="s1">&#39;synthesizer__parsimony_coefficient&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;synthesizer&#39;</span><span class="p">,</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;r2&#39;</span>
+<span class="p">)</span>
+
+<span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best parameters: </span><span class="si">{</span><span class="n">grid_search</span><span class="o">.</span><span class="n">best_params_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best CV R²: </span><span class="si">{</span><span class="n">grid_search</span><span class="o">.</span><span class="n">best_score_</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting">
+<h2><a class="toc-backref" href="#id28" role="doc-backlink">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Link to this heading"><span>#</span></a></h2>
+<section id="problem-poor-performance">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Problem: Poor Performance</a><a class="headerlink" href="#problem-poor-performance" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: Features don’t improve model performance</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">generations</span></code> (may not have converged)</p></li>
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">population_size</span></code> (more diversity)</p></li>
+<li><p>Try different <code class="docutils literal notranslate"><span class="pre">fitness</span></code> function</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (allowing more complexity)</p></li>
+<li><p>Check if target has signal (baseline model performance)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check baseline performance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.dummy</span><span class="w"> </span><span class="kn">import</span> <span class="n">DummyRegressor</span>
+<span class="n">dummy</span> <span class="o">=</span> <span class="n">DummyRegressor</span><span class="p">()</span>
+<span class="n">dummy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">baseline_r2</span> <span class="o">=</span> <span class="n">dummy</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline R²: </span><span class="si">{</span><span class="n">baseline_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># If baseline is close to your model&#39;s R², the problem may be too hard</span>
+</pre></div>
+</div>
+</section>
+<section id="problem-overfitting">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Problem: Overfitting</a><a class="headerlink" href="#problem-overfitting" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: Great training performance, poor test performance</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (simpler features)</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">n_features</span></code> (fewer features)</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> (shallower trees)</p></li>
+<li><p>Use cross-validation to evaluate</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="c1"># Use cross-validation instead of single train/test split</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R²: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (+/- </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="problem-slow-training">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Problem: Slow Training</a><a class="headerlink" href="#problem-slow-training" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: Training takes too long</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">population_size</span></code></p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">generations</span></code></p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">max_depth</span></code></p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">n_jobs=-1</span></code> for parallelization</p></li>
+<li><p>Reduce <code class="docutils literal notranslate"><span class="pre">n_features</span></code></p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fast prototyping</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="problem-all-features-similar">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Problem: All Features Similar</a><a class="headerlink" href="#problem-all-features-similar" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Symptoms</strong>: Discovered features are nearly identical</p>
+<p><strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">selection_method=&quot;mrmr&quot;</span></code> (default) to reduce redundancy</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">n_features</span></code> (fewer features)</p></li>
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (more diversity in simpler trees)</p></li>
+</ul>
+</section>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"><span>#</span></a></h2>
+<section id="example-1-regression-with-interactions">
+<h3><a class="toc-backref" href="#id34" role="doc-backlink">Example 1: Regression with Interactions</a><a class="headerlink" href="#example-1-regression-with-interactions" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+
+<span class="c1"># Generate data with interaction</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+    <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="p">})</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+<span class="c1"># Synthesize features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Check if interaction was discovered</span>
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">&#39;x1&#39;</span> <span class="ow">in</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;x2&#39;</span> <span class="ow">in</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found interaction: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-classification">
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">Example 2: Classification</a><a class="headerlink" href="#example-2-classification" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="c1"># Generate binary classification data</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Synthesize features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;log_loss&quot;</span><span class="p">,</span>  <span class="c1"># For classification</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Train classifier</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_aug</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_aug</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-3-time-series">
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Example 3: Time Series</a><a class="headerlink" href="#example-3-time-series" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create lag features for time series</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)})</span>
+
+<span class="c1"># Create lags</span>
+<span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
+    <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lag_</span><span class="si">{</span><span class="n">lag</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">lag</span><span class="p">)</span>
+
+<span class="c1"># Drop NaN</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># Prepare features and target</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>  <span class="c1"># Predict next value</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Synthesize features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># View discovered temporal patterns</span>
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id37" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="linear_regression_power.html"><span class="doc">Linear Regression Power</span></a> - See dramatic performance improvements</p></li>
+<li><p><a class="reference internal" href="feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a> - Select optimal feature subsets</p></li>
+<li><p><a class="reference internal" href="../api_reference/high_level_api.html"><span class="doc">High-Level API</span></a> - FeatureSynthesizer API reference</p></li>
+<li><p><span class="xref std std-doc">../concepts/genetic_feature_synthesis</span> - Genetic programming theory</p></li>
+<li><p><a class="reference internal" href="../api_reference/fitness_functions.html"><span class="doc">Fitness Functions</span></a> - All fitness functions</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../getting_started/quickstart.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Quick Start Guide</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="feature_selection.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Feature Selection Tutorial</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-feature-synthesis">When to Use Feature Synthesis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How It Works</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example">Complete Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-explained">Parameters Explained</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#essential-parameters">Essential Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evolutionary-parameters">Evolutionary Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tree-structure-parameters">Tree Structure Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-parameters">Advanced Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitness-functions">Fitness Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#auto-detection-recommended">Auto-Detection (Recommended)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-selection">Manual Selection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-fitness-functions">Custom Fitness Functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-results">Interpreting Results</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-discovered-programs">Getting Discovered Programs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-evolution-history">Plotting Evolution History</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-on-new-data">Evaluating on New Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-importance">Feature Importance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-parameters">Choosing Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#preventing-overfitting">Preventing Overfitting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#handling-different-data-types">Handling Different Data Types</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-scikit-learn">Integration with Scikit-learn</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelines">Pipelines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-unions">Feature Unions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grid-search">Grid Search</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-poor-performance">Problem: Poor Performance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-overfitting">Problem: Overfitting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-slow-training">Problem: Slow Training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-all-features-similar">Problem: All Features Similar</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-regression-with-interactions">Example 1: Regression with Interactions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-classification">Example 2: Classification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-3-time-series">Example 3: Time Series</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/feature_synthesis.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

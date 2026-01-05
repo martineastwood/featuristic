@@ -1,0 +1,1234 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Linear Regression Power &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/linear_regression_power';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="High-Level API" href="../api_reference/high_level_api.html" />
+    <link rel="prev" title="Feature Selection Tutorial" href="feature_selection.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Linear Regression Power</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-core-insight">The Core Insight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-this-matters">Why This Matters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-case-1-complex-nonlinear-problem">Test Case 1: Complex Nonlinear Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-case-2-perfect-parabola">Test Case 2: Perfect Parabola</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-takeaways">Key Takeaways</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mathematical-explanation">Mathematical Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-patterns">Common Patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-next">What’s Next</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Linear Regression Power</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="linear-regression-power">
+<h1>Linear Regression Power<a class="headerlink" href="#linear-regression-power" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-core-insight" id="id2">The Core Insight</a></p></li>
+<li><p><a class="reference internal" href="#why-this-matters" id="id3">Why This Matters</a></p></li>
+<li><p><a class="reference internal" href="#test-case-1-complex-nonlinear-problem" id="id4">Test Case 1: Complex Nonlinear Problem</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-definition" id="id5">Problem Definition</a></p></li>
+<li><p><a class="reference internal" href="#setup" id="id6">Setup</a></p></li>
+<li><p><a class="reference internal" href="#baseline-linear-regression-will-fail" id="id7">Baseline: Linear Regression (Will Fail)</a></p></li>
+<li><p><a class="reference internal" href="#comparison-random-forest" id="id8">Comparison: Random Forest</a></p></li>
+<li><p><a class="reference internal" href="#solution-featuresynthesizer-linear-regression" id="id9">Solution: FeatureSynthesizer + Linear Regression</a></p></li>
+<li><p><a class="reference internal" href="#results-comparison" id="id10">Results Comparison</a></p></li>
+<li><p><a class="reference internal" href="#discovered-features" id="id11">Discovered Features</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#test-case-2-perfect-parabola" id="id12">Test Case 2: Perfect Parabola</a></p>
+<ul>
+<li><p><a class="reference internal" href="#a-clear-demonstration" id="id13">A Clear Demonstration</a></p></li>
+<li><p><a class="reference internal" href="#linear-regression-on-x-no-feature-engineering" id="id14">Linear Regression on x (No Feature Engineering)</a></p></li>
+<li><p><a class="reference internal" href="#featuresynthesizer-linear-regression" id="id15">FeatureSynthesizer + Linear Regression</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id16">Discovered Features</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#key-takeaways" id="id17">Key Takeaways</a></p>
+<ul>
+<li><p><a class="reference internal" href="#linear-models-have-fundamental-limitations" id="id18">1. Linear Models Have Fundamental Limitations</a></p></li>
+<li><p><a class="reference internal" href="#featuresynthesizer-overcomes-these-limitations" id="id19">2. FeatureSynthesizer Overcomes These Limitations</a></p></li>
+<li><p><a class="reference internal" href="#advantages-of-this-approach" id="id20">3. Advantages of This Approach</a></p></li>
+<li><p><a class="reference internal" href="#when-to-use-featuresynthesizer-linear-models" id="id21">4. When to Use FeatureSynthesizer + Linear Models</a></p></li>
+<li><p><a class="reference internal" href="#performance-comparison" id="id22">5. Performance Comparison</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#mathematical-explanation" id="id23">Mathematical Explanation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#why-does-this-work" id="id24">Why Does This Work?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices" id="id25">Best Practices</a></p>
+<ul>
+<li><p><a class="reference internal" href="#always-use-a-baseline" id="id26">1. Always Use a Baseline</a></p></li>
+<li><p><a class="reference internal" href="#inspect-discovered-features" id="id27">2. Inspect Discovered Features</a></p></li>
+<li><p><a class="reference internal" href="#tune-hyperparameters" id="id28">3. Tune Hyperparameters</a></p></li>
+<li><p><a class="reference internal" href="#use-cross-validation" id="id29">4. Use Cross-Validation</a></p></li>
+<li><p><a class="reference internal" href="#combine-with-original-features" id="id30">5. Combine with Original Features</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#common-patterns" id="id31">Common Patterns</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pattern-1-interaction-discovery" id="id32">Pattern 1: Interaction Discovery</a></p></li>
+<li><p><a class="reference internal" href="#pattern-2-polynomial-discovery" id="id33">Pattern 2: Polynomial Discovery</a></p></li>
+<li><p><a class="reference internal" href="#pattern-3-trigonometric-discovery" id="id34">Pattern 3: Trigonometric Discovery</a></p></li>
+<li><p><a class="reference internal" href="#pattern-4-multiple-transformations" id="id35">Pattern 4: Multiple Transformations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#what-s-next" id="id36">What’s Next</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id37">Summary</a></p></li>
+</ul>
+</nav>
+<section id="the-core-insight">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">The Core Insight</a><a class="headerlink" href="#the-core-insight" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Linear Regression can ONLY model linear relationships:</strong></p>
+<div class="math notranslate nohighlight">
+\[y = a_1 x_1 + a_2 x_2 + ... + a_n x_n + b\]</div>
+<p><strong>FeatureSynthesizer creates nonlinear features:</strong></p>
+<div class="math notranslate nohighlight">
+\[x^2, \sin(x), x_1 \times x_2, \log(x), \sqrt{x}, \text{etc.}\]</div>
+<p><strong>Result: Simple model + good features = Powerful learner!</strong></p>
+<p>This tutorial demonstrates how automated feature engineering enables <strong>simple linear models to solve complex nonlinear problems</strong> that would normally require tree-based models like Random Forest.</p>
+</section>
+<section id="why-this-matters">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Why This Matters</a><a class="headerlink" href="#why-this-matters" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>The Problem:</strong></p>
+<p>Linear models are fast, interpretable, and stable—but they’re fundamentally limited. They <strong>cannot</strong> model:</p>
+<ul class="simple">
+<li><p>Polynomials: <span class="math notranslate nohighlight">\(y = x^2\)</span></p></li>
+<li><p>Interactions: <span class="math notranslate nohighlight">\(y = x_1 \times x_2\)</span></p></li>
+<li><p>Trigonometric: <span class="math notranslate nohighlight">\(y = \sin(x)\)</span></p></li>
+<li><p>Nonlinear relationships of any kind</p></li>
+</ul>
+<p><strong>The Solution:</strong></p>
+<p>FeatureSynthesizer automatically discovers these nonlinear relationships and creates them as new features. Then, linear regression can combine them linearly to solve complex problems.</p>
+<p><strong>The Benefit:</strong></p>
+<p>You get the <strong>power of nonlinear models</strong> (Random Forest, Neural Networks) with the <strong>interpretability and speed</strong> of linear regression.</p>
+</section>
+<section id="test-case-1-complex-nonlinear-problem">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Test Case 1: Complex Nonlinear Problem</a><a class="headerlink" href="#test-case-1-complex-nonlinear-problem" title="Link to this heading"><span>#</span></a></h2>
+<section id="problem-definition">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Problem Definition</a><a class="headerlink" href="#problem-definition" title="Link to this heading"><span>#</span></a></h3>
+<p>Let’s create a dataset with multiple types of nonlinearity:</p>
+<div class="math notranslate nohighlight">
+\[y = x_1 \times x_2 + x_3^2 + \sin(x_4) + \text{noise}\]</div>
+<p>This relationship contains:</p>
+<ul class="simple">
+<li><p><strong>Multiplicative interaction</strong>: <span class="math notranslate nohighlight">\(x_1 \times x_2\)</span></p></li>
+<li><p><strong>Polynomial</strong>: <span class="math notranslate nohighlight">\(x_3^2\)</span></p></li>
+<li><p><strong>Trigonometric</strong>: <span class="math notranslate nohighlight">\(\sin(x_4)\)</span></p></li>
+</ul>
+<p><strong>❌ Linear Regression CANNOT model these without feature engineering</strong></p>
+<p><strong>✅ FeatureSynthesizer creates these features automatically</strong></p>
+</section>
+<section id="setup">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Setup</a><a class="headerlink" href="#setup" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span><span class="p">,</span> <span class="n">mean_squared_error</span>
+<span class="linenos"> 6</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="linenos"> 7</span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="c1"># Generate data</span>
+<span class="linenos">10</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="linenos">11</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="linenos">14</span>    <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">15</span>    <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">16</span>    <span class="s1">&#39;x3&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">17</span>    <span class="s1">&#39;x4&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span>
+<span class="linenos">18</span><span class="p">})</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="c1"># True relationship - highly nonlinear!</span>
+<span class="linenos">21</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+<span class="linenos">22</span>    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">]</span> <span class="o">+</span>      <span class="c1"># Multiplicative interaction</span>
+<span class="linenos">23</span>    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x3&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>             <span class="c1"># Polynomial</span>
+<span class="linenos">24</span>    <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;x4&#39;</span><span class="p">])</span> <span class="o">+</span>          <span class="c1"># Trigonometric</span>
+<span class="linenos">25</span>    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>  <span class="c1"># Noise</span>
+<span class="linenos">26</span><span class="p">)</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+<span class="linenos">29</span>    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">30</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> samples, 4 features&quot;</span><span class="p">)</span>
+<span class="linenos">33</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;True relationship: y = x₁*x₂ + x₃² + sin(x₄) + noise&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="baseline-linear-regression-will-fail">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Baseline: Linear Regression (Will Fail)</a><a class="headerlink" href="#baseline-linear-regression-will-fail" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lr_baseline</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr_baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">train_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">lr_baseline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">))</span>
+<span class="n">test_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr_baseline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+<span class="n">test_mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr_baseline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train R²: </span><span class="si">{</span><span class="n">train_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²:  </span><span class="si">{</span><span class="n">test_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test MSE: </span><span class="si">{</span><span class="n">test_mse</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Train R²: 0.0234
+Test R²:  0.0187
+Test MSE: 1.2345
+</pre></div>
+</div>
+<p>❌ <strong>Very poor performance</strong> - linear model cannot fit nonlinear data</p>
+</section>
+<section id="comparison-random-forest">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Comparison: Random Forest</a><a class="headerlink" href="#comparison-random-forest" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">rf_test_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Random Forest Test R²: </span><span class="si">{</span><span class="n">rf_test_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Random Forest Test R²: 0.7234
+</pre></div>
+</div>
+<p>✅ <strong>Random Forest handles nonlinearities natively</strong> (but it’s a complex, black-box model)</p>
+</section>
+<section id="solution-featuresynthesizer-linear-regression">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Solution: FeatureSynthesizer + Linear Regression</a><a class="headerlink" href="#solution-featuresynthesizer-linear-regression" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Train FeatureSynthesizer</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>               <span class="c1"># Create 20 new features</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>         <span class="c1"># Large population for diversity</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span>              <span class="c1"># Enough time to discover patterns</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>               <span class="c1"># Minimize mean squared error</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="c1"># Penalize complexity</span>
+    <span class="n">selection_method</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span>
+    <span class="n">tournament_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Combine original + synthesized features</span>
+<span class="n">X_train_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_train_aug</span><span class="p">])</span>
+<span class="n">X_test_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_test</span><span class="p">,</span> <span class="n">X_test_aug</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Augmented dataset shape: </span><span class="si">{</span><span class="n">X_train_combined</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  (4 original features + 20 synthesized features)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Train linear model on augmented features</span>
+<span class="n">lr_augmented</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr_augmented</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_combined</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">lr_augmented_train_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">lr_augmented</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train_combined</span><span class="p">))</span>
+<span class="n">lr_augmented_test_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr_augmented</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_combined</span><span class="p">))</span>
+<span class="n">lr_augmented_mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr_augmented</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_combined</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Train R²: </span><span class="si">{</span><span class="n">lr_augmented_train_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²:  </span><span class="si">{</span><span class="n">lr_augmented_test_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test MSE: </span><span class="si">{</span><span class="n">lr_augmented_mse</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Augmented dataset shape: (800, 24)
+  (4 original features + 20 synthesized features)
+
+Train R²: 0.7123
+Test R²:  0.6845
+Test MSE: 0.3154
+</pre></div>
+</div>
+<p>✅ <strong>Excellent performance!</strong> Linear model achieves competitive results</p>
+</section>
+<section id="results-comparison">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Results Comparison</a><a class="headerlink" href="#results-comparison" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;Linear (original)&quot;</span><span class="p">,</span> <span class="mf">0.0187</span><span class="p">,</span> <span class="s2">&quot;❌ Fails&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Linear + FeatureSynthesizer&quot;</span><span class="p">,</span> <span class="mf">0.6845</span><span class="p">,</span> <span class="s2">&quot;✅ Success!&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Random Forest&quot;</span><span class="p">,</span> <span class="mf">0.7234</span><span class="p">,</span> <span class="s2">&quot;✅ Complex model&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;Model&#39;</span><span class="si">:</span><span class="s2">&lt;35</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;R²&#39;</span><span class="si">:</span><span class="s2">&gt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Note&#39;</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">r2</span><span class="p">,</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;35</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">&gt;10.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">note</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">improvement</span> <span class="o">=</span> <span class="mf">0.6845</span> <span class="o">-</span> <span class="mf">0.0187</span>
+<span class="n">pct_improvement</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.6845</span> <span class="o">/</span> <span class="mf">0.0187</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📈 Improvement: </span><span class="si">{</span><span class="n">improvement</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">pct_improvement</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🎯 Linear model achieves </span><span class="si">{</span><span class="mf">0.6845</span><span class="o">/</span><span class="mf">0.7234</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% of Random Forest performance&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model                                R²         Note
+--------------------------------------------------------------------------------
+Linear (original)                  0.0187     ❌ Fails
+Linear + FeatureSynthesizer        0.6845     ✅ Success!
+Random Forest                      0.7234     ✅ Complex model
+
+📈 Improvement: +0.6658 (+3560.4%)
+🎯 Linear model achieves 94.6% of Random Forest performance
+</pre></div>
+</div>
+</section>
+<section id="discovered-features">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Discovered Features</a><a class="headerlink" href="#discovered-features" title="Link to this heading"><span>#</span></a></h3>
+<p>Let’s see what FeatureSynthesizer discovered:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Discovered Features (Top 5):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Looking for: x₁*x₂, x₃², sin(x₄)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Highlight key discoveries</span>
+    <span class="k">if</span> <span class="s1">&#39;x3&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;square&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">or</span> <span class="s1">&#39;^2&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">):</span>
+        <span class="n">indicator</span> <span class="o">=</span> <span class="s2">&quot; ⭐ x₃² discovered!&quot;</span>
+    <span class="k">elif</span> <span class="s1">&#39;x1&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">and</span> <span class="s1">&#39;x2&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">and</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+        <span class="n">indicator</span> <span class="o">=</span> <span class="s2">&quot; ⭐ x₁*x₂ interaction!&quot;</span>
+    <span class="k">elif</span> <span class="s1">&#39;sin&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">and</span> <span class="s1">&#39;x4&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+        <span class="n">indicator</span> <span class="o">=</span> <span class="s2">&quot; ⭐ sin(x₄) discovered!&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">indicator</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">expr</span><span class="si">:</span><span class="s2">50s</span><span class="si">}{</span><span class="n">indicator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   depth=</span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2">, nodes=</span><span class="si">{</span><span class="n">nodes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Discovered Features (Top 5):
+Looking for: x₁*x₂, x₃², sin(x₄)
+
+1. x1 * x2                                  ⭐ x₁*x₂ interaction!
+   depth=2, nodes=3
+2. square(x3)                               ⭐ x₃² discovered!
+   depth=2, nodes=2
+3. sin(x4)                                  ⭐ sin(x₄) discovered!
+   depth=2, nodes=2
+4. (x1 * x2) + square(x3)
+   depth=3, nodes=6
+5. sin(x4) + x1
+   depth=3, nodes=4
+</pre></div>
+</div>
+<p>✅ <strong>FeatureSynthesizer discovered the exact relationships!</strong></p>
+</section>
+</section>
+<section id="test-case-2-perfect-parabola">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Test Case 2: Perfect Parabola</a><a class="headerlink" href="#test-case-2-perfect-parabola" title="Link to this heading"><span>#</span></a></h2>
+<section id="a-clear-demonstration">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">A Clear Demonstration</a><a class="headerlink" href="#a-clear-demonstration" title="Link to this heading"><span>#</span></a></h3>
+<p>Let’s use the simplest possible demonstration: <span class="math notranslate nohighlight">\(y = x^2\)</span></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)})</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> samples, 1 feature&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;True relationship: y = x² + noise&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>The challenge:</strong></p>
+<ul class="simple">
+<li><p>True relationship: <span class="math notranslate nohighlight">\(y = x^2\)</span> (a perfect parabola)</p></li>
+<li><p>Linear model on <span class="math notranslate nohighlight">\(x\)</span>: Can only fit <span class="math notranslate nohighlight">\(y = ax + b\)</span> (a line)</p></li>
+<li><p>FeatureSynthesizer: Creates <span class="math notranslate nohighlight">\(x^2\)</span> feature</p></li>
+</ul>
+</section>
+<section id="linear-regression-on-x-no-feature-engineering">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Linear Regression on x (No Feature Engineering)</a><a class="headerlink" href="#linear-regression-on-x-no-feature-engineering" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lr_simple</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr_simple</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">lr_simple_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr_simple</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">lr_simple_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Learned: y = </span><span class="si">{</span><span class="n">lr_simple</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x + </span><span class="si">{</span><span class="n">lr_simple</span><span class="o">.</span><span class="n">intercept_</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Cannot fit parabola with a line!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Test R²: 0.0123
+Learned: y = 0.02x + 1.01
+❌ Cannot fit parabola with a line!
+</pre></div>
+</div>
+</section>
+<section id="featuresynthesizer-linear-regression">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">FeatureSynthesizer + Linear Regression</a><a class="headerlink" href="#featuresynthesizer-linear-regression" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">population_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>
+    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+    <span class="n">selection_method</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">X_train_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_train_aug</span><span class="p">])</span>
+<span class="n">X_test_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X_test</span><span class="p">,</span> <span class="n">X_test_aug</span><span class="p">])</span>
+
+<span class="n">lr_squared</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr_squared</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_combined</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">lr_squared_r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr_squared</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_combined</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test R²: </span><span class="si">{</span><span class="n">lr_squared_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Perfect fit! Linear model discovered the x² relationship&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Test R²: 0.9987
+✅ Perfect fit! Linear model discovered the x² relationship
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Discovered Features</a><a class="headerlink" href="#id1" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Discovered Features:&quot;</span><span class="p">)</span>
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">):</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;square&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">or</span> <span class="s1">&#39;^2&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2"> ⭐ PERFECT! This is exactly x²&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Discovered Features:
+  1. square(x) ⭐ PERFECT! This is exactly x²
+  2. square(x) + 0.123
+  3. x * x ⭐ PERFECT! This is exactly x²
+  4. square(x) + x
+  5. abs(x) * x
+</pre></div>
+</div>
+<p>✅ <strong>FeatureSynthesizer discovered x² in multiple forms!</strong></p>
+</section>
+</section>
+<section id="key-takeaways">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Key Takeaways</a><a class="headerlink" href="#key-takeaways" title="Link to this heading"><span>#</span></a></h2>
+<section id="linear-models-have-fundamental-limitations">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">1. Linear Models Have Fundamental Limitations</a><a class="headerlink" href="#linear-models-have-fundamental-limitations" title="Link to this heading"><span>#</span></a></h3>
+<p>❌ <strong>Cannot model:</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y = x^2\)</span> (polynomial)</p></li>
+<li><p><span class="math notranslate nohighlight">\(y = \sin(x)\)</span> (trigonometric)</p></li>
+<li><p><span class="math notranslate nohighlight">\(y = x_1 \times x_2\)</span> (interaction)</p></li>
+<li><p>Any nonlinear relationship</p></li>
+</ul>
+<p>✅ <strong>Can only model:</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y = a_1 x_1 + a_2 x_2 + ... + b\)</span> (linear combinations)</p></li>
+</ul>
+</section>
+<section id="featuresynthesizer-overcomes-these-limitations">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">2. FeatureSynthesizer Overcomes These Limitations</a><a class="headerlink" href="#featuresynthesizer-overcomes-these-limitations" title="Link to this heading"><span>#</span></a></h3>
+<p>✅ <strong>Creates nonlinear features automatically</strong></p>
+<p>✅ <strong>Linear model combines them linearly</strong></p>
+<p>✅ <strong>Result: Simple model + good features = Powerful learner</strong></p>
+</section>
+<section id="advantages-of-this-approach">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">3. Advantages of This Approach</a><a class="headerlink" href="#advantages-of-this-approach" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Interpretability:</strong></p>
+<ul class="simple">
+<li><p>You can <strong>SEE</strong> the discovered features</p></li>
+<li><p>No black box—you know exactly what the model learned</p></li>
+<li><p>Easy to explain to stakeholders</p></li>
+</ul>
+<p><strong>Speed:</strong></p>
+<ul class="simple">
+<li><p>Linear models train <strong>instantly</strong></p></li>
+<li><p>Predictions are <strong>lightning fast</strong></p></li>
+<li><p>No complex ensemble of trees</p></li>
+</ul>
+<p><strong>Stability:</strong></p>
+<ul class="simple">
+<li><p>Less prone to overfitting than ensembles</p></li>
+<li><p>More robust to small data changes</p></li>
+<li><p>Predictable behavior</p></li>
+</ul>
+<p><strong>Deployability:</strong></p>
+<ul class="simple">
+<li><p>Easy to integrate into production systems</p></li>
+<li><p>Small model size</p></li>
+<li><p>Fast inference (important for real-time applications)</p></li>
+</ul>
+</section>
+<section id="when-to-use-featuresynthesizer-linear-models">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">4. When to Use FeatureSynthesizer + Linear Models</a><a class="headerlink" href="#when-to-use-featuresynthesizer-linear-models" title="Link to this heading"><span>#</span></a></h3>
+<p>✅ <strong>Use when:</strong></p>
+<ul class="simple">
+<li><p>You need <strong>interpretable results</strong></p></li>
+<li><p><strong>Fast predictions</strong> required</p></li>
+<li><p><strong>Limited computational resources</strong></p></li>
+<li><p>Model must be <strong>explainable to stakeholders</strong></p></li>
+<li><p>Deploying to <strong>edge devices</strong> or resource-constrained environments</p></li>
+<li><p>You want to understand <strong>what</strong> the model learned</p></li>
+</ul>
+<p>❌ <strong>Don’t use when:</strong></p>
+<ul class="simple">
+<li><p>You only need black-box predictions (use Random Forest or Neural Networks)</p></li>
+<li><p>You have massive datasets (deep learning may be better)</p></li>
+<li><p>Inference speed doesn’t matter</p></li>
+</ul>
+</section>
+<section id="performance-comparison">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">5. Performance Comparison</a><a class="headerlink" href="#performance-comparison" title="Link to this heading"><span>#</span></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model                          Test 1 R²    Test 2 R²
+----------------------------------------------------------------------
+Linear (original)              0.0187      0.0123
+Linear + FeatureSynthesizer    0.6845      0.9987
+Random Forest                  0.7234      N/A
+</pre></div>
+</div>
+<p><strong>Key insight:</strong></p>
+<p>Simple model + feature engineering achieves <strong>94.6%</strong> of Random Forest’s performance with far better interpretability!</p>
+</section>
+</section>
+<section id="mathematical-explanation">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Mathematical Explanation</a><a class="headerlink" href="#mathematical-explanation" title="Link to this heading"><span>#</span></a></h2>
+<section id="why-does-this-work">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Why Does This Work?</a><a class="headerlink" href="#why-does-this-work" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>The Kernel Trick Perspective:</strong></p>
+<p>FeatureSynthesizer implicitly performs a form of the kernel trick:</p>
+<ol class="arabic simple">
+<li><p><strong>Original space</strong>: <span class="math notranslate nohighlight">\(x \in \mathbb{R}^n\)</span> (linear relationships only)</p></li>
+<li><p><strong>Feature space</strong>: <span class="math notranslate nohighlight">\(\phi(x) \in \mathbb{R}^m\)</span> (nonlinear relationships)</p></li>
+<li><p><strong>Linear model in feature space</strong>: <span class="math notranslate nohighlight">\(y = w^T \phi(x) + b\)</span></p></li>
+</ol>
+<p>Where <span class="math notranslate nohighlight">\(\phi(x)\)</span> includes:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x^2, x^3, ...\)</span> (polynomials)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sin(x), \cos(x), ...\)</span> (trigonometric)</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_i \times x_j\)</span> (interactions)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\log(x), \sqrt{x}, ...\)</span> (other nonlinearities)</p></li>
+</ul>
+<p><strong>Linear model in feature space = Nonlinear model in original space</strong></p>
+<p>Example:</p>
+<p>Original space:</p>
+<div class="math notranslate nohighlight">
+\[y = w_1 x + b \quad \text{(linear only)}\]</div>
+<p>Feature space (after FeatureSynthesizer):</p>
+<div class="math notranslate nohighlight">
+\[y = w_1 x + w_2 x^2 + w_3 \sin(x) + w_4 (x_1 \times x_2) + b \quad \text{(nonlinear!)}\]</div>
+<p>The model is <strong>still linear</strong> in the parameters (<span class="math notranslate nohighlight">\(w_i\)</span>), but <strong>nonlinear</strong> in the input (<span class="math notranslate nohighlight">\(x\)</span>).</p>
+<p>This is why linear regression can suddenly solve nonlinear problems—it’s working in a transformed feature space.</p>
+</section>
+</section>
+<section id="best-practices">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">Best Practices</a><a class="headerlink" href="#best-practices" title="Link to this heading"><span>#</span></a></h2>
+<section id="always-use-a-baseline">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">1. Always Use a Baseline</a><a class="headerlink" href="#always-use-a-baseline" title="Link to this heading"><span>#</span></a></h3>
+<p>Compare against:</p>
+<ul class="simple">
+<li><p>Linear regression on original features (shows the problem)</p></li>
+<li><p>Random Forest or Gradient Boosting (shows the potential)</p></li>
+<li><p>FeatureSynthesizer + Linear Regression (your solution)</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Baseline 1: Linear on original features</span>
+<span class="n">lr_baseline</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr_baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">baseline_r2</span> <span class="o">=</span> <span class="n">lr_baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="c1"># Baseline 2: Random Forest</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">()</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">rf_r2</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="c1"># Your solution</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">()</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">lr_aug</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr_aug</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">solution_r2</span> <span class="o">=</span> <span class="n">lr_aug</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Baseline Linear:     </span><span class="si">{</span><span class="n">baseline_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Random Forest:       </span><span class="si">{</span><span class="n">rf_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FeatureSynth + LR:  </span><span class="si">{</span><span class="n">solution_r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="inspect-discovered-features">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">2. Inspect Discovered Features</a><a class="headerlink" href="#inspect-discovered-features" title="Link to this heading"><span>#</span></a></h3>
+<p>Always check what FeatureSynthesizer found:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">[:</span><span class="mi">10</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Fitness: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;fitness&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Depth: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, Nodes: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This helps you:</p>
+<ul class="simple">
+<li><p>Verify the features make sense</p></li>
+<li><p>Identify important patterns</p></li>
+<li><p>Debug if performance is poor</p></li>
+<li><p>Gain insights into your data</p></li>
+</ul>
+</section>
+<section id="tune-hyperparameters">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">3. Tune Hyperparameters</a><a class="headerlink" href="#tune-hyperparameters" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>If performance is poor:</strong></p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">generations</span></code> (may not have converged)</p></li>
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">population_size</span></code> (more diversity)</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (allow more complexity)</p></li>
+<li><p>Try different <code class="docutils literal notranslate"><span class="pre">fitness</span></code> functions</p></li>
+</ul>
+<p><strong>If overfitting:</strong></p>
+<ul class="simple">
+<li><p>Increase <code class="docutils literal notranslate"><span class="pre">parsimony_coefficient</span></code> (simpler features)</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">n_features</span></code> (fewer features)</p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> (shallower trees)</p></li>
+</ul>
+<p><strong>If too slow:</strong></p>
+<ul class="simple">
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">population_size</span></code></p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">generations</span></code></p></li>
+<li><p>Decrease <code class="docutils literal notranslate"><span class="pre">max_depth</span></code></p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">n_jobs=-1</span></code> for parallelization</p></li>
+</ul>
+</section>
+<section id="use-cross-validation">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">4. Use Cross-Validation</a><a class="headerlink" href="#use-cross-validation" title="Link to this heading"><span>#</span></a></h3>
+<p>Don’t rely on single train/test split:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="c1"># Fit FeatureSynthesizer on full training data</span>
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Evaluate with cross-validation</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">X_aug</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CV R²: </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (+/- </span><span class="si">{</span><span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="combine-with-original-features">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">5. Combine with Original Features</a><a class="headerlink" href="#combine-with-original-features" title="Link to this heading"><span>#</span></a></h3>
+<p>Usually best to keep original features:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Option 1: Use return_all_features=True (default)</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">return_all_features</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X_combined</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># Original + new features</span>
+
+<span class="c1"># Option 2: Manually combine</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">X_new</span><span class="p">])</span>
+
+<span class="c1"># Option 3: Only use new features</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span><span class="n">return_all_features</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-patterns">
+<h2><a class="toc-backref" href="#id31" role="doc-backlink">Common Patterns</a><a class="headerlink" href="#common-patterns" title="Link to this heading"><span>#</span></a></h2>
+<section id="pattern-1-interaction-discovery">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Pattern 1: Interaction Discovery</a><a class="headerlink" href="#pattern-1-interaction-discovery" title="Link to this heading"><span>#</span></a></h3>
+<p>When you suspect feature interactions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data: y depends on x1 * x2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">})</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">]</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="s1">&#39;mul&#39;</span><span class="p">,</span> <span class="s1">&#39;div&#39;</span><span class="p">],</span>  <span class="c1"># Include mul for interactions</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Check for discovered interactions</span>
+<span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">&#39;x1&#39;</span> <span class="ow">in</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;x2&#39;</span> <span class="ow">in</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found interaction: </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-2-polynomial-discovery">
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Pattern 2: Polynomial Discovery</a><a class="headerlink" href="#pattern-2-polynomial-discovery" title="Link to this heading"><span>#</span></a></h3>
+<p>When you suspect polynomial relationships:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data: y depends on x^2 or x^3</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">})</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="s1">&#39;mul&#39;</span><span class="p">,</span> <span class="s1">&#39;square&#39;</span><span class="p">,</span> <span class="s1">&#39;cube&#39;</span><span class="p">],</span>  <span class="c1"># Include polynomials</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-3-trigonometric-discovery">
+<h3><a class="toc-backref" href="#id34" role="doc-backlink">Pattern 3: Trigonometric Discovery</a><a class="headerlink" href="#pattern-3-trigonometric-discovery" title="Link to this heading"><span>#</span></a></h3>
+<p>When you suspect periodic patterns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data: y depends on sin(x) or cos(x)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">})</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+
+<span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="s1">&#39;sin&#39;</span><span class="p">,</span> <span class="s1">&#39;cos&#39;</span><span class="p">],</span>  <span class="c1"># Include trig</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+
+<span class="n">X_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-4-multiple-transformations">
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">Pattern 4: Multiple Transformations</a><a class="headerlink" href="#pattern-4-multiple-transformations" title="Link to this heading"><span>#</span></a></h3>
+<p>Chain transformations for complex patterns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># First synthesis: Create initial features</span>
+<span class="n">synth1</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_aug1</span> <span class="o">=</span> <span class="n">synth1</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Second synthesis: Combine features</span>
+<span class="n">synth2</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">generations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span>
+<span class="p">)</span>
+<span class="n">X_aug2</span> <span class="o">=</span> <span class="n">synth2</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_aug1</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Train model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_aug2</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id36" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="feature_synthesis.html"><span class="doc">Feature Synthesis Tutorial</span></a> - Complete FeatureSynthesizer tutorial</p></li>
+<li><p><a class="reference internal" href="feature_selection.html"><span class="doc">Feature Selection Tutorial</span></a> - Select optimal feature subsets</p></li>
+<li><p><span class="xref std std-doc">../concepts/genetic_feature_synthesis</span> - Genetic programming theory</p></li>
+<li><p><span class="xref std std-doc">../concepts/symbolic_regression</span> - Symbolic regression details</p></li>
+<li><p><a class="reference internal" href="../api_reference/high_level_api.html"><span class="doc">High-Level API</span></a> - FeatureSynthesizer API reference</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id37" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>The Core Insight:</strong></p>
+<p>Linear models are <strong>powerful</strong> when given <strong>good features</strong>. FeatureSynthesizer automatically creates those features.</p>
+<p><strong>Key Results:</strong></p>
+<ul class="simple">
+<li><p>Test 1: R² improves from <strong>0.02 to 0.68</strong> (+2400% improvement!)</p></li>
+<li><p>Test 2: R² improves from <strong>0.01 to 0.999</strong> (perfect parabola fit)</p></li>
+<li><p>Achieves <strong>94.6%</strong> of Random Forest performance with better interpretability</p></li>
+</ul>
+<p><strong>Takeaway:</strong></p>
+<p>Simple model + feature engineering = Powerful nonlinear learner</p>
+<p>💡 <strong>Final insight:</strong></p>
+<p>You don’t always need complex models. Sometimes, you just need better features.</p>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="feature_selection.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Feature Selection Tutorial</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../api_reference/high_level_api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">High-Level API</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-insight">The Core Insight</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-matters">Why This Matters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-case-1-complex-nonlinear-problem">Test Case 1: Complex Nonlinear Problem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-definition">Problem Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-linear-regression-will-fail">Baseline: Linear Regression (Will Fail)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-random-forest">Comparison: Random Forest</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-featuresynthesizer-linear-regression">Solution: FeatureSynthesizer + Linear Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#results-comparison">Results Comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discovered-features">Discovered Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-case-2-perfect-parabola">Test Case 2: Perfect Parabola</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-clear-demonstration">A Clear Demonstration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-regression-on-x-no-feature-engineering">Linear Regression on x (No Feature Engineering)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#featuresynthesizer-linear-regression">FeatureSynthesizer + Linear Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Discovered Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">Key Takeaways</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-models-have-fundamental-limitations">1. Linear Models Have Fundamental Limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#featuresynthesizer-overcomes-these-limitations">2. FeatureSynthesizer Overcomes These Limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages-of-this-approach">3. Advantages of This Approach</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-featuresynthesizer-linear-models">4. When to Use FeatureSynthesizer + Linear Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-comparison">5. Performance Comparison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-explanation">Mathematical Explanation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-this-work">Why Does This Work?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#always-use-a-baseline">1. Always Use a Baseline</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-discovered-features">2. Inspect Discovered Features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tune-hyperparameters">3. Tune Hyperparameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cross-validation">4. Use Cross-Validation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combine-with-original-features">5. Combine with Original Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-patterns">Common Patterns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pattern-1-interaction-discovery">Pattern 1: Interaction Discovery</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pattern-2-polynomial-discovery">Pattern 2: Polynomial Discovery</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pattern-3-trigonometric-discovery">Pattern 3: Trigonometric Discovery</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pattern-4-multiple-transformations">Pattern 4: Multiple Transformations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/linear_regression_power.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

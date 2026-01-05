@@ -1,0 +1,1032 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Interpreting Discovered Features &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/interpretability';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/rust_functions.html">Rust Functions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Interpreting Discovered Features</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="interpreting-discovered-features">
+<h1>Interpreting Discovered Features<a class="headerlink" href="#interpreting-discovered-features" title="Link to this heading"><span>#</span></a></h1>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#the-key-advantage" id="id2">The Key Advantage</a></p></li>
+<li><p><a class="reference internal" href="#example-dataset" id="id3">Example Dataset</a></p></li>
+<li><p><a class="reference internal" href="#method-1-simple-feature-inspection" id="id4">Method 1: Simple Feature Inspection</a></p></li>
+<li><p><a class="reference internal" href="#method-2-individual-feature-evaluation" id="id5">Method 2: Individual Feature Evaluation</a></p></li>
+<li><p><a class="reference internal" href="#method-3-correlation-analysis" id="id6">Method 3: Correlation Analysis</a></p></li>
+<li><p><a class="reference internal" href="#method-4-model-based-interpretation" id="id7">Method 4: Model-Based Interpretation</a></p></li>
+<li><p><a class="reference internal" href="#method-5-domain-knowledge-validation" id="id8">Method 5: Domain Knowledge Validation</a></p></li>
+<li><p><a class="reference internal" href="#method-6-visualization" id="id9">Method 6: Visualization</a></p></li>
+<li><p><a class="reference internal" href="#practical-tips" id="id10">Practical Tips</a></p>
+<ul>
+<li><p><a class="reference internal" href="#start-simple" id="id11">1. <strong>Start Simple</strong></a></p></li>
+<li><p><a class="reference internal" href="#evaluate-individually" id="id12">2. <strong>Evaluate Individually</strong></a></p></li>
+<li><p><a class="reference internal" href="#check-for-redundancy" id="id13">3. <strong>Check for Redundancy</strong></a></p></li>
+<li><p><a class="reference internal" href="#validate-with-domain-knowledge" id="id14">4. <strong>Validate with Domain Knowledge</strong></a></p></li>
+<li><p><a class="reference internal" href="#use-feature-importance" id="id15">5. <strong>Use Feature Importance</strong></a></p></li>
+<li><p><a class="reference internal" href="#document-your-findings" id="id16">6. <strong>Document Your Findings</strong></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#common-patterns" id="id17">Common Patterns</a></p>
+<ul>
+<li><p><a class="reference internal" href="#what-features-mean" id="id18">What Features Mean</a></p></li>
+<li><p><a class="reference internal" href="#red-flags" id="id19">Red Flags</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#real-world-example" id="id20">Real-World Example</a></p>
+<ul>
+<li><p><a class="reference internal" href="#customer-churn-prediction" id="id21">Customer Churn Prediction</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#best-practices-summary" id="id22">Best Practices Summary</a></p></li>
+<li><p><a class="reference internal" href="#what-s-next" id="id23">What’s Next</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id24">Summary</a></p></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading"><span>#</span></a></h2>
+<p>Unlike black-box models like deep neural networks, <strong>FeatureSynthesizer creates human-readable mathematical expressions</strong>. This tutorial shows you how to understand, validate, and interpret the features your model discovers.</p>
+<p><strong>Why Interpretability Matters:</strong></p>
+<ul class="simple">
+<li><p><strong>Trust</strong>: Understand what your model is doing</p></li>
+<li><p><strong>Debugging</strong>: Catch errors or unexpected behavior</p></li>
+<li><p><strong>Compliance</strong>: Meet regulatory requirements for model transparency</p></li>
+<li><p><strong>Communication</strong>: Explain model decisions to stakeholders</p></li>
+<li><p><strong>Insight</strong>: Learn new patterns in your data</p></li>
+</ul>
+</section>
+<section id="the-key-advantage">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">The Key Advantage</a><a class="headerlink" href="#the-key-advantage" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Black-box models (neural networks, complex ensembles):</strong></p>
+<ul class="simple">
+<li><p>Good predictions</p></li>
+<li><p>No explanation of <em>why</em> they work</p></li>
+<li><p>Hard to validate or debug</p></li>
+</ul>
+<p><strong>FeatureSynthesizer + Linear Model:</strong></p>
+<ul class="simple">
+<li><p>Good predictions</p></li>
+<li><p><strong>Exact mathematical formulas</strong> for each feature</p></li>
+<li><p>Easy to validate and understand</p></li>
+<li><p>Can explain predictions to anyone</p></li>
+</ul>
+</section>
+<section id="example-dataset">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Example Dataset</a><a class="headerlink" href="#example-dataset" title="Link to this heading"><span>#</span></a></h2>
+<p>Let’s create a dataset with <strong>known relationships</strong> so we can validate our interpretations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">featuristic</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureSynthesizer</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="c1"># Business simulation: Revenue prediction</span>
+<span class="linenos">10</span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+<span class="linenos">11</span>    <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">),</span>      <span class="c1"># $10-$100</span>
+<span class="linenos">12</span>    <span class="s1">&#39;quantity&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">),</span>    <span class="c1"># 1-20 items</span>
+<span class="linenos">13</span>    <span class="s1">&#39;discount&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">),</span>    <span class="c1"># 0-30% discount</span>
+<span class="linenos">14</span>    <span class="s1">&#39;seasonality&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">),</span>   <span class="c1"># Demand factor</span>
+<span class="linenos">15</span><span class="p">})</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="c1"># True relationship (revenue formula)</span>
+<span class="linenos">18</span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+<span class="linenos">19</span>    <span class="n">X</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;seasonality&#39;</span><span class="p">]</span>     <span class="c1"># Main driver</span>
+<span class="linenos">20</span>    <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;discount&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="s1">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span>  <span class="c1"># Discount reduces revenue</span>
+<span class="linenos">21</span>    <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mi">50</span>  <span class="c1"># Noise</span>
+<span class="linenos">22</span><span class="p">)</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True relationship:&quot;</span><span class="p">)</span>
+<span class="linenos">25</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  revenue = price × quantity × seasonality&quot;</span><span class="p">)</span>
+<span class="linenos">26</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;           - 0.5 × discount × price × quantity + noise&quot;</span><span class="p">)</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+<span class="linenos">29</span>    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">30</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="c1"># Discover features</span>
+<span class="linenos">33</span><span class="n">synth</span> <span class="o">=</span> <span class="n">FeatureSynthesizer</span><span class="p">(</span>
+<span class="linenos">34</span>    <span class="n">n_features</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+<span class="linenos">35</span>    <span class="n">population_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="linenos">36</span>    <span class="n">generations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+<span class="linenos">37</span>    <span class="n">fitness</span><span class="o">=</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span>
+<span class="linenos">38</span>    <span class="n">parsimony_coefficient</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+<span class="linenos">39</span>    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="linenos">40</span><span class="p">)</span>
+<span class="linenos">41</span>
+<span class="linenos">42</span><span class="n">X_train_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="linenos">43</span><span class="n">X_test_aug</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="method-1-simple-feature-inspection">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Method 1: Simple Feature Inspection</a><a class="headerlink" href="#method-1-simple-feature-inspection" title="Link to this heading"><span>#</span></a></h2>
+<p>The easiest way to understand discovered features is to <strong>just read them</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">programs</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">get_programs</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All discovered features:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">):</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span>
+    <span class="n">fitness</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;fitness&#39;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">expr</span><span class="si">:</span><span class="s2">50s</span><span class="si">}</span><span class="s2"> (fitness=</span><span class="si">{</span><span class="n">fitness</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      depth=</span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2">, nodes=</span><span class="si">{</span><span class="n">nodes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>All discovered features:
+------------------------------------------------------------
+ 1. price * quantity                                  (fitness=1234.56)
+       depth=2, nodes=3
+ 2. price * quantity * seasonality                   (fitness=987.65)
+       depth=3, nodes=5
+ 3. discount * price * quantity                       (fitness=1456.78)
+       depth=3, nodes=5
+ 4. square(price)                                    (fitness=2345.67)
+       depth=2, nodes=2
+...
+</pre></div>
+</div>
+<p><strong>What to look for:</strong></p>
+<ul class="simple">
+<li><p><strong>Familiar patterns</strong>: Interactions (×), polynomials (^2), trigonometric (sin, cos)</p></li>
+<li><p><strong>Domain logic</strong>: Features that make business sense</p></li>
+<li><p><strong>Surprises</strong>: Unexpected relationships (potential insights or errors)</p></li>
+</ul>
+</section>
+<section id="method-2-individual-feature-evaluation">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Method 2: Individual Feature Evaluation</a><a class="headerlink" href="#method-2-individual-feature-evaluation" title="Link to this heading"><span>#</span></a></h2>
+<p>Test each feature individually to see which are actually useful:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">featuristic</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Testing each feature individually:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+    <span class="c1"># Get the synthesized feature</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span>
+    <span class="n">feat_train</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X_train</span><span class="p">)</span>
+    <span class="n">feat_test</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># Train linear model with just this feature</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+    <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">feat_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">feat_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: R² = </span><span class="si">{</span><span class="n">r2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  |  </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Testing each feature individually:
+------------------------------------------------------------
+  Feature 1: R² = 0.7234  |  price * quantity
+  Feature 2: R² = 0.8912  |  price * quantity * seasonality
+  Feature 3: R² = 0.6543  |  discount * price * quantity
+  Feature 4: R² = 0.1234  |  square(price)
+  Feature 5: R² = 0.0456  |  sqrt(quantity)
+</pre></div>
+</div>
+<p><strong>Interpretation:</strong></p>
+<ul class="simple">
+<li><p>Feature 2 is the <strong>most predictive</strong> (R² = 0.89) - it matches the true relationship!</p></li>
+<li><p>Features 1 and 3 are also useful</p></li>
+<li><p>Features 4 and 5 add little value</p></li>
+</ul>
+</section>
+<section id="method-3-correlation-analysis">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Method 3: Correlation Analysis</a><a class="headerlink" href="#method-3-correlation-analysis" title="Link to this heading"><span>#</span></a></h2>
+<p>Calculate correlation between each feature and the target:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all synthesized features</span>
+<span class="n">all_features_train</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">all_features_test</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">programs</span><span class="p">:</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span>
+    <span class="n">feat_train</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X_train</span><span class="p">)</span>
+    <span class="n">feat_test</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+    <span class="n">all_features_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat_train</span><span class="p">)</span>
+    <span class="n">all_features_test</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat_test</span><span class="p">)</span>
+    <span class="n">feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">])</span>
+
+<span class="n">all_features_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">all_features_train</span><span class="p">)</span>
+<span class="n">all_features_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">all_features_test</span><span class="p">)</span>
+
+<span class="c1"># Calculate correlation with target</span>
+<span class="n">correlations</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">all_features_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">all_features_train</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">y_train</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">correlations</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">corr</span><span class="p">))</span>
+
+<span class="c1"># Sort by absolute correlation</span>
+<span class="n">correlations</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Top 10 features by correlation with target:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">corr</span> <span class="ow">in</span> <span class="n">correlations</span><span class="p">[:</span><span class="mi">10</span><span class="p">]:</span>
+    <span class="n">feat_name</span> <span class="o">=</span> <span class="n">feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">corr</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">  |  </span><span class="si">{</span><span class="n">feat_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical Output:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Top 10 features by correlation with target:
+------------------------------------------------------------
+  +0.9456  |  price * quantity * seasonality
+  +0.8512  |  price * quantity
+  -0.7823  |  discount * price * quantity
+  +0.6543  |  price * seasonality
+  +0.5234  |  quantity * seasonality
+...
+</pre></div>
+</div>
+<p><strong>What correlation tells you:</strong></p>
+<ul class="simple">
+<li><p><strong>Strength</strong>: How predictive is the feature?</p></li>
+<li><p><strong>Direction</strong>: Positive correlation (feature increases, target increases) or negative</p></li>
+<li><p><strong>Ranking</strong>: Which features are most important?</p></li>
+</ul>
+</section>
+<section id="method-4-model-based-interpretation">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Method 4: Model-Based Interpretation</a><a class="headerlink" href="#method-4-model-based-interpretation" title="Link to this heading"><span>#</span></a></h2>
+<p>Train a model on all features and examine coefficients:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="c1"># Train model on all synthesized features</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">all_features_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Get coefficients</span>
+<span class="n">coefs</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">coef_</span>
+<span class="n">intercept</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">intercept_</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Learned model:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  y = &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">terms</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coefs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coef</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">:</span>  <span class="c1"># Only show significant terms</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span> <span class="k">if</span> <span class="n">coef</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sign</span><span class="si">}{</span><span class="n">coef</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">feature_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">     + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">terms</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  + </span><span class="si">{</span><span class="n">intercept</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Show most important features</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Features with largest absolute coefficients:&quot;</span><span class="p">)</span>
+<span class="n">coefs_with_abs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coefs</span><span class="p">)]</span>
+<span class="n">coefs_with_abs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">abs_coef</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="n">coefs_with_abs</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">abs_coef</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Interpretation:</strong></p>
+<ul class="simple">
+<li><p>Coefficients show <strong>how much</strong> each feature contributes</p></li>
+<li><p>Large absolute value = important feature</p></li>
+<li><p>Sign shows direction (positive or negative relationship)</p></li>
+</ul>
+</section>
+<section id="method-5-domain-knowledge-validation">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Method 5: Domain Knowledge Validation</a><a class="headerlink" href="#method-5-domain-knowledge-validation" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Most important method</strong>: Use your domain expertise to validate features</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validating against domain knowledge:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">We know the true relationship involves:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  • price × quantity (multiplicative)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  • seasonality effect&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  • discount impact</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Find features that match these patterns</span>
+<span class="n">found_price_qty</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">found_seasonality</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">found_discount</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">):</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Check for patterns</span>
+    <span class="k">if</span> <span class="s1">&#39;price&#39;</span> <span class="ow">in</span> <span class="n">expr</span> <span class="ow">and</span> <span class="s1">&#39;quantity&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✅ Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Contains price × quantity&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">found_price_qty</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="s1">&#39;seasonality&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✅ Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Contains seasonality&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">found_seasonality</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="s1">&#39;discount&#39;</span> <span class="ow">in</span> <span class="n">expr</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✅ Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Contains discount&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">found_discount</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Validation Summary:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Found price × quantity:  </span><span class="si">{</span><span class="n">found_price_qty</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Found seasonality:        </span><span class="si">{</span><span class="n">found_seasonality</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Found discount:          </span><span class="si">{</span><span class="n">found_discount</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Why this works:</strong></p>
+<ul class="simple">
+<li><p>You understand your domain</p></li>
+<li><p>You know what relationships <em>should</em> exist</p></li>
+<li><p>You can catch errors or unexpected patterns</p></li>
+<li><p>You can explain features to stakeholders</p></li>
+</ul>
+</section>
+<section id="method-6-visualization">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Method 6: Visualization</a><a class="headerlink" href="#method-6-visualization" title="Link to this heading"><span>#</span></a></h2>
+<p>Visual validation helps understand feature behavior:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Create a figure with subplots</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="c1"># Plot 1: Actual vs Predicted</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">all_features_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">all_features_test</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">y_test</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">y_test</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
+                 <span class="p">[</span><span class="n">y_test</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">y_test</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
+                 <span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Perfect prediction&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Actual Revenue&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Predicted Revenue&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Actual vs Predicted&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Plot 2: Residuals</span>
+<span class="n">residuals</span> <span class="o">=</span> <span class="n">y_test</span> <span class="o">-</span> <span class="n">y_pred</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">residuals</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Predicted Revenue&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Residual Plot&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Plot 3: Top feature vs target</span>
+<span class="n">top_idx</span> <span class="o">=</span> <span class="n">correlations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">all_features_test</span><span class="p">[:,</span> <span class="n">top_idx</span><span class="p">],</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">feature_names</span><span class="p">[</span><span class="n">top_idx</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Revenue&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Best Feature vs Target&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Plot 4: Feature distribution</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">all_features_test</span><span class="p">[:,</span> <span class="n">top_idx</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">feature_names</span><span class="p">[</span><span class="n">top_idx</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Feature Distribution&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;feature_interpretation.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved visualization to &#39;feature_interpretation.png&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What to look for:</strong></p>
+<ul class="simple">
+<li><p><strong>Actual vs Predicted</strong>: Points should cluster around the diagonal</p></li>
+<li><p><strong>Residuals</strong>: Should be randomly scattered (no patterns)</p></li>
+<li><p><strong>Feature vs Target</strong>: Should show clear relationship</p></li>
+<li><p><strong>Distribution</strong>: Understand feature range and spread</p></li>
+</ul>
+</section>
+<section id="practical-tips">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Practical Tips</a><a class="headerlink" href="#practical-tips" title="Link to this heading"><span>#</span></a></h2>
+<section id="start-simple">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">1. <strong>Start Simple</strong></a><a class="headerlink" href="#start-simple" title="Link to this heading"><span>#</span></a></h3>
+<p>Read through all discovered features. Look for:</p>
+<ul class="simple">
+<li><p>Familiar mathematical patterns (polynomials, interactions)</p></li>
+<li><p>Domain-relevant combinations</p></li>
+<li><p>Surprising or unexpected expressions</p></li>
+</ul>
+</section>
+<section id="evaluate-individually">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">2. <strong>Evaluate Individually</strong></a><a class="headerlink" href="#evaluate-individually" title="Link to this heading"><span>#</span></a></h3>
+<p>Test each feature alone with a simple model:</p>
+<ul class="simple">
+<li><p>High R² → Feature is very predictive</p></li>
+<li><p>Low R² → Feature may not be useful alone (but might help in combination)</p></li>
+</ul>
+</section>
+<section id="check-for-redundancy">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">3. <strong>Check for Redundancy</strong></a><a class="headerlink" href="#check-for-redundancy" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p>High correlation between features?</p></li>
+<li><p>Similar expressions (e.g., x² and x*x)?</p></li>
+<li><p>Consider removing redundant features to reduce overfitting</p></li>
+</ul>
+</section>
+<section id="validate-with-domain-knowledge">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">4. <strong>Validate with Domain Knowledge</strong></a><a class="headerlink" href="#validate-with-domain-knowledge" title="Link to this heading"><span>#</span></a></h3>
+<ul class="simple">
+<li><p>Do features make business sense?</p></li>
+<li><p>Can you explain them to stakeholders?</p></li>
+<li><p>Do they match expected relationships?</p></li>
+</ul>
+</section>
+<section id="use-feature-importance">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">5. <strong>Use Feature Importance</strong></a><a class="headerlink" href="#use-feature-importance" title="Link to this heading"><span>#</span></a></h3>
+<p>Train final model and extract feature importances:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">all_features_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">importances</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span>
+
+<span class="c1"># Show top 5</span>
+<span class="n">top_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">top_idx</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">importances</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="document-your-findings">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">6. <strong>Document Your Findings</strong></a><a class="headerlink" href="#document-your-findings" title="Link to this heading"><span>#</span></a></h3>
+<p>Keep a record of:</p>
+<ul class="simple">
+<li><p>What features were discovered</p></li>
+<li><p>Which features are most important</p></li>
+<li><p>What they mean in domain terms</p></li>
+<li><p>Any surprises or insights</p></li>
+</ul>
+</section>
+</section>
+<section id="common-patterns">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Common Patterns</a><a class="headerlink" href="#common-patterns" title="Link to this heading"><span>#</span></a></h2>
+<section id="what-features-mean">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">What Features Mean</a><a class="headerlink" href="#what-features-mean" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Interactions:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>price * quantity           → Revenue increases multiplicatively
+x1 * x2                   → Two features work together
+sin(x1) * x2              → Complex interaction
+</pre></div>
+</div>
+<p><strong>Polynomials:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>square(x)                  → Quadratic relationship (U-shape)
+x^3                        → Cubic relationship (S-shape)
+abs(x)                     → V-shape (symmetric around zero)
+</pre></div>
+</div>
+<p><strong>Transformations:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>log(x + 1)                 → Diminishing returns
+sqrt(x)                    → Square root relationship
+exp(x)                     → Exponential growth
+</pre></div>
+</div>
+<p><strong>Trigonometric:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sin(x)                     → Periodic/cyclical pattern
+cos(x)                     → Periodic/cyclical pattern (shifted)
+</pre></div>
+</div>
+</section>
+<section id="red-flags">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Red Flags</a><a class="headerlink" href="#red-flags" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Be suspicious of:</strong></p>
+<ul class="simple">
+<li><p><strong>Overly complex features</strong>: Deep trees with many nodes may be overfitting</p></li>
+<li><p><strong>Constants</strong>: Features like “5.234” alone don’t make sense</p></li>
+<li><p><strong>Duplicate features</strong>: Same expression multiple times</p></li>
+<li><p><strong>Unfamiliar functions</strong>: If you don’t recognize a pattern, investigate</p></li>
+</ul>
+<p>Example: Red Flag Detection</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prog</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">programs</span><span class="p">):</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">]</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">prog</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Red flags</span>
+    <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">6</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️  Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Very deep tree (depth=</span><span class="si">{</span><span class="n">depth</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     May be overfitting!&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">nodes</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️  Feature </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: Many nodes (nodes=</span><span class="si">{</span><span class="n">nodes</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     Consider increasing parsimony_coefficient&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="real-world-example">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Real-World Example</a><a class="headerlink" href="#real-world-example" title="Link to this heading"><span>#</span></a></h2>
+<section id="customer-churn-prediction">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Customer Churn Prediction</a><a class="headerlink" href="#customer-churn-prediction" title="Link to this heading"><span>#</span></a></h3>
+<p><strong>Discovered features:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1. account_age * monthly_spend          R² = 0.7234
+2. support_calls / account_age          R² = 0.6543
+3. sqrt(monthly_spend)                   R² = 0.5821
+4. log(account_age + 1) * churn_score    R² = 0.5234
+</pre></div>
+</div>
+<p><strong>Interpretation:</strong></p>
+<ul class="simple">
+<li><p><strong>Feature 1</strong>: High-value, long-term customers are most valuable</p></li>
+<li><p><strong>Feature 2</strong>: Frequent support calls relative to account age → churn risk</p></li>
+<li><p><strong>Feature 3</strong>: Diminishing returns on monthly spend</p></li>
+<li><p><strong>Feature 4</strong>: Account age matters logarithmically (new customers matter most)</p></li>
+</ul>
+<p><strong>Actionable insights:</strong></p>
+<ul class="simple">
+<li><p>Focus retention on high-value, long-term customers</p></li>
+<li><p>Investigate why some customers need more support</p></li>
+<li><p>Prioritize new customer onboarding</p></li>
+</ul>
+</section>
+</section>
+<section id="best-practices-summary">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Best Practices Summary</a><a class="headerlink" href="#best-practices-summary" title="Link to this heading"><span>#</span></a></h2>
+<p>✅ <strong>DO:</strong></p>
+<ul class="simple">
+<li><p>Read all discovered features</p></li>
+<li><p>Test features individually</p></li>
+<li><p>Use domain knowledge to validate</p></li>
+<li><p>Visualize feature behavior</p></li>
+<li><p>Document findings</p></li>
+<li><p>Check for redundancy</p></li>
+</ul>
+<p>❌ <strong>DON’T:</strong></p>
+<ul class="simple">
+<li><p>Trust the model blindly</p></li>
+<li><p>Ignore features you don’t understand</p></li>
+<li><p>Skip validation</p></li>
+<li><p>Forget to consider business context</p></li>
+<li><p>Overcomplicate interpretations</p></li>
+</ul>
+</section>
+<section id="what-s-next">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">What’s Next</a><a class="headerlink" href="#what-s-next" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="linear_regression_power.html"><span class="doc">Linear Regression Power</span></a> - Core value proposition</p></li>
+<li><p><a class="reference internal" href="friedman_benchmark.html"><span class="doc">Friedman #1 Benchmark</span></a> - Classic symbolic regression test</p></li>
+<li><p><a class="reference internal" href="classification.html"><span class="doc">Classification with FeatureSynthesizer</span></a> - Feature synthesis for classification</p></li>
+<li><p><span class="xref std std-doc">../concepts/genetic_feature_synthesis</span> - How evolution works</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Key takeaways:</strong></p>
+<ol class="arabic simple">
+<li><p>FeatureSynthesizer creates <strong>interpretable features</strong> - not black boxes</p></li>
+<li><p><strong>Multiple methods</strong> available to understand features</p></li>
+<li><p><strong>Domain knowledge</strong> is your most powerful tool</p></li>
+<li><p><strong>Validation</strong> is essential - trust but verify</p></li>
+<li><p><strong>Visualization</strong> helps communicate findings</p></li>
+</ol>
+<p><strong>The advantage:</strong> You can explain exactly what your model learned, something impossible with black-box approaches.</p>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-key-advantage">The Key Advantage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-dataset">Example Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-1-simple-feature-inspection">Method 1: Simple Feature Inspection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-2-individual-feature-evaluation">Method 2: Individual Feature Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-3-correlation-analysis">Method 3: Correlation Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-4-model-based-interpretation">Method 4: Model-Based Interpretation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-5-domain-knowledge-validation">Method 5: Domain Knowledge Validation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-6-visualization">Method 6: Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-tips">Practical Tips</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#start-simple">1. <strong>Start Simple</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluate-individually">2. <strong>Evaluate Individually</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-for-redundancy">3. <strong>Check for Redundancy</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-with-domain-knowledge">4. <strong>Validate with Domain Knowledge</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-feature-importance">5. <strong>Use Feature Importance</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#document-your-findings">6. <strong>Document Your Findings</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-patterns">Common Patterns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-features-mean">What Features Mean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#red-flags">Red Flags</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-example">Real-World Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#customer-churn-prediction">Customer Churn Prediction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices-summary">Best Practices Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-next">What’s Next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/interpretability.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>

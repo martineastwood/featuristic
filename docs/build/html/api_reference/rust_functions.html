@@ -1,0 +1,704 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Rust Functions &#8212; Featuristic  documentation</title>
+
+
+
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/rust_functions';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Code Examples" href="../examples/running_examples.html" />
+    <link rel="prev" title="High-Level API" href="high_level_api.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+
+
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+
+
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  <div id="pst-scroll-pixel-helper"></div>
+
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+
+  <dialog id="pst-search-dialog">
+
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+
+
+  <div class=" navbar-header-items__start">
+
+      <div class="navbar-item">
+
+
+
+
+
+<a class="navbar-brand logo" href="../index.html">
+
+
+
+
+
+
+
+
+
+
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Featuristic  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Featuristic  documentation - Home"/>
+
+
+</a></div>
+
+  </div>
+
+  <div class=" navbar-header-items">
+
+
+    <div class="navbar-header-items__end">
+
+        <div class="navbar-item navbar-persistent--container">
+
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+
+
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+    </div>
+
+  </div>
+
+
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+
+
+
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+
+</div>
+
+    </header>
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+
+
+
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+
+
+
+  <div class="sidebar-header-items sidebar-primary__section">
+
+
+
+
+      <div class="sidebar-header-items__end">
+
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+
+
+
+
+
+
+
+
+          <a href="https://github.com/martineastwood/featuristic" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+
+      </div>
+
+  </div>
+
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quick Start Guide</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_synthesis.html">Feature Synthesis Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/feature_selection.html">Feature Selection Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/linear_regression_power.html">Linear Regression Power</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="high_level_api.html">High-Level API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Rust Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tree-operations">Tree Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-selection">Feature Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-functions">Utility Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tree-representation">Tree Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See Also</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/running_examples.html">Code Examples</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Development</a></li>
+</ul>
+</div>
+    </div>
+
+
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+
+      <main id="main-content" class="bd-main" role="main">
+
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+
+    <div class="header-article-items__start">
+
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Rust Functions</span></li>
+  </ul>
+</nav>
+</div>
+
+    </div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="searchbox"></div>
+                <article class="bd-article">
+
+  <section id="rust-functions">
+<h1>Rust Functions<a class="headerlink" href="#rust-functions" title="Link to this heading"><span>#</span></a></h1>
+<p>Low-level Rust functions for symbolic tree operations and feature selection.</p>
+<p>These functions are implemented in Rust for performance (5-20x speedup) and exposed to Python via PyO3 bindings. Most users don’t need to use these directly—use <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSelector</span></code> instead.</p>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tree-operations" id="id1">Tree Operations</a></p></li>
+<li><p><a class="reference internal" href="#feature-selection" id="id2">Feature Selection</a></p></li>
+<li><p><a class="reference internal" href="#utility-functions" id="id3">Utility Functions</a></p></li>
+<li><p><a class="reference internal" href="#usage-examples" id="id4">Usage Examples</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creating-random-trees" id="id5">Creating Random Trees</a></p></li>
+<li><p><a class="reference internal" href="#evaluating-trees" id="id6">Evaluating Trees</a></p></li>
+<li><p><a class="reference internal" href="#tree-properties" id="id7">Tree Properties</a></p></li>
+<li><p><a class="reference internal" href="#converting-trees-to-strings" id="id8">Converting Trees to Strings</a></p></li>
+<li><p><a class="reference internal" href="#feature-selection-with-mrmr" id="id9">Feature Selection with mRMR</a></p></li>
+<li><p><a class="reference internal" href="#advanced-custom-genetic-programming" id="id10">Advanced: Custom Genetic Programming</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#tree-representation" id="id11">Tree Representation</a></p></li>
+<li><p><a class="reference internal" href="#performance-considerations" id="id12">Performance Considerations</a></p></li>
+<li><p><a class="reference internal" href="#see-also" id="id13">See Also</a></p></li>
+</ul>
+</nav>
+<section id="tree-operations">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Tree Operations</a><a class="headerlink" href="#tree-operations" title="Link to this heading"><span>#</span></a></h2>
+</section>
+<section id="feature-selection">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Feature Selection</a><a class="headerlink" href="#feature-selection" title="Link to this heading"><span>#</span></a></h2>
+</section>
+<section id="utility-functions">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Utility Functions</a><a class="headerlink" href="#utility-functions" title="Link to this heading"><span>#</span></a></h2>
+</section>
+<section id="usage-examples">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Usage Examples</a><a class="headerlink" href="#usage-examples" title="Link to this heading"><span>#</span></a></h2>
+<section id="creating-random-trees">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Creating Random Trees</a><a class="headerlink" href="#creating-random-trees" title="Link to this heading"><span>#</span></a></h3>
+<p>Generate random symbolic trees for custom genetic programming:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">featuristic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Generate a random tree</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">random_tree</span><span class="p">(</span>
+    <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;sin&quot;</span><span class="p">,</span> <span class="s2">&quot;cos&quot;</span><span class="p">],</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="s2">&quot;x3&quot;</span><span class="p">],</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># tree = {</span>
+<span class="c1">#     &#39;function&#39;: &#39;add&#39;,</span>
+<span class="c1">#     &#39;children&#39;: [</span>
+<span class="c1">#         {&#39;function&#39;: &#39;mul&#39;, &#39;children&#39;: [...]},</span>
+<span class="c1">#         {&#39;function&#39;: &#39;sin&#39;, &#39;children&#39;: [...]}</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
+</section>
+<section id="evaluating-trees">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Evaluating Trees</a><a class="headerlink" href="#evaluating-trees" title="Link to this heading"><span>#</span></a></h3>
+<p>Evaluate a symbolic tree on data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Create some data</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span>
+    <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">],</span>
+    <span class="s1">&#39;x3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="c1"># Evaluate tree</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="c1"># result = array([1.234, 5.678, 9.012])</span>
+</pre></div>
+</div>
+</section>
+<section id="tree-properties">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Tree Properties</a><a class="headerlink" href="#tree-properties" title="Link to this heading"><span>#</span></a></h3>
+<p>Get tree properties for analysis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">depth</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">tree_depth</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+<span class="c1"># depth = 3</span>
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">tree_node_count</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+<span class="c1"># nodes = 7</span>
+</pre></div>
+</div>
+</section>
+<section id="converting-trees-to-strings">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Converting Trees to Strings</a><a class="headerlink" href="#converting-trees-to-strings" title="Link to this heading"><span>#</span></a></h3>
+<p>Convert tree to human-readable formula:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple string conversion</span>
+<span class="n">expr</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">tree_to_string</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+<span class="c1"># expr = &quot;(x1 * x2) + sin(x3)&quot;</span>
+
+<span class="c1"># Custom format strings for features</span>
+<span class="n">expr_custom</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">tree_to_string_with_format</span><span class="p">(</span>
+    <span class="n">tree</span><span class="p">,</span>
+    <span class="n">feature_format</span><span class="o">=</span><span class="s2">&quot;Feature(</span><span class="si">{}</span><span class="s2">)&quot;</span>
+<span class="p">)</span>
+<span class="c1"># expr_custom = &quot;(Feature(0) * Feature(1)) + sin(Feature(2))&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="feature-selection-with-mrmr">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Feature Selection with mRMR</a><a class="headerlink" href="#feature-selection-with-mrmr" title="Link to this heading"><span>#</span></a></h3>
+<p>Fast Maximum Relevance Minimum Redundancy feature selection:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Prepare data</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># Your features</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>     <span class="c1"># Your target</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># Select top 10 features using mRMR</span>
+<span class="n">selected</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">mrmr_select</span><span class="p">(</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="n">K</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="n">feature_names</span><span class="p">,</span>
+    <span class="n">redundancy_penalty</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected features: </span><span class="si">{</span><span class="n">selected</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># [&#39;feature_5&#39;, &#39;feature_12&#39;, &#39;feature_23&#39;, ...]</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">X</span></code> (array-like) - Feature matrix (n_samples, n_features)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y</span></code> (array-like) - Target vector (n_samples,)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">K</span></code> (int) - Number of features to select</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_names</span></code> (list) - Names of features</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">redundancy_penalty</span></code> (float) - Penalty for redundancy (default: 1.0)</p></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<p>List of selected feature names.</p>
+</section>
+<section id="advanced-custom-genetic-programming">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Advanced: Custom Genetic Programming</a><a class="headerlink" href="#advanced-custom-genetic-programming" title="Link to this heading"><span>#</span></a></h3>
+<p>Use low-level functions to implement custom genetic programming:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">featuristic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Create initial population</span>
+<span class="n">population</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">featuristic</span><span class="o">.</span><span class="n">random_tree</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">functions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">],</span> <span class="n">feature_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Evaluate fitness</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fitness</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">evaluate_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_pred</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># MSE</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">fitness</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="n">population</span><span class="p">]</span>
+
+<span class="c1"># Select best</span>
+<span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<span class="n">best_tree</span> <span class="o">=</span> <span class="n">population</span><span class="p">[</span><span class="n">best_idx</span><span class="p">]</span>
+<span class="n">best_expr</span> <span class="o">=</span> <span class="n">featuristic</span><span class="o">.</span><span class="n">tree_to_string</span><span class="p">(</span><span class="n">best_tree</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best expression: </span><span class="si">{</span><span class="n">best_expr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fitness: </span><span class="si">{</span><span class="n">scores</span><span class="p">[</span><span class="n">best_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> For most use cases, use <code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code> instead of implementing custom GP.</p>
+</section>
+</section>
+<section id="tree-representation">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Tree Representation</a><a class="headerlink" href="#tree-representation" title="Link to this heading"><span>#</span></a></h2>
+<p>Trees are represented as nested dictionaries:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span>           <span class="c1"># Function name (None for leaf nodes)</span>
+    <span class="s1">&#39;children&#39;</span><span class="p">:</span> <span class="p">[</span>                 <span class="c1"># List of child trees</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;mul&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;children&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>  <span class="c1"># Feature leaf</span>
+                <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>   <span class="c1"># Feature leaf</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># Leaf node</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">1.5</span>           <span class="c1"># Constant leaf</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Node Types:</strong></p>
+<ul class="simple">
+<li><p><strong>Function nodes</strong>: Have <code class="docutils literal notranslate"><span class="pre">function</span></code> and <code class="docutils literal notranslate"><span class="pre">children</span></code> keys</p></li>
+<li><p><strong>Feature nodes</strong>: Have <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">index</span></code> keys (input features)</p></li>
+<li><p><strong>Constant nodes</strong>: Have <code class="docutils literal notranslate"><span class="pre">value</span></code> key (numeric constants)</p></li>
+</ul>
+<p><strong>Supported Functions:</strong></p>
+<ul class="simple">
+<li><p>Arithmetic: <code class="docutils literal notranslate"><span class="pre">add</span></code>, <code class="docutils literal notranslate"><span class="pre">sub</span></code>, <code class="docutils literal notranslate"><span class="pre">mul</span></code>, <code class="docutils literal notranslate"><span class="pre">div</span></code></p></li>
+<li><p>Trigonometric: <code class="docutils literal notranslate"><span class="pre">sin</span></code>, <code class="docutils literal notranslate"><span class="pre">cos</span></code>, <code class="docutils literal notranslate"><span class="pre">tan</span></code></p></li>
+<li><p>Other: <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">abs</span></code>, <code class="docutils literal notranslate"><span class="pre">neg</span></code>, <code class="docutils literal notranslate"><span class="pre">square</span></code>, <code class="docutils literal notranslate"><span class="pre">cube</span></code></p></li>
+</ul>
+</section>
+<section id="performance-considerations">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Performance Considerations</a><a class="headerlink" href="#performance-considerations" title="Link to this heading"><span>#</span></a></h2>
+<p><strong>Why Rust?</strong></p>
+<ul class="simple">
+<li><p><strong>Speed</strong>: 5-20x faster than pure Python</p></li>
+<li><p><strong>Parallelization</strong>: Automatic parallelization with Rayon</p></li>
+<li><p><strong>Memory Safety</strong>: Rust prevents common memory errors</p></li>
+</ul>
+<p><strong>When to Use Low-Level Functions:</strong></p>
+<ul class="simple">
+<li><p><strong>Use high-level API</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code>) for:
+* Standard feature synthesis workflows
+* Scikit-learn pipeline integration
+* Most use cases</p></li>
+<li><p><strong>Use low-level functions</strong> for:
+* Custom genetic programming algorithms
+* Research and experimentation
+* Understanding tree structure
+* Performance optimization</p></li>
+</ul>
+<p><strong>Performance Tips:</strong></p>
+<ul class="simple">
+<li><p>Evaluate multiple trees in a batch (handled by Population class)</p></li>
+<li><p>Use numpy arrays for data (not pandas DataFrames)</p></li>
+<li><p>Pre-allocate result arrays when possible</p></li>
+</ul>
+</section>
+<section id="see-also">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">See Also</a><a class="headerlink" href="#see-also" title="Link to this heading"><span>#</span></a></h2>
+<ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code> - Population of trees for genetic programming</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSynthesizer</span></code> - High-level feature synthesis</p></li>
+<li><p><a class="reference internal" href="rust_classes.html"><span class="doc">Rust Classes</span></a> - Rust classes documentation</p></li>
+<li><p><span class="xref std std-doc">../concepts/genetic_feature_synthesis</span> - Genetic programming theory</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+
+
+
+
+
+                <footer class="prev-next-footer d-print-none">
+
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="high_level_api.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">High-Level API</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../examples/running_examples.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Code Examples</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+
+            </div>
+
+
+
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tree-operations">Tree Operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-selection">Feature Selection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-functions">Utility Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-examples">Usage Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-random-trees">Creating Random Trees</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-trees">Evaluating Trees</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tree-properties">Tree Properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-trees-to-strings">Converting Trees to Strings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-selection-with-mrmr">Feature Selection with mRMR</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-custom-genetic-programming">Advanced: Custom Genetic Programming</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tree-representation">Tree Representation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations">Performance Considerations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api_reference/rust_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+
+
+          </div>
+          <footer class="bd-footer-content">
+
+          </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+
+    <div class="footer-items__start">
+
+        <div class="footer-item">
+
+  <p class="copyright">
+
+      © Copyright 2025, Martin Eastwood.
+      <br/>
+
+  </p>
+</div>
+
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+
+    </div>
+
+
+
+    <div class="footer-items__end">
+
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+
+    </div>
+
+</div>
+
+  </footer>
+  </body>
+</html>
