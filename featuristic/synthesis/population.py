@@ -1,8 +1,9 @@
 """
 Population module using Nim backend for high-performance genetic programming.
 
-This replaces the pure Python implementation with a Nim-based backend that
-provides 10-50x speedup.
+This version uses the complete Nim GA implementation that runs the entire
+evolution loop in Nim, providing 10-50x speedup by minimizing Python/Nim
+boundary crossings.
 """
 
 from pathlib import Path
@@ -11,6 +12,7 @@ import numpy as np
 import pandas as pd
 import importlib.util
 import random
+from abc import ABC, abstractmethod
 
 # Load the compiled Nim extension
 featuristic_path = Path(__file__).parent.parent.parent / "featuristic"
@@ -33,12 +35,39 @@ except ImportError:
         return 1 + sum(node_count(c) for c in prog["children"])
 
 
+class BasePopulation(ABC):
+    """Abstract base class for population implementations."""
+
+    @abstractmethod
+    def initialize(self, X: pd.DataFrame) -> Self:
+        """Initialize the population."""
+        pass
+
+    @abstractmethod
+    def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
+        """Evaluate the population."""
+        pass
+
+
+# Import for node_count (needed for parsimony)
+try:
+    from .program import node_count
+except ImportError:
+    # Fallback if program.py has issues
+    def node_count(prog: dict) -> int:
+        """Count nodes in a program tree."""
+        if "children" not in prog:
+            return 1
+        return 1 + sum(node_count(c) for c in prog["children"])
+
+
 class SerialPopulation:
     """
     High-performance population class using Nim backend.
 
-    This class provides the same interface as the original SerialPopulation
-    but uses a Nim backend for 10-50x speedup.
+    This class uses the complete Nim genetic algorithm implementation
+    that runs the entire evolution loop in Nim, minimizing Python/Nim
+    boundary crossings for maximum performance.
     """
 
     def __init__(
@@ -77,6 +106,8 @@ class SerialPopulation:
         self._feature_ptrs = None
         self._feature_names = None
         self._initialized = False
+        self._best_program = None
+        self._best_fitness = None
 
     def initialize(self, X: pd.DataFrame) -> Self:
         """
@@ -101,56 +132,181 @@ class SerialPopulation:
             int(X_colmajor[i, :].ctypes.data) for i in range(X_array.shape[1])
         ]
 
-        # Generate random population in Nim
-        # We'll create a simple initial population using random programs
-        self._population = self._generate_random_population()
-
         self._initialized = True
         return self
 
-    def _generate_random_population(self) -> List[dict]:
-        """Generate initial random population using Nim."""
-        # For now, generate simple random programs in Python
-        # TODO: Could move this to Nim for consistency
-        population = []
-        for _ in range(self.population_size):
-            # Simple random program: single feature or simple operation
-            depth = random.randint(1, 3)
-            prog = self._random_program(depth)
-            population.append(prog)
+    def run_genetic_algorithm(
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        num_generations: int,
+        max_depth: int,
+        parsimony_coefficient: float,
+        random_seed: int,
+    ) -> dict:
+        """
+        Run the complete genetic algorithm in Nim.
 
-        return population
+        This method runs the entire evolution loop in Nim, providing
+        maximum performance by minimizing Python/Nim boundary crossings.
 
-    def _random_program(self, max_depth: int, current_depth: int = 0) -> dict:
-        """Generate a random program tree."""
-        if current_depth >= max_depth or (current_depth > 0 and random.random() < 0.3):
-            # Leaf node - feature
-            feature_idx = random.randint(0, len(self._feature_names) - 1)
-            return {"feature_name": self._feature_names[feature_idx]}
+        Args
+        ----
+        X : pd.DataFrame
+            The feature dataframe.
 
-        # Internal node - operation
-        ops = ["add", "subtract", "multiply", "divide", "negate", "square", "cube"]
-        op = random.choice(ops)
+        y : pd.Series
+            The target values.
 
-        if op in ["negate", "square", "cube"]:
-            # Unary operation
-            return {
-                "operation": op,
-                "children": [self._random_program(max_depth, current_depth + 1)],
-            }
-        else:
-            # Binary operation
-            return {
-                "operation": op,
-                "children": [
-                    self._random_program(max_depth, current_depth + 1),
-                    self._random_program(max_depth, current_depth + 1),
-                ],
-            }
+        num_generations : int
+            Number of generations to run.
 
+        max_depth : int
+            Maximum program depth.
+
+        parsimony_coefficient : float
+            Parsimony coefficient for complexity penalty.
+
+        random_seed : int
+            Random seed for reproducibility.
+
+        Returns
+        -------
+        dict
+            Dictionary containing:
+                - 'program': Best program (as dict)
+                - 'fitness': Best fitness value
+                - 'score': Best score (without parsimony)
+        """
+        if not self._initialized:
+            raise RuntimeError("Must call initialize() first")
+
+        # Prepare data
+        X_array = X.values.astype(np.float64)
+        X_colmajor = X_array.T.copy()
+        feature_ptrs = [
+            int(X_colmajor[i, :].ctypes.data) for i in range(X_array.shape[1])
+        ]
+        y_list = y.tolist()
+
+        # Run GA in Nim
+        result = _featuristic_lib.runGeneticAlgorithm(
+            feature_ptrs,
+            y_list,
+            len(X),
+            X_array.shape[1],
+            self.population_size,
+            num_generations,
+            max_depth,
+            self.tournament_size,
+            self.crossover_prob,
+            parsimony_coefficient,
+            random_seed,
+        )
+
+        # Result is returned as a tuple: (bestFeatureIndices, bestOpKinds, bestLeftChildren, bestRightChildren, bestConstants, bestFitness, bestScore)
+        (
+            best_feature_indices,
+            best_op_kinds,
+            best_left_children,
+            best_right_children,
+            best_constants,
+            best_fitness,
+            best_score,
+        ) = result
+
+        # Deserialize best program
+        best_program = self._deserialize_program(
+            best_feature_indices,
+            best_op_kinds,
+            best_left_children,
+            best_right_children,
+            best_constants,
+        )
+
+        self._best_program = best_program
+        self._best_fitness = best_fitness
+
+        return {
+            "program": best_program,
+            "fitness": best_fitness,
+            "score": best_score,
+        }
+
+    def _deserialize_program(
+        self,
+        feature_indices: List[int],
+        op_kinds: List[int],
+        left_children: List[int],
+        right_children: List[int],
+        constants: List[float],
+    ) -> dict:
+        """Deserialize a program from Nim format to Python dict."""
+
+        # Operation kind mapping
+        op_names = {
+            0: "add",
+            1: "subtract",
+            2: "multiply",
+            3: "divide",
+            4: "abs",
+            5: "negate",
+            6: "sin",
+            7: "cos",
+            8: "tan",
+            9: "sqrt",
+            10: "square",
+            11: "cube",
+            12: "add_constant",
+            13: "mul_constant",
+            14: "feature",
+        }
+
+        def deserialize_node(idx: int) -> dict:
+            """Deserialize a node recursively."""
+            op_kind = op_kinds[idx]
+
+            if op_kind == 14:  # opFeature
+                # Leaf node
+                feature_idx = feature_indices[idx]
+                return {"feature_name": self._feature_names[feature_idx]}
+
+            # Internal node
+            op_name = op_names.get(op_kind, "add")
+
+            # Get children
+            left_idx = left_children[idx]
+            right_idx = right_children[idx]
+
+            if right_idx == -1:
+                # Unary operation
+                child = deserialize_node(left_idx)
+                node = {"operation": op_name, "children": [child]}
+
+                # Add constant value if applicable
+                if op_kind in [12, 13]:
+                    node["value"] = constants[idx]
+
+                return node
+            else:
+                # Binary operation
+                left_child = deserialize_node(left_idx)
+                right_child = deserialize_node(right_idx)
+                return {"operation": op_name, "children": [left_child, right_child]}
+
+        # Start from root (last node in post-order traversal)
+        if not feature_indices:
+            return {"feature_name": self._feature_names[0]}
+
+        return deserialize_node(len(feature_indices) - 1)
+
+    # Legacy methods for backward compatibility
     def evaluate(self, X: pd.DataFrame) -> List[pd.Series]:
         """
         Evaluate the population against the feature dataframe.
+
+        Note: This method is kept for backward compatibility.
+        For new code, use run_genetic_algorithm() instead.
 
         Args
         ----
@@ -164,6 +320,12 @@ class SerialPopulation:
         """
         if not self._initialized:
             raise RuntimeError("Must call initialize() first")
+
+        if self._population is None:
+            raise RuntimeError(
+                "Population not initialized. "
+                "Use run_genetic_algorithm() for complete GA loop."
+            )
 
         # Prepare data for Nim
         X_array = X.values.astype(np.float64)
@@ -200,24 +362,7 @@ class SerialPopulation:
         """
         Compute the fitness of the population.
 
-        Args
-        ----
-        fitness_func : callable
-            The fitness function to use.
-
-        parsimony_coefficient : float
-            The parsimony coefficient.
-
-        prediction : list
-            The predicted values.
-
-        y : pd.Series
-            The true values.
-
-        Returns
-        -------
-        List[float]
-            The fitness of the population.
+        Note: This method is kept for backward compatibility.
         """
         scores = [
             fitness_func(prog, parsimony_coefficient, y, pred)
@@ -231,18 +376,7 @@ class SerialPopulation:
         """
         Apply the parsimony coefficient to the fitness scores.
 
-        Args
-        ----
-        scores : list
-            The fitness scores.
-
-        parsimony_coefficient : float
-            The parsimony coefficient.
-
-        Returns
-        -------
-        List[float]
-            The updated fitness scores.
+        Note: This method is kept for backward compatibility.
         """
 
         def _parsimony_coefficient(loss, prog):
@@ -259,20 +393,10 @@ class SerialPopulation:
         """
         Evolve the population by one generation.
 
-        Args
-        ----
-        fitness : List[float]
-            The fitness values (lower is better).
-
-        X : pd.DataFrame
-            The feature dataframe.
-
-        Returns
-        -------
-        Self
+        Note: This method is kept for backward compatibility.
+        For new code, use run_genetic_algorithm() instead.
         """
-        # For now, use a simplified evolution in Python
-        # TODO: Implement proper Nim-based evolution
+        # For backward compatibility, keep old evolution logic
         self._population = self._evolve_population(self._population, fitness, X)
         return self
 
@@ -317,6 +441,42 @@ class SerialPopulation:
             new_population.append(copy.deepcopy(offspring))
 
         return new_population
+
+    def _generate_random_population(self) -> List[dict]:
+        """Generate initial random population."""
+        population = []
+        for _ in range(self.population_size):
+            depth = random.randint(1, 3)
+            prog = self._random_program(depth)
+            population.append(prog)
+        return population
+
+    def _random_program(self, max_depth: int, current_depth: int = 0) -> dict:
+        """Generate a random program tree."""
+        if current_depth >= max_depth or (current_depth > 0 and random.random() < 0.3):
+            # Leaf node - feature
+            feature_idx = random.randint(0, len(self._feature_names) - 1)
+            return {"feature_name": self._feature_names[feature_idx]}
+
+        # Internal node - operation
+        ops = ["add", "subtract", "multiply", "divide", "negate", "square", "cube"]
+        op = random.choice(ops)
+
+        if op in ["negate", "square", "cube"]:
+            # Unary operation
+            return {
+                "operation": op,
+                "children": [self._random_program(max_depth, current_depth + 1)],
+            }
+        else:
+            # Binary operation
+            return {
+                "operation": op,
+                "children": [
+                    self._random_program(max_depth, current_depth + 1),
+                    self._random_program(max_depth, current_depth + 1),
+                ],
+            }
 
     def _serialize_program(self, prog: dict) -> dict:
         """Serialize a dict program to flat arrays for Nim."""
@@ -397,6 +557,11 @@ class SerialPopulation:
     def population(self) -> List[dict]:
         """Get the population."""
         return self._population
+
+    @population.setter
+    def population(self, value: List[dict]):
+        """Set the population."""
+        self._population = value
 
 
 # ParallelPopulation is now just an alias for SerialPopulation

@@ -37,5 +37,6 @@ from .synthesis.symbolic_functions import (
     CustomSymbolicFunction,
     list_symbolic_functions,
 )
-from .selection.genetic_feature_selector import GeneticFeatureSelector
+
+# from .selection.genetic_feature_selector import GeneticFeatureSelector  # Temporarily disabled
 from .version import __version__
