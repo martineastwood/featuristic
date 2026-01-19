@@ -133,3 +133,18 @@ homepage = "https://www.featuristic.co.uk"
 # The source code repository, don't use this if your homepage
 # is the repo
 repository = "https://github.com/martineastwood/featuristic.git"
+
+[build-system]
+requires = ["nuwa-build"]
+build-backend = "nuwa_build"
+
+[tool.nuwa]
+nim-source = "nim"
+module-name = "featuristic"
+lib-name = "featuristic_lib"
+entry-point = "featuristic_lib.nim"
+nimble-deps = ["nimpy", "nuwa_sdk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = "."

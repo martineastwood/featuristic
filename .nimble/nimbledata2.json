@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "reverseDeps": {
+    "nimpy": {
+      "0.2.1": {
+        "0e88588fb093806b3e2d9f2a4b7e507abf863958": [
+          {
+            "name": "nuwa_sdk",
+            "version": "0.2.0",
+            "checksum": "dfc25bd73388ea5b9497f14a281990ff3b5a647f"
+          }
+        ]
+      }
+    }
+  }
+}

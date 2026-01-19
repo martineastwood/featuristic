@@ -1,12 +1,29 @@
-""" The module to represent the population of programs in the genetic programming algorithm. """
+"""
+Population module using Nim backend for high-performance binary genetic algorithm.
 
-import copy
-import sys
+This replaces the pure Python implementation with a Nim-based backend for
+optimized crossover and mutation operations.
+"""
+
+from pathlib import Path
 from typing import Callable, List, Tuple
-
 import numpy as np
 import pandas as pd
+import importlib.util
+import copy
+import sys
 from joblib import Parallel, cpu_count, delayed
+
+# Load the compiled Nim extension
+# __file__ is /path/to/featuristic/selection/population.py
+# parent.parent is /path/to/featuristic/
+featuristic_path = Path(__file__).parent.parent
+spec = importlib.util.spec_from_file_location(
+    "featuristic_lib",
+    featuristic_path / "featuristic_lib.cpython-313-darwin.so"
+)
+_featuristic_lib = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(_featuristic_lib)
 
 
 class BasePopulation:
@@ -134,30 +151,39 @@ class BasePopulation:
                 selection_ix = ix
         return self.population[selection_ix]
 
-    def _mutate(self, genome) -> np.ndarray:
+    def _mutate(self, genome: np.ndarray, random_seed: int) -> np.ndarray:
         """
-        Mutate the individual's genome.
+        Mutate the individual's genome using Nim backend.
 
         Parameters
         ----------
         genome : np.ndarray
             The genome of an individual.
+        random_seed : int
+            Random seed for reproducibility.
 
         Returns
         -------
         np.ndarray
             The mutated genome.
         """
-        proba = np.random.uniform(size=len(genome))
-        mask = proba < self.mutation_proba
-        genome[mask == 1] = 1 - genome[mask == 1]
-        return genome
+        # Convert to list for Nim
+        genome_list = genome.tolist()
+
+        # Call Nim mutation
+        mutated_list = _featuristic_lib.binaryBitFlipMutate(
+            genome_list,
+            self.mutation_proba,
+            random_seed
+        )
+
+        return np.array(mutated_list)
 
     def _crossover(
-        self, parent1: np.ndarray, parent2: np.ndarray, crossover_proba: float
+        self, parent1: np.ndarray, parent2: np.ndarray, crossover_proba: float, random_seed: int
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Crossover two individuals to create two new children.
+        Crossover two individuals to create two new children using Nim backend.
 
         Parameters
         ----------
@@ -167,19 +193,30 @@ class BasePopulation:
             The second parent.
         crossover_proba : float
             The probability of crossover.
+        random_seed : int
+            Random seed for reproducibility.
 
         Returns
         -------
         Tuple[np.ndarray, np.ndarray]
             The two new children.
         """
-        c1, c2 = copy.deepcopy(parent1), copy.deepcopy(parent2)
+        # Convert to lists for Nim
+        parent1_list = parent1.tolist()
+        parent2_list = parent2.tolist()
 
-        if np.random.rand() < crossover_proba:
-            pt = np.random.randint(1, len(parent1) - 2)
-            c1 = np.concatenate([parent1[:pt], parent2[pt:]])
-            c2 = np.concatenate([parent2[:pt], parent1[pt:]])
-        return c1, c2
+        # Call Nim crossover
+        result = _featuristic_lib.binarySinglePointCrossover(
+            parent1_list,
+            parent2_list,
+            crossover_proba,
+            random_seed
+        )
+
+        # Nim returns a tuple (child1, child2), access by index
+        child1_list, child2_list = result
+
+        return np.array(child1_list), np.array(child2_list)
 
     def evolve(self, fitness: List[float]):
         """
@@ -190,16 +227,28 @@ class BasePopulation:
         fitness : List[float]
             The fitness scores of the population.
         """
+        import random
+
         selected = [self._selection(fitness) for _ in range(self.population_size)]
 
         children = []
         for i in range(0, len(self.population) - 1, 2):
             p1, p2 = selected[i], selected[i + 1]
-            for c in self._crossover(p1, p2, self.crossover_proba):
-                c = self._mutate(c)
-                children.append(c)
 
-        self.population = children
+            # Use random seed for reproducibility
+            seed = random.randint(0, 2**31 - 1)
+            c1, c2 = self._crossover(p1, p2, self.crossover_proba, seed)
+
+            seed = random.randint(0, 2**31 - 1)
+            c1 = self._mutate(c1, seed)
+
+            seed = random.randint(0, 2**31 - 1)
+            c2 = self._mutate(c2, seed)
+
+            children.append(c1)
+            children.append(c2)
+
+        self.population = np.array(children)
 
 
 class SerialPopulation(BasePopulation):
@@ -224,7 +273,9 @@ class SerialPopulation(BasePopulation):
         population_size : int
             The size of the population.
         feature_count : int
-            The number of features in the dataset.
+            The number of features.
+        tournament_size : int, optional
+            The tournament size, by default 10.
         crossover_proba : float, optional
             The probability of crossover, by default 0.9.
         mutation_proba : float, optional
@@ -256,7 +307,7 @@ class SerialPopulation(BasePopulation):
         Returns
         -------
         List[float]
-            The predicted values.
+            The fitness scores.
         """
         return [self._evaluate(cost_func, X, y, genome) for genome in self.population]
 
@@ -284,7 +335,9 @@ class ParallelPopulation(BasePopulation):
         population_size : int
             The size of the population.
         feature_count : int
-            The number of features in the dataset.
+            The number of features.
+        tournament_size : int, optional
+            The tournament size, by default 10.
         crossover_proba : float, optional
             The probability of crossover, by default 0.9.
         mutation_proba : float, optional
@@ -300,7 +353,7 @@ class ParallelPopulation(BasePopulation):
             mutation_proba,
         )
 
-        n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
 
     def evaluate(
         self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
@@ -320,9 +373,9 @@ class ParallelPopulation(BasePopulation):
         Returns
         -------
         List[float]
-            The predicted values.
+            The fitness scores.
         """
-        return Parallel(n_jobs=cpu_count())(
+        return Parallel(n_jobs=self.n_jobs)(
             delayed(self._evaluate)(cost_func, X, y, genome)
             for genome in self.population
         )

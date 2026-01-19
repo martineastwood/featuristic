@@ -1,0 +1,379 @@
+"""
+Population module using Nim backend for high-performance binary genetic algorithm.
+
+This replaces the pure Python implementation with a Nim-based backend for
+optimized crossover and mutation operations.
+"""
+
+from pathlib import Path
+from typing import Callable, List, Tuple
+import numpy as np
+import pandas as pd
+import importlib.util
+import copy
+import sys
+from joblib import Parallel, cpu_count, delayed
+
+# Load the compiled Nim extension
+# __file__ is /path/to/featuristic/selection/population.py
+# parent.parent is /path/to/featuristic/
+featuristic_path = Path(__file__).parent.parent
+spec = importlib.util.spec_from_file_location(
+    "featuristic_lib", featuristic_path / "featuristic_lib.cpython-313-darwin.so"
+)
+_featuristic_lib = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(_featuristic_lib)
+
+
+class BasePopulation:
+    """
+    A class to represent the population of programs in the genetic programming algorithm.
+
+    Parameters
+    ----------
+    population_size : int
+        The size of the population.
+
+    feature_count : int
+        The number of features in the dataset.
+
+    tournament_size : int, optional
+        The number of individuals to select for the tournament, by default 10.
+
+    crossover_proba : float, optional
+        The probability of crossover, by default 0.9.
+
+    mutation_proba : float, optional
+        The probability of mutation, by default 0.1.
+    """
+
+    def __init__(
+        self,
+        population_size: int,
+        feature_count: int,
+        tournament_size: int = 10,
+        crossover_proba: float = 0.9,
+        mutation_proba: float = 0.1,
+    ):
+        self.population_size = population_size
+        self.feature_count = feature_count
+        self.crossover_proba = crossover_proba
+        self.mutation_proba = mutation_proba
+        self.tournament_size = tournament_size
+
+        self.population = None
+        self._initialize_population()
+
+    def _initialize_population(self):
+        """
+        Initialize the population.
+
+        Returns
+        -------
+        np.ndarray:
+            The initial population.
+        """
+        self.population = np.random.choice(
+            [0, 1], size=(self.population_size, self.feature_count)
+        )
+
+    def evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
+    ) -> List[pd.Series]:
+        """
+        Evaluate the population against the dataframe of features.
+
+        Args
+        ----
+        cost_func : Callable
+            The cost function to evaluate the individual's fitness.
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+
+        Returns
+        -------
+        List[pd.Series]
+            The predicted values.
+        """
+        raise NotImplementedError
+
+    def _evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series, genome: np.ndarray
+    ) -> float:
+        """
+        Evaluate the populations's fitness using the cost function.
+
+        Parameters
+        ----------
+        cost_func : Callable
+            The cost function to evaluate the individual's fitness.
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+        genome : np.ndarray
+            The genome of an individual.
+
+        Returns
+        -------
+        float
+            The fitness of the individual.
+        """
+        if genome.sum() == 0:
+            current_cost = sys.maxsize
+        else:
+            current_cost = cost_func(X[X.columns[genome == 1]], y)
+        return current_cost
+
+    def _selection(self, scores: List, k: int = 3) -> np.ndarray:
+        """
+        Select an individual from the population using tournament selection.
+
+        Parameters
+        ----------
+        scores : List
+            The fitness scores of the population.
+        k : int, optional
+            The number of individuals to select for the tournament, by default 3.
+
+        Returns
+        -------
+        np.ndarray
+            The selected individual.
+        """
+        selection_ix = np.random.randint(len(self.population))
+
+        for ix in np.random.randint(0, len(self.population), k - 1):
+            if scores[ix] < scores[selection_ix]:
+                selection_ix = ix
+        return self.population[selection_ix]
+
+    def _mutate(self, genome: np.ndarray, random_seed: int) -> np.ndarray:
+        """
+        Mutate the individual's genome using Nim backend.
+
+        Parameters
+        ----------
+        genome : np.ndarray
+            The genome of an individual.
+        random_seed : int
+            Random seed for reproducibility.
+
+        Returns
+        -------
+        np.ndarray
+            The mutated genome.
+        """
+        # Convert to list for Nim
+        genome_list = genome.tolist()
+
+        # Call Nim mutation
+        mutated_list = _featuristic_lib.binaryBitFlipMutate(
+            genome_list, self.mutation_proba, random_seed
+        )
+
+        return np.array(mutated_list)
+
+    def _crossover(
+        self,
+        parent1: np.ndarray,
+        parent2: np.ndarray,
+        crossover_proba: float,
+        random_seed: int,
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Crossover two individuals to create two new children using Nim backend.
+
+        Parameters
+        ----------
+        parent1 : np.ndarray
+            The first parent.
+        parent2 : np.ndarray
+            The second parent.
+        crossover_proba : float
+            The probability of crossover.
+        random_seed : int
+            Random seed for reproducibility.
+
+        Returns
+        -------
+        Tuple[np.ndarray, np.ndarray]
+            The two new children.
+        """
+        # Convert to lists for Nim
+        parent1_list = parent1.tolist()
+        parent2_list = parent2.tolist()
+
+        # Call Nim crossover
+        result = _featuristic_lib.binarySinglePointCrossover(
+            parent1_list, parent2_list, crossover_proba, random_seed
+        )
+
+        # Nim returns a tuple (child1, child2), access by index
+        child1_list, child2_list = result
+
+        return np.array(child1_list), np.array(child2_list)
+
+    def evolve(self, fitness: List[float]):
+        """
+        Evolve the population based on the fitness scores.
+
+        Parameters
+        ----------
+        fitness : List[float]
+            The fitness scores of the population.
+        """
+        import random
+
+        selected = [self._selection(fitness) for _ in range(self.population_size)]
+
+        children = []
+        for i in range(0, len(self.population) - 1, 2):
+            p1, p2 = selected[i], selected[i + 1]
+
+            # Use random seed for reproducibility
+            seed = random.randint(0, 2**31 - 1)
+            c1, c2 = self._crossover(p1, p2, self.crossover_proba, seed)
+
+            seed = random.randint(0, 2**31 - 1)
+            c1 = self._mutate(c1, seed)
+
+            seed = random.randint(0, 2**31 - 1)
+            c2 = self._mutate(c2, seed)
+
+            children.append(c1)
+            children.append(c2)
+
+        self.population = np.array(children)
+
+
+class SerialPopulation(BasePopulation):
+    """
+    A class to represent the population of programs in the genetic programming algorithm where
+    the programs are evaluated serially.
+    """
+
+    def __init__(
+        self,
+        population_size: int,
+        feature_count: int,
+        tournament_size: int = 10,
+        crossover_proba: float = 0.9,
+        mutation_proba: float = 0.1,
+    ):
+        """
+        Initialize the population class.
+
+        Args
+        ----
+        population_size : int
+            The size of the population.
+        feature_count : int
+            The number of features.
+        tournament_size : int, optional
+            The tournament size, by default 10.
+        crossover_proba : float, optional
+            The probability of crossover, by default 0.9.
+        mutation_proba : float, optional
+            The probability of mutation, by default 0.1.
+        """
+        super().__init__(
+            population_size,
+            feature_count,
+            tournament_size,
+            crossover_proba,
+            mutation_proba,
+        )
+
+    def evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
+    ) -> List[float]:
+        """
+        Evaluate the population against the dataframe of features.
+
+        Args
+        ----
+        cost_func : Callable
+            The cost function to evaluate the individual's fitness.
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+
+        Returns
+        -------
+        List[float]
+            The fitness scores.
+        """
+        return [self._evaluate(cost_func, X, y, genome) for genome in self.population]
+
+
+class ParallelPopulation(BasePopulation):
+    """
+    A class to represent the population of programs in the genetic programming algorithm where
+    the programs are evaluated in parallel.
+    """
+
+    def __init__(
+        self,
+        population_size: int,
+        feature_count: int,
+        tournament_size: int = 10,
+        crossover_proba: float = 0.9,
+        mutation_proba: float = 0.1,
+        n_jobs: int = -1,
+    ):
+        """
+        Initialize the population class.
+
+        Args
+        ----
+        population_size : int
+            The size of the population.
+        feature_count : int
+            The number of features.
+        tournament_size : int, optional
+            The tournament size, by default 10.
+        crossover_proba : float, optional
+            The probability of crossover, by default 0.9.
+        mutation_proba : float, optional
+            The probability of mutation, by default 0.1.
+        n_jobs : int, optional
+            The number of parallel jobs to run, by default -1 (use all available cores).
+        """
+        super().__init__(
+            population_size,
+            feature_count,
+            tournament_size,
+            crossover_proba,
+            mutation_proba,
+        )
+
+        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+
+    def evaluate(
+        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
+    ) -> List[float]:
+        """
+        Evaluate the population against the dataframe of features.
+
+        Args
+        ----
+        cost_func : Callable
+            The cost function to evaluate the individual's fitness.
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+
+        Returns
+        -------
+        List[float]
+            The fitness scores.
+        """
+        return Parallel(n_jobs=self.n_jobs)(
+            delayed(self._evaluate)(cost_func, X, y, genome)
+            for genome in self.population
+        )
