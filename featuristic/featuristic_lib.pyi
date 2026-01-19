@@ -30,6 +30,13 @@ def squareVecZerocopy(ptrA: int, length: int) -> list[float]:
     """Zero-copy vectorized square"""
     ...
 
+def testTargetPointer(targetPtr: int, length: int) -> float:
+    """
+    Test function to see if single pointer works with nimpy
+    This should help us debug if we can pass target as pointer
+    """
+    ...
+
 def sinVecZerocopy(ptrA: int, length: int) -> list[float]:
     """Zero-copy vectorized sin"""
     ...
@@ -42,22 +49,6 @@ def binaryBitFlipMutate(
 
 def testSubtract(a: float, b: float) -> float:
     """Test subtraction operation"""
-    ...
-
-def runMRMR(
-    featurePtrs: list[int],
-    targetData: list[float],
-    numRows: int,
-    numFeatures: int,
-    k: int,
-    floor: float,
-) -> list[int]:
-    """
-    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
-    This algorithm selects features that are:
-    1. Highly correlated with the target (maximum relevance)
-    2. Least correlated with each other (minimum redundancy)
-    """
     ...
 
 def cubeVecZerocopy(ptrA: int, length: int) -> list[float]:
@@ -87,6 +78,20 @@ def cosVecZerocopy(ptrA: int, length: int) -> list[float]:
 
 def addConstantVecZerocopy(ptrA: int, length: int, constant: float) -> list[float]:
     """Zero-copy add constant"""
+    ...
+
+def runMRMRZerocopy(
+    featurePtrs: list[int],
+    targetPtr: int,
+    numRows: int,
+    numFeatures: int,
+    k: int,
+    floor: float,
+) -> list[int]:
+    """
+    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
+    ZERO-COPY VERSION: Both features and target passed as pointers
+    """
     ...
 
 def testMultiply(a: float, b: float) -> float:
@@ -141,6 +146,20 @@ def tanVecZerocopy(ptrA: int, length: int) -> list[float]:
 
 def getVersion() -> str:
     """Get the version of featuristic"""
+    ...
+
+def runMRMR(
+    featurePtrs: list[int],
+    targetData: list[float],
+    numRows: int,
+    numFeatures: int,
+    k: int,
+    floor: float,
+) -> list[int]:
+    """
+    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
+    This version copies target data (kept for backward compatibility)
+    """
     ...
 
 def countSelectedFeatures(genome: list[int]) -> int:

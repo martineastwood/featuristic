@@ -325,10 +325,7 @@ proc runMRMR*(
   floor: float64
 ): seq[int] {.nuwa_export.} =
   ## Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
-
-  ## This algorithm selects features that are:
-  ## 1. Highly correlated with the target (maximum relevance)
-  ## 2. Least correlated with each other (minimum redundancy)
+  ## This version copies target data (kept for backward compatibility)
 
   var k = min(k, numFeatures)
 
@@ -407,3 +404,107 @@ proc runMRMR*(
         notSelected.delete(pos)
 
   return selected
+
+
+proc runMRMRZerocopy*(
+  featurePtrs: seq[int],
+  targetPtr: int,  # ← Zero-copy! Just a pointer, no data copy
+  numRows: int,
+  numFeatures: int,
+  k: int,
+  floor: float64
+): seq[int] {.nuwa_export.} =
+  ## Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
+  ## ZERO-COPY VERSION: Both features and target passed as pointers
+
+  var k = min(k, numFeatures)
+
+  # Get target pointer directly (no copy!)
+  let target = cast[ptr UncheckedArray[float64]](targetPtr)
+
+  # Get feature arrays (also no copy!)
+  var features = newSeq[ptr UncheckedArray[float64]](numFeatures)
+  for i in 0..<numFeatures:
+    features[i] = cast[ptr UncheckedArray[float64]](featurePtrs[i])
+
+  # Calculate F-statistics (correlation with target) for all features
+  var fStats = newSeq[float64](numFeatures)
+  for i in 0..<numFeatures:
+    fStats[i] = abs(pearsonCorrelationForMRMR(features[i], target, numRows))
+
+  # Initialize correlation matrix with floor value
+  var corr = newSeq[seq[float64]](numFeatures)
+  for i in 0..<numFeatures:
+    corr[i] = newSeq[float64](numFeatures)
+    for j in 0..<numFeatures:
+      corr[i][j] = floor
+
+  # Initialize selected and not_selected lists
+  var selected = newSeq[int]()
+  var notSelected = newSeq[int]()
+  for i in 0..<numFeatures:
+    notSelected.add(i)
+
+  # Select features iteratively
+  for iteration in 0..<k:
+    if iteration > 0:
+      # Update correlation matrix with the last selected feature
+      let lastSelected = selected[^1]
+      let lastSelectedData = features[lastSelected]
+
+      for idx in notSelected:
+        let featureData = features[idx]
+        let c = pearsonCorrelationForMRMR(featureData, lastSelectedData, numRows)
+        corr[idx][lastSelected] = abs(c)
+        if corr[idx][lastSelected] < floor:
+          corr[idx][lastSelected] = floor
+
+    # Compute mRMR score for each not-selected feature
+    # score = relevance / redundancy
+    var bestScore = -Inf
+    var bestIdx = -1
+
+    for idx in notSelected:
+      # Relevance: F-statistic
+      let relevance = fStats[idx]
+
+      # Redundancy: mean correlation with selected features
+      var redundancy = floor
+      if selected.len() > 0:
+        var sumCorr = 0.0
+        for selIdx in selected:
+          sumCorr += corr[idx][selIdx]
+        redundancy = sumCorr / selected.len().float64
+        if redundancy < floor:
+          redundancy = floor
+
+      # mRMR score
+      let score = relevance / redundancy
+
+      if score > bestScore:
+        bestScore = score
+        bestIdx = idx
+
+    # Select the best feature
+    if bestIdx >= 0:
+      selected.add(bestIdx)
+      # Remove from notSelected
+      let pos = notSelected.find(bestIdx)
+      if pos >= 0:
+        notSelected.delete(pos)
+
+  return selected
+
+
+proc testTargetPointer*(targetPtr: int, length: int): float64 {.nuwa_export.} =
+  ## Test function to see if single pointer works with nimpy
+  ## This should help us debug if we can pass target as pointer
+
+  let target = cast[ptr UncheckedArray[float64]](targetPtr)
+
+  # Calculate mean
+  var sum = 0.0
+  for i in 0..<length:
+    sum += target[i]
+
+  return sum / length.float64
