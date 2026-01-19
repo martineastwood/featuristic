@@ -1,25 +1,19 @@
 # Maximum Relevance Minimum Redundancy (mRMR) Feature Selection in Nim
-# This provides fast feature selection for genetic feature synthesis
+# Simplified version that avoids FeatureMatrix to work with nimpy
 
 import std/math
 import std/algorithm
 
 
-type
-  MRMRResult* = object
-    selectedFeatures*: seq[int]
-    scores*: seq[float64]
+proc pearsonCorrelationSimple*(x: ptr float64, y: ptr float64, n: int): float64 =
+  ## Compute Pearson correlation between two arrays (simplified version)
 
-
-proc pearsonCorrelation*(x: ptr float64, y: ptr float64, n: int): float64 =
-  ## Compute Pearson correlation between two arrays
+  let xArr = cast[ptr UncheckedArray[float64]](x)
+  let yArr = cast[ptr UncheckedArray[float64]](y)
 
   # Calculate means
   var meanX = 0.0
   var meanY = 0.0
-  let xArr = cast[ptr UncheckedArray[float64]](x)
-  let yArr = cast[ptr UncheckedArray[float64]](y)
-
   for i in 0..<n:
     meanX += xArr[i]
     meanY += yArr[i]
@@ -44,42 +38,31 @@ proc pearsonCorrelation*(x: ptr float64, y: ptr float64, n: int): float64 =
   result = covariance / sqrt(stdX * stdY)
 
 
-proc computeFStat*(x: ptr float64, y: ptr float64, n: int): float64 =
-  ## Compute F-statistic (correlation-based) for regression
-  ## For classification, this would use ANOVA F-statistic
-  let corr = pearsonCorrelation(x, y, n)
-  result = abs(corr)
-
-
-proc runMRMR*(
-  featurePtrs: seq[int],     # Pointers to feature columns
-  targetPtr: int,             # Pointer to target column
-  numRows: int,               # Number of samples
-  numFeatures: int,           # Number of features
-  k: int,                     # Number of features to select
-  floor: float64 = 0.00001    # Floor value for correlation
+proc runMRMRSimple*(
+  featurePtrs: seq[int],
+  targetPtr: int,
+  numRows: int,
+  numFeatures: int,
+  k: int,
+  floor: float64
 ): seq[int] {.nuwa_export.} =
   ## Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
-
-  ## This algorithm selects features that are:
-  ## 1. Highly correlated with the target (maximum relevance)
-  ## 2. Least correlated with each other (minimum redundancy)
+  ## Simplified version that works directly with pointers
 
   var k = min(k, numFeatures)
 
-  # Create feature matrix
-  var fm = newFeatureMatrix(numRows, numFeatures)
+  # Get target array
+  let target = cast[ptr UncheckedArray[float64]](targetPtr)
+
+  # Get feature arrays
+  var features = newSeq[ptr UncheckedArray[float64]](numFeatures)
   for i in 0..<numFeatures:
-    fm.setColumn(i, featurePtrs[i])
+    features[i] = cast[ptr UncheckedArray[float64]](featurePtrs[i])
 
-  # Create target array
-  let target = cast[ptr float64](targetPtr)
-
-  # Calculate F-statistics for all features (relevance)
+  # Calculate F-statistics (correlation with target) for all features
   var fStats = newSeq[float64](numFeatures)
   for i in 0..<numFeatures:
-    let featureData = cast[ptr float64](fm.getColumn(i))
-    fStats[i] = computeFStat(featureData, target, numRows)
+    fStats[i] = abs(pearsonCorrelationSimple(features[i], target, numRows))
 
   # Initialize correlation matrix with floor value
   var corr = newSeq[seq[float64]](numFeatures)
@@ -99,11 +82,11 @@ proc runMRMR*(
     if iteration > 0:
       # Update correlation matrix with the last selected feature
       let lastSelected = selected[^1]
-      let lastSelectedData = cast[ptr float64](fm.getColumn(lastSelected))
+      let lastSelectedData = features[lastSelected]
 
       for idx in notSelected:
-        let featureData = cast[ptr float64](fm.getColumn(idx))
-        let c = pearsonCorrelation(featureData, lastSelectedData, numRows)
+        let featureData = features[idx]
+        let c = pearsonCorrelationSimple(featureData, lastSelectedData, numRows)
         corr[idx][lastSelected] = abs(c)
         if corr[idx][lastSelected] < floor:
           corr[idx][lastSelected] = floor

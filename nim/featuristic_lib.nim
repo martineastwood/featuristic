@@ -8,7 +8,7 @@ include core/program
 include genetic/operations
 include genetic/algorithm
 include genetic/binary_ga
-# include genetic/mrmr  # Temporarily disabled
+# include genetic/mrmr  # Temporarily disabled - using simpler approach
 
 # Simple test function to verify the build works
 proc getVersion*(): string {.nuwa_export.} =
