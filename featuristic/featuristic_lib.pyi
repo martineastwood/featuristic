@@ -44,6 +44,22 @@ def testSubtract(a: float, b: float) -> float:
     """Test subtraction operation"""
     ...
 
+def runMRMR(
+    featurePtrs: list[int],
+    targetData: list[float],
+    numRows: int,
+    numFeatures: int,
+    k: int,
+    floor: float,
+) -> list[int]:
+    """
+    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
+    This algorithm selects features that are:
+    1. Highly correlated with the target (maximum relevance)
+    2. Least correlated with each other (minimum redundancy)
+    """
+    ...
+
 def cubeVecZerocopy(ptrA: int, length: int) -> list[float]:
     """Zero-copy vectorized cube"""
     ...
