@@ -65,6 +65,25 @@ proc tanVecImpl(ptrA: int, length: int): seq[float64]  =
   for i in 0..<length:
     result[i] = tan(dataA[i])
 
+## Vectorized power for NumPy arrays (zero-copy, binary)
+proc powVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
+  let dataA = cast[ptr UncheckedArray[float64]](ptrA)
+  let dataB = cast[ptr UncheckedArray[float64]](ptrB)
+  result = newSeq[float64](length)
+  for i in 0..<length:
+    let base = dataA[i]
+    let exp = dataB[i]
+    # Handle special cases for safety
+    if abs(base) < 1e-10 and exp < 0:
+      # 0^(-n) would be infinity, return 1 instead
+      result[i] = 1.0
+    elif base < 0 and floor(exp) != exp:
+      # Negative base with non-integer exponent would be complex
+      # Use absolute value instead
+      result[i] = pow(abs(base), exp)
+    else:
+      result[i] = pow(base, exp)
+
 ## Vectorized sqrt for NumPy arrays (zero-copy)
 proc sqrtVecImpl(ptrA: int, length: int): seq[float64]  =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
@@ -152,6 +171,19 @@ proc cosOp*(a: float64): float64 {.inline.} =
 proc tanOp*(a: float64): float64 {.inline.} =
   return tan(a)
 
+## Power operation (safe)
+proc powOp*(a: float64, b: float64): float64 {.inline.} =
+  ## Safe power operation that handles edge cases
+  if abs(a) < 1e-10 and b < 0:
+    # 0^(-n) would be infinity, return 1 instead
+    return 1.0
+  elif a < 0 and floor(b) != b:
+    # Negative base with non-integer exponent would be complex
+    # Use absolute value instead
+    return pow(abs(a), b)
+  else:
+    return pow(a, b)
+
 ## Square root operation (of absolute value)
 proc sqrtOp*(a: float64): float64 {.inline.} =
   return sqrt(abs(a))
@@ -161,4 +193,4 @@ proc absOp*(a: float64): float64 {.inline.} =
   return abs(a)
 
 # Export scalar operations for internal use
-export safeDiv, negate, square, cube, sinOp, cosOp, tanOp, sqrtOp, absOp
+export safeDiv, negate, square, cube, sinOp, cosOp, tanOp, powOp, sqrtOp, absOp

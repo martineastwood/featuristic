@@ -16,6 +16,7 @@ type
     opSqrt = "sqrt"            # Square root: sqrt(|a|)
     opSquare = "square"        # Square: a²
     opCube = "cube"            # Cube: a³
+    opPow = "pow"              # Power: a^b (safe)
     opAddConstant = "add_constant"   # Add constant: a + c
     opMulConstant = "mul_constant"   # Multiply constant: a * c
     opFeature = "feature"      # Feature leaf node (for stack-based evaluation)

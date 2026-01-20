@@ -17,6 +17,46 @@ proc countNodes*(program: StackProgram): int =
   return len(program.nodes)
 
 
+proc findSubtreeBounds*(program: StackProgram, rootIdx: int): tuple[startIdx: int, size: int] =
+  ## Find the bounds (start index and size) of a subtree in post-order representation
+  ##
+  ## In post-order:
+  ## - All descendants of a node have indices < node index
+  ## - The subtree starts at the first descendant (lowest index)
+  ## - The subtree includes the root at the highest index
+
+  if rootIdx < 0 or rootIdx >= len(program.nodes):
+    return (startIdx: -1, size: 0)
+
+  # Find all nodes in the subtree
+  var inSubtree = newSeq[bool](len(program.nodes))
+  for i in 0..<len(inSubtree):
+    inSubtree[i] = false
+
+  proc markSubtree(idx: int) =
+    if idx < 0 or idx >= len(program.nodes):
+      return
+    inSubtree[idx] = true
+    let node = program.nodes[idx]
+    if node.left >= 0 and node.left < idx:
+      markSubtree(node.left)
+    if node.right >= 0 and node.right < idx:
+      markSubtree(node.right)
+
+  markSubtree(rootIdx)
+
+  # Find start (first marked node) and count
+  var startIdx = -1
+  var size = 0
+  for i in 0..<len(inSubtree):
+    if inSubtree[i]:
+      if startIdx < 0:
+        startIdx = i
+      inc(size)
+
+  return (startIdx: startIdx, size: size)
+
+
 proc getRandomNodeIndex*(program: StackProgram, rng: var Rand): int =
   ## Select a random node index from the program
   ## Uses weighted probability based on depth
@@ -51,31 +91,13 @@ proc cloneSubtree*(program: StackProgram, nodeIdx: int): tuple[nodes: seq[StackP
   # - All descendants have indices < root index in post-order
 
   # Find all nodes in the subtree
-  var subtreeIndices = newSeq[int](0)
-
-  proc collectDescendants(idx: int) =
-    ## Collect all descendant indices
-    if idx < 0:
-      return
-
-    subtreeIndices.add(idx)
-
-    let node = program.nodes[idx]
-    if node.left >= 0 and node.left < idx:
-      collectDescendants(node.left)
-    if node.right >= 0 and node.right < idx:
-      collectDescendants(node.right)
-
-  collectDescendants(nodeIdx)
-
-  # Sort indices to maintain post-order
-  subtreeIndices.sort(cmp[int])
+  let (startIdx, size) = findSubtreeBounds(program, nodeIdx)
 
   # Clone nodes and create mapping
   var newIndex = 0
-  for oldIdx in subtreeIndices:
-    mapping[oldIdx] = newIndex
-    result.add(program.nodes[oldIdx])
+  for i in countup(startIdx, startIdx + size - 1):
+    mapping[i] = newIndex
+    result.add(program.nodes[i])
     inc(newIndex)
 
   # Update child indices in cloned nodes
@@ -96,71 +118,64 @@ proc cloneSubtree*(program: StackProgram, nodeIdx: int): tuple[nodes: seq[StackP
   return (result, mapping)
 
 
-proc replaceSubtree*(program: var StackProgram, targetIdx: int, replacementNodes: seq[StackProgramNode], rootOffset: int) =
+proc replaceSubtree*(program: var StackProgram, targetIdx: int, replacementNodes: seq[StackProgramNode]) =
   ## Replace a subtree rooted at targetIdx with new nodes
+  ##
+  ## This properly handles index adjustments in post-order representation
 
-  ## Args:
-  ##   - program: The program to modify
-  ##   - targetIdx: Index of the root of the subtree to replace
-  ##   - replacementNodes: The new subtree nodes (already in post-order)
-  ##   - rootOffset: Offset to add to child indices when replacing
+  if targetIdx < 0 or targetIdx >= len(program.nodes):
+    return
 
-  ## This is complex because:
-  ## 1. We need to remove the old subtree
-  ## 2. Insert the new subtree
-  ## 3. Update all parent references
+  if len(replacementNodes) == 0:
+    return
 
-  # For simplicity, we'll implement this as:
-  # 1. Create new program array
-  # 2. Copy nodes before the subtree
-  # 3. Insert new nodes
-  # 4. Copy nodes after the subtree (with adjusted indices)
-
-  # Find the size of the subtree to replace
-  var subtreeSize = 0
-
-  proc countSubtree(program: StackProgram, idx: int): int =
-    ## Count nodes in subtree
-    if idx < 0 or idx >= len(program.nodes):
-      return 0
-    var count = 1
-    let node = program.nodes[idx]
-    if node.left >= 0 and node.left < idx:
-      count += countSubtree(program, node.left)
-    if node.right >= 0 and node.right < idx:
-      count += countSubtree(program, node.right)
-    return count
-
-  subtreeSize = countSubtree(program, targetIdx)
+  # Find the bounds of the subtree to replace
+  let (startIdx, oldSize) = findSubtreeBounds(program, targetIdx)
 
   # Create new node array
   var newNodes = newSeq[StackProgramNode](0)
 
-  # Copy nodes before the subtree (indices 0 to targetIdx - subtreeSize)
-  let beforeCount = targetIdx - subtreeSize
-  for i in 0..<beforeCount:
+  # Copy nodes before the subtree
+  for i in 0..<startIdx:
     newNodes.add(program.nodes[i])
 
-  # Insert new subtree nodes
-  let newRootIdx = len(newNodes)
+  # Track the index of the new subtree root
+  let newRootIdx = len(newNodes) + len(replacementNodes) - 1
+
+  # Insert new subtree nodes with adjusted indices
+  var newMapping = initTable[int, int]()
   for i in 0..<len(replacementNodes):
-    # Adjust child indices based on new position
+    let oldIdx = startIdx + i
+    newMapping[oldIdx] = len(newNodes)
+
     var node = replacementNodes[i]
-    if node.left >= 0:
-      node.left = node.left + newRootIdx
-    if node.right >= 0:
-      node.right = node.right + newRootIdx
+    # Adjust child indices to point within new subtree
+    if node.left >= 0 and node.left < len(replacementNodes):
+      node.left = newRootIdx - (len(replacementNodes) - 1 - node.left)
+    if node.right >= 0 and node.right < len(replacementNodes):
+      node.right = newRootIdx - (len(replacementNodes) - 1 - node.right)
     newNodes.add(node)
 
-  # Copy nodes after the subtree (indices targetIdx+1 to end)
-  # These need their indices adjusted
-  let afterStart = targetIdx + 1
-  for i in afterStart..<len(program.nodes):
+  # Copy nodes after the subtree, updating their child references
+  let sizeDiff = len(replacementNodes) - oldSize
+  for i in countup(startIdx + oldSize, len(program.nodes) - 1):
     var node = program.nodes[i]
 
-    # Check if this node or its ancestors reference the replaced subtree
-    # This is complex - for now, just copy without adjustment
-    # TODO: Implement proper index adjustment
+    # Update child indices if they referenced nodes in the old subtree
+    if node.left >= startIdx and node.left < startIdx + oldSize:
+      # Pointed to old subtree, now point to new root
+      node.left = newRootIdx
+    elif node.left >= startIdx + oldSize:
+      # Pointed to node after old subtree, adjust for size difference
+      node.left = node.left + sizeDiff
+
+    if node.right >= startIdx and node.right < startIdx + oldSize:
+      # Pointed to old subtree, now point to new root
+      node.right = newRootIdx
+    elif node.right >= startIdx + oldSize:
+      # Pointed to node after old subtree, adjust for size difference
+      node.right = node.right + sizeDiff
+
     newNodes.add(node)
 
   program.nodes = newNodes
@@ -170,29 +185,192 @@ proc replaceSubtree*(program: var StackProgram, targetIdx: int, replacementNodes
 # Genetic Operations
 # ============================================================================
 
-proc crossover*(parent1: StackProgram, parent2: StackProgram, rng: var Rand): StackProgram =
-  ## Perform crossover between two programs
-  ## Simplified strategy: randomly select either parent1 or parent2
-  ## This introduces diversity while maintaining solution quality
+proc crossover*(parent1: StackProgram, parent2: StackProgram, rng: var Rand, maxDepth: int = 6): StackProgram =
+  ## Perform subtree crossover between two programs
+  ##
+  ## Strategy:
+  ## 1. Select random subtree from parent1
+  ## 2. Select random subtree from parent2
+  ## 3. Replace parent1's subtree with parent2's subtree
+  ## 4. Return offspring (clone of parent1 with replacement) IF depth limit not exceeded
 
-  # 70% chance to return parent1 (maintain good solutions)
-  # 30% chance to return parent2 (introduce diversity)
-  if rng.rand(1.0) < 0.7:
-    return StackProgram(nodes: parent1.nodes, depth: parent1.depth)
-  else:
-    return StackProgram(nodes: parent2.nodes, depth: parent2.depth)
+  if len(parent1.nodes) == 0 or len(parent2.nodes) == 0:
+    # One parent is empty, return the other
+    if len(parent1.nodes) > 0:
+      return StackProgram(nodes: parent1.nodes, depth: parent1.depth)
+    else:
+      return StackProgram(nodes: parent2.nodes, depth: parent2.depth)
+
+  # Clone parent1 to modify
+  var offspring = StackProgram(nodes: parent1.nodes, depth: parent1.depth)
+
+  # Try crossover up to 3 times to find one that doesn't exceed depth limit
+  for attempt in 0..<3:
+    # Select random crossover point in offspring (from parent1)
+    let targetIdx = getRandomNodeIndex(offspring, rng)
+    if targetIdx < 0:
+      break
+
+    # Select random subtree from parent2 to insert
+    let sourceIdx = getRandomNodeIndex(parent2, rng)
+    if sourceIdx < 0:
+      break
+
+    # Clone subtree from parent2
+    let (subtreeNodes, _) = cloneSubtree(parent2, sourceIdx)
+
+    # Check if replacement would exceed max depth
+    let currentDepth = len(offspring.nodes) div 2  # Rough estimate
+    let addedDepth = len(subtreeNodes) div 2
+    if currentDepth + addedDepth > maxDepth:
+      # Would exceed depth, try again or skip
+      continue
+
+    # Replace subtree in offspring
+    replaceSubtree(offspring, targetIdx, subtreeNodes)
+
+    # Success
+    return offspring
+
+  # All attempts exceeded depth limit, return parent1 unchanged
+  return parent1
 
 
-proc mutate*(program: StackProgram, newXProgram: StackProgram, rng: var Rand): StackProgram =
-  ## Mutate a program by replacing it with a new random program
-  ## Simplified strategy: randomly return original or new program
+proc mutate*(program: StackProgram, rng: var Rand, maxDepth: int, numFeatures: int, availableOps: seq[OperationKind]): StackProgram =
+  ## Perform subtree mutation on a program
+  ##
+  ## Strategy:
+  ## 1. Select random subtree in program
+  ## 2. Generate new random subtree
+  ## 3. Replace selected subtree with new one IF depth limit not exceeded
+  ##
+  ## This creates local diversity while preserving most of the program structure
 
-  # 80% chance to keep original program
-  # 20% chance to replace with new random program
-  if rng.rand(1.0) < 0.8:
-    return StackProgram(nodes: program.nodes, depth: program.depth)
-  else:
-    return StackProgram(nodes: newXProgram.nodes, depth: newXProgram.depth)
+  if len(program.nodes) == 0:
+    return program
+
+  # Clone program to modify
+  var offspring = StackProgram(nodes: program.nodes, depth: program.depth)
+
+  # Try mutation up to 3 times to find one that doesn't exceed depth limit
+  for attempt in 0..<3:
+    # Select random mutation point
+    let targetIdx = getRandomNodeIndex(offspring, rng)
+    if targetIdx < 0:
+      break
+
+    # Find current depth at target node (approximate)
+    let currentDepth = min(targetIdx div 2, maxDepth - 2)  # Rough estimate, leave room for subtree
+
+    # Generate new random subtree (inline to avoid circular import)
+    var nodes = newSeq[StackProgramNode](0)
+
+    proc generateNode(rng: var Rand, depth: int): int =
+      let leafProbability = depth / (maxDepth - currentDepth)
+
+      # Enforce minimum complexity: if we're at depth 0, we MUST create an internal node
+      let forceInternal = (depth == 0)
+
+      if (not forceInternal) and (rng.rand(1.0) < leafProbability or depth >= (maxDepth - currentDepth)):
+        # Create leaf node (feature)
+        let featureIdx = rng.rand(numFeatures - 1)
+        let nodeIdx = len(nodes)
+        nodes.add(StackProgramNode(
+          kind: opFeature,
+          featureIndex: featureIdx,
+          left: -1,
+          right: -1
+        ))
+        return nodeIdx
+      else:
+        # Create internal node (operation)
+        var unaryOps = newSeq[OperationKind]()
+        var binaryOps = newSeq[OperationKind]()
+        for op in availableOps:
+          if op in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}:
+            unaryOps.add(op)
+          elif op in {opAddConstant, opMulConstant}:
+            unaryOps.add(op)
+          else:
+            binaryOps.add(op)
+
+        var selectedOp: OperationKind
+        if len(unaryOps) > 0 and len(binaryOps) > 0:
+          if rng.rand(1.0) < 0.5:
+            selectedOp = unaryOps[rng.rand(len(unaryOps) - 1)]
+          else:
+            selectedOp = binaryOps[rng.rand(len(binaryOps) - 1)]
+        elif len(unaryOps) > 0:
+          selectedOp = unaryOps[rng.rand(len(unaryOps) - 1)]
+        else:
+          selectedOp = binaryOps[rng.rand(len(binaryOps) - 1)]
+
+        let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}
+        let isBinary = selectedOp in {opAdd, opSubtract, opMultiply, opDivide, opPow}
+        let isConstant = selectedOp in {opAddConstant, opMulConstant}
+
+        if isUnary:
+          let childIdx = generateNode(rng, depth + 1)
+          let nodeIdx = len(nodes)
+          nodes.add(StackProgramNode(
+            kind: selectedOp,
+            left: childIdx,
+            right: -1
+          ))
+          return nodeIdx
+        elif isConstant:
+          let childIdx = generateNode(rng, depth + 1)
+          let constant = rng.rand(1.0) * 2.0 - 1.0
+          let opKind = selectedOp
+
+          case opKind
+          of opAddConstant:
+            nodes.add(StackProgramNode(
+              kind: opKind,
+              addConstantValue: constant,
+              left: childIdx,
+              right: -1
+            ))
+          of opMulConstant:
+            nodes.add(StackProgramNode(
+              kind: opKind,
+              mulConstantValue: constant,
+              left: childIdx,
+              right: -1
+            ))
+          else:
+            discard
+
+          return len(nodes) - 1
+        else:
+          let leftIdx = generateNode(rng, depth + 1)
+          let rightIdx = generateNode(rng, depth + 1)
+          let nodeIdx = len(nodes)
+          nodes.add(StackProgramNode(
+            kind: selectedOp,
+            left: leftIdx,
+            right: rightIdx
+          ))
+          return nodeIdx
+
+    discard generateNode(rng, 0)
+
+    # Check if replacement would exceed max depth
+    let (startIdx, oldSize) = findSubtreeBounds(offspring, targetIdx)
+    let offspringDepth = len(offspring.nodes) div 2
+    let newDepth = len(nodes) div 2
+    if offspringDepth - oldSize + newDepth > maxDepth:
+      # Would exceed depth, try again or skip
+      continue
+
+    # Replace subtree in offspring
+    replaceSubtree(offspring, targetIdx, nodes)
+
+    # Success
+    return offspring
+
+  # All attempts failed, return original
+  return program
 
 
 proc tournamentSelect*(population: seq[StackProgram], fitness: seq[float64],
@@ -209,7 +387,8 @@ proc tournamentSelect*(population: seq[StackProgram], fitness: seq[float64],
 
   let popSize = len(population)
   if popSize == 0:
-    return nil
+    # Value type cannot return nil - return empty program instead
+    return StackProgram(nodes: @[], depth: 0)
 
   var bestIdx = -1
   var bestFitness = Inf
@@ -225,5 +404,5 @@ proc tournamentSelect*(population: seq[StackProgram], fitness: seq[float64],
 
 
 # Export functions without nuwa_export (implementation only)
-export countNodes, getRandomNodeIndex, cloneSubtree, replaceSubtree,
+export countNodes, findSubtreeBounds, getRandomNodeIndex, cloneSubtree, replaceSubtree,
        crossover, mutate, tournamentSelect

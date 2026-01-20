@@ -2,17 +2,16 @@
 # This provides 10-50x speedup over Python recursion by using:
 # 1. Stack-based evaluation instead of recursion
 # 2. Direct NumPy array access with zero-copy
-# 3. Efficient memory management
+# 3. C-style memory management (flat buffers, value types)
 
-import std/tables
 import std/math
 import ./types
 
 # Types for program tree evaluation
 type
-  ## Stack frame for evaluation
-  EvalFrame* = ref object
-    result*: seq[float64]  # Computed result
+  ## Stack frame for evaluation (VALUE TYPE - no GC overhead)
+  EvalFrame* = object
+    resultBuffer*: ptr UncheckedArray[float64]  # Pointer into pre-allocated flat buffer
     case isLeaf*: bool
     of true:
       featureIndex*: int  # Index into feature matrix
@@ -20,21 +19,29 @@ type
       opKind*: OperationKind
       numChildren*: int
 
-  ## Feature matrix for batch evaluation
-  FeatureMatrix* = ref object
-    data*: seq[ptr UncheckedArray[float64]]  # Pointers to each column
+  ## Pre-allocated buffer pool for evaluation (C-style: single flat allocation)
+  ## ONE contiguous memory block for all buffers, accessed via offset arithmetic
+  EvalBufferPool* = object
+    data*: ptr UncheckedArray[float64]  # Single flat allocation (like malloc)
+    numBuffers*: int
+    bufferSize*: int
+    totalSize*: int  # Total size in floats (numBuffers * bufferSize)
+
+  ## Feature matrix for batch evaluation (VALUE TYPE - no ref/GC)
+  FeatureMatrix* = object
+    data*: ptr UncheckedArray[ptr UncheckedArray[float64]]  # Pointers to each column
     numRows*: int
     numCols*: int
 
-  ## StackProgram definition (simplified for stack evaluation)
+  ## StackProgram definition (VALUE TYPE - no ref/GC)
   ## Programs are represented as flat lists for stack-based evaluation
-  StackProgram* = ref object
-    nodes*: seq[StackProgramNode]
+  StackProgram* = object
+    nodes*: seq[StackProgramNode]  # seq is OK here - allocated once per program
     depth*: int
 
   StackProgramNode* = object
     case kind*: OperationKind
-    of opAdd, opSubtract, opMultiply, opDivide:
+    of opAdd, opSubtract, opMultiply, opDivide, opPow:
       discard
     of opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs:
       discard
@@ -48,16 +55,62 @@ type
     right*: int # Index of right child in nodes array (-1 if none)
 
 # ============================================================================
-# Feature Matrix Management
+# Buffer Pool Management (C-style: single malloc, offset arithmetic)
+# ============================================================================
+
+proc newEvalBufferPool*(numBuffers: int, bufferSize: int): EvalBufferPool =
+  ## Create a new buffer pool with a SINGLE flat allocation
+  ## This is like: float* buffer = (float*)malloc(numBuffers * bufferSize * sizeof(float))
+  ##
+  ## Instead of allocating N separate buffers (N mallocs), we allocate
+  ## ONE big buffer and use pointer arithmetic to access slices.
+
+  result.totalSize = numBuffers * bufferSize
+  result.numBuffers = numBuffers
+  result.bufferSize = bufferSize
+
+  # Single allocation (like malloc in C)
+  # allocate returns pointer to uninitialized memory
+  result.data = cast[ptr UncheckedArray[float64]](alloc(result.totalSize * sizeof(float64)))
+
+proc getBuffer*(pool: var EvalBufferPool, index: int): ptr UncheckedArray[float64] =
+  ## Get pointer to buffer at index using OFFSET ARITHMETIC
+  ## This is like: return &buffer[index * bufferSize]
+  ##
+  ## ZERO allocations after initialization - just pointer math!
+  if index >= pool.numBuffers:
+    # Should not happen with correct sizing, but fail gracefully
+    let newSize = (index + 1) * pool.bufferSize
+    var newData = cast[ptr UncheckedArray[float64]](alloc(newSize * sizeof(float64)))
+
+    # Copy old data
+    for i in 0..<pool.totalSize:
+      newData[i] = pool.data[i]
+
+    # Free old and assign new (in C, we'd use realloc here)
+    pool.data = newData
+    pool.totalSize = newSize
+    pool.numBuffers = index + 1
+
+  # Pointer arithmetic: return pointer to offset [index * bufferSize]
+  return cast[ptr UncheckedArray[float64]](addr pool.data[index * pool.bufferSize])
+
+proc destroyEvalBufferPool*(pool: var EvalBufferPool) =
+  ## Free the allocated memory (explicit cleanup like free() in C)
+  if pool.data != nil:
+    dealloc(pool.data)
+    pool.data = nil
+
+# ============================================================================
+# Feature Matrix Management (VALUE TYPE - passed by value, not ref)
 # ============================================================================
 
 proc newFeatureMatrix*(numRows: int, numCols: int): FeatureMatrix =
-  ## Create a new feature matrix
-  result = FeatureMatrix(
-    data: newSeq[ptr UncheckedArray[float64]](numCols),
-    numRows: numRows,
-    numCols: numCols
-  )
+  ## Create a new feature matrix (VALUE TYPE, no heap allocation for the struct itself)
+  ## Only allocates the array of column pointers
+  result.numRows = numRows
+  result.numCols = numCols
+  result.data = cast[ptr UncheckedArray[ptr UncheckedArray[float64]]](alloc(numCols * sizeof(ptr UncheckedArray[float64])))
 
 proc setColumn*(fm: var FeatureMatrix, colIdx: int, ptrData: int) =
   ## Set a column in the feature matrix (zero-copy)
@@ -67,17 +120,24 @@ proc getColumn*(fm: FeatureMatrix, colIdx: int): ptr UncheckedArray[float64] =
   ## Get a column from the feature matrix
   return fm.data[colIdx]
 
+proc destroyFeatureMatrix*(fm: var FeatureMatrix) =
+  ## Free the allocated memory
+  if fm.data != nil:
+    dealloc(fm.data)
+    fm.data = nil
+
 # ============================================================================
-# Stack-Based Program Evaluation
+# Stack-Based Program Evaluation (OPTIMIZED with Flat Buffer Pool)
 # ============================================================================
 
-proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix): seq[float64] =
-  ## Evaluate a program using stack-based approach (zero-copy on features)
+proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix, pool: var EvalBufferPool): seq[float64] =
+  ## Evaluate a program using stack-based approach with flat buffer pool
   ##
   ## This is much faster than Python recursion because:
   ## 1. No Python function call overhead
   ## 2. Stack-based instead of recursive
   ## 3. Direct memory access to NumPy arrays
+  ## 4. Flat buffer pool (ONE malloc, pointer arithmetic, NO per-node allocations!)
   ##
   ## Returns: Computed values for all rows
 
@@ -85,12 +145,9 @@ proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix): seq[float64
   if numNodes == 0:
     return newSeq[float64](fm.numRows)
 
-  # Create stack for evaluation
+  # Create stack for evaluation (value types, no GC)
   var stack = newSeq[EvalFrame](numNodes)
   var stackPtr = 0
-
-  # Create result array
-  var result = newSeq[float64](fm.numRows)
 
   # Process each node in order (post-order: children come before parents)
   for nodeIdx in 0..<numNodes:
@@ -98,263 +155,314 @@ proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix): seq[float64
 
     case node.kind
     of opFeature:
-      # Leaf node - just reference the feature column
+      # Leaf node - copy feature data to pre-allocated buffer
+      let targetBuffer = pool.getBuffer(stackPtr)
       stack[stackPtr] = EvalFrame(
         isLeaf: true,
         featureIndex: node.featureIndex,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
-      # Copy data from feature matrix (zero-copy not possible for result)
+      # Copy data from feature matrix directly into buffer
       let colData = fm.getColumn(node.featureIndex)
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = colData[i]
+        targetBuffer[i] = colData[i]
 
       stackPtr += 1
 
     of opNegate:
-      # Unary operation
+      # Unary operation - write to pre-allocated buffer
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = -childResult[i]
+        targetBuffer[i] = -childBuffer[i]
 
       stackPtr += 1
 
     of opSquare:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        let val = childResult[i]
-        stack[stackPtr].result[i] = val * val
+        let val = childBuffer[i]
+        targetBuffer[i] = val * val
 
       stackPtr += 1
 
     of opCube:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        let val = childResult[i]
-        stack[stackPtr].result[i] = val * val * val
+        let val = childBuffer[i]
+        targetBuffer[i] = val * val * val
 
       stackPtr += 1
 
     of opSin:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = sin(childResult[i])
+        targetBuffer[i] = sin(childBuffer[i])
 
       stackPtr += 1
 
     of opCos:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = cos(childResult[i])
+        targetBuffer[i] = cos(childBuffer[i])
 
       stackPtr += 1
 
     of opTan:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = tan(childResult[i])
+        targetBuffer[i] = tan(childBuffer[i])
+
+      stackPtr += 1
+
+    of opPow:
+      let leftIdx = node.left
+      let rightIdx = node.right
+      let leftBuffer = stack[leftIdx].resultBuffer
+      let rightBuffer = stack[rightIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
+
+      stack[stackPtr] = EvalFrame(
+        isLeaf: false,
+        opKind: node.kind,
+        numChildren: 2,
+        resultBuffer: targetBuffer
+      )
+
+      for i in 0..<fm.numRows:
+        let base = leftBuffer[i]
+        let exp = rightBuffer[i]
+        # Handle special cases for safety
+        if abs(base) < 1e-10 and exp < 0:
+          # 0^(-n) would be infinity, return 1 instead
+          targetBuffer[i] = 1.0
+        elif base < 0 and floor(exp) != exp:
+          # Negative base with non-integer exponent would be complex
+          # Use absolute value instead
+          targetBuffer[i] = pow(abs(base), exp)
+        else:
+          targetBuffer[i] = pow(base, exp)
 
       stackPtr += 1
 
     of opSqrt:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = sqrt(abs(childResult[i]))
+        targetBuffer[i] = sqrt(abs(childBuffer[i]))
 
       stackPtr += 1
 
     of opAbs:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = abs(childResult[i])
+        targetBuffer[i] = abs(childBuffer[i])
 
       stackPtr += 1
 
     of opAdd:
       let leftIdx = node.left
       let rightIdx = node.right
-      let leftResult = stack[leftIdx].result
-      let rightResult = stack[rightIdx].result
+      let leftBuffer = stack[leftIdx].resultBuffer
+      let rightBuffer = stack[rightIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 2,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = leftResult[i] + rightResult[i]
+        targetBuffer[i] = leftBuffer[i] + rightBuffer[i]
 
       stackPtr += 1
 
     of opSubtract:
       let leftIdx = node.left
       let rightIdx = node.right
-      let leftResult = stack[leftIdx].result
-      let rightResult = stack[rightIdx].result
+      let leftBuffer = stack[leftIdx].resultBuffer
+      let rightBuffer = stack[rightIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 2,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = leftResult[i] - rightResult[i]
+        targetBuffer[i] = leftBuffer[i] - rightBuffer[i]
 
       stackPtr += 1
 
     of opMultiply:
       let leftIdx = node.left
       let rightIdx = node.right
-      let leftResult = stack[leftIdx].result
-      let rightResult = stack[rightIdx].result
+      let leftBuffer = stack[leftIdx].resultBuffer
+      let rightBuffer = stack[rightIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 2,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = leftResult[i] * rightResult[i]
+        targetBuffer[i] = leftBuffer[i] * rightBuffer[i]
 
       stackPtr += 1
 
     of opDivide:
       let leftIdx = node.left
       let rightIdx = node.right
-      let leftResult = stack[leftIdx].result
-      let rightResult = stack[rightIdx].result
+      let leftBuffer = stack[leftIdx].resultBuffer
+      let rightBuffer = stack[rightIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 2,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        let r = rightResult[i]
+        let r = rightBuffer[i]
         if abs(r) < 1e-10:
-          stack[stackPtr].result[i] = leftResult[i]
+          targetBuffer[i] = leftBuffer[i]
         else:
-          stack[stackPtr].result[i] = leftResult[i] / r
+          targetBuffer[i] = leftBuffer[i] / r
 
       stackPtr += 1
 
     of opAddConstant:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = childResult[i] + node.addConstantValue
+        targetBuffer[i] = childBuffer[i] + node.addConstantValue
 
       stackPtr += 1
 
     of opMulConstant:
       let childIdx = node.left
-      let childResult = stack[childIdx].result
+      let childBuffer = stack[childIdx].resultBuffer
+      let targetBuffer = pool.getBuffer(stackPtr)
 
       stack[stackPtr] = EvalFrame(
         isLeaf: false,
         opKind: node.kind,
         numChildren: 1,
-        result: newSeq[float64](fm.numRows)
+        resultBuffer: targetBuffer
       )
 
       for i in 0..<fm.numRows:
-        stack[stackPtr].result[i] = childResult[i] * node.mulConstantValue
+        targetBuffer[i] = childBuffer[i] * node.mulConstantValue
 
       stackPtr += 1
 
   # Return the root node's result (last node processed in post-order)
   if stackPtr == 0:
     return newSeq[float64](0)
-  return stack[stackPtr - 1].result
+
+  # Copy result from buffer to return seq
+  let finalBuffer = stack[stackPtr - 1].resultBuffer
+  result = newSeq[float64](fm.numRows)
+  for i in 0..<fm.numRows:
+    result[i] = finalBuffer[i]
+  return result
 
 # Implementation functions for program evaluation (called from Python wrappers)
 
@@ -371,7 +479,7 @@ proc evaluateProgramImpl(
   ## Evaluate a program from Python
   ##
   ## This function takes serialized program data from Python and evaluates it
-  ## using the fast stack-based approach.
+  ## using the fast stack-based approach with flat buffer pool.
   ##
   ## Args:
   ##   featurePtrs: Raw pointers to NumPy array data for each feature
@@ -387,12 +495,18 @@ proc evaluateProgramImpl(
 
   let numNodes = len(opKinds)
 
-  # Create feature matrix
+  # Create feature matrix (VALUE TYPE, automatic cleanup when scope exits)
   var fm = newFeatureMatrix(numRows, numCols)
+  defer: destroyFeatureMatrix(fm)
+
   for i in 0..<numCols:
     fm.setColumn(i, featurePtrs[i])
 
-  # Build program from serialized data
+  # Create buffer pool (pre-allocate once, reuse for all nodes!)
+  var pool = newEvalBufferPool(numNodes, numRows)
+  defer: destroyEvalBufferPool(pool)
+
+  # Build program from serialized data (VALUE TYPE, no GC)
   var program = StackProgram(nodes: newSeq[StackProgramNode](numNodes), depth: 0)
 
   for i in 0..<numNodes:
@@ -427,5 +541,5 @@ proc evaluateProgramImpl(
         right: rightChildren[i]
       )
 
-  # Evaluate the program
-  return evaluateProgramStack(program, fm)
+  # Evaluate the program with buffer pool (NO per-node allocations!)
+  return evaluateProgramStack(program, fm, pool)

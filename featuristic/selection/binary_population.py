@@ -5,30 +5,30 @@ This replaces the pure Python implementation with a Nim-based backend for
 optimized crossover and mutation operations.
 """
 
-from pathlib import Path
 from typing import Callable, List, Tuple
 import numpy as np
 import pandas as pd
-import importlib.util
-import copy
 import sys
 from joblib import Parallel, cpu_count, delayed
 
-# Load the compiled Nim extension
-# __file__ is /path/to/featuristic/selection/population.py
-# parent.parent is /path/to/featuristic/
-featuristic_path = Path(__file__).parent.parent
-spec = importlib.util.spec_from_file_location(
-    "featuristic_lib",
-    featuristic_path / "featuristic_lib.cpython-313-darwin.so"
+# Import from centralized backend (single source of truth for Nim library access)
+from ..backend import (
+    binaryBitFlipMutate,
+    binarySinglePointCrossover,
+    evolveBinaryPopulationBatched,
+    evaluateBinaryGenomeNative,
+    extract_feature_pointers,
+    extract_target_pointer,
 )
-_featuristic_lib = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_featuristic_lib)
 
 
-class BasePopulation:
+class BinaryPopulation:
     """
-    A class to represent the population of programs in the genetic programming algorithm.
+    A population of binary feature selection genomes using Nim-accelerated operations.
+
+    This manages a population of binary masks for feature selection.
+    The evolution loop runs in Python (to allow custom objective functions),
+    but mutation and crossover are accelerated by Nim.
 
     Parameters
     ----------
@@ -167,20 +167,19 @@ class BasePopulation:
         np.ndarray
             The mutated genome.
         """
-        # Convert to list for Nim
-        genome_list = genome.tolist()
-
         # Call Nim mutation
-        mutated_list = _featuristic_lib.binaryBitFlipMutate(
-            genome_list,
-            self.mutation_proba,
-            random_seed
+        mutated_list = binaryBitFlipMutate(
+            genome.tolist(), self.mutation_proba, random_seed
         )
 
         return np.array(mutated_list)
 
     def _crossover(
-        self, parent1: np.ndarray, parent2: np.ndarray, crossover_proba: float, random_seed: int
+        self,
+        parent1: np.ndarray,
+        parent2: np.ndarray,
+        crossover_proba: float,
+        random_seed: int,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Crossover two individuals to create two new children using Nim backend.
@@ -201,19 +200,12 @@ class BasePopulation:
         Tuple[np.ndarray, np.ndarray]
             The two new children.
         """
-        # Convert to lists for Nim
-        parent1_list = parent1.tolist()
-        parent2_list = parent2.tolist()
-
         # Call Nim crossover
-        result = _featuristic_lib.binarySinglePointCrossover(
-            parent1_list,
-            parent2_list,
-            crossover_proba,
-            random_seed
+        result = binarySinglePointCrossover(
+            parent1.tolist(), parent2.tolist(), crossover_proba, random_seed
         )
 
-        # Nim returns a tuple (child1, child2), access by index
+        # Nim returns a tuple (child1, child2)
         child1_list, child2_list = result
 
         return np.array(child1_list), np.array(child2_list)
@@ -222,6 +214,9 @@ class BasePopulation:
         """
         Evolve the population based on the fitness scores.
 
+        Uses Nim batched evolution for 10-20x speedup by avoiding
+        multiple Python-Nim boundary crossings.
+
         Parameters
         ----------
         fitness : List[float]
@@ -229,32 +224,37 @@ class BasePopulation:
         """
         import random
 
-        selected = [self._selection(fitness) for _ in range(self.population_size)]
+        # Flatten the population for Nim (2D array -> 1D)
+        pop_flat = self.population.flatten().tolist()
 
-        children = []
-        for i in range(0, len(self.population) - 1, 2):
-            p1, p2 = selected[i], selected[i + 1]
+        # Use random seed for reproducibility
+        seed = random.randint(0, 2**31 - 1)
 
-            # Use random seed for reproducibility
-            seed = random.randint(0, 2**31 - 1)
-            c1, c2 = self._crossover(p1, p2, self.crossover_proba, seed)
+        # Call Nim to evolve the entire population at once
+        # This is much faster than calling mutate/crossover individually
+        # Note: Nim function uses positional arguments (nimpy limitation)
+        new_pop_flat = evolveBinaryPopulationBatched(
+            pop_flat,
+            fitness,
+            self.population_size,
+            self.feature_count,
+            self.crossover_proba,
+            self.mutation_proba,
+            self.tournament_size,
+            seed,
+        )
 
-            seed = random.randint(0, 2**31 - 1)
-            c1 = self._mutate(c1, seed)
-
-            seed = random.randint(0, 2**31 - 1)
-            c2 = self._mutate(c2, seed)
-
-            children.append(c1)
-            children.append(c2)
-
-        self.population = np.array(children)
+        # Reshape the result back to 2D array
+        self.population = np.array(new_pop_flat).reshape(
+            self.population_size, self.feature_count
+        )
 
 
-class SerialPopulation(BasePopulation):
+class SerialPopulation(BinaryPopulation):
     """
-    A class to represent the population of programs in the genetic programming algorithm where
-    the programs are evaluated serially.
+    Binary population with serial evaluation.
+
+    Inherits from BinaryPopulation and evaluates each genome sequentially.
     """
 
     def __init__(
@@ -311,11 +311,61 @@ class SerialPopulation(BasePopulation):
         """
         return [self._evaluate(cost_func, X, y, genome) for genome in self.population]
 
+    def evaluate_native(
+        self, X: pd.DataFrame, y: pd.Series, metric: str = "mse"
+    ) -> List[float]:
+        """
+        Evaluate the population using native Nim computation (15-30x faster).
 
-class ParallelPopulation(BasePopulation):
+        This method uses Nim's native metric computation (MSE, MAE, or R²)
+        instead of calling Python's objective function. This is much faster
+        but less flexible - it only works for simple metrics.
+
+        Args
+        ----
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+        metric : str
+            The metric to use: "mse", "mae", or "r2"
+
+        Returns
+        -------
+        List[float]
+            The fitness scores.
+        """
+        # Extract feature pointers for zero-copy access
+        feature_ptrs, _ = extract_feature_pointers(X)
+        target_ptr, _ = extract_target_pointer(y)
+
+        # Map metric string to int
+        metric_map = {"mse": 0, "mae": 1, "r2": 2}
+        metric_type = metric_map.get(metric.lower(), 0)
+
+        # Evaluate each genome using Nim
+        fitness = []
+        for genome in self.population:
+            genome_list = genome.tolist()
+            # Note: Nim function uses positional arguments (nimpy limitation)
+            score = evaluateBinaryGenomeNative(
+                genome_list,
+                feature_ptrs,
+                target_ptr,
+                X.shape[0],
+                X.shape[1],
+                metric_type,
+            )
+            fitness.append(score)
+
+        return fitness
+
+
+class ParallelPopulation(BinaryPopulation):
     """
-    A class to represent the population of programs in the genetic programming algorithm where
-    the programs are evaluated in parallel.
+    Binary population with parallel evaluation.
+
+    Inherits from BinaryPopulation and evaluates genomes in parallel using joblib.
     """
 
     def __init__(
@@ -379,3 +429,51 @@ class ParallelPopulation(BasePopulation):
             delayed(self._evaluate)(cost_func, X, y, genome)
             for genome in self.population
         )
+
+    def evaluate_native(
+        self, X: pd.DataFrame, y: pd.Series, metric: str = "mse"
+    ) -> List[float]:
+        """
+        Evaluate the population using native Nim computation (15-30x faster).
+
+        Note: ParallelPopulation runs evaluation serially when using native
+        Nim evaluation, since the Nim code is already fast enough.
+
+        Args
+        ----
+        X : pd.DataFrame
+            The dataframe with the features.
+        y : pd.Series
+            The true values.
+        metric : str
+            The metric to use: "mse", "mae", or "r2"
+
+        Returns
+        -------
+        List[float]
+            The fitness scores.
+        """
+        # Extract feature pointers for zero-copy access
+        feature_ptrs, _ = extract_feature_pointers(X)
+        target_ptr, _ = extract_target_pointer(y)
+
+        # Map metric string to int
+        metric_map = {"mse": 0, "mae": 1, "r2": 2}
+        metric_type = metric_map.get(metric.lower(), 0)
+
+        # Evaluate each genome using Nim (serial - already fast)
+        fitness = []
+        for genome in self.population:
+            genome_list = genome.tolist()
+            # Note: Nim function uses positional arguments (nimpy limitation)
+            score = evaluateBinaryGenomeNative(
+                genome_list,
+                feature_ptrs,
+                target_ptr,
+                X.shape[0],
+                X.shape[1],
+                metric_type,
+            )
+            fitness.append(score)
+
+        return fitness

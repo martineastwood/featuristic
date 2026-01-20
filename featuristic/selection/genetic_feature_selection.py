@@ -11,7 +11,7 @@ from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
-from .population import ParallelPopulation, SerialPopulation
+from .binary_population import ParallelPopulation, SerialPopulation
 
 
 class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
@@ -36,6 +36,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         n_jobs: int = -1,
         pbar: bool = True,
         verbose: bool = False,
+        random_state: Union[int, None] = None,
     ) -> None:
         """
         Initialize the genetic algorithm.
@@ -69,6 +70,10 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         verbose : bool
             Whether to print progress.
+
+        random_state : int, optional
+            Seed for random number generator for reproducibility. If None,
+            results will not be reproducible. Default is None.
         """
         self.objective_function = objective_function
         self.population_size = population_size
@@ -94,6 +99,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             self.n_jobs = n_jobs
 
         self.verbose = verbose
+        self.random_state = random_state
 
         self.pbar = pbar
 
@@ -154,6 +160,13 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         -------
         self
         """
+        # Set random seeds for reproducibility
+        if self.random_state is not None:
+            import random
+
+            random.seed(self.random_state)
+            np.random.seed(self.random_state)
+
         self.num_genes = X.shape[1]
 
         if self.n_jobs == 1:
