@@ -10,6 +10,7 @@ import std/cpuinfo
 import ../core/types
 import ../core/program
 import ../core/operations
+import ../core/simplify  # Import program simplification
 import ./operations  # Import genetic operations
 
 
@@ -274,6 +275,11 @@ proc evolveGeneration*(
     else:
       # Mutation - replace random subtree with new randomly generated subtree
       result[i] = mutate(parent, rng, maxDepth, numFeatures, availableOps)
+
+    # OPTIMIZATION: Simplify immediately after crossover/mutation!
+    # This keeps the tree small before it enters the population,
+    # preventing bloat from propagating through generations
+    result[i] = simplifyProgram(result[i])
 
 
 # ============================================================================

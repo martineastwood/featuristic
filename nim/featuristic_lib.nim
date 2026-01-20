@@ -6,6 +6,7 @@ include core/types
 include core/operations
 include core/program
 include core/python_helpers  # GIL management via Python C API
+include core/simplify  # Program simplification optimization
 include genetic/operations
 include genetic/algorithm
 include genetic/binary_ga
@@ -128,6 +129,114 @@ proc evaluateProgram*(
 proc testEvaluation*(): string {.nuwa_export.} =
   ## Test function to verify program evaluation works
   return "program evaluation test passed"
+
+
+# ============================================================================
+# Program Simplification
+# Export wrappers for program simplification defined in core/simplify.nim
+# ============================================================================
+
+proc simplifyProgramWrapper*(
+  featureIndices: seq[int],
+  opKinds: seq[int],
+  leftChildren: seq[int],
+  rightChildren: seq[int],
+  constants: seq[float64]
+): tuple[
+  featureIndices: seq[int],
+  opKinds: seq[int],
+  leftChildren: seq[int],
+  rightChildren: seq[int],
+  constants: seq[float64]
+] {.nuwa_export.} =
+  ## Simplify a program by removing redundant operations
+  ##
+  ## This function takes a serialized program, applies simplification rules,
+  ## and returns the simplified program in serialized form.
+  ##
+  ## Simplifications applied:
+  ## - Identity removal: x + 0 -> x, x * 1 -> x
+  ## - Constant folding: (x + 5) + 3 -> x + 8
+  ## - Double negation: negate(negate(x)) -> x
+  ##
+  ## Args:
+  ##   featureIndices: Feature index for each node (-1 for operation nodes)
+  ##   opKinds: Integer representation of operation kind for each node
+  ##   leftChildren: Index of left child in node array
+  ##   rightChildren: Index of right child in node array
+  ##   constants: Constant values (used for add/mul_constant)
+  ##
+  ## Returns: Simplified program in same serialized format
+
+  # Reconstruct StackProgram from serialized data
+  let numNodes = len(opKinds)
+  var nodes = newSeq[StackProgramNode](numNodes)
+
+  for i in 0..<numNodes:
+    let kind = OperationKind(opKinds[i])
+
+    case kind
+    of opAddConstant:
+      nodes[i] = StackProgramNode(
+        kind: kind,
+        addConstantValue: constants[i],
+        left: leftChildren[i],
+        right: -1
+      )
+    of opMulConstant:
+      nodes[i] = StackProgramNode(
+        kind: kind,
+        mulConstantValue: constants[i],
+        left: leftChildren[i],
+        right: -1
+      )
+    of opFeature:
+      nodes[i] = StackProgramNode(
+        kind: kind,
+        featureIndex: featureIndices[i],
+        left: -1,
+        right: -1
+      )
+    else:
+      nodes[i] = StackProgramNode(
+        kind: kind,
+        left: leftChildren[i],
+        right: rightChildren[i]
+      )
+
+  let program = StackProgram(nodes: nodes, depth: 0)
+
+  # Run simplification
+  let simpleProgram = simplifyProgram(program)
+
+  # Serialize back to arrays
+  let newSize = len(simpleProgram.nodes)
+  var resFeatureIndices = newSeq[int](newSize)
+  var resOpKinds = newSeq[int](newSize)
+  var resLeft = newSeq[int](newSize)
+  var resRight = newSeq[int](newSize)
+  var resConstants = newSeq[float64](newSize)
+
+  for i, node in simpleProgram.nodes:
+    resFeatureIndices[i] = if node.kind == opFeature: node.featureIndex else: -1
+    resOpKinds[i] = ord(node.kind)
+    resLeft[i] = node.left
+    resRight[i] = node.right
+
+    if node.kind == opAddConstant:
+      resConstants[i] = node.addConstantValue
+    elif node.kind == opMulConstant:
+      resConstants[i] = node.mulConstantValue
+    else:
+      resConstants[i] = 0.0
+
+  return (
+    featureIndices: resFeatureIndices,
+    opKinds: resOpKinds,
+    leftChildren: resLeft,
+    rightChildren: resRight,
+    constants: resConstants
+  )
 
 
 proc evaluateProgramsBatched*(

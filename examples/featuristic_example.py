@@ -87,8 +87,8 @@ print("   Using Nim backend (single call runs all GAs - 10-50x speedup!)")
 
 synth = genetic_feature_synthesis.GeneticFeatureSynthesis(
     n_features=100,  # Generate 10 synthetic features
-    population_size=250,  # Moderate population
-    max_generations=500,  # Moderate generations for good evolution
+    population_size=100,  # Moderate population
+    max_generations=200,  # Moderate generations for good evolution
     tournament_size=10,
     crossover_proba=0.85,
     parsimony_coefficient=0.005,  # Lower to allow more complex features
