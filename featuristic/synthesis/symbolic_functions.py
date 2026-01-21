@@ -97,109 +97,52 @@ class SymbolicOperation:
             self.arg_count = fmt.count("{}")
 
 
-class SymbolicAdd(SymbolicOperation):
-    """Symbolic addition operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.ADD)
-
-
-class SymbolicSubtract(SymbolicOperation):
-    """Symbolic subtraction operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.SUBTRACT)
-
-
-class SymbolicMultiply(SymbolicOperation):
-    """Symbolic multiplication operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.MULTIPLY)
+# Create all symbolic operation classes using a simple factory
+def _make_op_class(name, op_kind, doc):
+    """Factory function to create symbolic operation classes."""
+    return type(
+        name,
+        (SymbolicOperation,),
+        {
+            "__doc__": doc,
+            "__init__": lambda self: SymbolicOperation.__init__(self, op_kind),
+        },
+    )
 
 
-class SymbolicDivide(SymbolicOperation):
-    """Symbolic division operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.DIVIDE)
-
-
-class SymbolicAbs(SymbolicOperation):
-    """Symbolic absolute value operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.ABS)
-
-
-class SymbolicNegate(SymbolicOperation):
-    """Symbolic negation operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.NEGATE)
-
-
-class SymbolicSin(SymbolicOperation):
-    """Symbolic sine operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.SIN)
-
-
-class SymbolicCos(SymbolicOperation):
-    """Symbolic cosine operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.COS)
-
-
-class SymbolicTan(SymbolicOperation):
-    """Symbolic tangent operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.TAN)
-
-
-class SymbolicSqrt(SymbolicOperation):
-    """Symbolic square root operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.SQRT)
-
-
-class SymbolicSquare(SymbolicOperation):
-    """Symbolic square operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.SQUARE)
-
-
-class SymbolicCube(SymbolicOperation):
-    """Symbolic cube operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.CUBE)
-
-
-class SymbolicPow(SymbolicOperation):
-    """Symbolic power operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.POW)
-
-
-class SymbolicAddConstant(SymbolicOperation):
-    """Symbolic add constant operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.ADD_CONSTANT)
-
-
-class SymbolicMulConstant(SymbolicOperation):
-    """Symbolic multiply constant operation."""
-
-    def __init__(self):
-        super().__init__(OpKind.MUL_CONSTANT)
+SymbolicAdd = _make_op_class("SymbolicAdd", OpKind.ADD, "Symbolic addition operation.")
+SymbolicSubtract = _make_op_class(
+    "SymbolicSubtract", OpKind.SUBTRACT, "Symbolic subtraction operation."
+)
+SymbolicMultiply = _make_op_class(
+    "SymbolicMultiply", OpKind.MULTIPLY, "Symbolic multiplication operation."
+)
+SymbolicDivide = _make_op_class(
+    "SymbolicDivide", OpKind.DIVIDE, "Symbolic division operation."
+)
+SymbolicAbs = _make_op_class(
+    "SymbolicAbs", OpKind.ABS, "Symbolic absolute value operation."
+)
+SymbolicNegate = _make_op_class(
+    "SymbolicNegate", OpKind.NEGATE, "Symbolic negation operation."
+)
+SymbolicSin = _make_op_class("SymbolicSin", OpKind.SIN, "Symbolic sine operation.")
+SymbolicCos = _make_op_class("SymbolicCos", OpKind.COS, "Symbolic cosine operation.")
+SymbolicTan = _make_op_class("SymbolicTan", OpKind.TAN, "Symbolic tangent operation.")
+SymbolicSqrt = _make_op_class(
+    "SymbolicSqrt", OpKind.SQRT, "Symbolic square root operation."
+)
+SymbolicSquare = _make_op_class(
+    "SymbolicSquare", OpKind.SQUARE, "Symbolic square operation."
+)
+SymbolicCube = _make_op_class("SymbolicCube", OpKind.CUBE, "Symbolic cube operation.")
+SymbolicPow = _make_op_class("SymbolicPow", OpKind.POW, "Symbolic power operation.")
+SymbolicAddConstant = _make_op_class(
+    "SymbolicAddConstant", OpKind.ADD_CONSTANT, "Symbolic add constant operation."
+)
+SymbolicMulConstant = _make_op_class(
+    "SymbolicMulConstant", OpKind.MUL_CONSTANT, "Symbolic multiply constant operation."
+)
 
 
 # List of all available operations (used for validation and API discovery)
