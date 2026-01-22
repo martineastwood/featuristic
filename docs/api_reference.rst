@@ -14,7 +14,6 @@ Genetic Feature Generation
     :toctree: generated/
 
     GeneticFeatureSynthesis
-    CustomSymbolicFunction
     list_symbolic_functions
 
 

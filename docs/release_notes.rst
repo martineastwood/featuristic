@@ -1,6 +1,14 @@
 Release Notes
 ---------------
 
+v1.2.0 (Unreleased)
+===================
+
+- **Breaking Changes:**
+    - Removed `CustomSymbolicFunction` class and `custom_functions` parameter from `GeneticFeatureSynthesis`. This feature was not compatible with the Nim backend and has been removed to avoid confusion. Users should use the built-in functions available via `list_symbolic_functions()`.
+- **Documentation:**
+    - Removed custom symbolic functions guide as the feature is no longer supported.
+
 v1.1.0 April 10, 2024
 ========================
 

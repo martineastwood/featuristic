@@ -15,7 +15,7 @@ from .engine import deserialize_program, evaluate_programs
 from .mrmr import MaxRelevanceMinRedundancy
 from .preprocess import preprocess_data
 from .render import render_prog, simplify_program
-from .symbolic_functions import CustomSymbolicFunction, AVAILABLE_OPERATIONS
+from .symbolic_functions import AVAILABLE_OPERATIONS
 
 
 class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -58,7 +58,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
         functions: Union[List[str] | None] = None,
-        custom_functions: Union[List[CustomSymbolicFunction] | None] = None,
         return_all_features: bool = True,
         verbose: bool = False,
         random_state: Union[int, None] = None,
@@ -108,10 +107,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             built-in functions are used. The functions must be the names of the
             functions returned by the `list_symbolic_functions` method.
 
-        custom_functions : list
-            A list of custom functions to use in the programs. Each custom function
-            must be an instance of the `CustomSymbolicFunction` class.
-
         return_all_features : bool
             Whether to return all the features generated or just the best features.
 
@@ -133,11 +128,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                         f"Function '{func}' not found in symbolic operations"
                     )
                 self.functions.append(func)
-
-        if custom_functions is not None:
-            # Store custom function names for validation
-            for func in custom_functions:
-                self.functions.append(func.name)
 
         self.population_size = population_size
         self.max_generations = max_generations

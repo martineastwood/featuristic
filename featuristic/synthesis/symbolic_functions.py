@@ -8,7 +8,6 @@ Arg count (arity) is used for program generation.
 """
 
 from typing import List, Tuple
-from dataclasses import dataclass
 
 from ..constants import OP_KIND_METADATA
 
@@ -18,19 +17,6 @@ OP_NAME_TO_METADATA: dict[str, Tuple[str, str]] = {
     name: (name, fmt if fmt is not None else "{}")
     for name, fmt in OP_KIND_METADATA.values()
 }
-
-
-@dataclass
-class CustomSymbolicFunction:
-    """
-    A custom symbolic function defined by the user.
-
-    This allows users to extend the genetic programming with their own operations.
-    """
-
-    name: str
-    format_str: str
-    arg_count: int = 1
 
 
 # Available operation names (built from Nim constants)

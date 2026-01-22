@@ -35,7 +35,6 @@ from .selection import GeneticFeatureSelector
 from .synthesis import GeneticFeatureSynthesis
 from .synthesis.mrmr import MaxRelevanceMinRedundancy
 from .synthesis.symbolic_functions import (
-    CustomSymbolicFunction,
     list_symbolic_functions,
 )
 from .version import __version__
