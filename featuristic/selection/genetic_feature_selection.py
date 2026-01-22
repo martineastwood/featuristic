@@ -222,20 +222,176 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         self.selected_columns = X.columns[self.best_genome == 1]
 
-    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
+    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
         """
-        Plot the history of the fitness function.
+        Plot the history of the fitness function with enhanced visualization.
 
-        return
-        ------
-        None
+        Displays the convergence of the genetic algorithm over generations,
+        showing both the best score found and the median population score
+        to track optimization progress and population diversity.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes, optional
+            The axes to plot on. If None, creates a new figure.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes with the plot.
+
+        Examples
+        --------
+        >>> selector = GeneticFeatureSelector(objective_function=...)
+        >>> selector.fit(X, y)
+        >>> ax = selector.plot_history()
         """
         if not self.is_fitted_:
-            raise ValueError("Must call fit_transform or transform before plot_history")
+            raise ValueError("Must call fit_transform or fit before plot_history")
 
         if ax is None:
-            _, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(10, 6))
+
+        if len(self.history) == 0:
+            ax.text(
+                0.5,
+                0.5,
+                "No history data available",
+                ha="center",
+                va="center",
+                transform=ax.transAxes,
+            )
+            return ax
 
         df = pd.DataFrame(self.history)
-        df.plot(x="generation", y=["best_score", "median_score"], ax=ax)
-        plt.show()
+
+        # Plot best score
+        ax.plot(
+            df["generation"],
+            df["best_score"],
+            "o-",
+            linewidth=2.5,
+            markersize=6,
+            color="#2563eb",
+            alpha=0.9,
+            label="Best Score",
+        )
+
+        # Plot median score
+        ax.plot(
+            df["generation"],
+            df["median_score"],
+            "s-",
+            linewidth=2,
+            markersize=6,
+            color="#7c3aed",
+            alpha=0.7,
+            label="Median Score",
+        )
+
+        # Add fill between to show population diversity
+        ax.fill_between(
+            df["generation"],
+            df["best_score"],
+            df["median_score"],
+            alpha=0.15,
+            color="#6366f1",
+            label="Population Spread",
+        )
+
+        # Highlight the final best score
+        if len(df) > 0:
+            final_best = df["best_score"].iloc[-1]
+            final_gen = df["generation"].iloc[-1]
+            ax.scatter(
+                [final_gen],
+                [final_best],
+                s=200,
+                color="#dc2626",
+                marker="*",
+                zorder=5,
+                edgecolors="white",
+                linewidths=1.5,
+                label=f"Final Best: {final_best:.4f}",
+            )
+
+        # Styling
+        ax.set_xlabel("Generation", fontsize=12, fontweight="bold")
+        ax.set_ylabel("Objective Score", fontsize=12, fontweight="bold")
+        ax.set_title(
+            "Feature Selection Convergence", fontsize=14, fontweight="bold", pad=15
+        )
+
+        # Add grid with better styling
+        ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
+        ax.set_axisbelow(True)
+
+        # Better legend
+        ax.legend(
+            loc="best",
+            framealpha=0.95,
+            shadow=True,
+            fontsize=10,
+            edgecolor="#ddd",
+            ncol=2,
+        )
+
+        # Add light background
+        ax.set_facecolor("#f9fafb")
+
+        # Add annotation for early termination if applicable
+        if hasattr(self, "early_termination_counter"):
+            total_gens = len(df)
+            max_gens = self.max_generations
+            if total_gens < max_gens:
+                ax.annotate(
+                    f"Early termination at gen {total_gens}",
+                    xy=(total_gens, df["best_score"].iloc[-1]),
+                    xytext=(10, 10),
+                    textcoords="offset points",
+                    fontsize=9,
+                    bbox=dict(
+                        boxstyle="round,pad=0.5",
+                        facecolor="#fef3c7",
+                        edgecolor="#f59e0b",
+                        alpha=0.8,
+                    ),
+                    arrowprops=dict(
+                        arrowstyle="->",
+                        connectionstyle="arc3,rad=0",
+                        color="#f59e0b",
+                        lw=1.5,
+                    ),
+                )
+
+        # Adjust layout to prevent label cutoff
+        plt.tight_layout()
+
+        return ax
+
+    def plot_convergence(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
+        """
+        Plot convergence of genetic algorithm.
+
+        Alias for plot_history() for API consistency. Displays the fitness
+        progression over generations with population statistics.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes, optional
+            The axes to plot on. If None, creates a new figure.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes with the plot.
+
+        Examples
+        --------
+        >>> selector = GeneticFeatureSelector(objective_function=...)
+        >>> selector.fit(X, y)
+        >>> selector.plot_convergence()
+        """
+        if not self.is_fitted_:
+            raise ValueError("Must call fit_transform or fit before plot_convergence")
+        return self.plot_history(ax)

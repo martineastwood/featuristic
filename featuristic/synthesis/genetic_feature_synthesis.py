@@ -576,40 +576,137 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
     def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
         """
-        Plot the history of the fitness function.
+        Plot the history of the fitness function with enhanced visualization.
 
-        return
-        ------
-        None
-        """
-        if not self.fit_called:
-            raise ValueError("Must call fit before plot_history")
-
-        if ax is None:
-            _, ax = plt.subplots()
-
-        df = pd.DataFrame(self.history)
-        if len(df) > 0 and "best_fitness" in df.columns:
-            df.plot(
-                x="feature", y="best_fitness", ax=ax, title="Best Fitness per Feature"
-            )
-        plt.show()
-
-    def plot_convergence(self, ax=None):
-        """
-        Plot convergence of genetic algorithm.
-
-        Alias for plot_history() for API consistency.
+        Displays the best fitness achieved for each generated feature along with
+        running statistics to show optimization progress.
 
         Parameters
         ----------
         ax : matplotlib.axes.Axes, optional
-            The axes to plot on.
+            The axes to plot on. If None, creates a new figure.
 
         Returns
         -------
         matplotlib.axes.Axes
             The axes with the plot.
+
+        Examples
+        --------
+        >>> synth = GeneticFeatureSynthesis(n_features=10)
+        >>> synth.fit(X, y)
+        >>> ax = synth.plot_history()
+        """
+        if not self.fit_called:
+            raise ValueError("Must call fit before plot_history")
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(10, 6))
+
+        df = pd.DataFrame(self.history)
+
+        if len(df) == 0 or "best_fitness" not in df.columns:
+            ax.text(
+                0.5,
+                0.5,
+                "No history data available",
+                ha="center",
+                va="center",
+                transform=ax.transAxes,
+            )
+            return ax
+
+        # Extract fitness values
+        feature_indices = df["feature"].values
+        fitness_values = df["best_fitness"].values
+
+        # Calculate running statistics
+        cumulative_best = np.minimum.accumulate(fitness_values)
+        running_mean = np.convolve(fitness_values, np.ones(3) / 3, mode="valid")
+
+        # Plot main fitness line with markers
+        ax.plot(
+            feature_indices,
+            fitness_values,
+            "o-",
+            linewidth=2,
+            markersize=8,
+            color="#2563eb",
+            alpha=0.8,
+            label="Best Fitness per Feature",
+        )
+
+        # Plot cumulative best (lower is better for fitness/error metrics)
+        ax.plot(
+            feature_indices,
+            cumulative_best,
+            "--",
+            linewidth=2,
+            color="#dc2626",
+            alpha=0.7,
+            label="Cumulative Best",
+        )
+
+        # Plot running mean if we have enough points
+        if len(running_mean) > 0:
+            # mode='valid' reduces array size by window_size - 1
+            offset = len(fitness_values) - len(running_mean)
+            ax.plot(
+                feature_indices[offset:],
+                running_mean,
+                ":",
+                linewidth=2,
+                color="#059669",
+                alpha=0.6,
+                label="Running Mean (window=3)",
+            )
+
+        # Styling
+        ax.set_xlabel("Feature Generation Order", fontsize=12, fontweight="bold")
+        ax.set_ylabel("Fitness Score", fontsize=12, fontweight="bold")
+        ax.set_title(
+            "Feature Synthesis Convergence", fontsize=14, fontweight="bold", pad=15
+        )
+
+        # Add grid with better styling
+        ax.grid(True, alpha=0.3, linestyle="-", linewidth=0.5)
+        ax.set_axisbelow(True)
+
+        # Better legend
+        ax.legend(
+            loc="best", framealpha=0.95, shadow=True, fontsize=10, edgecolor="#ddd"
+        )
+
+        # Add light background
+        ax.set_facecolor("#f9fafb")
+
+        # Adjust layout to prevent label cutoff
+        plt.tight_layout()
+
+        return ax
+
+    def plot_convergence(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
+        """
+        Plot convergence of genetic algorithm.
+
+        Alias for plot_history() for API consistency. Displays the fitness
+        progression across generated features with running statistics.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes, optional
+            The axes to plot on. If None, creates a new figure.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes with the plot.
+
+        Examples
+        --------
+        >>> synth = GeneticFeatureSynthesis(n_features=10)
+        >>> synth.fit(X, y)
+        >>> synth.plot_convergence()
         """
         if not self.fit_called:
             raise ValueError("Must call fit before plot_convergence")
