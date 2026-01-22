@@ -19,7 +19,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.datasets import make_classification
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score, train_test_split
@@ -28,8 +27,6 @@ from sklearn.model_selection import cross_val_score, train_test_split
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import featuristic as ft
-from featuristic.selection import genetic_feature_selection
-from featuristic.synthesis import genetic_feature_synthesis
 
 print("=" * 70)
 print("Featuristic Example: Complete Feature Engineering Pipeline")
@@ -85,7 +82,7 @@ print(f"   Baseline Accuracy: {acc_baseline:.4f}")
 print("\n3. Feature Synthesis: Creating synthetic features...")
 print("   Using Nim backend (single call runs all GAs - 10-50x speedup!)")
 
-synth = genetic_feature_synthesis.GeneticFeatureSynthesis(
+synth = ft.GeneticFeatureSynthesis(
     n_features=100,  # Generate 10 synthetic features
     population_size=100,  # Moderate population
     max_generations=200,  # Moderate generations for good evolution
@@ -153,7 +150,7 @@ def selection_objective(X_selected, y):
     return -accuracy_score(y, rf.predict(X_selected))
 
 
-selector = genetic_feature_selection.GeneticFeatureSelector(
+selector = ft.GeneticFeatureSelector(
     objective_function=selection_objective,
     population_size=50,
     max_generations=50,

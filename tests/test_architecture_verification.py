@@ -5,7 +5,7 @@ This script verifies that the refactored architecture maintains consistency
 across all components: constants.py, symbolic_functions.py, engine.py, and render.py.
 
 Tests:
-1. Metadata consistency between constants and symbolic functions
+1. Operation metadata availability
 2. Format string parity (Python == Nim)
 3. Simplification logic with new parenthesized format strings
 4. End-to-end pipeline (if Engine is available)
@@ -13,101 +13,63 @@ Tests:
 
 import featuristic as ft
 from featuristic.constants import (
-    OpKind,
     OP_KIND_METADATA,
     UNARY_OPERATIONS,
     BINARY_OPERATIONS,
+    ALL_OP_KINDS,
 )
-from featuristic.synthesis import symbolic_functions, render_prog
+from featuristic.synthesis import render_prog
 import pandas as pd
 import numpy as np
 
 
-def test_metadata_consistency():
-    """Verify that symbolic functions derive metadata correctly from constants."""
-    print("\n=== Testing Metadata Consistency ===")
+def test_operation_metadata():
+    """Verify that operation metadata is available from Nim."""
+    print("\n=== Testing Operation Metadata ===")
 
-    # Map of symbolic function classes to their OpKind
-    op_mapping = {
-        symbolic_functions.SymbolicAdd: OpKind.ADD,
-        symbolic_functions.SymbolicSubtract: OpKind.SUBTRACT,
-        symbolic_functions.SymbolicMultiply: OpKind.MULTIPLY,
-        symbolic_functions.SymbolicDivide: OpKind.DIVIDE,
-        symbolic_functions.SymbolicAbs: OpKind.ABS,
-        symbolic_functions.SymbolicNegate: OpKind.NEGATE,
-        symbolic_functions.SymbolicSin: OpKind.SIN,
-        symbolic_functions.SymbolicCos: OpKind.COS,
-        symbolic_functions.SymbolicTan: OpKind.TAN,
-        symbolic_functions.SymbolicSqrt: OpKind.SQRT,
-        symbolic_functions.SymbolicSquare: OpKind.SQUARE,
-        symbolic_functions.SymbolicCube: OpKind.CUBE,
-        symbolic_functions.SymbolicPow: OpKind.POW,
-        symbolic_functions.SymbolicAddConstant: OpKind.ADD_CONSTANT,
-        symbolic_functions.SymbolicMulConstant: OpKind.MUL_CONSTANT,
-    }
+    # Check that we have operations
+    if not ALL_OP_KINDS:
+        raise AssertionError("No operations found from Nim")
 
-    failures = []
-    for op_class, expected_kind in op_mapping.items():
-        op = op_class()
+    # Check that metadata is populated
+    if not OP_KIND_METADATA:
+        raise AssertionError("No operation metadata found")
 
-        # Check OpKind matches
-        if op.op_kind != expected_kind:
-            failures.append(
-                f"{op_class.__name__}: op_kind mismatch ({op.op_kind} != {expected_kind})"
-            )
+    # Check that operation sets are populated
+    if not UNARY_OPERATIONS:
+        raise AssertionError("No unary operations found")
 
-        # Check name matches constants
-        expected_name, expected_fmt = OP_KIND_METADATA[expected_kind]
-        if op.name != expected_name:
-            failures.append(
-                f"{op_class.__name__}: name mismatch ({op.name} != {expected_name})"
-            )
+    if not BINARY_OPERATIONS:
+        raise AssertionError("No binary operations found")
 
-        # Check format_str matches constants
-        if op.format_str != expected_fmt:
-            failures.append(
-                f"{op_class.__name__}: format_str mismatch ({op.format_str} != {expected_fmt})"
-            )
-
-        # Check arg_count is correct (unary=1, binary=2)
-        if expected_kind in UNARY_OPERATIONS and op.arg_count != 1:
-            failures.append(
-                f"{op_class.__name__}: arg_count should be 1, got {op.arg_count}"
-            )
-        elif expected_kind in BINARY_OPERATIONS and op.arg_count != 2:
-            failures.append(
-                f"{op_class.__name__}: arg_count should be 2, got {op.arg_count}"
-            )
-
-    if failures:
-        print("❌ FAILED - Metadata inconsistencies found:")
-        for failure in failures:
-            print(f"  - {failure}")
-        raise AssertionError(f"Metadata consistency failed with {len(failures)} errors")
-    else:
-        print("✅ PASSED - All metadata is consistent")
+    print(f"✅ PASSED - Found {len(ALL_OP_KINDS)} operations with metadata")
 
 
 def test_format_strings_have_parentheses():
     """Verify that binary operations have outer parentheses for rendering."""
     print("\n=== Testing Format String Parentheses ===")
 
-    binary_ops = [
-        (OpKind.ADD, "({} + {})"),
-        (OpKind.SUBTRACT, "({} - {})"),
-        (OpKind.MULTIPLY, "({} * {})"),
-        (OpKind.DIVIDE, "(safe_divide({}, {}))"),
-        (OpKind.POW, "pow({}, {})"),
-        (OpKind.ADD_CONSTANT, "({} + {})"),
-        (OpKind.MUL_CONSTANT, "({} * {})"),
-    ]
+    # Expected format strings for key binary operations
+    expected_formats = {
+        0: "({} + {})",  # ADD
+        1: "({} - {})",  # SUBTRACT
+        2: "({} * {})",  # MULTIPLY
+        3: "(safe_divide({}, {}))",  # DIVIDE
+        12: "pow({}, {})",  # POW
+        13: "({} + {})",  # ADD_CONSTANT
+        14: "({} * {})",  # MUL_CONSTANT
+    }
 
     failures = []
-    for op_kind, expected_fmt in binary_ops:
+    for op_kind, expected_fmt in expected_formats.items():
+        if op_kind not in OP_KIND_METADATA:
+            failures.append(f"OpKind {op_kind}: not found in metadata")
+            continue
+
         actual_fmt = OP_KIND_METADATA[op_kind][1]
         if actual_fmt != expected_fmt:
             failures.append(
-                f"OpKind.{OpKind.__dict__.get(op_kind, str(op_kind))}: expected {expected_fmt}, got {actual_fmt}"
+                f"OpKind {op_kind}: expected '{expected_fmt}', got '{actual_fmt}'"
             )
 
     if failures:
@@ -265,7 +227,9 @@ def test_list_symbolic_functions():
     """Verify that list_symbolic_functions returns all operations."""
     print("\n=== Testing list_symbolic_functions ===")
 
-    funcs = ft.synthesis.list_symbolic_functions()
+    from featuristic.synthesis.symbolic_functions import list_symbolic_functions
+
+    funcs = list_symbolic_functions()
 
     expected_ops = [
         "add",
@@ -300,7 +264,7 @@ def run_all_verification_tests():
     print("=" * 60)
 
     try:
-        test_metadata_consistency()
+        test_operation_metadata()
         test_format_strings_have_parentheses()
         test_simplification_logic()
         test_render_with_new_format_strings()
@@ -317,6 +281,9 @@ def run_all_verification_tests():
         print("❌ VERIFICATION FAILED")
         print("=" * 60)
         print(f"\nError: {e}")
+        import traceback
+
+        traceback.print_exc()
         return False
 
 

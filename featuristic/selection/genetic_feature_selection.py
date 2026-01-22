@@ -1,17 +1,18 @@
 """Class for binary genetic algorithm for feature selection."""
 
+import random
 import sys
 from typing import Callable, Self, Union
 
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 
-from .binary_population import ParallelPopulation, SerialPopulation
+from .binary_population import BinaryPopulation
 
 
 class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
@@ -162,30 +163,20 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         """
         # Set random seeds for reproducibility
         if self.random_state is not None:
-            import random
 
             random.seed(self.random_state)
             np.random.seed(self.random_state)
 
         self.num_genes = X.shape[1]
 
-        if self.n_jobs == 1:
-            self.population = SerialPopulation(
-                self.population_size,
-                self.num_genes,
-                self.tournament_size,
-                self.crossover_proba,
-                self.mutation_proba,
-            )
-        else:
-            self.population = ParallelPopulation(
-                self.population_size,
-                self.num_genes,
-                self.tournament_size,
-                self.crossover_proba,
-                self.mutation_proba,
-                self.n_jobs,
-            )
+        self.population = BinaryPopulation(
+            self.population_size,
+            self.num_genes,
+            self.tournament_size,
+            self.crossover_proba,
+            self.mutation_proba,
+            self.n_jobs,
+        )
 
         if self.pbar:
             pbar = tqdm(

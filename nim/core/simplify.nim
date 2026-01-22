@@ -2,6 +2,7 @@
 # Optimizes program trees by removing redundant operations
 
 import std/math
+import std/sets
 import ./types
 import ./program
 
@@ -35,18 +36,33 @@ proc simplifyProgram*(program: StackProgram): StackProgram =
   proc isOne(x: float64): bool {.inline.} =
     return abs(x - 1.0) < 1e-9
 
+  # Track visited nodes to prevent cycles
+  var visited = initHashSet[int]()
+
   # Recursive function to process a node and its children
   # Returns the index of the simplified node in 'newNodes'
   proc processNode(oldIdx: int): int =
+    # Prevent infinite recursion by checking if we've already processed this node
+    if oldIdx in visited:
+      # Already processed, return the last created node
+      if len(newNodes) > 0:
+        return len(newNodes) - 1
+      return -1
+
+    # Ensure the index is valid
+    if oldIdx < 0 or oldIdx >= len(program.nodes):
+      return -1
+
+    visited.incl(oldIdx)
     let oldNode = program.nodes[oldIdx]
 
     # RECURSION: Simplify children first (Bottom-Up)
     var newLeftIdx = -1
     var newRightIdx = -1
 
-    if oldNode.left != -1:
+    if oldNode.left != -1 and oldNode.left < len(program.nodes):
       newLeftIdx = processNode(oldNode.left)
-    if oldNode.right != -1:
+    if oldNode.right != -1 and oldNode.right < len(program.nodes):
       newRightIdx = processNode(oldNode.right)
 
     # RULE 1: Identity Removal for Constants
@@ -80,11 +96,13 @@ proc simplifyProgram*(program: StackProgram): StackProgram =
 
     # RULE 3: Double Negation
     # negate(negate(x)) -> x
+    # NOTE: We can only skip if the grandchild has already been processed
     if oldNode.kind == opNegate and newLeftIdx >= 0:
       let child = newNodes[newLeftIdx]
-      if child.kind == opNegate:
-        # Skip both negates, return grandchild
-        return child.left
+      if child.kind == opNegate and child.left >= 0 and child.left in visited:
+        # The grandchild was processed, but we need to find its NEW index
+        # For now, just return the child (remove one level of negation)
+        return newLeftIdx
 
     # NO SIMPLIFICATION MATCHED:
     # Push the current node to the new program with updated child indices

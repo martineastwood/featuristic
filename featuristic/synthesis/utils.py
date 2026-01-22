@@ -1,61 +1,9 @@
-"""
-Centralized backend for Nim library integration.
-
-This module provides a single point of access to the compiled Nim extension,
-handling library loading, zero-copy pointer extraction, and data preparation.
-
-Benefits:
-- Single source of truth for Nim library access
-- Centralized pointer extraction logic
-- Consistent error handling and validation
-- Easier maintenance and testing
-"""
+"""Utility functions for data preparation and zero-copy access."""
 
 from typing import List, Tuple
+
 import numpy as np
 import pandas as pd
-
-
-# Import all Nim functions from the compiled extension
-# These are imported from featuristic_lib which is built by the Nim compiler
-from featuristic.featuristic_lib import (
-    absVecZerocopy,
-    addConstantVecZerocopy,
-    addVecZerocopy,
-    cosVecZerocopy,
-    cubeVecZerocopy,
-    getVersion,
-    mulConstantVecZerocopy,
-    mulVecZerocopy,
-    negateVecZerocopy,
-    safeDivVecZerocopy,
-    sinVecZerocopy,
-    sqrtVecZerocopy,
-    squareVecZerocopy,
-    subVecZerocopy,
-    tanVecZerocopy,
-    # mRMR feature selection (38x speedup)
-    runMRMRZerocopy,
-    # Test functions
-    testAdd,
-    testDivide,
-    testMultiply,
-    testSubtract,
-)
-
-# Import the complete GA implementation (10-50x speedup)
-from featuristic.featuristic_lib import runGeneticAlgorithm, runMultipleGAsWrapper
-from featuristic.featuristic_lib import evaluateProgramsBatched
-
-# Import binary GA functions for feature selection
-from featuristic.featuristic_lib import (
-    binaryBitFlipMutate,
-    binarySinglePointCrossover,
-    evolveBinaryPopulationBatched,
-    pearsonCorrelationNim,
-    evaluateBinaryGenomeNative,
-    runCompleteBinaryGANative,
-)
 
 
 def ensure_contiguous(arr: np.ndarray) -> np.ndarray:
@@ -167,48 +115,3 @@ def extract_target_pointer(y: pd.Series) -> Tuple[int, np.ndarray]:
     target_ptr = int(target_array.__array_interface__["data"][0])
 
     return target_ptr, target_array
-
-
-# Public API
-__all__ = [
-    # Nim vectorized operations
-    "absVecZerocopy",
-    "addConstantVecZerocopy",
-    "addVecZerocopy",
-    "cosVecZerocopy",
-    "cubeVecZerocopy",
-    "getVersion",
-    "mulConstantVecZerocopy",
-    "mulVecZerocopy",
-    "negateVecZerocopy",
-    "safeDivVecZerocopy",
-    "sinVecZerocopy",
-    "sqrtVecZerocopy",
-    "squareVecZerocopy",
-    "subVecZerocopy",
-    "tanVecZerocopy",
-    # mRMR
-    "runMRMRZerocopy",
-    # GA (Symbolic regression)
-    "runGeneticAlgorithm",
-    "runMultipleGAsWrapper",
-    "evaluateProgramsBatched",
-    # Binary GA (Feature selection)
-    "binaryBitFlipMutate",
-    "binarySinglePointCrossover",
-    "evolveBinaryPopulationBatched",
-    "evaluateBinaryGenomeNative",
-    "runCompleteBinaryGANative",
-    # Test functions
-    "testAdd",
-    "testDivide",
-    "testMultiply",
-    "testSubtract",
-    # Pearson correlation
-    "pearsonCorrelationNim",
-    # Utility functions
-    "ensure_contiguous",
-    "extract_column_pointers",
-    "extract_feature_pointers",
-    "extract_target_pointer",
-]

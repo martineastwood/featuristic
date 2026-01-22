@@ -5,21 +5,22 @@ This replaces the pure Python implementation with a Nim-based backend for
 optimized crossover and mutation operations.
 """
 
-from typing import Callable, List, Tuple
+import random
+import sys
+from typing import Callable, List
+
 import numpy as np
 import pandas as pd
-import sys
 from joblib import Parallel, cpu_count, delayed
 
 # Import from centralized backend (single source of truth for Nim library access)
-from ..backend import (
+from ..featuristic_lib import (
     binaryBitFlipMutate,
     binarySinglePointCrossover,
-    evolveBinaryPopulationBatched,
     evaluateBinaryGenomeNative,
-    extract_feature_pointers,
-    extract_target_pointer,
+    evolveBinaryPopulationBatched,
 )
+from ..synthesis.utils import extract_feature_pointers, extract_target_pointer
 
 
 class BinaryPopulation:
@@ -46,6 +47,10 @@ class BinaryPopulation:
 
     mutation_proba : float, optional
         The probability of mutation, by default 0.1.
+
+    n_jobs : int, optional
+        The number of parallel jobs to run, by default 1 (serial).
+        Use -1 to use all available cores.
     """
 
     def __init__(
@@ -55,12 +60,14 @@ class BinaryPopulation:
         tournament_size: int = 10,
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
+        n_jobs: int = 1,
     ):
         self.population_size = population_size
         self.feature_count = feature_count
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
         self.tournament_size = tournament_size
+        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
 
         self.population = None
         self._initialize_population()
@@ -80,9 +87,11 @@ class BinaryPopulation:
 
     def evaluate(
         self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
-    ) -> List[pd.Series]:
+    ) -> List[float]:
         """
         Evaluate the population against the dataframe of features.
+
+        Uses parallel evaluation if n_jobs > 1.
 
         Args
         ----
@@ -95,10 +104,20 @@ class BinaryPopulation:
 
         Returns
         -------
-        List[pd.Series]
-            The predicted values.
+        List[float]
+            The fitness scores.
         """
-        raise NotImplementedError
+        if self.n_jobs == 1:
+            # Serial evaluation
+            return [
+                self._evaluate(cost_func, X, y, genome) for genome in self.population
+            ]
+        else:
+            # Parallel evaluation
+            return Parallel(n_jobs=self.n_jobs)(
+                delayed(self._evaluate)(cost_func, X, y, genome)
+                for genome in self.population
+            )
 
     def _evaluate(
         self, cost_func: Callable, X: pd.DataFrame, y: pd.Series, genome: np.ndarray
@@ -127,189 +146,6 @@ class BinaryPopulation:
         else:
             current_cost = cost_func(X[X.columns[genome == 1]], y)
         return current_cost
-
-    def _selection(self, scores: List, k: int = 3) -> np.ndarray:
-        """
-        Select an individual from the population using tournament selection.
-
-        Parameters
-        ----------
-        scores : List
-            The fitness scores of the population.
-        k : int, optional
-            The number of individuals to select for the tournament, by default 3.
-
-        Returns
-        -------
-        np.ndarray
-            The selected individual.
-        """
-        selection_ix = np.random.randint(len(self.population))
-
-        for ix in np.random.randint(0, len(self.population), k - 1):
-            if scores[ix] < scores[selection_ix]:
-                selection_ix = ix
-        return self.population[selection_ix]
-
-    def _mutate(self, genome: np.ndarray, random_seed: int) -> np.ndarray:
-        """
-        Mutate the individual's genome using Nim backend.
-
-        Parameters
-        ----------
-        genome : np.ndarray
-            The genome of an individual.
-        random_seed : int
-            Random seed for reproducibility.
-
-        Returns
-        -------
-        np.ndarray
-            The mutated genome.
-        """
-        # Call Nim mutation
-        mutated_list = binaryBitFlipMutate(
-            genome.tolist(), self.mutation_proba, random_seed
-        )
-
-        return np.array(mutated_list)
-
-    def _crossover(
-        self,
-        parent1: np.ndarray,
-        parent2: np.ndarray,
-        crossover_proba: float,
-        random_seed: int,
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Crossover two individuals to create two new children using Nim backend.
-
-        Parameters
-        ----------
-        parent1 : np.ndarray
-            The first parent.
-        parent2 : np.ndarray
-            The second parent.
-        crossover_proba : float
-            The probability of crossover.
-        random_seed : int
-            Random seed for reproducibility.
-
-        Returns
-        -------
-        Tuple[np.ndarray, np.ndarray]
-            The two new children.
-        """
-        # Call Nim crossover
-        result = binarySinglePointCrossover(
-            parent1.tolist(), parent2.tolist(), crossover_proba, random_seed
-        )
-
-        # Nim returns a tuple (child1, child2)
-        child1_list, child2_list = result
-
-        return np.array(child1_list), np.array(child2_list)
-
-    def evolve(self, fitness: List[float]):
-        """
-        Evolve the population based on the fitness scores.
-
-        Uses Nim batched evolution for 10-20x speedup by avoiding
-        multiple Python-Nim boundary crossings.
-
-        Parameters
-        ----------
-        fitness : List[float]
-            The fitness scores of the population.
-        """
-        import random
-
-        # Flatten the population for Nim (2D array -> 1D)
-        pop_flat = self.population.flatten().tolist()
-
-        # Use random seed for reproducibility
-        seed = random.randint(0, 2**31 - 1)
-
-        # Call Nim to evolve the entire population at once
-        # This is much faster than calling mutate/crossover individually
-        # Note: Nim function uses positional arguments (nimpy limitation)
-        new_pop_flat = evolveBinaryPopulationBatched(
-            pop_flat,
-            fitness,
-            self.population_size,
-            self.feature_count,
-            self.crossover_proba,
-            self.mutation_proba,
-            self.tournament_size,
-            seed,
-        )
-
-        # Reshape the result back to 2D array
-        self.population = np.array(new_pop_flat).reshape(
-            self.population_size, self.feature_count
-        )
-
-
-class SerialPopulation(BinaryPopulation):
-    """
-    Binary population with serial evaluation.
-
-    Inherits from BinaryPopulation and evaluates each genome sequentially.
-    """
-
-    def __init__(
-        self,
-        population_size: int,
-        feature_count: int,
-        tournament_size: int = 10,
-        crossover_proba: float = 0.9,
-        mutation_proba: float = 0.1,
-    ):
-        """
-        Initialize the population class.
-
-        Args
-        ----
-        population_size : int
-            The size of the population.
-        feature_count : int
-            The number of features.
-        tournament_size : int, optional
-            The tournament size, by default 10.
-        crossover_proba : float, optional
-            The probability of crossover, by default 0.9.
-        mutation_proba : float, optional
-            The probability of mutation, by default 0.1.
-        """
-        super().__init__(
-            population_size,
-            feature_count,
-            tournament_size,
-            crossover_proba,
-            mutation_proba,
-        )
-
-    def evaluate(
-        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
-    ) -> List[float]:
-        """
-        Evaluate the population against the dataframe of features.
-
-        Args
-        ----
-        cost_func : Callable
-            The cost function to evaluate the individual's fitness.
-        X : pd.DataFrame
-            The dataframe with the features.
-        y : pd.Series
-            The true values.
-
-        Returns
-        -------
-        List[float]
-            The fitness scores.
-        """
-        return [self._evaluate(cost_func, X, y, genome) for genome in self.population]
 
     def evaluate_native(
         self, X: pd.DataFrame, y: pd.Series, metric: str = "mse"
@@ -360,120 +196,61 @@ class SerialPopulation(BinaryPopulation):
 
         return fitness
 
-
-class ParallelPopulation(BinaryPopulation):
-    """
-    Binary population with parallel evaluation.
-
-    Inherits from BinaryPopulation and evaluates genomes in parallel using joblib.
-    """
-
-    def __init__(
-        self,
-        population_size: int,
-        feature_count: int,
-        tournament_size: int = 10,
-        crossover_proba: float = 0.9,
-        mutation_proba: float = 0.1,
-        n_jobs: int = -1,
-    ):
+    def _selection(self, scores: List, k: int = 3) -> np.ndarray:
         """
-        Initialize the population class.
+        Select an individual from the population using tournament selection.
 
-        Args
-        ----
-        population_size : int
-            The size of the population.
-        feature_count : int
-            The number of features.
-        tournament_size : int, optional
-            The tournament size, by default 10.
-        crossover_proba : float, optional
-            The probability of crossover, by default 0.9.
-        mutation_proba : float, optional
-            The probability of mutation, by default 0.1.
-        n_jobs : int, optional
-            The number of parallel jobs to run, by default -1 (use all available cores).
-        """
-        super().__init__(
-            population_size,
-            feature_count,
-            tournament_size,
-            crossover_proba,
-            mutation_proba,
-        )
-
-        self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
-
-    def evaluate(
-        self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
-    ) -> List[float]:
-        """
-        Evaluate the population against the dataframe of features.
-
-        Args
-        ----
-        cost_func : Callable
-            The cost function to evaluate the individual's fitness.
-        X : pd.DataFrame
-            The dataframe with the features.
-        y : pd.Series
-            The true values.
+        Parameters
+        ----------
+        scores : List
+            The fitness scores of the population.
+        k : int, optional
+            The number of individuals to select for the tournament, by default 3.
 
         Returns
         -------
-        List[float]
-            The fitness scores.
+        np.ndarray
+            The selected individual.
         """
-        return Parallel(n_jobs=self.n_jobs)(
-            delayed(self._evaluate)(cost_func, X, y, genome)
-            for genome in self.population
+        selection_ix = np.random.randint(len(self.population))
+
+        for ix in np.random.randint(0, len(self.population), k - 1):
+            if scores[ix] < scores[selection_ix]:
+                selection_ix = ix
+        return self.population[selection_ix]
+
+    def evolve(self, fitness: List[float]):
+        """
+        Evolve the population based on the fitness scores.
+
+        Uses Nim batched evolution for 10-20x speedup by avoiding
+        multiple Python-Nim boundary crossings.
+
+        Parameters
+        ----------
+        fitness : List[float]
+            The fitness scores of the population.
+        """
+
+        # Flatten the population for Nim (2D array -> 1D)
+        pop_flat = self.population.flatten().tolist()
+
+        # Use random seed for reproducibility
+        seed = random.randint(0, 2**31 - 1)
+
+        # Call Nim to evolve the entire population at once
+        new_pop_flat = evolveBinaryPopulationBatched(
+            pop_flat,
+            fitness,
+            self.population_size,
+            self.feature_count,
+            self.crossover_proba,
+            self.mutation_proba,
+            self.tournament_size,
+            seed,
         )
 
-    def evaluate_native(
-        self, X: pd.DataFrame, y: pd.Series, metric: str = "mse"
-    ) -> List[float]:
-        """
-        Evaluate the population using native Nim computation (15-30x faster).
-
-        Note: ParallelPopulation runs evaluation serially when using native
-        Nim evaluation, since the Nim code is already fast enough.
-
-        Args
-        ----
-        X : pd.DataFrame
-            The dataframe with the features.
-        y : pd.Series
-            The true values.
-        metric : str
-            The metric to use: "mse", "mae", or "r2"
-
-        Returns
-        -------
-        List[float]
-            The fitness scores.
-        """
-        # Extract feature pointers for zero-copy access
-        feature_ptrs, _ = extract_feature_pointers(X)
-        target_ptr, _ = extract_target_pointer(y)
-
-        # Map metric string to int
-        metric_map = {"mse": 0, "mae": 1, "r2": 2}
-        metric_type = metric_map.get(metric.lower(), 0)
-
-        # Evaluate each genome using Nim (serial - already fast)
-        fitness = []
-        for genome in self.population:
-            genome_list = genome.tolist()
-            # Note: Nim function uses positional arguments (nimpy limitation)
-            score = evaluateBinaryGenomeNative(
-                genome_list,
-                feature_ptrs,
-                target_ptr,
-                X.shape[0],
-                X.shape[1],
-                metric_type,
-            )
-            fitness.append(score)
-
-        return fitness
+        # Reshape the result back to 2D array
+        self.population = np.array(new_pop_flat).reshape(
+            self.population_size, self.feature_count
+        )

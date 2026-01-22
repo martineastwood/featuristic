@@ -1,14 +1,13 @@
 """Fitness functions for measuring how well the features are performing"""
 
+import sys
 import warnings
 
 import numpy as np
 import pandas as pd
 import scipy
-import sys
 
-# Import Nim Pearson correlation for 2-5x speedup
-from ..backend import pearsonCorrelationNim
+from ..featuristic_lib import pearsonCorrelationNim
 
 
 def node_count(node: dict) -> int:
@@ -63,11 +62,9 @@ def fitness_pearson(
             return sys.maxsize
 
         # Maximize correlation (higher is better)
-        # Use Nim implementation for 2-5x speedup
         correlation = abs(pearsonCorrelationNim(y_pred.tolist(), y_true.tolist()))
 
         # Penalize complexity: add penalty to correlation
-        # Complex programs need significantly higher correlation to compete
         num_nodes = node_count(program)
         penalty = parsimony * num_nodes
 

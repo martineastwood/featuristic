@@ -17,6 +17,22 @@ proc countNodes*(program: StackProgram): int =
   return len(program.nodes)
 
 
+proc markSubtreeNodes(
+  program: StackProgram,
+  idx: int,
+  inSubtree: var seq[bool]
+) =
+  ## Helper to mark all nodes in a subtree
+  if idx < 0 or idx >= len(program.nodes):
+    return
+  inSubtree[idx] = true
+  let node = program.nodes[idx]
+  if node.left >= 0 and node.left < idx:
+    markSubtreeNodes(program, node.left, inSubtree)
+  if node.right >= 0 and node.right < idx:
+    markSubtreeNodes(program, node.right, inSubtree)
+
+
 proc findSubtreeBounds*(program: StackProgram, rootIdx: int): tuple[startIdx: int, size: int] =
   ## Find the bounds (start index and size) of a subtree in post-order representation
   ##
@@ -33,17 +49,7 @@ proc findSubtreeBounds*(program: StackProgram, rootIdx: int): tuple[startIdx: in
   for i in 0..<len(inSubtree):
     inSubtree[i] = false
 
-  proc markSubtree(idx: int) =
-    if idx < 0 or idx >= len(program.nodes):
-      return
-    inSubtree[idx] = true
-    let node = program.nodes[idx]
-    if node.left >= 0 and node.left < idx:
-      markSubtree(node.left)
-    if node.right >= 0 and node.right < idx:
-      markSubtree(node.right)
-
-  markSubtree(rootIdx)
+  markSubtreeNodes(program, rootIdx, inSubtree)
 
   # Find start (first marked node) and count
   var startIdx = -1
@@ -236,6 +242,124 @@ proc crossover*(parent1: StackProgram, parent2: StackProgram, rng: var Rand, max
   return parent1
 
 
+# ============================================================================
+# Mutation Subtree Generator (Standalone to avoid closure issues)
+# ============================================================================
+
+proc generateMutationNode(
+  rng: var Rand,
+  depth: int,
+  maxAllowedDepth: int,
+  numFeatures: int,
+  availableOps: seq[OperationKind],
+  nodes: var seq[StackProgramNode]
+): int =
+  ## Helper to generate a single node for mutation
+  ## Returns the index of the created node
+
+  let leafProbability = depth / maxAllowedDepth
+  let forceInternal = (depth == 0)
+
+  if (not forceInternal) and (rng.rand(1.0) < leafProbability or depth >= maxAllowedDepth):
+    # Create leaf node (feature)
+    let maxFeatureIdx = max(0, numFeatures - 1)
+    let featureIdx = rng.rand(maxFeatureIdx)
+    let nodeIdx = len(nodes)
+    nodes.add(StackProgramNode(
+      left: -1,
+      right: -1,
+      kind: opFeature,
+      featureIndex: featureIdx
+    ))
+    return nodeIdx
+  else:
+    # Create internal node (operation)
+    var unaryOps = newSeq[OperationKind]()
+    var binaryOps = newSeq[OperationKind]()
+    for op in availableOps:
+      if op in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}:
+        unaryOps.add(op)
+      elif op in {opAddConstant, opMulConstant}:
+        unaryOps.add(op)
+      else:
+        binaryOps.add(op)
+
+    var selectedOp: OperationKind
+    if len(unaryOps) > 0 and len(binaryOps) > 0:
+      if rng.rand(1.0) < 0.5:
+        let maxIdx = max(0, high(unaryOps))
+        selectedOp = unaryOps[rng.rand(maxIdx)]
+      else:
+        let maxIdx = max(0, high(binaryOps))
+        selectedOp = binaryOps[rng.rand(maxIdx)]
+    elif len(unaryOps) > 0:
+      let maxIdx = max(0, high(unaryOps))
+      selectedOp = unaryOps[rng.rand(maxIdx)]
+    else:
+      let maxIdx = max(0, high(binaryOps))
+      selectedOp = binaryOps[rng.rand(maxIdx)]
+
+    let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}
+    let isConstant = selectedOp in {opAddConstant, opMulConstant}
+
+    if isUnary:
+      let childIdx = generateMutationNode(rng, depth + 1, maxAllowedDepth, numFeatures, availableOps, nodes)
+      let nodeIdx = len(nodes)
+      nodes.add(StackProgramNode(
+        left: childIdx,
+        right: -1,
+        kind: selectedOp
+      ))
+      return nodeIdx
+    elif isConstant:
+      let childIdx = generateMutationNode(rng, depth + 1, maxAllowedDepth, numFeatures, availableOps, nodes)
+      let constant = rng.rand(1.0) * 2.0 - 1.0
+      let opKind = selectedOp
+
+      case opKind
+      of opAddConstant:
+        nodes.add(StackProgramNode(
+          left: childIdx,
+          right: -1,
+          kind: opKind,
+          addConstantValue: constant
+        ))
+      of opMulConstant:
+        nodes.add(StackProgramNode(
+          left: childIdx,
+          right: -1,
+          kind: opKind,
+          mulConstantValue: constant
+        ))
+      else:
+        discard
+
+      return len(nodes) - 1
+    else:
+      # Binary operation
+      let leftIdx = generateMutationNode(rng, depth + 1, maxAllowedDepth, numFeatures, availableOps, nodes)
+      let rightIdx = generateMutationNode(rng, depth + 1, maxAllowedDepth, numFeatures, availableOps, nodes)
+      let nodeIdx = len(nodes)
+      nodes.add(StackProgramNode(
+        left: leftIdx,
+        right: rightIdx,
+        kind: selectedOp
+      ))
+      return nodeIdx
+
+
+proc generateRandomSubtree(
+  rng: var Rand,
+  maxDepth: int,
+  numFeatures: int,
+  availableOps: seq[OperationKind]
+): seq[StackProgramNode] =
+  ## Generate a random subtree for mutation
+  var nodes = newSeq[StackProgramNode](0)
+  discard generateMutationNode(rng, 0, maxDepth, numFeatures, availableOps, nodes)
+  return nodes
+
+
 proc mutate*(program: StackProgram, rng: var Rand, maxDepth: int, numFeatures: int, availableOps: seq[OperationKind]): StackProgram =
   ## Perform subtree mutation on a program
   ##
@@ -262,98 +386,11 @@ proc mutate*(program: StackProgram, rng: var Rand, maxDepth: int, numFeatures: i
     # Find current depth at target node (approximate)
     let currentDepth = min(targetIdx div 2, maxDepth - 2)  # Rough estimate, leave room for subtree
 
-    # Generate new random subtree (inline to avoid circular import)
-    var nodes = newSeq[StackProgramNode](0)
+    # Calculate remaining depth for the new subtree
+    let remainingDepth = max(1, maxDepth - currentDepth)
 
-    proc generateNode(rng: var Rand, depth: int): int =
-      let leafProbability = depth / (maxDepth - currentDepth)
-
-      # Enforce minimum complexity: if we're at depth 0, we MUST create an internal node
-      let forceInternal = (depth == 0)
-
-      if (not forceInternal) and (rng.rand(1.0) < leafProbability or depth >= (maxDepth - currentDepth)):
-        # Create leaf node (feature)
-        let featureIdx = rng.rand(numFeatures - 1)
-        let nodeIdx = len(nodes)
-        nodes.add(StackProgramNode(
-          kind: opFeature,
-          featureIndex: featureIdx,
-          left: -1,
-          right: -1
-        ))
-        return nodeIdx
-      else:
-        # Create internal node (operation)
-        var unaryOps = newSeq[OperationKind]()
-        var binaryOps = newSeq[OperationKind]()
-        for op in availableOps:
-          if op in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}:
-            unaryOps.add(op)
-          elif op in {opAddConstant, opMulConstant}:
-            unaryOps.add(op)
-          else:
-            binaryOps.add(op)
-
-        var selectedOp: OperationKind
-        if len(unaryOps) > 0 and len(binaryOps) > 0:
-          if rng.rand(1.0) < 0.5:
-            selectedOp = unaryOps[rng.rand(len(unaryOps) - 1)]
-          else:
-            selectedOp = binaryOps[rng.rand(len(binaryOps) - 1)]
-        elif len(unaryOps) > 0:
-          selectedOp = unaryOps[rng.rand(len(unaryOps) - 1)]
-        else:
-          selectedOp = binaryOps[rng.rand(len(binaryOps) - 1)]
-
-        let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}
-        let isBinary = selectedOp in {opAdd, opSubtract, opMultiply, opDivide, opPow}
-        let isConstant = selectedOp in {opAddConstant, opMulConstant}
-
-        if isUnary:
-          let childIdx = generateNode(rng, depth + 1)
-          let nodeIdx = len(nodes)
-          nodes.add(StackProgramNode(
-            kind: selectedOp,
-            left: childIdx,
-            right: -1
-          ))
-          return nodeIdx
-        elif isConstant:
-          let childIdx = generateNode(rng, depth + 1)
-          let constant = rng.rand(1.0) * 2.0 - 1.0
-          let opKind = selectedOp
-
-          case opKind
-          of opAddConstant:
-            nodes.add(StackProgramNode(
-              kind: opKind,
-              addConstantValue: constant,
-              left: childIdx,
-              right: -1
-            ))
-          of opMulConstant:
-            nodes.add(StackProgramNode(
-              kind: opKind,
-              mulConstantValue: constant,
-              left: childIdx,
-              right: -1
-            ))
-          else:
-            discard
-
-          return len(nodes) - 1
-        else:
-          let leftIdx = generateNode(rng, depth + 1)
-          let rightIdx = generateNode(rng, depth + 1)
-          let nodeIdx = len(nodes)
-          nodes.add(StackProgramNode(
-            kind: selectedOp,
-            left: leftIdx,
-            right: rightIdx
-          ))
-          return nodeIdx
-
-    discard generateNode(rng, 0)
+    # Generate new random subtree using standalone helper
+    var nodes = generateRandomSubtree(rng, remainingDepth, numFeatures, availableOps)
 
     # Check if replacement would exceed max depth
     let (startIdx, oldSize) = findSubtreeBounds(offspring, targetIdx)
@@ -405,4 +442,4 @@ proc tournamentSelect*(population: seq[StackProgram], fitness: seq[float64],
 
 # Export functions without nuwa_export (implementation only)
 export countNodes, findSubtreeBounds, getRandomNodeIndex, cloneSubtree, replaceSubtree,
-       crossover, mutate, tournamentSelect
+       crossover, mutate, tournamentSelect, generateMutationNode, generateRandomSubtree

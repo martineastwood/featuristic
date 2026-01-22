@@ -2,13 +2,11 @@
 
 from typing import List
 
-import numpy as np
 import pandas as pd
 from sklearn.feature_selection import f_classif, f_regression
-from tqdm import tqdm
 
-# Import Nim-accelerated mRMR (38x speedup) from centralized backend
-from ..backend import runMRMRZerocopy, extract_feature_pointers, extract_target_pointer
+from ..featuristic_lib import runMRMRZerocopy
+from ..synthesis.utils import extract_feature_pointers, extract_target_pointer
 
 # set the floor value for the correlation matrix
 FLOOR: float = 0.00001

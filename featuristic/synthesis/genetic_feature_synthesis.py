@@ -1,17 +1,21 @@
 """Contains the SymbolicFeatureGenerator class."""
 
-import sys
+import random
 from typing import List, Union
-import matplotlib.pyplot as plt
+
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from ..featuristic_lib import runMultipleGAsWrapper
+from ..synthesis.utils import extract_column_pointers
+from .engine import deserialize_program, evaluate_programs
 from .mrmr import MaxRelevanceMinRedundancy
-from .engine import SymbolicEvolutionEngine
-from .render import render_prog
-from .symbolic_functions import CustomSymbolicFunction, operations
 from .preprocess import preprocess_data
+from .render import render_prog, simplify_program
+from .symbolic_functions import CustomSymbolicFunction, AVAILABLE_OPERATIONS
 
 
 class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -119,24 +123,21 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             results will not be reproducible. Default is None.
         """
         if functions is None:
-            self.functions = operations
+            self.functions = list(AVAILABLE_OPERATIONS)
         else:
+            # Validate function names
             self.functions = []
             for func in functions:
-                found = False
-                for op in operations:
-                    if op().name == func:
-                        self.functions.append(op)
-                        found = True
-                        break
-                if not found:
+                if func not in AVAILABLE_OPERATIONS:
                     raise ValueError(
                         f"Function '{func}' not found in symbolic operations"
                     )
+                self.functions.append(func)
 
         if custom_functions is not None:
+            # Store custom function names for validation
             for func in custom_functions:
-                self.functions.append(func)
+                self.functions.append(func.name)
 
         self.population_size = population_size
         self.max_generations = max_generations
@@ -177,15 +178,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         None
         """
         # Evaluate synthetic features from hall of fame
-        population = SymbolicEvolutionEngine(
-            population_size=len(self.hall_of_fame),
-            tournament_size=self.tournament_size,
-            crossover_prob=self.crossover_proba,
-        ).initialize(X)
-
-        # Extract programs from hall of fame
         programs = [entry["individual"] for entry in self.hall_of_fame]
-        synthetic_features = population.evaluate_programs(X, programs)
+        synthetic_features = evaluate_programs(X, programs)
 
         # Clean NaN/Inf values from synthetic features
         synthetic_features = self._clean_features(synthetic_features)
@@ -280,32 +274,19 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # Set random seeds for reproducibility
         if self.random_state is not None:
-            import random
-            import numpy as np
 
             random.seed(self.random_state)
             np.random.seed(self.random_state)
 
         # Generate diverse features using Nim GA
-        # OPTIMIZATION: Run ALL GAs in a single Nim call (no Python looping!)
-        # This provides 1.5-3x speedup by:
-        # - Single Python-Nim boundary crossing
-        # - Reuse feature matrix across all GAs
-        # - Reuse buffer pool across all GAs
-
-        # Use max_generations directly for deeper evolution per GA
-        # This produces higher-quality features instead of many shallow ones
         generations_per_ga = self.max_generations
 
         # Prepare data for Nim - single column-major copy
-        from ..backend import extract_column_pointers
 
         feature_ptrs, X_colmajor = extract_column_pointers(X_copy)
         y_list = y_copy.tolist()
 
         # Generate random seeds for each GA
-        import random
-
         if self.random_state is not None:
             # Generate deterministic seeds for reproducibility
             random_seeds = [
@@ -316,9 +297,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             random_seeds = [
                 random.randint(0, 2**31 - 1) for _ in range(self.n_features)
             ]
-
-        # SINGLE CALL TO NIM - runs all GAs internally!
-        from ..backend import runMultipleGAsWrapper
 
         # Note: Nim function returns tuple (positional args due to nimpy)
         (
@@ -346,11 +324,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # Process results from Nim
         self.hall_of_fame = []
-        engine = SymbolicEvolutionEngine(
-            population_size=self.population_size,
-            tournament_size=self.tournament_size,
-            crossover_prob=self.crossover_proba,
-        ).initialize(X_copy)
 
         for feature_idx in range(self.n_features):
             # Extract serialized program data for this GA
@@ -367,12 +340,13 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             best_fitness = program_data["fitness"]
 
             # Deserialize for formula string generation (only for display)
-            best_program_for_display = engine.deserialize_program(program_data)
+            best_program_for_display = deserialize_program(
+                program_data, self.feature_names_
+            )
             formula = render_prog(best_program_for_display)
 
             # Filter out programs that simplify to single features (no actual transformation)
             # Check if the simplified program has any operations (has children)
-            from .render import simplify_program
 
             simplified_program = simplify_program(best_program_for_display)
 
@@ -437,8 +411,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         pd.DataFrame
             Cleaned dataframe with NaN/Inf replaced and synthetic features normalized.
         """
-        import numpy as np
-
         # Make a copy to avoid modifying the original
         df_clean = df.copy()
 
@@ -493,15 +465,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # Evaluate synthetic features from hall of fame
         if len(self.hall_of_fame) > 0:
-            engine = SymbolicEvolutionEngine(
-                population_size=len(self.hall_of_fame),
-                tournament_size=self.tournament_size,
-                crossover_prob=self.crossover_proba,
-            ).initialize(X_pd.reset_index(drop=True))
-
             # Extract programs and evaluate them
             programs = [x["individual"] for x in self.hall_of_fame]
-            synthetic_features = engine.evaluate_programs(
+            synthetic_features = evaluate_programs(
                 X_pd.reset_index(drop=True), programs
             )
 
@@ -570,16 +536,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         output = []
         for prog in self.hall_of_fame:
             # Deserialize the program for rendering
-            # Use stored feature names from fit()
-            dummy_X = pd.DataFrame(columns=self.feature_names_)
-
-            engine = SymbolicEvolutionEngine(
-                population_size=1,
-                tournament_size=self.tournament_size,
-                crossover_prob=self.crossover_proba,
-            ).initialize(dummy_X)
-
-            individual = engine.deserialize_program(prog["individual"])
+            individual = deserialize_program(prog["individual"], self.feature_names_)
 
             tmp = {
                 "name": prog["name"],

@@ -5,8 +5,8 @@ import std/random
 import std/math
 import std/tables
 import std/algorithm
-import std/threadpool
-import std/cpuinfo
+import std/typedthreads
+import std/locks
 import ../core/types
 import ../core/program
 import ../core/operations
@@ -103,6 +103,133 @@ proc computeFitness*(
 # Program Initialization
 # ============================================================================
 
+proc generateNode(
+  rng: var Rand,
+  depth: int,
+  maxDepth: int,
+  numFeatures: int,
+  availableOps: seq[OperationKind],
+  nodes: var seq[StackProgramNode]
+): int =
+  ## Helper to generate a single node in the program tree
+  ## Returns the index of the created node in the nodes sequence
+
+  # Decide whether to create a leaf or internal node
+  # More likely to create leaf as depth increases
+  let leafProbability = depth / maxDepth
+
+  # Enforce minimum complexity: if we're at depth 0, we MUST create an internal node
+  # This ensures all programs have at least one operation (no raw features)
+  let forceInternal = (depth == 0)
+
+  if (not forceInternal) and (rng.rand(1.0) < leafProbability or depth >= maxDepth):
+    # Create leaf node (feature)
+    # Ensure we always have valid feature index
+    let maxFeatureIdx = max(0, numFeatures - 1)  # Handle numFeatures == 0 case
+    let featureIdx = rng.rand(maxFeatureIdx)
+
+    let nodeIdx = len(nodes)
+    nodes.add(StackProgramNode(
+      left: -1,
+      right: -1,
+      kind: opFeature,
+      featureIndex: featureIdx
+    ))
+    return nodeIdx
+
+  else:
+    # Create internal node (operation)
+    # Separate unary and binary operations for balanced selection
+    var unaryOps = newSeq[OperationKind]()
+    var binaryOps = newSeq[OperationKind]()
+    for op in availableOps:
+      if op in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}:
+        unaryOps.add(op)
+      elif op in {opAddConstant, opMulConstant}:
+        unaryOps.add(op)  # Constant operations are unary
+      else:
+        binaryOps.add(op)
+
+    # Choose between unary and binary with equal probability
+    var selectedOp: OperationKind
+    if len(unaryOps) > 0 and len(binaryOps) > 0:
+      if rng.rand(1.0) < 0.5:
+        # Select unary operation
+        let maxIdx = max(0, high(unaryOps))
+        selectedOp = unaryOps[rng.rand(maxIdx)]
+      else:
+        # Select binary operation
+        let maxIdx = max(0, high(binaryOps))
+        selectedOp = binaryOps[rng.rand(maxIdx)]
+    elif len(unaryOps) > 0:
+      # Only unary available
+      let maxIdx = max(0, high(unaryOps))
+      selectedOp = unaryOps[rng.rand(maxIdx)]
+    else:
+      # Only binary available
+      let maxIdx = max(0, high(binaryOps))
+      selectedOp = binaryOps[rng.rand(maxIdx)]
+
+    # Determine if unary or binary operation
+    let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}
+    let isConstant = selectedOp in {opAddConstant, opMulConstant}
+
+    if isUnary:
+      # Unary operation
+      let childIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
+
+      let nodeIdx = len(nodes)
+      nodes.add(StackProgramNode(
+        left: childIdx,
+        right: -1,
+        kind: selectedOp
+      ))
+      return nodeIdx
+
+    elif isConstant:
+      # Constant operation
+      let childIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
+      let constant = rng.rand(1.0) * 2.0 - 1.0  # Random value in [-1, 1]
+
+      # Create immutable copy for case discriminator
+      let opKind = selectedOp
+
+      # Use case statement for discriminated union
+      case opKind
+      of opAddConstant:
+        nodes.add(StackProgramNode(
+          left: childIdx,
+          right: -1,
+          kind: opKind,
+          addConstantValue: constant
+        ))
+      of opMulConstant:
+        nodes.add(StackProgramNode(
+          left: childIdx,
+          right: -1,
+          kind: opKind,
+          mulConstantValue: constant
+        ))
+      else:
+        # Should not happen
+        discard
+
+      return len(nodes) - 1
+
+    else:
+      # Binary operation
+      let leftIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
+      let rightIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
+
+      let nodeIdx = len(nodes)
+      nodes.add(StackProgramNode(
+        left: leftIdx,
+        right: rightIdx,
+        kind: selectedOp
+      ))
+      return nodeIdx
+
+
 proc generateRandomProgram*(
   rng: var Rand,
   maxDepth: int,
@@ -113,119 +240,8 @@ proc generateRandomProgram*(
 
   var nodes = newSeq[StackProgramNode](0)
 
-  proc generateNode(rng: var Rand, depth: int): int =
-
-    # Decide whether to create a leaf or internal node
-    # More likely to create leaf as depth increases
-    let leafProbability = depth / maxDepth
-
-    # Enforce minimum complexity: if we're at depth 0, we MUST create an internal node
-    # This ensures all programs have at least one operation (no raw features)
-    let forceInternal = (depth == 0)
-
-    if (not forceInternal) and (rng.rand(1.0) < leafProbability or depth >= maxDepth):
-      # Create leaf node (feature)
-      let featureIdx = rng.rand(numFeatures - 1)
-
-      let nodeIdx = len(nodes)
-      nodes.add(StackProgramNode(
-        kind: opFeature,
-        featureIndex: featureIdx,
-        left: -1,
-        right: -1
-      ))
-      return nodeIdx
-
-    else:
-      # Create internal node (operation)
-      # Separate unary and binary operations for balanced selection
-      var unaryOps = newSeq[OperationKind]()
-      var binaryOps = newSeq[OperationKind]()
-      for op in availableOps:
-        if op in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}:
-          unaryOps.add(op)
-        elif op in {opAddConstant, opMulConstant}:
-          unaryOps.add(op)  # Constant operations are unary
-        else:
-          binaryOps.add(op)
-
-      # Choose between unary and binary with equal probability
-      var selectedOp: OperationKind
-      if len(unaryOps) > 0 and len(binaryOps) > 0:
-        if rng.rand(1.0) < 0.5:
-          # Select unary operation
-          selectedOp = unaryOps[rng.rand(len(unaryOps) - 1)]
-        else:
-          # Select binary operation
-          selectedOp = binaryOps[rng.rand(len(binaryOps) - 1)]
-      elif len(unaryOps) > 0:
-        # Only unary available
-        selectedOp = unaryOps[rng.rand(len(unaryOps) - 1)]
-      else:
-        # Only binary available
-        selectedOp = binaryOps[rng.rand(len(binaryOps) - 1)]
-
-      # Determine if unary or binary operation
-      let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}
-      let isConstant = selectedOp in {opAddConstant, opMulConstant}
-
-      if isUnary:
-        # Unary operation
-        let childIdx = generateNode(rng, depth + 1)
-
-        let nodeIdx = len(nodes)
-        nodes.add(StackProgramNode(
-          kind: selectedOp,
-          left: childIdx,
-          right: -1
-        ))
-        return nodeIdx
-
-      elif isConstant:
-        # Constant operation
-        let childIdx = generateNode(rng, depth + 1)
-        let constant = rng.rand(1.0) * 2.0 - 1.0  # Random value in [-1, 1]
-
-        # Create immutable copy for case discriminator
-        let opKind = selectedOp
-
-        # Use case statement for discriminated union
-        case opKind
-        of opAddConstant:
-          nodes.add(StackProgramNode(
-            kind: opKind,
-            addConstantValue: constant,
-            left: childIdx,
-            right: -1
-          ))
-        of opMulConstant:
-          nodes.add(StackProgramNode(
-            kind: opKind,
-            mulConstantValue: constant,
-            left: childIdx,
-            right: -1
-          ))
-        else:
-          # Should not happen
-          discard
-
-        return len(nodes) - 1
-
-      else:
-        # Binary operation
-        let leftIdx = generateNode(rng, depth + 1)
-        let rightIdx = generateNode(rng, depth + 1)
-
-        let nodeIdx = len(nodes)
-        nodes.add(StackProgramNode(
-          kind: selectedOp,
-          left: leftIdx,
-          right: rightIdx
-        ))
-        return nodeIdx
-
   # Generate the program tree
-  discard generateNode(rng, 0)
+  discard generateNode(rng, 0, maxDepth, numFeatures, availableOps, nodes)
 
   return StackProgram(nodes: nodes, depth: 0)
 
@@ -426,7 +442,7 @@ proc runSingleGA(
   let availableOps = @[
     opAdd, opSubtract, opMultiply, opDivide, opPow,
     opNegate, opSquare, opCube, opAbs, opSqrt,
-    opSin, opCos, opTan
+    opSin, opCos, opTan, opAddConstant, opMulConstant
   ]
 
   # E. Initialize Population
@@ -490,17 +506,16 @@ proc runMultipleGAs*(
   parsimonyCoefficient: float64,
   randomSeeds: seq[int32]
 ): MultipleGAResult =
-  ## Run multiple independent GAs in parallel using threadpool
+  ## Run multiple independent GAs in parallel using weave
   ##
-  ## This is the key optimization for feature synthesis - instead of Python
-  ## calling Nim multiple times, we coordinate all GA runs here in Nim with
-  ## parallel execution using std/threadpool.
+  ## This uses weave instead of the deprecated threadpool, which avoids
+  ## the pytest import-time initialization issues.
   ##
   ## Benefits:
   ## - Single Python-Nim boundary crossing
   ## - Parallel execution across CPU cores (near-linear speedup)
   ## - Thread-local resources for safety (each thread gets its own pool)
-  ## - ~7-8x speedup on 8-core machines
+  ## - No global threadpool state - weave uses work-stealing with lazy initialization
   ##
   ## Args:
   ##   featurePtrs: Pointers to feature columns (read-only, shared safely)
@@ -519,43 +534,97 @@ proc runMultipleGAs*(
   ## Returns:
   ##   MultipleGAResult with best programs and fitnesses from all GAs
 
-  # 1. Prepare storage for FlowVars (handles to future results)
-  var responses = newSeq[FlowVar[SingleGAResult]](numGAs)
+  # Parallel execution using std/typedthreads
+  # Each GA run is independent, so we create a thread per GA
+  # Use locks to synchronize access to shared results array
 
-  # 2. Spawn parallel tasks
-  # Each GA is independent, differing only by random seed
-  # The threadpool automatically manages worker threads (typically = CPU cores)
-  for i in 0..<numGAs:
-    # 'spawn' schedules runSingleGA on the threadpool
-    # featurePtrs and targetData are read-only, so sharing is safe
-    responses[i] = spawn runSingleGA(
-      featurePtrs,
-      targetData,
-      numRows,
-      numFeatures,
-      generationsPerGA,
-      populationSize,
-      maxDepth,
-      tournamentSize,
-      crossoverProb,
-      parsimonyCoefficient,
-      randomSeeds[i]
+  type
+    GAParams = tuple[
+      featurePtrs: seq[int],  # Thread-local copy
+      targetData: seq[float64],  # Thread-local copy
+      numRows: int,
+      numFeatures: int,
+      generations: int,
+      popSize: int,
+      maxDepth: int,
+      tournamentSize: int,
+      crossoverProb: float64,
+      parsimonyCoef: float64,
+      seed: int32,
+      idx: int,
+      results: ptr seq[SingleGAResult],  # Pointer to shared results array
+      lock: ptr Lock  # Lock for synchronized access
+    ]
+
+  var
+    results = newSeq[SingleGAResult](numGAs)
+    threads = newSeq[Thread[GAParams]](numGAs)
+    resultsLock: Lock
+  initLock(resultsLock)
+
+  proc gaThreadFunc(params: GAParams) {.thread.} =
+    # Run the GA and store result in the shared array with lock
+    let gaResult = runSingleGA(
+      params.featurePtrs,
+      params.targetData,
+      params.numRows,
+      params.numFeatures,
+      params.generations,
+      params.popSize,
+      params.maxDepth,
+      params.tournamentSize,
+      params.crossoverProb,
+      params.parsimonyCoef,
+      params.seed
     )
 
-  # 3. Collect Results (Barrier - blocks until each thread completes)
+    # Safely store result using lock
+    acquire(params.lock[])
+    params.results[][params.idx] = gaResult
+    release(params.lock[])
+
+  # Create and launch threads with data copies
+  for i in 0..<numGAs:
+    # Create thread-local copies of the input data
+    var featurePtrsCopy = newSeq[int](len(featurePtrs))
+    for j in 0..<len(featurePtrs):
+      featurePtrsCopy[j] = featurePtrs[j]
+
+    var targetDataCopy = newSeq[float64](len(targetData))
+    for j in 0..<len(targetData):
+      targetDataCopy[j] = targetData[j]
+
+    let params: GAParams = (
+      featurePtrs: featurePtrsCopy,
+      targetData: targetDataCopy,
+      numRows: numRows,
+      numFeatures: numFeatures,
+      generations: generationsPerGA,
+      popSize: populationSize,
+      maxDepth: maxDepth,
+      tournamentSize: tournamentSize,
+      crossoverProb: crossoverProb,
+      parsimonyCoef: parsimonyCoefficient,
+      seed: randomSeeds[i],
+      idx: i,
+      results: addr results,
+      lock: addr resultsLock
+    )
+    createThread(threads[i], gaThreadFunc, params)
+
+  # Wait for all threads to complete
+  joinThreads(threads)
+  deinitLock(resultsLock)
+
+  # Collect final results
   var bestPrograms = newSeq[StackProgram](numGAs)
   var bestFitnesses = newSeq[float64](numGAs)
   var bestScores = newSeq[float64](numGAs)
 
   for i in 0..<numGAs:
-    # '^' blocks until the specific thread finishes
-    let res = ^responses[i]
-    bestPrograms[i] = res.program
-    bestFitnesses[i] = res.fitness
-    bestScores[i] = res.score
-
-  # 4. Sync Threads (ensure all threads are complete)
-  sync()
+    bestPrograms[i] = results[i].program
+    bestFitnesses[i] = results[i].fitness
+    bestScores[i] = results[i].score
 
   return MultipleGAResult(
     bestPrograms: bestPrograms,

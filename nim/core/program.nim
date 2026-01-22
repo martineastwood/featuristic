@@ -40,6 +40,8 @@ type
     depth*: int
 
   StackProgramNode* = object
+    left*: int  # Index of left child in nodes array (-1 if none) - MUST be first
+    right*: int # Index of right child in nodes array (-1 if none) - MUST be second
     case kind*: OperationKind
     of opAdd, opSubtract, opMultiply, opDivide, opPow:
       discard
@@ -51,8 +53,6 @@ type
       mulConstantValue*: float64
     of opFeature:
       featureIndex*: int
-    left*: int  # Index of left child in nodes array (-1 if none)
-    right*: int # Index of right child in nodes array (-1 if none)
 
 # ============================================================================
 # Buffer Pool Management (C-style: single malloc, offset arithmetic)
@@ -515,30 +515,30 @@ proc evaluateProgramImpl(
     case kind
     of opAddConstant:
       program.nodes[i] = StackProgramNode(
-        kind: kind,
-        addConstantValue: constants[i],
         left: leftChildren[i],
-        right: -1
+        right: -1,
+        kind: kind,
+        addConstantValue: constants[i]
       )
     of opMulConstant:
       program.nodes[i] = StackProgramNode(
-        kind: kind,
-        mulConstantValue: constants[i],
         left: leftChildren[i],
-        right: -1
+        right: -1,
+        kind: kind,
+        mulConstantValue: constants[i]
       )
     of opFeature:
       program.nodes[i] = StackProgramNode(
-        kind: kind,
-        featureIndex: featureIndices[i],
         left: -1,
-        right: -1
+        right: -1,
+        kind: kind,
+        featureIndex: featureIndices[i]
       )
     else:
       program.nodes[i] = StackProgramNode(
-        kind: kind,
         left: leftChildren[i],
-        right: rightChildren[i]
+        right: rightChildren[i],
+        kind: kind
       )
 
   # Evaluate the program with buffer pool (NO per-node allocations!)

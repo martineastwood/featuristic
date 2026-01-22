@@ -178,30 +178,30 @@ proc simplifyProgramWrapper*(
     case kind
     of opAddConstant:
       nodes[i] = StackProgramNode(
-        kind: kind,
-        addConstantValue: constants[i],
         left: leftChildren[i],
-        right: -1
+        right: -1,
+        kind: kind,
+        addConstantValue: constants[i]
       )
     of opMulConstant:
       nodes[i] = StackProgramNode(
-        kind: kind,
-        mulConstantValue: constants[i],
         left: leftChildren[i],
-        right: -1
+        right: -1,
+        kind: kind,
+        mulConstantValue: constants[i]
       )
     of opFeature:
       nodes[i] = StackProgramNode(
-        kind: kind,
-        featureIndex: featureIndices[i],
         left: -1,
-        right: -1
+        right: -1,
+        kind: kind,
+        featureIndex: featureIndices[i]
       )
     else:
       nodes[i] = StackProgramNode(
-        kind: kind,
         left: leftChildren[i],
-        right: rightChildren[i]
+        right: rightChildren[i],
+        kind: kind
       )
 
   let program = StackProgram(nodes: nodes, depth: 0)
@@ -1027,3 +1027,90 @@ proc runCompleteBinaryGANative*(
     bestFitness: result.bestFitness,
     history: result.history
   )
+
+# ============================================================================
+# Operation Metadata Export for Python
+# Single source of truth for operation mappings between Python and Nim
+# ============================================================================
+
+proc getOperationCount*(): int {.nuwa_export.} =
+  ## Get the total number of operations
+  return 16  # opFeature + 15 operations
+
+proc getOperationName*(opKindInt: int): string {.nuwa_export.} =
+  ## Get operation name from operation kind integer
+  let kind = OperationKind(opKindInt)
+  case kind
+  of opAdd: "add"
+  of opSubtract: "subtract"
+  of opMultiply: "multiply"
+  of opDivide: "divide"
+  of opAbs: "abs"
+  of opNegate: "negate"
+  of opSin: "sin"
+  of opCos: "cos"
+  of opTan: "tan"
+  of opSqrt: "sqrt"
+  of opSquare: "square"
+  of opCube: "cube"
+  of opPow: "pow"
+  of opAddConstant: "add_constant"
+  of opMulConstant: "mul_constant"
+  of opFeature: "feature"
+
+proc getOperationFormat*(opKindInt: int): string {.nuwa_export.} =
+  ## Get format string from operation kind integer
+  let kind = OperationKind(opKindInt)
+  case kind
+  of opAdd: "({} + {})"
+  of opSubtract: "({} - {})"
+  of opMultiply: "({} * {})"
+  of opDivide: "(safe_divide({}, {}))"
+  of opAbs: "abs({})"
+  of opNegate: "negate({})"
+  of opSin: "sin({})"
+  of opCos: "cos({})"
+  of opTan: "tan({})"
+  of opSqrt: "sqrt({})"
+  of opSquare: "square({})"
+  of opCube: "cube({})"
+  of opPow: "pow({}, {})"
+  of opAddConstant: "({} + {})"
+  of opMulConstant: "({} * {})"
+  of opFeature: ""
+
+proc isUnaryOperation*(opKindInt: int): bool {.nuwa_export.} =
+  ## Check if operation is unary
+  let kind = OperationKind(opKindInt)
+  return kind in {
+    opAbs, opNegate, opSin, opCos, opTan,
+    opSqrt, opSquare, opCube, opAddConstant, opMulConstant
+  }
+
+proc isBinaryOperation*(opKindInt: int): bool {.nuwa_export.} =
+  ## Check if operation is binary
+  let kind = OperationKind(opKindInt)
+  return kind in {opAdd, opSubtract, opMultiply, opDivide, opPow}
+
+proc getOpKindInts*(): seq[int] {.nuwa_export.} =
+  ## Get all operation kind integers (0-15)
+  return @[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+proc getUnaryOperationInts*(): seq[int] {.nuwa_export.} =
+  ## Get all unary operation kind integers
+  return @[
+    4.int,   # opAbs
+    5,       # opNegate
+    6,       # opSin
+    7,       # opCos
+    8,       # opTan
+    9,       # opSqrt
+    10,      # opSquare
+    11,      # opCube
+    13,      # opAddConstant
+    14       # opMulConstant
+  ]
+
+proc getBinaryOperationInts*(): seq[int] {.nuwa_export.} =
+  ## Get all binary operation kind integers
+  return @[0.int, 1, 2, 3, 12]  # opAdd, opSubtract, opMultiply, opDivide, opPow

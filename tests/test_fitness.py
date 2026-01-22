@@ -24,4 +24,5 @@ def test_pearson_fitness():
     a = pd.Series([1, 2, 3, 4, 5])
     b = pd.Series([1, 2, 3, 4, 5])
     c = ft.synthesis.fitness.fitness_pearson({}, 0.001, a, b)
-    assert c == approx(-1.0)
+    # Result is -1.0 (correlation) + 0.001 (parsimony penalty for 1 node)
+    assert c == approx(-0.999)

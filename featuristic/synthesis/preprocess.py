@@ -34,22 +34,3 @@ def preprocess_data(X: pd.DataFrame, y: pd.Series) -> Tuple[pd.DataFrame, pd.Ser
     X = X.loc[:, X.nunique() > 1]
 
     return X, y
-
-
-def drop_low_variance_features(X, threshold=0.01):
-    """
-    Drop features with variance below a certain threshold.
-
-    Parameters
-    ----------
-    X : pd.DataFrame
-        The input data.
-    threshold : float, default=0.1
-        The threshold below which features are dropped.
-
-    Returns
-    -------
-    pd.DataFrame
-        The input data with low-variance features dropped.
-    """
-    return X.loc[:, X.var() > threshold]

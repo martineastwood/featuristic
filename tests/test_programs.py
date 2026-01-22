@@ -1,6 +1,4 @@
 import featuristic as ft
-import pandas as pd
-import numpy as np
 
 
 def test_list_symbolic_functions():
@@ -13,48 +11,56 @@ def test_list_symbolic_functions():
 
 
 def test_symbolic_operation_metadata():
-    """Test that symbolic operations derive metadata from constants."""
-    add_op = ft.synthesis.symbolic_functions.SymbolicAdd()
-    assert add_op.name == "add"
-    assert add_op.format_str == "({} + {})"
-    assert add_op.arg_count == 2
+    """Test that we can get operation metadata from the constants."""
+    # Test that we can access operation metadata through the constants
+    from featuristic.constants import OP_KIND_METADATA, OP_NAME_TO_KIND
 
-    abs_op = ft.synthesis.symbolic_functions.SymbolicAbs()
-    assert abs_op.name == "abs"
-    assert abs_op.format_str == "abs({})"
-    assert abs_op.arg_count == 1
+    # Check that some operations exist
+    assert "add" in OP_NAME_TO_KIND
+    assert "abs" in OP_NAME_TO_KIND
+
+    # Check that we can get metadata
+    add_kind = OP_NAME_TO_KIND["add"]
+    assert add_kind in OP_KIND_METADATA
+
+    name, fmt = OP_KIND_METADATA[add_kind]
+    assert name == "add"
+    assert fmt == "({} + {})"
 
 
 def test_render_prog():
     """Test rendering a program to string."""
+    # Create a simple program node using dict structure (how the deserializer works)
     node = {
-        "func": ft.synthesis.symbolic_functions.SymbolicAdd(),
-        "children": [
-            {"feature_name": "a"},
-            {"feature_name": "b"},
-        ],
+        "kind": "add",
         "format_str": "({} + {})",
+        "children": [
+            {"kind": "feature", "feature_name": "a"},
+            {"kind": "feature", "feature_name": "b"},
+        ],
     }
 
-    assert ft.synthesis.render_prog(node) == "(a + b)"
+    result = ft.synthesis.render_prog(node)
+    assert result == "(a + b)"
 
 
 def test_render_prog_nested():
     """Test rendering a nested program."""
     node = {
-        "func": ft.synthesis.symbolic_functions.SymbolicMultiply(),
+        "kind": "multiply",
+        "format_str": "({} * {})",
         "children": [
-            {"feature_name": "x"},
+            {"kind": "feature", "feature_name": "x"},
             {
-                "func": ft.synthesis.symbolic_functions.SymbolicAdd(),
-                "children": [
-                    {"feature_name": "a"},
-                    {"feature_name": "b"},
-                ],
+                "kind": "add",
                 "format_str": "({} + {})",
+                "children": [
+                    {"kind": "feature", "feature_name": "a"},
+                    {"kind": "feature", "feature_name": "b"},
+                ],
             },
         ],
-        "format_str": "({} * {})",
     }
 
-    assert ft.synthesis.render_prog(node) == "(x * (a + b))"
+    result = ft.synthesis.render_prog(node)
+    assert result == "(x * (a + b))"
