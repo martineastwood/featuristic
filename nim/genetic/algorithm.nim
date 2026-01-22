@@ -346,7 +346,9 @@ proc runGeneticAlgorithmImpl(
 
   # Create buffer pool (pre-allocated once for all evaluations)
   # Max nodes per program determines pool size
-  var maxNodes = maxDepth * 2  # Approximate max nodes
+  # Calculate max nodes for a full binary tree: 2^(depth+1) - 1
+  # This prevents costly reallocation during evaluation
+  var maxNodes = (1 shl (maxDepth + 1)) - 1
   var pool = newEvalBufferPool(maxNodes, numRows)
 
   # Track best
@@ -434,7 +436,8 @@ proc runSingleGA(
 
   # C. Setup Thread-Local Buffer Pool (CRITICAL: Must be per-thread)
   # Each thread needs its own pool to avoid race conditions
-  var maxNodes = maxDepth * 2
+  # Calculate max nodes for a full binary tree: 2^(depth+1) - 1
+  var maxNodes = (1 shl (maxDepth + 1)) - 1
   var pool = newEvalBufferPool(maxNodes, numRows)
   defer: destroyEvalBufferPool(pool)
 
@@ -584,37 +587,53 @@ proc runMultipleGAs*(
     release(params.lock[])
 
   # Create and launch threads with data copies
-  for i in 0..<numGAs:
-    # Create thread-local copies of the input data
-    var featurePtrsCopy = newSeq[int](len(featurePtrs))
-    for j in 0..<len(featurePtrs):
-      featurePtrsCopy[j] = featurePtrs[j]
+  # Track how many threads were successfully created for cleanup
+  var threadsCreated = 0
+  try:
+    for i in 0..<numGAs:
+      # Create thread-local copies of the input data
+      # Note: featurePtrs and targetData are read-only, so shallow copies are safe
+      # and avoid expensive memory copying for large datasets
+      var featurePtrsCopy = newSeq[int](len(featurePtrs))
+      for j in 0..<len(featurePtrs):
+        featurePtrsCopy[j] = featurePtrs[j]
 
-    var targetDataCopy = newSeq[float64](len(targetData))
-    for j in 0..<len(targetData):
-      targetDataCopy[j] = targetData[j]
+      # Shallow copy for targetData - safe because it's read-only and {.gcsafe.}
+      # This avoids O(numRows * numGAs) memory copying overhead
+      let targetDataCopy = targetData
 
-    let params: GAParams = (
-      featurePtrs: featurePtrsCopy,
-      targetData: targetDataCopy,
-      numRows: numRows,
-      numFeatures: numFeatures,
-      generations: generationsPerGA,
-      popSize: populationSize,
-      maxDepth: maxDepth,
-      tournamentSize: tournamentSize,
-      crossoverProb: crossoverProb,
-      parsimonyCoef: parsimonyCoefficient,
-      seed: randomSeeds[i],
-      idx: i,
-      results: addr results,
-      lock: addr resultsLock
-    )
-    createThread(threads[i], gaThreadFunc, params)
+      let params: GAParams = (
+        featurePtrs: featurePtrsCopy,
+        targetData: targetDataCopy,
+        numRows: numRows,
+        numFeatures: numFeatures,
+        generations: generationsPerGA,
+        popSize: populationSize,
+        maxDepth: maxDepth,
+        tournamentSize: tournamentSize,
+        crossoverProb: crossoverProb,
+        parsimonyCoef: parsimonyCoefficient,
+        seed: randomSeeds[i],
+        idx: i,
+        results: addr results,
+        lock: addr resultsLock
+      )
+      createThread(threads[i], gaThreadFunc, params)
+      threadsCreated = i + 1  # Track successful creation
 
-  # Wait for all threads to complete
-  joinThreads(threads)
-  deinitLock(resultsLock)
+    # Wait for all threads to complete
+    joinThreads(threads)
+    deinitLock(resultsLock)
+  except Exception:
+    # Cleanup: join any threads that were successfully created
+    # This prevents hanging if thread creation fails partway through
+    if threadsCreated > 0:
+      # Join only the threads that were successfully created
+      for i in 0..<threadsCreated:
+        joinThread(threads[i])
+    deinitLock(resultsLock)
+    # Re-raise the exception to the caller
+    raise
 
   # Collect final results
   var bestPrograms = newSeq[StackProgram](numGAs)

@@ -85,11 +85,11 @@ print("   Using Nim backend (single call runs all GAs - 10-50x speedup!)")
 synth = ft.GeneticFeatureSynthesis(
     n_features=100,  # Generate 10 synthetic features
     population_size=100,  # Moderate population
-    max_generations=200,  # Moderate generations for good evolution
+    max_generations=100,  # Moderate generations for good evolution
     tournament_size=10,
     crossover_proba=0.85,
-    parsimony_coefficient=0.005,  # Lower to allow more complex features
-    early_termination_iters=50,
+    parsimony_coefficient=0.01,  # Lower to allow more complex features
+    early_termination_iters=25,
     verbose=False,
     random_state=42,  # For reproducibility
 )
