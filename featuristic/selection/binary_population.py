@@ -153,7 +153,7 @@ class BinaryPopulation:
         """
         Evaluate the population using native Nim computation (15-30x faster).
 
-        This method uses Nim's native metric computation (MSE, MAE, or R²)
+        This method uses Nim's native metric computation (MSE, MAE, R², LogLoss, or Accuracy)
         instead of calling Python's objective function. This is much faster
         but less flexible - it only works for simple metrics.
 
@@ -164,7 +164,9 @@ class BinaryPopulation:
         y : pd.Series
             The true values.
         metric : str
-            The metric to use: "mse", "mae", or "r2"
+            The metric to use: "mse", "mae", "r2", "logloss", or "accuracy"
+            * Regression metrics: "mse", "mae", "r2"
+            * Classification metrics: "logloss", "accuracy"
 
         Returns
         -------
@@ -176,7 +178,7 @@ class BinaryPopulation:
         target_ptr, _ = extract_target_pointer(y)
 
         # Map metric string to int
-        metric_map = {"mse": 0, "mae": 1, "r2": 2}
+        metric_map = {"mse": 0, "mae": 1, "r2": 2, "logloss": 3, "accuracy": 4}
         metric_type = metric_map.get(metric.lower(), 0)
 
         # Evaluate each genome using Nim

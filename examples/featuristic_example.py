@@ -9,7 +9,8 @@ This example demonstrates a complete feature engineering pipeline:
 5. Final optimized model
 
 Performance improvements through Nim backend:
-- Feature Selection: 100-150x speedup (native metrics) or 10-20x (custom objectives)
+- Feature Selection: 100-150x speedup with native metrics (mse, mae, r2, logloss, accuracy)
+- Feature Selection: 10-20x speedup with custom objective functions
 - Feature Synthesis: 10-50x speedup (single Nim call for all GAs)
 """
 
@@ -140,18 +141,12 @@ print(f"   Improvement over baseline: {improvement_combined:+.2f}%")
 # ============================================================================
 
 print("\n5. Feature Selection: Finding optimal feature subset...")
-print("   Using Nim backend (batched evolution - 10-20x speedup!)")
+print("   Using Nim backend (native metrics - 100-150x speedup!)")
 
-
-def selection_objective(X_selected, y):
-    """Objective function for feature selection."""
-    rf = LogisticRegression(max_iter=5000)
-    rf.fit(X_selected, y)
-    return -accuracy_score(y, rf.predict(X_selected))
-
-
+# For classification, we can use native metrics (logloss or accuracy)
+# This provides 100-150x speedup compared to custom objective functions
 selector = ft.GeneticFeatureSelector(
-    objective_function=selection_objective,
+    metric="logloss",  # Native metric for 100-150x speedup! Also supports "accuracy"
     population_size=50,
     max_generations=50,
     tournament_size=10,

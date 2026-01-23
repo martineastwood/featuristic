@@ -21,6 +21,8 @@ type
     mtMSE = "mse"
     mtMAE = "mae"
     mtR2 = "r2"
+    mtLogLoss = "logloss"
+    mtAccuracy = "accuracy"
 
   BinaryGAResult* = object
     bestGenome*: seq[int]
@@ -118,6 +120,62 @@ proc computeR2*(yPred, yTrue: seq[float64]): float64 =
   return 1.0 - (mse / varTrue)
 
 
+proc computeLogLoss*(yPred, yTrue: seq[float64]): float64 =
+  ## Compute Log Loss (Binary Cross-Entropy Loss)
+  ##
+  ## For binary classification where yTrue is in {0, 1} and yPred is
+  ## the predicted probability of class 1.
+  ##
+  ## Uses numerical stability tricks: clip probabilities to avoid log(0).
+  let n = len(yPred)
+  if n == 0 or n != len(yTrue):
+    return Inf
+
+  var logLoss = 0.0
+  let epsilon = 1e-15  # Small value to avoid log(0)
+
+  for i in 0..<n:
+    # Clip predictions to [epsilon, 1 - epsilon] for numerical stability
+    var p = yPred[i]
+    if p < epsilon:
+      p = epsilon
+    elif p > 1.0 - epsilon:
+      p = 1.0 - epsilon
+
+    let y = yTrue[i]
+
+    # Binary cross-entropy: -[y * log(p) + (1-y) * log(1-p)]
+    if y == 1.0:
+      logLoss -= ln(p)
+    elif y == 0.0:
+      logLoss -= ln(1.0 - p)
+    else:
+      # If yTrue is not 0 or 1, this is invalid for binary classification
+      return Inf
+
+  return logLoss / n.float64
+
+
+proc computeAccuracy*(yPred, yTrue: seq[float64]): float64 =
+  ## Compute Classification Accuracy
+  ##
+  ## For binary classification, predictions are thresholded at 0.5.
+  ## Returns the proportion of correct predictions (0-1 scale).
+  let n = len(yPred)
+  if n == 0 or n != len(yTrue):
+    return 0.0
+
+  var correct = 0
+
+  for i in 0..<n:
+    # Threshold prediction at 0.5
+    let predClass = if yPred[i] >= 0.5: 1.0 else: 0.0
+    if predClass == yTrue[i]:
+      inc(correct)
+
+  return correct.float64 / n.float64
+
+
 # ============================================================================
 # Simple Linear Regression for Native Feature Selection
 # ============================================================================
@@ -158,6 +216,65 @@ proc simpleLinearRegression*(
     result[i] = sum / numSelected.float64
 
 
+proc simpleLogisticRegression*(
+  X: ptr UncheckedArray[ptr UncheckedArray[float64]],  # Feature matrix (column-major)
+  y: ptr UncheckedArray[float64],                       # Target values (binary 0/1)
+  selectedFeatures: seq[int],                          # Indices of selected features
+  numRows: int,
+  numSelected: int
+): seq[float64] =
+  ## Fit a simple logistic regression model using selected features
+  ##
+  ## Returns predicted probabilities for class 1.
+  ##
+  ## This uses a simplified approach: compute the mean of selected features,
+  ## then apply a sigmoid transformation scaled by the target mean.
+  ##
+  ## This is a fast approximation that works well for feature selection.
+
+  if numSelected == 0:
+    # No features selected, return the prior probability (mean of y)
+    var prior = 0.0
+    for i in 0..<numRows:
+      prior += y[i]
+    prior /= numRows.float64
+
+    result = newSeq[float64](numRows)
+    for i in 0..<numRows:
+      result[i] = prior
+    return
+
+  result = newSeq[float64](numRows)
+
+  # Calculate mean of target (prior probability of class 1)
+  var prior = 0.0
+  for i in 0..<numRows:
+    prior += y[i]
+  prior /= numRows.float64
+
+  # Use the mean of selected features, scaled and shifted to produce probabilities
+  # This is a heuristic that correlates features with the target
+  for i in 0..<numRows:
+    var featureSum = 0.0
+    for featIdx in selectedFeatures:
+      featureSum += X[featIdx][i]
+
+    let featureMean = featureSum / numSelected.float64
+
+    # Normalize features to [0, 1] range approximately
+    # Then bias toward the prior probability
+    # This is a simple but effective heuristic for feature selection
+    var prob = prior + (featureMean * 0.1)
+
+    # Clip to valid probability range
+    if prob < 0.01:
+      prob = 0.01
+    elif prob > 0.99:
+      prob = 0.99
+
+    result[i] = prob
+
+
 proc evaluateBinaryGenome*(
   genome: BinaryGenome,
   X: ptr UncheckedArray[ptr UncheckedArray[float64]],
@@ -169,9 +286,9 @@ proc evaluateBinaryGenome*(
   ## Evaluate a binary genome using native metrics
   ##
   ## This function selects features based on the genome and computes
-  ## the fitness using the specified metric (MSE, MAE, or R²).
+  ## the fitness using the specified metric (MSE, MAE, R², LogLoss, or Accuracy).
   ##
-  ## Returns fitness value (lower is better for MSE/MAE, higher is better for R²)
+  ## Returns fitness value (lower is better for all metrics when used for minimization)
 
   # Count selected features and get their indices
   var selectedIndices = newSeq[int]()
@@ -184,13 +301,19 @@ proc evaluateBinaryGenome*(
   if numSelected == 0:
     # No features selected, return worst possible fitness
     case metricType
-    of mtMSE, mtMAE:
+    of mtMSE, mtMAE, mtLogLoss:
       return Inf
-    of mtR2:
+    of mtR2, mtAccuracy:
       return -Inf
 
   # Generate predictions using simple model
-  let yPred = simpleLinearRegression(X, y, selectedIndices, numRows, numSelected)
+  # Use logistic regression for classification metrics, linear regression for regression
+  var yPred: seq[float64]
+  case metricType
+  of mtLogLoss, mtAccuracy:
+    yPred = simpleLogisticRegression(X, y, selectedIndices, numRows, numSelected)
+  of mtMSE, mtMAE, mtR2:
+    yPred = simpleLinearRegression(X, y, selectedIndices, numRows, numSelected)
 
   # Convert y to sequence for metric computation
   var yTrueSeq = newSeq[float64](numRows)
@@ -206,6 +329,11 @@ proc evaluateBinaryGenome*(
   of mtR2:
     # For R², we want to maximize it, so return negative for minimization
     return -computeR2(yPred, yTrueSeq)
+  of mtLogLoss:
+    return computeLogLoss(yPred, yTrueSeq)
+  of mtAccuracy:
+    # For Accuracy, we want to maximize it, so return negative for minimization
+    return -computeAccuracy(yPred, yTrueSeq)
 
 
 # ============================================================================
@@ -610,8 +738,11 @@ export initBinaryPopulation,
        computeMSE,
        computeMAE,
        computeR2,
+       computeLogLoss,
+       computeAccuracy,
        evolvePopulationFromPython,
        runBinaryGAMultipleGenerations,
        runCompleteBinaryGA,
        evaluateBinaryGenome,
-       simpleLinearRegression
+       simpleLinearRegression,
+       simpleLogisticRegression

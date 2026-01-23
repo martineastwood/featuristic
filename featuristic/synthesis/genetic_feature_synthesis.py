@@ -7,7 +7,10 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype, is_string_dtype, is_object_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
+from sklearn.utils.validation import check_is_fitted
 
 from ..featuristic_lib import runMultipleGAsWrapper
 from ..synthesis.utils import extract_column_pointers
@@ -46,6 +49,23 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
       * Zero-copy architecture uses memory pointers that cannot be pickled
       * Reconstructing data structures in worker processes would negate performance gains
     - For better performance, consider running multiple instances with different random seeds
+
+    **Categorical Data Handling:**
+    - Non-numeric columns (object, string, or categorical dtypes) are automatically detected
+      and encoded during `fit()`.
+    - A hybrid encoding strategy is used to preserve the dimensionality of the genetic
+      search space:
+      * Binary categories (k=2 unique values) are encoded as 0.0 and 1.0 using
+        `OrdinalEncoder`. This preserves the binary nature without expanding dimensions.
+      * High cardinality categories (k>2 unique values) are encoded into continuous values
+        using `TargetEncoder`. Each category is replaced with the mean of the target
+        variable for that category.
+    - This approach avoids the dimensionality explosion caused by One-Hot Encoding,
+      which would create many new columns and complicate the genetic search space.
+    - During `transform()`, the same encoders are applied to new data, ensuring
+      consistent encoding between training and inference.
+    - The target encoder automatically detects if the target is continuous (regression)
+      or binary (classification) and adjusts accordingly.
     """
 
     def __init__(
@@ -61,6 +81,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         return_all_features: bool = True,
         verbose: bool = False,
         random_state: Union[int, None] = None,
+        max_depth: int = 6,
     ):
         """
         Initialize the Symbolic Feature Generator.
@@ -116,6 +137,11 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         random_state : int, optional
             Seed for random number generator for reproducibility. If None,
             results will not be reproducible. Default is None.
+
+        max_depth : int
+            The maximum depth of the expression trees in the genetic programming.
+            Larger values allow for more complex features but increase the risk of
+            overfitting (bloat). Typical values are 3-6. Default is 6.
         """
         if functions is None:
             self.functions = list(AVAILABLE_OPERATIONS)
@@ -135,6 +161,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.crossover_proba = crossover_proba
         self.n_features = n_features
         self.parsimony_coefficient = parsimony_coefficient
+        self.max_depth = max_depth
 
         self.history = []
         self.hall_of_fame = []
@@ -146,7 +173,11 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.random_state = random_state
 
-        self.fit_called = False
+        # Categorical encoding attributes
+        self.target_encoder_ = None
+        self.binary_encoder_ = None
+        self.high_card_cols_ = []
+        self.binary_cols_ = []
 
     def _select_best_features(self, X: pd.DataFrame, y: pd.Series):
         """
@@ -259,6 +290,39 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             X_pd.reset_index(drop=True), y_pd.reset_index(drop=True)
         )
 
+        # Validate input data for NaN/Inf values (raises error if found)
+        self._clean_features(X_copy, is_input=True)
+
+        # Handle categorical columns
+        # Identify non-numeric columns
+        non_numeric_cols = [
+            col for col in X_copy.columns if not is_numeric_dtype(X_copy[col])
+        ]
+
+        if non_numeric_cols:
+            # Split into binary (k=2) and high cardinality (k>2) columns
+            self.binary_cols_ = [
+                col for col in non_numeric_cols if X_copy[col].nunique() == 2
+            ]
+            self.high_card_cols_ = [
+                col for col in non_numeric_cols if X_copy[col].nunique() > 2
+            ]
+
+            # Encode binary columns with OrdinalEncoder (maps to 0.0 and 1.0)
+            if self.binary_cols_:
+                self.binary_encoder_ = OrdinalEncoder(dtype=np.float64)
+                X_copy[self.binary_cols_] = self.binary_encoder_.fit_transform(
+                    X_copy[self.binary_cols_]
+                )
+
+            # Encode high cardinality columns with TargetEncoder
+            if self.high_card_cols_:
+                target_type = "continuous" if is_numeric_dtype(y_copy) else "binary"
+                self.target_encoder_ = TargetEncoder(target_type=target_type)
+                X_copy[self.high_card_cols_] = self.target_encoder_.fit_transform(
+                    X_copy[self.high_card_cols_], y_copy
+                )
+
         # Store feature names for later deserialization
         self.feature_names_ = X_copy.columns.tolist()
 
@@ -305,7 +369,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             self.n_features,  # Number of GAs to run
             generations_per_ga,
             self.population_size,
-            6,  # Fixed depth for simplicity
+            self.max_depth,  # User-configurable depth for controlling complexity
             self.tournament_size,
             self.crossover_proba,
             self.parsimony_coefficient,
@@ -379,16 +443,14 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         # Select the best features using mRMR
         self._select_best_features(X_copy, y_copy)
 
-        # Successfully finished fitting
-        self.fit_called = True
-
         return self
 
-    def _clean_features(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _clean_features(self, df: pd.DataFrame, is_input: bool = False) -> pd.DataFrame:
         """
         Clean synthetic features by replacing NaN and Inf values.
 
-        Also clips extreme values and normalizes synthetic features to prevent
+        For input data (is_input=True), raises ValueError if NaN/Inf values are found.
+        For synthetic features (is_input=False), replaces NaN/Inf and normalizes to prevent
         numerical issues with models like LogisticRegression.
 
         Args
@@ -396,19 +458,58 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         df : pd.DataFrame
             The dataframe to clean.
 
+        is_input : bool
+            If True, this is input data and should be validated (not auto-imputed).
+            If False, this is synthetic features and should be cleaned.
+
         return
         ------
         pd.DataFrame
             Cleaned dataframe with NaN/Inf replaced and synthetic features normalized.
+
+        Raises
+        ------
+        ValueError
+            If is_input=True and the dataframe contains NaN or Inf values.
         """
         # Make a copy to avoid modifying the original
         df_clean = df.copy()
 
-        # Replace Inf and -Inf with NaN first
-        df_clean.replace([np.inf, -np.inf], np.nan, inplace=True)
+        # Check for NaN and Inf values
+        has_nan = df_clean.isna().any().any()
+        has_inf = np.isinf(df_clean.select_dtypes(include=[np.number])).any().any()
 
-        # Fill NaN with 0
-        df_clean.fillna(0, inplace=True)
+        if is_input:
+            # For input data, raise an error instead of silently imputing
+            if has_nan or has_inf:
+                nan_cols = df_clean.columns[df_clean.isna().any()].tolist()
+                inf_cols = (
+                    df_clean.select_dtypes(include=[np.number])
+                    .columns[
+                        np.isinf(df_clean.select_dtypes(include=[np.number])).any()
+                    ]
+                    .tolist()
+                )
+
+                issues = []
+                if nan_cols:
+                    issues.append(f"NaN values in columns: {nan_cols}")
+                if inf_cols:
+                    issues.append(f"Inf values in columns: {inf_cols}")
+
+                raise ValueError(
+                    "Input data contains NaN or Inf values. "
+                    "Please handle missing values before using GeneticFeatureSynthesis. "
+                    "Consider using sklearn.impute.SimpleImputer or pandas fillna methods. "
+                    f"Issues found: {'; '.join(issues)}"
+                )
+        else:
+            # For synthetic features, clean NaN/Inf as they can legitimately occur
+            # Replace Inf and -Inf with NaN first
+            df_clean.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+            # Fill NaN with 0 for synthetic features only
+            df_clean.fillna(0, inplace=True)
 
         # Clip extreme values to prevent overflow
         max_value = 1e6
@@ -447,11 +548,21 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         pd.DataFrame
             The transformed dataframe with selected features.
         """
-        if not self.fit_called:
-            raise ValueError("Must call fit before transform")
+        check_is_fitted(self, "feature_names_")
 
         # Convert numpy array to pandas DataFrame if needed
         X_pd = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
+
+        # Transform categorical columns if encoders were fitted
+        if self.binary_cols_ and self.binary_encoder_ is not None:
+            X_pd[self.binary_cols_] = self.binary_encoder_.transform(
+                X_pd[self.binary_cols_]
+            )
+
+        if self.high_card_cols_ and self.target_encoder_ is not None:
+            X_pd[self.high_card_cols_] = self.target_encoder_.transform(
+                X_pd[self.high_card_cols_]
+            )
 
         # Evaluate synthetic features from hall of fame
         if len(self.hall_of_fame) > 0:
@@ -520,8 +631,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         pd.DataFrame
             The dataframe with the information.
         """
-        if not self.fit_called:
-            raise ValueError("Must call fit before get_feature_info")
+        check_is_fitted(self, "feature_names_")
 
         output = []
         for prog in self.hall_of_fame:
@@ -550,8 +660,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             - 'formula': string representation
             - 'name': feature name
         """
-        if not self.fit_called:
-            raise ValueError("Must call fit before get_programs")
+        check_is_fitted(self, "feature_names_")
 
         sorted_hof = sorted(self.hall_of_fame, key=lambda x: x["fitness"])
         return [
@@ -587,8 +696,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         >>> synth.fit(X, y)
         >>> ax = synth.plot_history()
         """
-        if not self.fit_called:
-            raise ValueError("Must call fit before plot_history")
+        check_is_fitted(self, "feature_names_")
 
         if ax is None:
             fig, ax = plt.subplots(figsize=(10, 6))

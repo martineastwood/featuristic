@@ -10,6 +10,7 @@
 
   <a href="">[![Python Version](https://img.shields.io/pypi/pyversions/featuristic)](https://pypi.org/project/featuristic/)</a>
   <a href="">[![PyPI](https://img.shields.io/pypi/v/featuristic.svg)](https://pypi.org/project/featuristic/)</a>
+  <a href="https://github.com/martineastwood/nuwa-build">[![Built with Nuwa](https://img.shields.io/badge/built_with-nuwa_build-00A98F?style=flat&logo=python&logoColor=white)]()</a>
   <a href="">[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)</a>
   <a href='https://coveralls.io/github/martineastwood/featuristic?branch=dev'><img src='https://coveralls.io/repos/github/martineastwood/featuristic/badge.svg?branch=dev' alt='Coverage Status' /></a>
   <a href="">[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)</a>
