@@ -1,0 +1,127 @@
+site_name: Featuristic
+site_url: https://www.featuristic.co.uk
+site_description: Genetic algorithms for automated feature engineering and feature selection
+site_author: Martin Eastwood
+
+# Repository
+repo_name: martineastwood/featuristic
+repo_url: https://github.com/martineastwood/featuristic
+
+# Copyright
+copyright: Copyright &copy; 2024 Martin Eastwood
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/dna.svg
+  favicon: assets/favicon.svg
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_members_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            merge_init_into_class: true
+  - mkdocs-jupyter:
+      execute: false
+      include: ["*.ipynb"]
+  - exclude:
+      glob:
+        - release_notes.rst
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+  - User Guide:
+      - Genetic Feature Synthesis: guide/synthesis.md
+      - Genetic Feature Selection: guide/selection.md
+      - Datasets: guide/datasets.md
+      - Metrics: guide/metrics.md
+  - API Reference:
+      - Synthesis: api/synthesis.md
+      - Selection: api/selection.md
+      - Datasets: api/datasets.md
+  - Examples:
+      - Cars Example: examples/cars_example.md
+      - Plotting Example: examples/plotting_example.md
+  - Release Notes: release-notes.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/martineastwood/featuristic
+      name: GitHub
+    - icon: fontawesome/solid/globe
+      link: https://www.featuristic.co.uk
+      name: Website
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js

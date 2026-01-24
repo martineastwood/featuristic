@@ -4,17 +4,17 @@
 # 2. Direct NumPy array access with zero-copy
 # 3. C-style memory management (flat buffers, value types)
 
-import std/math
 import ./types
+import std/math
 
 # Types for program tree evaluation
 type
   ## Stack frame for evaluation (VALUE TYPE - no GC overhead)
   EvalFrame* = object
-    resultBuffer*: ptr UncheckedArray[float64]  # Pointer into pre-allocated flat buffer
+    resultBuffer*: ptr UncheckedArray[float64] # Pointer into pre-allocated flat buffer
     case isLeaf*: bool
     of true:
-      featureIndex*: int  # Index into feature matrix
+      featureIndex*: int # Index into feature matrix
     of false:
       opKind*: OperationKind
       numChildren*: int
@@ -22,25 +22,25 @@ type
   ## Pre-allocated buffer pool for evaluation (C-style: single flat allocation)
   ## ONE contiguous memory block for all buffers, accessed via offset arithmetic
   EvalBufferPool* = object
-    data*: ptr UncheckedArray[float64]  # Single flat allocation (like malloc)
+    data*: ptr UncheckedArray[float64] # Single flat allocation (like malloc)
     numBuffers*: int
     bufferSize*: int
-    totalSize*: int  # Total size in floats (numBuffers * bufferSize)
+    totalSize*: int                    # Total size in floats (numBuffers * bufferSize)
 
   ## Feature matrix for batch evaluation (VALUE TYPE - no ref/GC)
   FeatureMatrix* = object
-    data*: ptr UncheckedArray[ptr UncheckedArray[float64]]  # Pointers to each column
+    data*: ptr UncheckedArray[ptr UncheckedArray[float64]] # Pointers to each column
     numRows*: int
     numCols*: int
 
   ## StackProgram definition (VALUE TYPE - no ref/GC)
   ## Programs are represented as flat lists for stack-based evaluation
   StackProgram* = object
-    nodes*: seq[StackProgramNode]  # seq is OK here - allocated once per program
+    nodes*: seq[StackProgramNode] # seq is OK here - allocated once per program
     depth*: int
 
   StackProgramNode* = object
-    left*: int  # Index of left child in nodes array (-1 if none) - MUST be first
+    left*: int # Index of left child in nodes array (-1 if none) - MUST be first
     right*: int # Index of right child in nodes array (-1 if none) - MUST be second
     case kind*: OperationKind
     of opAdd, opSubtract, opMultiply, opDivide, opPow:
@@ -71,7 +71,8 @@ proc newEvalBufferPool*(numBuffers: int, bufferSize: int): EvalBufferPool =
 
   # Single allocation (like malloc in C)
   # allocate returns pointer to uninitialized memory
-  result.data = cast[ptr UncheckedArray[float64]](alloc(result.totalSize * sizeof(float64)))
+  result.data = cast[ptr UncheckedArray[float64]](alloc(result.totalSize *
+      sizeof(float64)))
 
 proc getBuffer*(pool: var EvalBufferPool, index: int): ptr UncheckedArray[float64] =
   ## Get pointer to buffer at index using OFFSET ARITHMETIC
@@ -93,7 +94,8 @@ proc getBuffer*(pool: var EvalBufferPool, index: int): ptr UncheckedArray[float6
     pool.numBuffers = index + 1
 
   # Pointer arithmetic: return pointer to offset [index * bufferSize]
-  return cast[ptr UncheckedArray[float64]](addr pool.data[index * pool.bufferSize])
+  return cast[ptr UncheckedArray[float64]](addr pool.data[index *
+      pool.bufferSize])
 
 proc destroyEvalBufferPool*(pool: var EvalBufferPool) =
   ## Free the allocated memory (explicit cleanup like free() in C)
@@ -110,7 +112,8 @@ proc newFeatureMatrix*(numRows: int, numCols: int): FeatureMatrix =
   ## Only allocates the array of column pointers
   result.numRows = numRows
   result.numCols = numCols
-  result.data = cast[ptr UncheckedArray[ptr UncheckedArray[float64]]](alloc(numCols * sizeof(ptr UncheckedArray[float64])))
+  result.data = cast[ptr UncheckedArray[ptr UncheckedArray[float64]]](alloc(
+      numCols * sizeof(ptr UncheckedArray[float64])))
 
 proc setColumn*(fm: var FeatureMatrix, colIdx: int, ptrData: int) =
   ## Set a column in the feature matrix (zero-copy)
@@ -130,7 +133,8 @@ proc destroyFeatureMatrix*(fm: var FeatureMatrix) =
 # Stack-Based Program Evaluation (OPTIMIZED with Flat Buffer Pool)
 # ============================================================================
 
-proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix, pool: var EvalBufferPool): seq[float64] =
+proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix,
+    pool: var EvalBufferPool): seq[float64] =
   ## Evaluate a program using stack-based approach with flat buffer pool
   ##
   ## This is much faster than Python recursion because:
@@ -467,12 +471,12 @@ proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix, pool: var Ev
 # Implementation functions for program evaluation (called from Python wrappers)
 
 proc evaluateProgramImpl(
-  featurePtrs: seq[int],     # Pointers to feature columns
+  featurePtrs: seq[int], # Pointers to feature columns
   featureIndices: seq[int], # Indices for each node (or -1 for ops)
-  opKinds: seq[int],         # Operation kind for each node
-  leftChildren: seq[int],   # Left child indices
-  rightChildren: seq[int],  # Right child indices
-  constants: seq[float64],   # Constants for add/mul_constant ops
+  opKinds: seq[int], # Operation kind for each node
+  leftChildren: seq[int], # Left child indices
+  rightChildren: seq[int], # Right child indices
+  constants: seq[float64], # Constants for add/mul_constant ops
   numRows: int,
   numCols: int
 ): seq[float64] =

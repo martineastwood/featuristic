@@ -126,7 +126,7 @@ def runMultipleGAsWrapper(
     - Reuse buffer pool across all GAs
     - 1.5-3x speedup compared to Python-looped approach
 
-    Returns serialized programs and fitnesses for all GAs
+    Returns serialized programs, fitnesses, and generation histories for all GAs
     """
     ...
 

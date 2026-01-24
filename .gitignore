@@ -169,3 +169,4 @@ cython_debug/
 *.code-workspace
 .nimble/
 repomix-output.xml
+.claude/

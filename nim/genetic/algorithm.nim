@@ -3,15 +3,11 @@
 
 import std/random
 import std/math
-import std/tables
-import std/algorithm
 import std/typedthreads
 import std/locks
 import ../core/types
 import ../core/program
-import ../core/operations
-import ../core/simplify  # Import program simplification
-import ./operations  # Import genetic operations
+import ../core/simplify # Import program simplification
 
 
 # ============================================================================
@@ -23,6 +19,7 @@ type
     program*: StackProgram
     fitness*: float64
     score*: float64
+    history*: seq[float64] # Best fitness at each generation
 
 
 # ============================================================================
@@ -125,7 +122,7 @@ proc generateNode(
   if (not forceInternal) and (rng.rand(1.0) < leafProbability or depth >= maxDepth):
     # Create leaf node (feature)
     # Ensure we always have valid feature index
-    let maxFeatureIdx = max(0, numFeatures - 1)  # Handle numFeatures == 0 case
+    let maxFeatureIdx = max(0, numFeatures - 1) # Handle numFeatures == 0 case
     let featureIdx = rng.rand(maxFeatureIdx)
 
     let nodeIdx = len(nodes)
@@ -146,7 +143,7 @@ proc generateNode(
       if op in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}:
         unaryOps.add(op)
       elif op in {opAddConstant, opMulConstant}:
-        unaryOps.add(op)  # Constant operations are unary
+        unaryOps.add(op) # Constant operations are unary
       else:
         binaryOps.add(op)
 
@@ -171,12 +168,14 @@ proc generateNode(
       selectedOp = binaryOps[rng.rand(maxIdx)]
 
     # Determine if unary or binary operation
-    let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos, opTan, opSqrt, opAbs}
+    let isUnary = selectedOp in {opNegate, opSquare, opCube, opSin, opCos,
+        opTan, opSqrt, opAbs}
     let isConstant = selectedOp in {opAddConstant, opMulConstant}
 
     if isUnary:
       # Unary operation
-      let childIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
+      let childIdx = generateNode(rng, depth + 1, maxDepth, numFeatures,
+          availableOps, nodes)
 
       let nodeIdx = len(nodes)
       nodes.add(StackProgramNode(
@@ -188,8 +187,9 @@ proc generateNode(
 
     elif isConstant:
       # Constant operation
-      let childIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
-      let constant = rng.rand(1.0) * 2.0 - 1.0  # Random value in [-1, 1]
+      let childIdx = generateNode(rng, depth + 1, maxDepth, numFeatures,
+          availableOps, nodes)
+      let constant = rng.rand(1.0) * 2.0 - 1.0 # Random value in [-1, 1]
 
       # Create immutable copy for case discriminator
       let opKind = selectedOp
@@ -218,8 +218,10 @@ proc generateNode(
 
     else:
       # Binary operation
-      let leftIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
-      let rightIdx = generateNode(rng, depth + 1, maxDepth, numFeatures, availableOps, nodes)
+      let leftIdx = generateNode(rng, depth + 1, maxDepth, numFeatures,
+          availableOps, nodes)
+      let rightIdx = generateNode(rng, depth + 1, maxDepth, numFeatures,
+          availableOps, nodes)
 
       let nodeIdx = len(nodes)
       nodes.add(StackProgramNode(
@@ -332,12 +334,13 @@ proc runGeneticAlgorithmImpl(
     opAdd, opSubtract, opMultiply, opDivide, opPow,
     # Unary operations (transformations)
     opNegate, opSquare, opCube,
-    opAbs, opSqrt,  # Safe operations only
-    opSin, opCos, opTan  # Trigonometric functions for non-linear features
+    opAbs, opSqrt,      # Safe operations only
+    opSin, opCos, opTan # Trigonometric functions for non-linear features
   ]
 
   # Initialize population
-  var population = initializePopulation(rng, populationSize, maxDepth, numFeatures, availableOps)
+  var population = initializePopulation(rng, populationSize, maxDepth,
+      numFeatures, availableOps)
 
   # Create feature matrix
   var fm = newFeatureMatrix(numRows, numFeatures)
@@ -366,7 +369,8 @@ proc runGeneticAlgorithmImpl(
       let yPred = evaluateProgramStack(population[i], fm, pool)
 
       # Compute fitness
-      let fitnessResult = computeFitness(yPred, targetData, len(population[i].nodes), parsimonyCoefficient)
+      let fitnessResult = computeFitness(yPred, targetData, len(population[
+          i].nodes), parsimonyCoefficient)
       fitnessValues[i] = fitnessResult.finalFitness
 
       # Track best
@@ -455,9 +459,11 @@ proc runSingleGA(
   var bestIdx = 0
   var bestFitness = Inf
   var bestScore = Inf
+  var fitnessHistory = newSeq[float64](generations) # Track best fitness per generation
 
   for generation in 0..<generations:
     var fitnessValues = newSeq[float64](popSize)
+    var genBestFitness = Inf # Track best fitness in this generation
 
     for i in 0..<popSize:
       # Use thread-local pool
@@ -465,10 +471,18 @@ proc runSingleGA(
       let fitRes = computeFitness(yPred, targetData, len(population[i].nodes), parsimonyCoef)
       fitnessValues[i] = fitRes.finalFitness
 
+      # Track overall best
       if fitRes.finalFitness < bestFitness:
         bestFitness = fitRes.finalFitness
         bestScore = fitRes.score
         bestIdx = i
+
+      # Track generation best
+      if fitRes.finalFitness < genBestFitness:
+        genBestFitness = fitRes.finalFitness
+
+    # Record the best fitness from this generation
+    fitnessHistory[generation] = genBestFitness
 
     if generation < generations - 1:
       population = evolveGeneration(
@@ -476,11 +490,12 @@ proc runSingleGA(
         maxDepth, numFeatures, availableOps, rng
       )
 
-  # Return the best result from this thread
+  # Return the best result from this thread with history
   return SingleGAResult(
     program: population[bestIdx],
     fitness: bestFitness,
-    score: bestScore
+    score: bestScore,
+    history: fitnessHistory
   )
 
 
@@ -490,9 +505,10 @@ proc runSingleGA(
 
 type
   MultipleGAResult* = object
-    bestPrograms*: seq[StackProgram]  # Best program from each GA
-    bestFitnesses*: seq[float64]      # Best fitness from each GA
-    bestScores*: seq[float64]          # Best raw scores from each GA
+    bestPrograms*: seq[StackProgram] # Best program from each GA
+    bestFitnesses*: seq[float64]     # Best fitness from each GA
+    bestScores*: seq[float64]        # Best raw scores from each GA
+    histories*: seq[seq[float64]]    # Generation history for each GA
 
 
 proc runMultipleGAs*(
@@ -543,8 +559,8 @@ proc runMultipleGAs*(
 
   type
     GAParams = tuple[
-      featurePtrs: seq[int],  # Thread-local copy
-      targetData: seq[float64],  # Thread-local copy
+      featurePtrs: seq[int], # Thread-local copy
+      targetData: seq[float64], # Thread-local copy
       numRows: int,
       numFeatures: int,
       generations: int,
@@ -555,8 +571,8 @@ proc runMultipleGAs*(
       parsimonyCoef: float64,
       seed: int32,
       idx: int,
-      results: ptr seq[SingleGAResult],  # Pointer to shared results array
-      lock: ptr Lock  # Lock for synchronized access
+      results: ptr seq[SingleGAResult], # Pointer to shared results array
+      lock: ptr Lock # Lock for synchronized access
     ]
 
   var
@@ -619,7 +635,7 @@ proc runMultipleGAs*(
         lock: addr resultsLock
       )
       createThread(threads[i], gaThreadFunc, params)
-      threadsCreated = i + 1  # Track successful creation
+      threadsCreated = i + 1 # Track successful creation
 
     # Wait for all threads to complete
     joinThreads(threads)
@@ -639,14 +655,17 @@ proc runMultipleGAs*(
   var bestPrograms = newSeq[StackProgram](numGAs)
   var bestFitnesses = newSeq[float64](numGAs)
   var bestScores = newSeq[float64](numGAs)
+  var histories = newSeq[seq[float64]](numGAs)
 
   for i in 0..<numGAs:
     bestPrograms[i] = results[i].program
     bestFitnesses[i] = results[i].fitness
     bestScores[i] = results[i].score
+    histories[i] = results[i].history
 
   return MultipleGAResult(
     bestPrograms: bestPrograms,
     bestFitnesses: bestFitnesses,
-    bestScores: bestScores
+    bestScores: bestScores,
+    histories: histories
   )

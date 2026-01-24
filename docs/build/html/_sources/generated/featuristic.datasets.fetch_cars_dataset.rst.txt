@@ -1,6 +1,0 @@
-﻿featuristic.datasets.fetch\_cars\_dataset
-=========================================
-
-.. currentmodule:: featuristic.datasets
-
-.. autofunction:: fetch_cars_dataset

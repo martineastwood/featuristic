@@ -2,7 +2,7 @@
 name = "featuristic"
 
 # Versions should comply with PEP 440
-version = "1.1.0"
+version = "2.0.0"
 
 
 # This is a one-line description or tagline of what your project does. This
@@ -70,6 +70,7 @@ classifiers = [ # Optional
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
@@ -144,7 +145,7 @@ module-name = "featuristic"
 lib-name = "featuristic_lib"
 entry-point = "featuristic_lib.nim"
 nimble-deps = ["nimpy", "nuwa_sdk"]
-nim-flags = ["--threads:on", "--gc:arc"]
+nim-flags = ["--threads:on", "--mm:arc"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

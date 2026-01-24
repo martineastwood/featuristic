@@ -10,7 +10,7 @@ import std/math
 # ============================================================================
 
 ## Vectorized safe division for NumPy arrays (zero-copy)
-proc safeDivVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
+proc safeDivVecImpl(ptrA: int, ptrB: int, length: int): seq[float64] =
   ## Zero-copy vectorized safe division
   ## Input: pointers to two float64 arrays
   ## Returns: new array with a/b where b != 0, else a
@@ -24,49 +24,49 @@ proc safeDivVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
       result[i] = dataA[i] / dataB[i]
 
 ## Vectorized negate for NumPy arrays (zero-copy)
-proc negateVecImpl(ptrA: int, length: int): seq[float64]  =
+proc negateVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = -dataA[i]
 
 ## Vectorized square for NumPy arrays (zero-copy)
-proc squareVecImpl(ptrA: int, length: int): seq[float64]  =
+proc squareVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = dataA[i] * dataA[i]
 
 ## Vectorized cube for NumPy arrays (zero-copy)
-proc cubeVecImpl(ptrA: int, length: int): seq[float64]  =
+proc cubeVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = dataA[i] * dataA[i] * dataA[i]
 
 ## Vectorized sin for NumPy arrays (zero-copy)
-proc sinVecImpl(ptrA: int, length: int): seq[float64]  =
+proc sinVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = sin(dataA[i])
 
 ## Vectorized cos for NumPy arrays (zero-copy)
-proc cosVecImpl(ptrA: int, length: int): seq[float64]  =
+proc cosVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = cos(dataA[i])
 
 ## Vectorized tan for NumPy arrays (zero-copy)
-proc tanVecImpl(ptrA: int, length: int): seq[float64]  =
+proc tanVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = tan(dataA[i])
 
 ## Vectorized power for NumPy arrays (zero-copy, binary)
-proc powVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
+proc powVecImpl(ptrA: int, ptrB: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   let dataB = cast[ptr UncheckedArray[float64]](ptrB)
   result = newSeq[float64](length)
@@ -85,21 +85,21 @@ proc powVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
       result[i] = pow(base, exp)
 
 ## Vectorized sqrt for NumPy arrays (zero-copy)
-proc sqrtVecImpl(ptrA: int, length: int): seq[float64]  =
+proc sqrtVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = sqrt(abs(dataA[i]))
 
 ## Vectorized abs for NumPy arrays (zero-copy)
-proc absVecImpl(ptrA: int, length: int): seq[float64]  =
+proc absVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = abs(dataA[i])
 
 ## Vectorized add for NumPy arrays (zero-copy)
-proc addVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
+proc addVecImpl(ptrA: int, ptrB: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   let dataB = cast[ptr UncheckedArray[float64]](ptrB)
   result = newSeq[float64](length)
@@ -107,7 +107,7 @@ proc addVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
     result[i] = dataA[i] + dataB[i]
 
 ## Vectorized subtract for NumPy arrays (zero-copy)
-proc subVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
+proc subVecImpl(ptrA: int, ptrB: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   let dataB = cast[ptr UncheckedArray[float64]](ptrB)
   result = newSeq[float64](length)
@@ -115,7 +115,7 @@ proc subVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
     result[i] = dataA[i] - dataB[i]
 
 ## Vectorized multiply for NumPy arrays (zero-copy)
-proc mulVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
+proc mulVecImpl(ptrA: int, ptrB: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   let dataB = cast[ptr UncheckedArray[float64]](ptrB)
   result = newSeq[float64](length)
@@ -123,14 +123,14 @@ proc mulVecImpl(ptrA: int, ptrB: int, length: int): seq[float64]  =
     result[i] = dataA[i] * dataB[i]
 
 ## Add constant (for constant operations) - zero-copy
-proc addConstantVecImpl(ptrA: int, length: int, constant: float64): seq[float64]  =
+proc addConstantVecImpl(ptrA: int, length: int, constant: float64): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:
     result[i] = dataA[i] + constant
 
 ## Multiply constant - zero-copy
-proc mulConstantVecImpl(ptrA: int, length: int, constant: float64): seq[float64]  =
+proc mulConstantVecImpl(ptrA: int, length: int, constant: float64): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)
   result = newSeq[float64](length)
   for i in 0..<length:

@@ -3,9 +3,7 @@
 
 import std/random
 import std/tables
-import std/algorithm
 import ../core/types
-import ../core/program
 
 
 # ============================================================================
@@ -89,7 +87,7 @@ proc cloneSubtree*(program: StackProgram, nodeIdx: int): tuple[nodes: seq[StackP
   if nodeIdx < 0 or nodeIdx >= len(program.nodes):
     return (newSeq[StackProgramNode](0), initTable[int, int]())
 
-  var result = newSeq[StackProgramNode](0)
+  var clonedNodes = newSeq[StackProgramNode](0)
   var mapping = initTable[int, int]()
 
   # For post-order representation, a subtree consists of:
@@ -103,12 +101,12 @@ proc cloneSubtree*(program: StackProgram, nodeIdx: int): tuple[nodes: seq[StackP
   var newIndex = 0
   for i in countup(startIdx, startIdx + size - 1):
     mapping[i] = newIndex
-    result.add(program.nodes[i])
+    clonedNodes.add(program.nodes[i])
     inc(newIndex)
 
   # Update child indices in cloned nodes
-  for i in 0..<len(result):
-    var node = result[i]
+  for i in 0..<len(clonedNodes):
+    var node = clonedNodes[i]
     if node.left >= 0:
       if node.left in mapping:
         node.left = mapping[node.left]
@@ -119,9 +117,9 @@ proc cloneSubtree*(program: StackProgram, nodeIdx: int): tuple[nodes: seq[StackP
         node.right = mapping[node.right]
       else:
         node.right = -1
-    result[i] = node
+    clonedNodes[i] = node
 
-  return (result, mapping)
+  return (clonedNodes, mapping)
 
 
 proc replaceSubtree*(program: var StackProgram, targetIdx: int, replacementNodes: seq[StackProgramNode]) =
@@ -393,7 +391,7 @@ proc mutate*(program: StackProgram, rng: var Rand, maxDepth: int, numFeatures: i
     var nodes = generateRandomSubtree(rng, remainingDepth, numFeatures, availableOps)
 
     # Check if replacement would exceed max depth
-    let (startIdx, oldSize) = findSubtreeBounds(offspring, targetIdx)
+    let oldSize = findSubtreeBounds(offspring, targetIdx).size
     let offspringDepth = len(offspring.nodes) div 2
     let newDepth = len(nodes) div 2
     if offspringDepth - oldSize + newDepth > maxDepth:

@@ -1,0 +1,47 @@
+/* Custom styles for Featuristic documentation */
+
+/* Better code block styling */
+/* .md-typeset pre {
+  padding: 1rem;
+  border-radius: 0.5rem;
+} */
+
+/* Custom admonition colors */
+/* .md-typeset .admonition {
+  border-radius: 0.5rem;
+} */
+
+/* Better table styling */
+.md-typeset table:not([class]) {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Custom font sizes for better readability */
+.md-typeset h1 {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.md-typeset h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* Better badge styling */
+.md-typeset .badge {
+  display: inline-block;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Improve navigation */
+.md-nav__link {
+  font-weight: 500;
+}
+
+.md-nav__link--active {
+  font-weight: 600;
+}

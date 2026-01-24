@@ -361,6 +361,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             best_constants,
             best_fitnesses,
             best_scores,
+            generation_histories,  # Generation-by-generation fitness for each GA
         ) = runMultipleGAsWrapper(
             feature_ptrs,
             y_list,
@@ -375,6 +376,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             self.parsimony_coefficient,
             random_seeds,
         )
+
+        # Store generation histories for convergence plotting
+        self.generation_histories_ = generation_histories
 
         # Process results from Nim
         self.hall_of_fame = []
@@ -677,8 +681,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         """
         Plot the history of the fitness function with enhanced visualization.
 
-        Displays the best fitness achieved for each generated feature along with
-        running statistics to show optimization progress.
+        Displays the convergence of the genetic algorithm across generations,
+        showing each GA's convergence and aggregated statistics.
 
         Parameters
         ----------
@@ -701,69 +705,106 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         if ax is None:
             fig, ax = plt.subplots(figsize=(10, 6))
 
-        df = pd.DataFrame(self.history)
-
-        if len(df) == 0 or "best_fitness" not in df.columns:
+        # Check if we have generation histories
+        if (
+            not hasattr(self, "generation_histories_")
+            or len(self.generation_histories_) == 0
+        ):
             ax.text(
                 0.5,
                 0.5,
-                "No history data available",
+                "No generation history available.\nMake sure the model was fitted after generation tracking was added.",
                 ha="center",
                 va="center",
                 transform=ax.transAxes,
+                fontsize=10,
             )
             return ax
 
-        # Extract fitness values
-        feature_indices = df["feature"].values
-        fitness_values = df["best_fitness"].values
+        # Convert histories to numpy array for easier manipulation
+        # Shape: (num_GAs, num_generations)
+        histories = np.array(self.generation_histories_)
 
-        # Calculate running statistics
-        cumulative_best = np.minimum.accumulate(fitness_values)
-        running_mean = np.convolve(fitness_values, np.ones(3) / 3, mode="valid")
+        # Number of generations (all GAs should have same length)
+        num_generations = histories.shape[1]
+        generations = np.arange(num_generations)
 
-        # Plot main fitness line with markers
-        ax.plot(
-            feature_indices,
-            fitness_values,
-            "o-",
-            linewidth=2,
-            markersize=8,
-            color="#2563eb",
-            alpha=0.8,
-            label="Best Fitness per Feature",
-        )
+        # Calculate statistics across all GAs at each generation
+        best_per_gen = np.min(histories, axis=0)  # Best fitness across all GAs
+        median_per_gen = np.median(histories, axis=0)  # Median across all GAs
+        min_per_gen = np.min(histories, axis=0)  # Same as best
+        max_per_gen = np.max(histories, axis=0)  # Worst GA at each generation
 
-        # Plot cumulative best (lower is better for fitness/error metrics)
-        ax.plot(
-            feature_indices,
-            cumulative_best,
-            "--",
-            linewidth=2,
-            color="#dc2626",
-            alpha=0.7,
-            label="Cumulative Best",
-        )
-
-        # Plot running mean if we have enough points
-        if len(running_mean) > 0:
-            # mode='valid' reduces array size by window_size - 1
-            offset = len(fitness_values) - len(running_mean)
+        # Plot individual GA convergence curves (faint)
+        for ga_idx in range(histories.shape[0]):
             ax.plot(
-                feature_indices[offset:],
-                running_mean,
-                ":",
-                linewidth=2,
-                color="#059669",
-                alpha=0.6,
-                label="Running Mean (window=3)",
+                generations,
+                histories[ga_idx, :],
+                "-",
+                linewidth=0.5,
+                color="#64748b",
+                alpha=0.3,
+                zorder=1,
             )
 
+        # Plot shaded region (min-max spread)
+        ax.fill_between(
+            generations,
+            min_per_gen,
+            max_per_gen,
+            alpha=0.15,
+            color="#6366f1",
+            label="Min-Max Spread",
+            zorder=2,
+        )
+
+        # Plot best fitness across all GAs (thick red line)
+        ax.plot(
+            generations,
+            best_per_gen,
+            "-",
+            linewidth=2.5,
+            color="#dc2626",
+            alpha=0.9,
+            label="Best Fitness",
+            zorder=4,
+        )
+
+        # Plot median fitness (thick blue line)
+        ax.plot(
+            generations,
+            median_per_gen,
+            "--",
+            linewidth=2,
+            color="#2563eb",
+            alpha=0.8,
+            label="Median Fitness",
+            zorder=3,
+        )
+
+        # Highlight the final best fitness
+        final_best = best_per_gen[-1]
+        final_gen = generations[-1]
+        ax.scatter(
+            [final_gen],
+            [final_best],
+            s=250,
+            color="#dc2626",
+            marker="*",
+            zorder=5,
+            edgecolors="white",
+            linewidths=2,
+            label=f"Best: {final_best:.4f}",
+        )
+
         # Styling
-        ax.set_xlabel("Feature Generation Order", fontsize=12, fontweight="bold")
+        ax.set_xlabel("Generation", fontsize=12, fontweight="bold")
         ax.set_ylabel("Fitness Score", fontsize=12, fontweight="bold")
         ax.set_title(
-            "Feature Synthesis Convergence", fontsize=14, fontweight="bold", pad=15
+            "Feature Synthesis Convergence (per Generation)",
+            fontsize=14,
+            fontweight="bold",
+            pad=15,
         )
 
         # Add grid with better styling
@@ -772,7 +813,12 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # Better legend
         ax.legend(
-            loc="best", framealpha=0.95, shadow=True, fontsize=10, edgecolor="#ddd"
+            loc="best",
+            framealpha=0.95,
+            shadow=True,
+            fontsize=10,
+            edgecolor="#ddd",
+            ncol=2,
         )
 
         # Add light background
@@ -806,6 +852,5 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         >>> synth.fit(X, y)
         >>> synth.plot_convergence()
         """
-        if not self.fit_called:
-            raise ValueError("Must call fit before plot_convergence")
+        check_is_fitted(self, "feature_names_")
         return self.plot_history(ax)

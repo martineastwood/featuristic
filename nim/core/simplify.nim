@@ -1,7 +1,6 @@
 # Program simplification for genetic programming
 # Optimizes program trees by removing redundant operations
 
-import std/math
 import std/sets
 import ./types
 import ./program
@@ -69,12 +68,12 @@ proc simplifyProgram*(program: StackProgram): StackProgram =
     # add_constant(x, 0.0) -> x
     if oldNode.kind == opAddConstant:
       if isZero(oldNode.addConstantValue):
-        return newLeftIdx  # Skip this node, return child directly!
+        return newLeftIdx # Skip this node, return child directly!
 
     # mul_constant(x, 1.0) -> x
     if oldNode.kind == opMulConstant:
       if isOne(oldNode.mulConstantValue):
-        return newLeftIdx  # Skip this node, return child directly!
+        return newLeftIdx # Skip this node, return child directly!
 
     # RULE 2: Constant Folding (Nested Constants)
     # add_constant(add_constant(x, 5), 3) -> add_constant(x, 8)
@@ -84,7 +83,7 @@ proc simplifyProgram*(program: StackProgram): StackProgram =
         # We found nested adds!
         # Mutate the child in 'newNodes' to absorb this value
         newNodes[newLeftIdx].addConstantValue += oldNode.addConstantValue
-        return newLeftIdx  # Return the child's index (it now holds the sum)
+        return newLeftIdx # Return the child's index (it now holds the sum)
 
     # mul_constant(mul_constant(x, 2), 3) -> mul_constant(x, 6)
     if oldNode.kind == opMulConstant and newLeftIdx >= 0:
@@ -92,7 +91,7 @@ proc simplifyProgram*(program: StackProgram): StackProgram =
       if child.kind == opMulConstant:
         # We found nested multiplies!
         newNodes[newLeftIdx].mulConstantValue *= oldNode.mulConstantValue
-        return newLeftIdx  # Return the child's index (it now holds the product)
+        return newLeftIdx # Return the child's index (it now holds the product)
 
     # RULE 3: Double Negation
     # negate(negate(x)) -> x

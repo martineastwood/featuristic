@@ -4,8 +4,6 @@
 # indicating which features to select.
 
 import std/random
-import std/algorithm
-import std/sequtils
 import std/math
 
 

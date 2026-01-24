@@ -112,7 +112,6 @@ proc evaluateProgram*(
   ## Evaluate a program from Python using stack-based approach
   ## WITH GIL RELEASE for concurrent Python threading
 
-  var result: seq[float64]
   withNogil:
     result = evaluateProgramImpl(
       featurePtrs,
@@ -124,7 +123,6 @@ proc evaluateProgram*(
       numRows,
       numCols
     )
-  return result
 
 proc testEvaluation*(): string {.nuwa_export.} =
   ## Test function to verify program evaluation works
@@ -271,7 +269,6 @@ proc evaluateProgramsBatched*(
   let numPrograms = len(programSizes)
 
   # Evaluate all programs with GIL released
-  var result: seq[seq[float64]]
   withNogil:
     result = newSeq[seq[float64]](numPrograms)
 
@@ -307,8 +304,6 @@ proc evaluateProgramsBatched*(
       )
 
       offset += progSize
-
-  return result
 
 
 # ============================================================================
@@ -348,9 +343,9 @@ proc runGeneticAlgorithm*(
 
   # Run genetic algorithm with C-style memory optimizations AND GIL release
   # (flat buffers, value types, no GC, NO PYTHON INTERPRETER INTERFERENCE)
-  var result: EvolutionResult
+  var evolutionResult: EvolutionResult
   withNogil:
-    result = runGeneticAlgorithmImpl(
+    evolutionResult = runGeneticAlgorithmImpl(
       featurePtrs,
       targetData,
       numRows,
@@ -365,7 +360,7 @@ proc runGeneticAlgorithm*(
     )
 
   # Serialize the best program
-  let bestNodes = result.bestProgram.nodes
+  let bestNodes = evolutionResult.bestProgram.nodes
   var featureIndices = newSeq[int](len(bestNodes))
   var opKinds = newSeq[int](len(bestNodes))
   var leftChildren = newSeq[int](len(bestNodes))
@@ -391,8 +386,8 @@ proc runGeneticAlgorithm*(
     bestLeftChildren: leftChildren,
     bestRightChildren: rightChildren,
     bestConstants: constants,
-    bestFitness: result.bestFitness,
-    bestScore: result.bestScore
+    bestFitness: evolutionResult.bestFitness,
+    bestScore: evolutionResult.bestScore
   )
 
 
@@ -420,7 +415,8 @@ proc runMultipleGAsWrapper*(
   bestRightChildren: seq[seq[int]],
   bestConstants: seq[seq[float64]],
   bestFitnesses: seq[float64],
-  bestScores: seq[float64]
+  bestScores: seq[float64],
+  generationHistories: seq[seq[float64]]
 ] {.nuwa_export.} =
   ## Run multiple independent GAs in a single Nim call
   ##
@@ -435,9 +431,9 @@ proc runMultipleGAsWrapper*(
   ##
   ## Returns serialized programs and fitnesses for all GAs
 
-  var result: MultipleGAResult
+  var multiGAResult: MultipleGAResult
   withNogil:
-    result = runMultipleGAs(
+    multiGAResult = runMultipleGAs(
       featurePtrs,
       targetData,
       numRows,
@@ -460,7 +456,7 @@ proc runMultipleGAsWrapper*(
   var bestConstants = newSeq[seq[float64]](numGAs)
 
   for gaIdx in 0..<numGAs:
-    let nodes = result.bestPrograms[gaIdx].nodes
+    let nodes = multiGAResult.bestPrograms[gaIdx].nodes
     let numNodes = len(nodes)
 
     var featureIndices = newSeq[int](numNodes)
@@ -494,8 +490,9 @@ proc runMultipleGAsWrapper*(
     bestLeftChildren: bestLeftChildren,
     bestRightChildren: bestRightChildren,
     bestConstants: bestConstants,
-    bestFitnesses: result.bestFitnesses,
-    bestScores: result.bestScores
+    bestFitnesses: multiGAResult.bestFitnesses,
+    bestScores: multiGAResult.bestScores,
+    generationHistories: multiGAResult.histories
   )
 
 
