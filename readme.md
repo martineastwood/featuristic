@@ -69,12 +69,11 @@ Next, we'll initiate the Genetic Feature Synthesis process. We've configured the
 
 ```python
 synth = ft.GeneticFeatureSynthesis(
-    num_features=5,
+    n_features=5,
     population_size=200,
     max_generations=100,
     early_termination_iters=25,
     parsimony_coefficient=0.035,
-    n_jobs=1,
 )
 
 synth.fit(X_train, y_train)

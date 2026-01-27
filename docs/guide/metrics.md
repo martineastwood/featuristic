@@ -18,11 +18,11 @@ If you are using an error metric (like MAE or MSE), the algorithm naturally mini
 
 Featuristic evaluates metrics using two distinct computational pathways. Understanding the difference is key to pipeline performance.
 
-### 1. Native Metrics (100-150x Speedup)
+### 1. Native Metrics
 
 If you are optimizing for standard machine learning metrics, pass the `metric` string argument. This bypasses the Python interpreter completely. The entire data matrix and target vector are passed as zero-copy memory pointers to the compiled Nim backend.
 
-Native evaluation runs the entire evolution loop—Selection, Crossover, Mutation, and Fitness Calculation—at the C-level, resulting in a **100-150x speedup** compared to standard Scikit-Learn evaluation.
+Native evaluation runs the entire evolution loop—Selection, Crossover, Mutation, and Fitness Calculation, at the C-level, resulting in a significant speedup compared to standard Scikit-Learn evaluation.
 
 ```python
 import featuristic as ft

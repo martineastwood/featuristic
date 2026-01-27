@@ -46,11 +46,11 @@ preds_baseline = model_baseline.predict(X_test)
 baseline_mae = mean_absolute_error(y_test, preds_baseline)
 
 print(f"Baseline MAE: {baseline_mae:.2f}")
-# Output: Baseline MAE: 2.59
+# Output: Baseline MAE: 2.58
 
 ```
 
-An error of ~2.59 MPG. This is our target to beat.
+An error of ~2.58 MPG. This is our target to beat.
 
 ---
 
@@ -136,9 +136,9 @@ print(f"Improvement:     {improvement:.1f}%")
 
 **Results:**
 
-* **Baseline MAE:** 2.59
-* **Featuristic MAE:** 1.95
-* **Improvement:** **24.7%**
+* **Baseline MAE:** 2.58
+* **Featuristic MAE:** 2.17
+* **Improvement:** **16.1%**
 
 ## Post-Hoc Analysis: What changed?
 
