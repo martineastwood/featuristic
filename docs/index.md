@@ -90,5 +90,9 @@ pip install featuristic
 
 * **[Installation Guide](getting-started/installation.md)** - Get Featuristic up and running.
 * **[Quick Start](getting-started/quickstart.md)** - Learn the basic workflows.
-* **[User Guide](guide/)** - Deep dive into genetic parameters, complexity control, and parsimony coefficients.
-* **[Examples](examples/)** - Explore complete, runnable examples.
+* **[Feature Synthesis Guide](guide/synthesis.md)** - Deep dive into genetic parameters, complexity control, and parsimony coefficients.
+* **[Feature Selection Guide](guide/selection.md)** - Learn about mRMR and genetic selection algorithms.
+* **[Scikit-Learn Integration](guide/sklearn.md)** - Use Featuristic in your existing pipelines.
+* **[Cars Dataset Example](examples/cars_example.md)** - Complete walkthrough with the UCI cars dataset.
+* **[Non-Linear Features Example](examples/nonlinear_features.md)** - Discover non-linear relationships in your data.
+* **[API Reference](api/synthesis.md)** - Detailed API documentation.
