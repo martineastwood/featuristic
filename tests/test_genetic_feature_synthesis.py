@@ -1,6 +1,7 @@
 import featuristic as ft
 import pytest
 import pandas as pd
+from sklearn.utils.validation import check_is_fitted
 
 
 def test_gfs():
@@ -17,7 +18,9 @@ def test_gfs():
     with pytest.raises(Exception):
         gfs.plot_history()
 
-    assert gfs.fit_called == False
+    # Check that the model is not fitted
+    with pytest.raises(Exception):
+        check_is_fitted(gfs, "feature_names_")
 
     with pytest.raises(Exception):
         gfs.fit(X=None, y=None)
@@ -31,7 +34,8 @@ def test_gfs():
     # The GA may generate fewer than n_features if programs simplify to raw features
     assert len(new_cols) >= 0
     assert len(new_cols) <= n_features
-    assert gfs.fit_called == True
+    # Check that the model is now fitted
+    check_is_fitted(gfs, "feature_names_")
 
     gfs = ft.GeneticFeatureSynthesis(
         n_features=n_features, population_size=10, max_generations=2, verbose=False

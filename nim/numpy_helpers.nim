@@ -1,0 +1,151 @@
+## Helper functions for converting nuwa_sdk numpy arrays to internal formats
+##
+## This module bridges the gap between the safe nuwa_sdk wrapper API and
+## featuristic's internal pointer-based algorithms. It provides ergonomic
+## conversions while maintaining zero-copy performance.
+##
+## This demonstrates the recommended pattern for using nuwa_sdk in production:
+## 1. Accept PyObject with validated numpy arrays
+## 2. Extract pointers for internal zero-copy algorithms
+## 3. Use RAII cleanup (defer: close())
+##
+## Note: This file is included in featuristic_lib.nim, which imports nuwa_sdk
+## We use types from nuwa_sdk directly
+
+import core/program
+import nimpy
+
+# =============================================================================
+# Conversion Errors
+# =============================================================================
+
+type
+  ConversionError* = object of ValueError
+    ## Error raised when array conversion fails
+
+# =============================================================================
+# 1D Array Conversion
+# =============================================================================
+
+proc toSeqFloat64*(arr: NumpyArrayRead[float64]): seq[float64] =
+  ## Convert a 1D numpy array to a Nim sequence
+  ##
+  ## This copies the data but is necessary for APIs that expect seq[float64].
+  ## Use direct pointer access instead when possible for zero-copy performance.
+
+  let n = arr.len
+  result = newSeq[float64](n)
+  let data = arr.data
+
+  for i in 0..<n:
+    result[i] = data[i]
+
+# =============================================================================
+# 2D Array to FeatureMatrix Conversion
+# =============================================================================
+
+proc toFeatureMatrix*(X: NumpyArrayRead[float64]): FeatureMatrix =
+  ## Convert a 2D numpy array to FeatureMatrix format
+  ##
+  ## This function expects column-major (Fortran order) layout for optimal
+  ## performance. Use order='F' when creating the numpy array.
+  ##
+  ## The conversion is zero-copy - we only extract pointers.
+  ##
+  ## Parameters:
+  ##   X - 2D numpy array wrapper (must be float64)
+  ##
+  ## Returns:
+  ##   FeatureMatrix with pointers to each column
+  ##
+  ## Raises:
+  ##   ConversionError if array is not 2D
+
+  if X.shape.len != 2:
+    raise newException(ConversionError,
+      "Expected 2D array, got " & $X.shape.len & "D array")
+
+  let nRows = X.shape[0]
+  let nCols = X.shape[1]
+
+  result = newFeatureMatrix(nRows, nCols)
+
+  # For column-major arrays, extract column pointers
+  # baseData points to the start of the array
+  # Column i starts at baseData + i * nRows elements
+  let baseData = X.data
+
+  for i in 0..<nCols:
+    # Get pointer to column i (offset by i * nRows elements)
+    let colPtr = cast[ptr UncheckedArray[float64]](cast[int](baseData) + i * nRows * sizeof(float64))
+    result.setColumn(i, cast[int](colPtr))
+
+# =============================================================================
+# Feature Extraction from Arrays
+# =============================================================================
+
+proc extractFeaturePointers*(X: NumpyArrayRead[float64]): seq[int] =
+  ## Extract column pointers from a 2D numpy array
+  ##
+  ## This is a lower-level function that returns raw pointers for each column.
+  ## Use this when you need to pass pointers to existing code.
+  ##
+  ## The array MUST be column-major (Fortran order) for correct results.
+  ##
+  ## Returns:
+  ##   Sequence of integer pointers (one per column)
+
+  let nCols = X.shape[1]
+  let nRows = X.shape[0]
+  let baseData = X.data
+
+  result = newSeq[int](nCols)
+  for i in 0..<nCols:
+    # Get pointer to column i (offset by i * nRows elements)
+    let offsetBytes = i * nRows * sizeof(float64)
+    let colPtr = cast[ptr UncheckedArray[float64]](cast[int](baseData) + offsetBytes)
+    result[i] = cast[int](colPtr)
+
+proc extractTargetPointer*(y: NumpyArrayRead[float64]): int =
+  ## Extract data pointer from a 1D numpy array
+  ##
+  ## Returns:
+  ##   Integer pointer to the array's data
+
+  result = cast[int](y.data)
+
+# =============================================================================
+# Validation Helpers
+# =============================================================================
+
+proc validateFloat64Array*(arr: PyObject): NumpyArrayRead[float64] =
+  ## Validate and wrap a 1D numpy array as float64
+  ##
+  ## This is a convenience function that combines wrapping and validation.
+  ##
+  ## Raises:
+  ##   TypeError if array is not float64
+  ##   ValueError if array is not contiguous
+
+  asNumpyArray(arr, float64)
+
+proc validateFloat64MatrixStrided*(arr: PyObject): NumpyArrayRead[float64] =
+  ## Validate and wrap a 2D numpy array as float64 (strided mode)
+  ##
+  ## This allows both C-contiguous (row-major) and F-contiguous (column-major) arrays.
+  ##
+  ## Raises:
+  ##   TypeError if array is not float64
+  ##   ValueError if array is not 2D
+
+  var wrapped = asStridedArray(arr, float64)
+  if wrapped.shape.len != 2:
+    wrapped.close()
+    raise newException(ValueError, "Expected 2D array, got " & $wrapped.shape.len & "D")
+  return wrapped
+
+# =============================================================================
+# Exports
+# =============================================================================
+
+export toFeatureMatrix, toSeqFloat64, extractFeaturePointers, extractTargetPointer

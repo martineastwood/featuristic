@@ -1,16 +1,18 @@
 # Main entry point for featuristic_lib
 # This file compiles into the Python extension module
 
-import nuwa_sdk  # Provides nuwa_export for automatic type stub generation
+import nuwa_sdk  # Provides nuwa_export for automatic type stub generation and withNogil
+include numpy_helpers  # New numpy array conversion helpers
 include core/types
 include core/operations
 include core/program
-include core/python_helpers  # GIL management via Python C API
 include core/simplify  # Program simplification optimization
 include genetic/operations
 include genetic/algorithm
 include genetic/binary_ga
 # Note: mRMR functions are defined directly in this file to avoid nimpy module issues
+
+import nimpy  # For PyObject type
 
 # Simple test function to verify the build works
 proc getVersion*(): string {.nuwa_export.} =
@@ -1111,3 +1113,653 @@ proc getUnaryOperationInts*(): seq[int] {.nuwa_export.} =
 proc getBinaryOperationInts*(): seq[int] {.nuwa_export.} =
   ## Get all binary operation kind integers
   return @[0.int, 1, 2, 3, 12]  # opAdd, opSubtract, opMultiply, opDivide, opPow
+
+
+# ============================================================================
+# NEW API: nuwa_sdk NumPy Array Wrappers
+# ============================================================================
+# These functions demonstrate the recommended pattern for using nuwa_sdk:
+# 1. Accept PyObject with validated numpy arrays
+# 2. Use RAII cleanup (defer: close())
+# 3. Extract pointers for internal zero-copy algorithms
+# 4. Maintain type safety and ergonomics
+#
+# The old API (with manual pointer passing) is kept for backward compatibility.
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Program Evaluation with NumPy Arrays
+# ----------------------------------------------------------------------------
+
+proc evaluateProgram*(
+  X: PyObject,
+  featureIndices: seq[int],
+  opKinds: seq[int],
+  leftChildren: seq[int],
+  rightChildren: seq[int],
+  constants: seq[float64]
+): seq[float64] {.nuwa_export.} =
+  ## Evaluate a program using numpy array input (new API)
+  ##
+  ## This is the recommended way to evaluate programs - pass numpy arrays directly
+  ## instead of extracting pointers manually.
+  ##
+  ## Parameters:
+  ##   X: 2D numpy array (float64), column-major (order='F') for best performance
+  ##   featureIndices: Feature index for each node (-1 for operation nodes)
+  ##   opKinds: Integer representation of operation kind for each node
+  ##   leftChildren: Index of left child in node array
+  ##   rightChildren: Index of right child in node array
+  ##   constants: Constant values (used for add/mul_constant)
+  ##
+  ## Returns:
+  ##   Sequence of computed values (converts to numpy array in Python)
+  ##
+  ## Example:
+  ##   X = np.asfortranarray(X)  # Column-major for efficiency
+  ##   result = evaluateProgram(X, feature_indices, op_kinds, ...)
+
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+
+  # Extract feature pointers using helper
+  let featurePtrs = extractFeaturePointers(XArr)
+
+  # Call the existing implementation
+  return evaluateProgramImpl(
+    featurePtrs,
+    featureIndices,
+    opKinds,
+    leftChildren,
+    rightChildren,
+    constants,
+    nRows,
+    nCols
+  )
+
+proc evaluateProgramsBatchedArray*(
+  X: PyObject,
+  programSizes: seq[int],
+  featureIndicesFlat: seq[int],
+  opKindsFlat: seq[int],
+  leftChildrenFlat: seq[int],
+  rightChildrenFlat: seq[int],
+  constantsFlat: seq[float64]
+): seq[seq[float64]] {.nuwa_export.} =
+  ## Evaluate multiple programs in a single call using numpy array input (new API)
+  ##
+  ## This is the batched version of evaluateProgram for efficiency.
+  ##
+  ## Parameters:
+  ##   X: 2D numpy array (float64), column-major (order='F')
+  ##   programSizes: Number of nodes in each program
+  ##   featureIndicesFlat: Flattened feature indices for all programs
+  ##   opKindsFlat: Flattened operation kinds for all programs
+  ##   leftChildrenFlat: Flattened left children for all programs
+  ##   rightChildrenFlat: Flattened right children for all programs
+  ##   constantsFlat: Flattened constants for all programs
+  ##
+  ## Returns:
+  ##   Sequence of result sequences, one per program
+
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+
+  # Extract feature pointers using helper
+  let featurePtrs = extractFeaturePointers(XArr)
+
+  # Call the existing batched implementation
+  return evaluateProgramsBatched(
+    featurePtrs,
+    programSizes,
+    featureIndicesFlat,
+    opKindsFlat,
+    leftChildrenFlat,
+    rightChildrenFlat,
+    constantsFlat,
+    nRows,
+    nCols
+  )
+
+# ----------------------------------------------------------------------------
+# Genetic Algorithm with NumPy Arrays
+# ----------------------------------------------------------------------------
+
+proc runGeneticAlgorithmArray*(
+  X: PyObject,
+  y: PyObject,
+  populationSize: int,
+  numGenerations: int,
+  maxDepth: int,
+  tournamentSize: int,
+  crossoverProb: float64,
+  parsimonyCoefficient: float64,
+  randomSeed: int
+): tuple[
+  bestFeatureIndices: seq[int],
+  bestOpKinds: seq[int],
+  bestLeftChildren: seq[int],
+  bestRightChildren: seq[int],
+  bestConstants: seq[float64],
+  bestFitness: float64,
+  bestScore: float64
+] {.nuwa_export.} =
+  ## Run the complete genetic algorithm using numpy array input (new API)
+  ##
+  ## This is the recommended way to run the GA - pass numpy arrays directly.
+  ##
+  ## Parameters:
+  ##   X: 2D numpy array (float64), column-major (order='F')
+  ##   y: 1D numpy array (float64)
+  ##   populationSize: Size of population
+  ##   numGenerations: Number of generations to run
+  ##   maxDepth: Maximum program depth
+  ##   tournamentSize: Tournament selection size
+  ##   crossoverProb: Crossover probability
+  ##   parsimonyCoefficient: Parsimony coefficient
+  ##   randomSeed: Random seed for reproducibility
+  ##
+  ## Returns:
+  ##   Tuple with best program (serialized) and its fitness
+  ##
+  ## Example:
+  ##   X = np.asfortranarray(X.values.astype(np.float64))
+  ##   y = y.values.astype(np.float64)
+  ##   result = runGeneticAlgorithmArray(X, y, 100, 50, 5, ...)
+
+  # Wrap arrays with RAII cleanup
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  var yArr = asNumpyArray(y, float64)
+  defer: yArr.close()
+
+  # Validate dimensions
+  if XArr.ndim != 2:
+    raise newException(ValueError, "X must be 2-dimensional")
+  if yArr.ndim != 1:
+    raise newException(ValueError, "y must be 1-dimensional")
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+  let yLen = yArr.len
+
+  if nRows != yLen:
+    raise newException(ValueError, "X and y must have the same number of rows")
+
+  # Extract pointers using helper
+  let featurePtrs = extractFeaturePointers(XArr)
+  let targetData = toSeqFloat64(yArr)
+
+  # Initialize random number generator
+  var rng = initRand(randomSeed)
+
+  # Run genetic algorithm with GIL released
+  var evolutionResult: EvolutionResult
+  withNogil:
+    evolutionResult = runGeneticAlgorithmImpl(
+      featurePtrs,
+      targetData,
+      nRows,
+      nCols,
+      populationSize,
+      numGenerations,
+      maxDepth,
+      tournamentSize,
+      crossoverProb,
+      parsimonyCoefficient,
+      rng
+    )
+
+  # Serialize the best program
+  let bestNodes = evolutionResult.bestProgram.nodes
+  var featureIndices = newSeq[int](len(bestNodes))
+  var opKinds = newSeq[int](len(bestNodes))
+  var leftChildren = newSeq[int](len(bestNodes))
+  var rightChildren = newSeq[int](len(bestNodes))
+  var constants = newSeq[float64](len(bestNodes))
+
+  for i, node in bestNodes:
+    featureIndices[i] = if node.kind == opFeature: node.featureIndex else: -1
+    opKinds[i] = ord(node.kind)
+    leftChildren[i] = node.left
+    rightChildren[i] = node.right
+
+    if node.kind == opAddConstant:
+      constants[i] = node.addConstantValue
+    elif node.kind == opMulConstant:
+      constants[i] = node.mulConstantValue
+    else:
+      constants[i] = 0.0
+
+  return (
+    bestFeatureIndices: featureIndices,
+    bestOpKinds: opKinds,
+    bestLeftChildren: leftChildren,
+    bestRightChildren: rightChildren,
+    bestConstants: constants,
+    bestFitness: evolutionResult.bestFitness,
+    bestScore: evolutionResult.bestScore
+  )
+
+proc runMultipleGAsArray*(
+  X: PyObject,
+  y: PyObject,
+  numGAs: int,
+  generationsPerGA: int,
+  populationSize: int,
+  maxDepth: int,
+  tournamentSize: int,
+  crossoverProb: float64,
+  parsimonyCoefficient: float64,
+  randomSeeds: seq[int32]
+): tuple[
+  bestFeatureIndices: seq[seq[int]],
+  bestOpKinds: seq[seq[int]],
+  bestLeftChildren: seq[seq[int]],
+  bestRightChildren: seq[seq[int]],
+  bestConstants: seq[seq[float64]],
+  bestFitnesses: seq[float64],
+  bestScores: seq[float64],
+  generationHistories: seq[seq[float64]]
+] {.nuwa_export.} =
+  ## Run multiple independent GAs using numpy array input (new API)
+  ##
+  ## This is the batched version for feature synthesis optimization.
+  ##
+  ## Parameters:
+  ##   X: 2D numpy array (float64), column-major (order='F')
+  ##   y: 1D numpy array (float64)
+  ##   numGAs: Number of independent GAs to run
+  ##   generationsPerGA: Generations per GA
+  ##   populationSize: Size of population for each GA
+  ##   maxDepth: Maximum program depth
+  ##   tournamentSize: Tournament selection size
+  ##   crossoverProb: Crossover probability
+  ##   parsimonyCoefficient: Parsimony coefficient
+  ##   randomSeeds: Random seed for each GA (length = numGAs)
+  ##
+  ## Returns:
+  ##   Tuple with serialized programs and fitnesses for all GAs
+
+  # Wrap arrays with RAII cleanup
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  var yArr = asNumpyArray(y, float64)
+  defer: yArr.close()
+
+  # Validate dimensions
+  if XArr.ndim != 2:
+    raise newException(ValueError, "X must be 2-dimensional")
+  if yArr.ndim != 1:
+    raise newException(ValueError, "y must be 1-dimensional")
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+  let yLen = yArr.len
+
+  if nRows != yLen:
+    raise newException(ValueError, "X and y must have the same number of rows")
+
+  # Extract pointers and convert target
+  let featurePtrs = extractFeaturePointers(XArr)
+  let targetData = toSeqFloat64(yArr)
+
+  # Run multiple GAs
+  var multiGAResult: MultipleGAResult
+  withNogil:
+    multiGAResult = runMultipleGAs(
+      featurePtrs,
+      targetData,
+      nRows,
+      nCols,
+      numGAs,
+      generationsPerGA,
+      populationSize,
+      maxDepth,
+      tournamentSize,
+      crossoverProb,
+      parsimonyCoefficient,
+      randomSeeds
+    )
+
+  # Serialize all programs
+  var bestFeatureIndices = newSeq[seq[int]](numGAs)
+  var bestOpKinds = newSeq[seq[int]](numGAs)
+  var bestLeftChildren = newSeq[seq[int]](numGAs)
+  var bestRightChildren = newSeq[seq[int]](numGAs)
+  var bestConstants = newSeq[seq[float64]](numGAs)
+
+  for gaIdx in 0..<numGAs:
+    let nodes = multiGAResult.bestPrograms[gaIdx].nodes
+    let numNodes = len(nodes)
+
+    var featureIndices = newSeq[int](numNodes)
+    var opKinds = newSeq[int](numNodes)
+    var leftChildren = newSeq[int](numNodes)
+    var rightChildren = newSeq[int](numNodes)
+    var constants = newSeq[float64](numNodes)
+
+    for i in 0..<numNodes:
+      featureIndices[i] = if nodes[i].kind == opFeature: nodes[i].featureIndex else: -1
+      opKinds[i] = ord(nodes[i].kind)
+      leftChildren[i] = nodes[i].left
+      rightChildren[i] = nodes[i].right
+
+      if nodes[i].kind == opAddConstant:
+        constants[i] = nodes[i].addConstantValue
+      elif nodes[i].kind == opMulConstant:
+        constants[i] = nodes[i].mulConstantValue
+      else:
+        constants[i] = 0.0
+
+    bestFeatureIndices[gaIdx] = featureIndices
+    bestOpKinds[gaIdx] = opKinds
+    bestLeftChildren[gaIdx] = leftChildren
+    bestRightChildren[gaIdx] = rightChildren
+    bestConstants[gaIdx] = constants
+
+  return (
+    bestFeatureIndices: bestFeatureIndices,
+    bestOpKinds: bestOpKinds,
+    bestLeftChildren: bestLeftChildren,
+    bestRightChildren: bestRightChildren,
+    bestConstants: bestConstants,
+    bestFitnesses: multiGAResult.bestFitnesses,
+    bestScores: multiGAResult.bestScores,
+    generationHistories: multiGAResult.histories
+  )
+
+# ----------------------------------------------------------------------------
+# mRMR with NumPy Arrays
+# ----------------------------------------------------------------------------
+
+# Forward declaration for internal implementation
+proc runMRMRImpl*(
+  featurePtrs: seq[int],
+  targetPtr: int,
+  numRows: int,
+  numFeatures: int,
+  k: int,
+  floor: float64
+): seq[int]
+
+proc runMRMRArray*(
+  X: PyObject,
+  y: PyObject,
+  k: int,
+  floor: float64
+): seq[int] {.nuwa_export.} =
+  ## Run Maximum Relevance Minimum Redundancy (mRMR) feature selection (new API)
+  ##
+  ## Uses numpy array input for cleaner API.
+  ##
+  ## Parameters:
+  ##   X: 2D numpy array (float64), column-major (order='F')
+  ##   y: 1D numpy array (float64)
+  ##   k: Number of features to select
+  ##   floor: Minimum correlation value (prevents division by zero)
+  ##
+  ## Returns:
+  ##   Indices of selected features
+
+  # Wrap arrays with RAII cleanup
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  var yArr = asNumpyArray(y, float64)
+  defer: yArr.close()
+
+  # Validate dimensions
+  if XArr.ndim != 2:
+    raise newException(ValueError, "X must be 2-dimensional")
+  if yArr.ndim != 1:
+    raise newException(ValueError, "y must be 1-dimensional")
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+  let yLen = yArr.len
+
+  if nRows != yLen:
+    raise newException(ValueError, "X and y must have the same number of rows")
+
+  # Extract pointers
+  let featurePtrs = extractFeaturePointers(XArr)
+  let targetPtr = extractTargetPointer(yArr)
+
+  let kEffective = min(k, nCols)
+
+  # Run mRMR with GIL released
+  var selected: seq[int]
+  withNogil:
+    selected = runMRMRImpl(
+      featurePtrs,
+      targetPtr,
+      nRows,
+      nCols,
+      kEffective,
+      floor
+    )
+
+  return selected
+
+# Internal mRMR implementation (extracted from runMRMRZerocopy)
+proc runMRMRImpl*(
+  featurePtrs: seq[int],
+  targetPtr: int,
+  numRows: int,
+  numFeatures: int,
+  k: int,
+  floor: float64
+): seq[int] =
+  ## Internal mRMR implementation with GIL release support
+
+  # Get target pointer directly (no copy!)
+  let target = cast[ptr UncheckedArray[float64]](targetPtr)
+
+  # Get feature arrays (also no copy!)
+  var features = newSeq[ptr UncheckedArray[float64]](numFeatures)
+  for i in 0..<numFeatures:
+    features[i] = cast[ptr UncheckedArray[float64]](featurePtrs[i])
+
+  # Calculate F-statistics (correlation with target) for all features
+  var fStats = newSeq[float64](numFeatures)
+  for i in 0..<numFeatures:
+    fStats[i] = abs(pearsonCorrelationForMRMR(features[i], target, numRows))
+
+  # Initialize correlation matrix with floor value
+  var corr = newSeq[seq[float64]](numFeatures)
+  for i in 0..<numFeatures:
+    corr[i] = newSeq[float64](numFeatures)
+    for j in 0..<numFeatures:
+      corr[i][j] = floor
+
+  # Initialize selected and not_selected lists
+  var selected = newSeq[int]()
+  var notSelected = newSeq[int]()
+  for i in 0..<numFeatures:
+    notSelected.add(i)
+
+  # Select features iteratively
+  for iteration in 0..<k:
+    if iteration > 0:
+      # Update correlation matrix with the last selected feature
+      let lastSelected = selected[^1]
+      let lastSelectedData = features[lastSelected]
+
+      for idx in notSelected:
+        let featureData = features[idx]
+        let c = pearsonCorrelationForMRMR(featureData, lastSelectedData, numRows)
+        corr[idx][lastSelected] = abs(c)
+        if corr[idx][lastSelected] < floor:
+          corr[idx][lastSelected] = floor
+
+    # Compute mRMR score for each not-selected feature
+    var bestScore = -Inf
+    var bestIdx = -1
+
+    for idx in notSelected:
+      let relevance = fStats[idx]
+
+      var redundancy = floor
+      if selected.len() > 0:
+        var sumCorr = 0.0
+        for selIdx in selected:
+          sumCorr += corr[idx][selIdx]
+        redundancy = sumCorr / selected.len().float64
+        if redundancy < floor:
+          redundancy = floor
+
+      let score = relevance / redundancy
+
+      if score > bestScore:
+        bestScore = score
+        bestIdx = idx
+
+    # Select the best feature
+    if bestIdx >= 0:
+      selected.add(bestIdx)
+      let pos = notSelected.find(bestIdx)
+      if pos >= 0:
+        notSelected.delete(pos)
+
+  return selected
+
+# ----------------------------------------------------------------------------
+# Binary GA with NumPy Arrays
+# ----------------------------------------------------------------------------
+
+proc runCompleteBinaryGAArray*(
+  X: PyObject,
+  y: PyObject,
+  populationSize: int,
+  numGenerations: int,
+  tournamentSize: int,
+  crossoverProb: float64,
+  mutationProb: float64,
+  metricType: int,
+  randomSeed: int32
+): tuple[
+  bestGenome: seq[int],
+  bestFitness: float64,
+  history: seq[float64]
+] {.nuwa_export.} =
+  ## Run the COMPLETE binary GA in Nim with native metrics (new API)
+  ##
+  ## This is the fastest option - everything happens in Nim with numpy array input.
+  ##
+  ## Parameters:
+  ##   X: 2D numpy array (float64), column-major (order='F')
+  ##   y: 1D numpy array (float64)
+  ##   populationSize: Size of population
+  ##   numGenerations: Number of generations to run
+  ##   tournamentSize: Tournament selection size
+  ##   crossoverProb: Crossover probability
+  ##   mutationProb: Mutation probability
+  ##   metricType: Metric to use (0=MSE, 1=MAE, 2=R2, 3=LogLoss, 4=Accuracy)
+  ##   randomSeed: Random seed for reproducibility
+  ##
+  ## Returns:
+  ##   Tuple with best genome, best fitness, and generation history
+
+  # Wrap arrays with RAII cleanup
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  var yArr = asNumpyArray(y, float64)
+  defer: yArr.close()
+
+  # Validate dimensions
+  if XArr.ndim != 2:
+    raise newException(ValueError, "X must be 2-dimensional")
+  if yArr.ndim != 1:
+    raise newException(ValueError, "y must be 1-dimensional")
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+  let yLen = yArr.len
+
+  if nRows != yLen:
+    raise newException(ValueError, "X and y must have the same number of rows")
+
+  # Extract pointers
+  let featurePtrs = extractFeaturePointers(XArr)
+  let targetPtr = extractTargetPointer(yArr)
+
+  # Convert metric type
+  let metric = case metricType
+  of 0: mtMSE
+  of 1: mtMAE
+  of 2: mtR2
+  of 3: mtLogLoss
+  of 4: mtAccuracy
+  else: mtMSE
+
+  # Run the complete GA in Nim
+  let result = runCompleteBinaryGA(
+    featurePtrs,
+    targetPtr,
+    nRows,
+    nCols,
+    populationSize,
+    numGenerations,
+    tournamentSize,
+    crossoverProb,
+    mutationProb,
+    metric,
+    randomSeed
+  )
+
+  return (
+    bestGenome: result.bestGenome,
+    bestFitness: result.bestFitness,
+    history: result.history
+  )
+
+proc evaluateBinaryGenomeArray*(
+  genome: seq[int],
+  X: PyObject,
+  y: PyObject,
+  metricType: int
+): float64 {.nuwa_export.} =
+  ## Evaluate a binary genome using numpy array input (new API)
+  ##
+  ## Parameters:
+  ##   genome: Binary genome sequence (0s and 1s)
+  ##   X: 2D numpy array (float64), column-major (order='F')
+  ##   y: 1D numpy array (float64)
+  ##   metricType: Metric to use (0=MSE, 1=MAE, 2=R2)
+  ##
+  ## Returns:
+  ##   Fitness value (lower is better)
+
+  # Wrap arrays with RAII cleanup
+  var XArr = asStridedArray(X, float64)
+  defer: XArr.close()
+
+  var yArr = asNumpyArray(y, float64)
+  defer: yArr.close()
+
+  let nRows = XArr.shape[0]
+  let nCols = XArr.shape[1]
+
+  # Extract pointers
+  let featurePtrs = extractFeaturePointers(XArr)
+  let targetPtr = extractTargetPointer(yArr)
+
+  # Evaluate genome (metricType is already an int matching the expected parameter)
+  return evaluateBinaryGenomeNative(
+    genome,
+    featurePtrs,
+    targetPtr,
+    nRows,
+    nCols,
+    metricType
+  )

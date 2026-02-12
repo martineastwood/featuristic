@@ -515,9 +515,12 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             # Fill NaN with 0 for synthetic features only
             df_clean.fillna(0, inplace=True)
 
-        # Clip extreme values to prevent overflow
+        # Clip extreme values to prevent overflow (only numeric columns)
         max_value = 1e6
-        df_clean = df_clean.clip(lower=-max_value, upper=max_value)
+        numeric_cols = df_clean.select_dtypes(include=[np.number]).columns
+        df_clean[numeric_cols] = df_clean[numeric_cols].clip(
+            lower=-max_value, upper=max_value
+        )
 
         # Normalize synthetic features to prevent convergence issues
         # Use robust normalization (median and IQR) to handle outliers

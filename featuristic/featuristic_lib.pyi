@@ -1,128 +1,76 @@
 # Stubs for featuristic_lib
 from typing import Any, List
 
-def getVersion() -> str:
-    """Get the version of featuristic"""
+def addVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
+    """Zero-copy vectorized add"""
     ...
 
-def testAdd(a: float, b: float) -> float:
-    """Test addition operation"""
+def runGeneticAlgorithm(
+    featurePtrs: list[int],
+    targetData: list[float],
+    numRows: int,
+    numFeatures: int,
+    populationSize: int,
+    numGenerations: int,
+    maxDepth: int,
+    tournamentSize: int,
+    crossoverProb: float,
+    parsimonyCoefficient: float,
+    randomSeed: int,
+) -> Any:
+    """
+    Run the complete genetic algorithm in Nim
+    This function runs the entire evolution loop in Nim, providing
+    10-50x speedup by avoiding Python-Nim boundary crossing.
+    Returns the best program found (serialized) and its fitness
+    """
     ...
 
-def testSubtract(a: float, b: float) -> float:
-    """Test subtraction operation"""
-    ...
+def pearsonCorrelationNim(yPred: list[float], yTrue: list[float]) -> float:
+    """
+    Compute Pearson correlation coefficient between two sequences
 
-def testMultiply(a: float, b: float) -> float:
-    """Test multiplication operation"""
-    ...
-
-def testDivide(a: float, b: float) -> float:
-    """Test safe division operation"""
-    ...
-
-def safeDivVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
-    """Zero-copy vectorized safe division"""
-    ...
-
-def negateVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized negate"""
+    This is the Nim implementation of scipy.stats.pearsonr for correlation
+    computation. Returns correlation in range [-1, 1].
+    """
     ...
 
 def squareVecZerocopy(ptrA: int, length: int) -> list[float]:
     """Zero-copy vectorized square"""
     ...
 
-def cubeVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized cube"""
-    ...
-
-def sinVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized sin"""
-    ...
-
-def cosVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized cos"""
-    ...
-
-def tanVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized tan"""
-    ...
-
-def sqrtVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized sqrt"""
-    ...
-
-def absVecZerocopy(ptrA: int, length: int) -> list[float]:
-    """Zero-copy vectorized abs"""
-    ...
-
-def addVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
-    """Zero-copy vectorized add"""
-    ...
-
-def subVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
-    """Zero-copy vectorized subtract"""
-    ...
-
-def mulVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
-    """Zero-copy vectorized multiply"""
-    ...
-
-def addConstantVecZerocopy(ptrA: int, length: int, constant: float) -> list[float]:
-    """Zero-copy add constant"""
-    ...
-
-def mulConstantVecZerocopy(ptrA: int, length: int, constant: float) -> list[float]:
-    """Zero-copy multiply constant"""
-    ...
-
-def evaluateProgram(
-    featurePtrs: list[int],
-    featureIndices: list[int],
-    opKinds: list[int],
-    leftChildren: list[int],
-    rightChildren: list[int],
-    constants: list[float],
-    numRows: int,
-    numCols: int,
-) -> list[float]:
+def evaluateProgramsBatchedArray(
+    X: Any,
+    programSizes: list[int],
+    featureIndicesFlat: list[int],
+    opKindsFlat: list[int],
+    leftChildrenFlat: list[int],
+    rightChildrenFlat: list[int],
+    constantsFlat: list[float],
+) -> list[list[float]]:
     """
-    Evaluate a program from Python using stack-based approach
-    WITH GIL RELEASE for concurrent Python threading
+    Evaluate multiple programs in a single call using numpy array input (new API)
+
+    This is the batched version of evaluateProgram for efficiency.
+
+    Parameters:
+      X: 2D numpy array (float64), column-major (order='F')
+      programSizes: Number of nodes in each program
+      featureIndicesFlat: Flattened feature indices for all programs
+      opKindsFlat: Flattened operation kinds for all programs
+      leftChildrenFlat: Flattened left children for all programs
+      rightChildrenFlat: Flattened right children for all programs
+      constantsFlat: Flattened constants for all programs
+
+    Returns:
+      Sequence of result sequences, one per program
     """
     ...
 
-def testEvaluation() -> str:
-    """Test function to verify program evaluation works"""
-    ...
-
-def simplifyProgramWrapper(
-    featureIndices: list[int],
-    opKinds: list[int],
-    leftChildren: list[int],
-    rightChildren: list[int],
-    constants: list[float],
-) -> Any:
+def testTargetPointer(targetPtr: int, length: int) -> float:
     """
-    Simplify a program by removing redundant operations
-
-    This function takes a serialized program, applies simplification rules,
-    and returns the simplified program in serialized form.
-
-    Simplifications applied:
-    - Identity removal: x + 0 -> x, x * 1 -> x
-    - Constant folding: (x + 5) + 3 -> x + 8
-    - Double negation: negate(negate(x)) -> x
-
-    Args:
-      featureIndices: Feature index for each node (-1 for operation nodes)
-      opKinds: Integer representation of operation kind for each node
-      leftChildren: Index of left child in node array
-      rightChildren: Index of right child in node array
-      constants: Constant values (used for add/mul_constant)
-
-    Returns: Simplified program in same serialized format
+    Test function to see if single pointer works with nimpy
+    This should help us debug if we can pass target as pointer
     """
     ...
 
@@ -158,25 +106,43 @@ def evaluateProgramsBatched(
     """
     ...
 
-def runGeneticAlgorithm(
-    featurePtrs: list[int],
-    targetData: list[float],
-    numRows: int,
-    numFeatures: int,
-    populationSize: int,
-    numGenerations: int,
-    maxDepth: int,
-    tournamentSize: int,
-    crossoverProb: float,
-    parsimonyCoefficient: float,
-    randomSeed: int,
-) -> Any:
+def sinVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized sin"""
+    ...
+
+def runMRMRArray(X: Any, y: Any, k: int, floor: float) -> list[int]:
     """
-    Run the complete genetic algorithm in Nim
-    This function runs the entire evolution loop in Nim, providing
-    10-50x speedup by avoiding Python-Nim boundary crossing.
-    Returns the best program found (serialized) and its fitness
+    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection (new API)
+
+    Uses numpy array input for cleaner API.
+
+    Parameters:
+      X: 2D numpy array (float64), column-major (order='F')
+      y: 1D numpy array (float64)
+      k: Number of features to select
+      floor: Minimum correlation value (prevents division by zero)
+
+    Returns:
+      Indices of selected features
     """
+    ...
+
+def binaryBitFlipMutate(
+    genome: list[int], mutationProb: float, randomSeed: int
+) -> list[int]:
+    """Mutate a binary genome by flipping bits"""
+    ...
+
+def getBinaryOperationInts() -> list[int]:
+    """Get all binary operation kind integers"""
+    ...
+
+def testSubtract(a: float, b: float) -> float:
+    """Test subtraction operation"""
+    ...
+
+def getOperationCount() -> int:
+    """Get the total number of operations"""
     ...
 
 def runMultipleGAsWrapper(
@@ -209,78 +175,44 @@ def runMultipleGAsWrapper(
     """
     ...
 
-def binarySinglePointCrossover(
-    parent1: list[int], parent2: list[int], crossoverProb: float, randomSeed: int
-) -> Any:
-    """Perform single-point crossover on two binary genomes"""
-    ...
-
-def binaryBitFlipMutate(
-    genome: list[int], mutationProb: float, randomSeed: int
-) -> list[int]:
-    """Mutate a binary genome by flipping bits"""
-    ...
-
-def countSelectedFeatures(genome: list[int]) -> int:
-    """Count how many features are selected (number of 1s)"""
-    ...
-
-def evolveBinaryPopulationBatched(
-    populationFlat: list[int],
-    fitness: list[float],
+def runCompleteBinaryGAArray(
+    X: Any,
+    y: Any,
     populationSize: int,
-    genomeLength: int,
+    numGenerations: int,
+    tournamentSize: int,
     crossoverProb: float,
     mutationProb: float,
-    tournamentSize: int,
+    metricType: int,
     randomSeed: int,
-) -> list[int]:
+) -> Any:
     """
-    Evolve a binary population in Nim (called from Python)
+    Run the COMPLETE binary GA in Nim with native metrics (new API)
 
-    This function takes a flattened population array from Python,
-    reconstructs it, evolves it using evolveBinaryPopulation,
-    and returns the flattened new population.
+    This is the fastest option - everything happens in Nim with numpy array input.
 
-    This avoids the Python-Nim boundary crossing overhead of calling
-    mutate/crossover individually for each genome.
+    Parameters:
+      X: 2D numpy array (float64), column-major (order='F')
+      y: 1D numpy array (float64)
+      populationSize: Size of population
+      numGenerations: Number of generations to run
+      tournamentSize: Tournament selection size
+      crossoverProb: Crossover probability
+      mutationProb: Mutation probability
+      metricType: Metric to use (0=MSE, 1=MAE, 2=R2, 3=LogLoss, 4=Accuracy)
+      randomSeed: Random seed for reproducibility
+
+    Returns:
+      Tuple with best genome, best fitness, and generation history
     """
     ...
 
-def runMRMR(
-    featurePtrs: list[int],
-    targetData: list[float],
-    numRows: int,
-    numFeatures: int,
-    k: int,
-    floor: float,
-) -> list[int]:
-    """
-    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
-    This version copies target data (kept for backward compatibility)
-    """
+def getOpKindInts() -> list[int]:
+    """Get all operation kind integers (0-15)"""
     ...
 
-def runMRMRZerocopy(
-    featurePtrs: list[int],
-    targetPtr: int,
-    numRows: int,
-    numFeatures: int,
-    k: int,
-    floor: float,
-) -> list[int]:
-    """
-    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
-    ZERO-COPY VERSION: Both features and target passed as pointers
-    WITH GIL RELEASE for concurrent Python threading
-    """
-    ...
-
-def testTargetPointer(targetPtr: int, length: int) -> float:
-    """
-    Test function to see if single pointer works with nimpy
-    This should help us debug if we can pass target as pointer
-    """
+def cubeVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized cube"""
     ...
 
 def evaluateBinaryGenomeNative(
@@ -312,13 +244,74 @@ def evaluateBinaryGenomeNative(
     """
     ...
 
-def pearsonCorrelationNim(yPred: list[float], yTrue: list[float]) -> float:
-    """
-    Compute Pearson correlation coefficient between two sequences
+def subVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
+    """Zero-copy vectorized subtract"""
+    ...
 
-    This is the Nim implementation of scipy.stats.pearsonr for correlation
-    computation. Returns correlation in range [-1, 1].
+def cosVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized cos"""
+    ...
+
+def addConstantVecZerocopy(ptrA: int, length: int, constant: float) -> list[float]:
+    """Zero-copy add constant"""
+    ...
+
+def evolveBinaryPopulationBatched(
+    populationFlat: list[int],
+    fitness: list[float],
+    populationSize: int,
+    genomeLength: int,
+    crossoverProb: float,
+    mutationProb: float,
+    tournamentSize: int,
+    randomSeed: int,
+) -> list[int]:
     """
+    Evolve a binary population in Nim (called from Python)
+
+    This function takes a flattened population array from Python,
+    reconstructs it, evolves it using evolveBinaryPopulation,
+    and returns the flattened new population.
+
+    This avoids the Python-Nim boundary crossing overhead of calling
+    mutate/crossover individually for each genome.
+    """
+    ...
+
+def testMultiply(a: float, b: float) -> float:
+    """Test multiplication operation"""
+    ...
+
+def getOperationName(opKindInt: int) -> str:
+    """Get operation name from operation kind integer"""
+    ...
+
+def mulVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
+    """Zero-copy vectorized multiply"""
+    ...
+
+def testDivide(a: float, b: float) -> float:
+    """Test safe division operation"""
+    ...
+
+def evaluateProgram(
+    featurePtrs: list[int],
+    featureIndices: list[int],
+    opKinds: list[int],
+    leftChildren: list[int],
+    rightChildren: list[int],
+    constants: list[float],
+    numRows: int,
+    numCols: int,
+) -> list[float]:
+    """
+    Evaluate a program from Python using stack-based approach
+    WITH GIL RELEASE for concurrent Python threading
+    """
+    ...
+
+def mulConstantVecZerocopy(ptrA: int, length: int, constant: float) -> list[float]:
+    """Zero-copy multiply constant"""
     ...
 
 def runCompleteBinaryGANative(
@@ -369,34 +362,237 @@ def runCompleteBinaryGANative(
     """
     ...
 
-def getOperationCount() -> int:
-    """Get the total number of operations"""
+def runGeneticAlgorithmArray(
+    X: Any,
+    y: Any,
+    populationSize: int,
+    numGenerations: int,
+    maxDepth: int,
+    tournamentSize: int,
+    crossoverProb: float,
+    parsimonyCoefficient: float,
+    randomSeed: int,
+) -> Any:
+    """
+    Run the complete genetic algorithm using numpy array input (new API)
+
+    This is the recommended way to run the GA - pass numpy arrays directly.
+
+    Parameters:
+      X: 2D numpy array (float64), column-major (order='F')
+      y: 1D numpy array (float64)
+      populationSize: Size of population
+      numGenerations: Number of generations to run
+      maxDepth: Maximum program depth
+      tournamentSize: Tournament selection size
+      crossoverProb: Crossover probability
+      parsimonyCoefficient: Parsimony coefficient
+      randomSeed: Random seed for reproducibility
+
+    Returns:
+      Tuple with best program (serialized) and its fitness
+
+    Example:
+      X = np.asfortranarray(X.values.astype(np.float64))
+      y = y.values.astype(np.float64)
+      result = runGeneticAlgorithmArray(X, y, 100, 50, 5, ...)
+    """
     ...
 
-def getOperationName(opKindInt: int) -> str:
-    """Get operation name from operation kind integer"""
+def sqrtVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized sqrt"""
     ...
 
-def getOperationFormat(opKindInt: int) -> str:
-    """Get format string from operation kind integer"""
+def runMRMRZerocopy(
+    featurePtrs: list[int],
+    targetPtr: int,
+    numRows: int,
+    numFeatures: int,
+    k: int,
+    floor: float,
+) -> list[int]:
+    """
+    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
+    ZERO-COPY VERSION: Both features and target passed as pointers
+    WITH GIL RELEASE for concurrent Python threading
+    """
     ...
 
-def isUnaryOperation(opKindInt: int) -> bool:
-    """Check if operation is unary"""
+def absVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized abs"""
+    ...
+
+def negateVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized negate"""
+    ...
+
+def testEvaluation() -> str:
+    """Test function to verify program evaluation works"""
     ...
 
 def isBinaryOperation(opKindInt: int) -> bool:
     """Check if operation is binary"""
     ...
 
-def getOpKindInts() -> list[int]:
-    """Get all operation kind integers (0-15)"""
+def testAdd(a: float, b: float) -> float:
+    """Test addition operation"""
+    ...
+
+def evaluateProgram(
+    X: Any,
+    featureIndices: list[int],
+    opKinds: list[int],
+    leftChildren: list[int],
+    rightChildren: list[int],
+    constants: list[float],
+) -> list[float]:
+    """
+    Evaluate a program using numpy array input (new API)
+
+    This is the recommended way to evaluate programs - pass numpy arrays directly
+    instead of extracting pointers manually.
+
+    Parameters:
+      X: 2D numpy array (float64), column-major (order='F') for best performance
+      featureIndices: Feature index for each node (-1 for operation nodes)
+      opKinds: Integer representation of operation kind for each node
+      leftChildren: Index of left child in node array
+      rightChildren: Index of right child in node array
+      constants: Constant values (used for add/mul_constant)
+
+    Returns:
+      Sequence of computed values (converts to numpy array in Python)
+
+    Example:
+      X = np.asfortranarray(X)  # Column-major for efficiency
+      result = evaluateProgram(X, feature_indices, op_kinds, ...)
+    """
+    ...
+
+def runMultipleGAsArray(
+    X: Any,
+    y: Any,
+    numGAs: int,
+    generationsPerGA: int,
+    populationSize: int,
+    maxDepth: int,
+    tournamentSize: int,
+    crossoverProb: float,
+    parsimonyCoefficient: float,
+    randomSeeds: list[int],
+) -> Any:
+    """
+    Run multiple independent GAs using numpy array input (new API)
+
+    This is the batched version for feature synthesis optimization.
+
+    Parameters:
+      X: 2D numpy array (float64), column-major (order='F')
+      y: 1D numpy array (float64)
+      numGAs: Number of independent GAs to run
+      generationsPerGA: Generations per GA
+      populationSize: Size of population for each GA
+      maxDepth: Maximum program depth
+      tournamentSize: Tournament selection size
+      crossoverProb: Crossover probability
+      parsimonyCoefficient: Parsimony coefficient
+      randomSeeds: Random seed for each GA (length = numGAs)
+
+    Returns:
+      Tuple with serialized programs and fitnesses for all GAs
+    """
+    ...
+
+def evaluateBinaryGenomeArray(
+    genome: list[int], X: Any, y: Any, metricType: int
+) -> float:
+    """
+    Evaluate a binary genome using numpy array input (new API)
+
+    Parameters:
+      genome: Binary genome sequence (0s and 1s)
+      X: 2D numpy array (float64), column-major (order='F')
+      y: 1D numpy array (float64)
+      metricType: Metric to use (0=MSE, 1=MAE, 2=R2)
+
+    Returns:
+      Fitness value (lower is better)
+    """
+    ...
+
+def simplifyProgramWrapper(
+    featureIndices: list[int],
+    opKinds: list[int],
+    leftChildren: list[int],
+    rightChildren: list[int],
+    constants: list[float],
+) -> Any:
+    """
+    Simplify a program by removing redundant operations
+
+    This function takes a serialized program, applies simplification rules,
+    and returns the simplified program in serialized form.
+
+    Simplifications applied:
+    - Identity removal: x + 0 -> x, x * 1 -> x
+    - Constant folding: (x + 5) + 3 -> x + 8
+    - Double negation: negate(negate(x)) -> x
+
+    Args:
+      featureIndices: Feature index for each node (-1 for operation nodes)
+      opKinds: Integer representation of operation kind for each node
+      leftChildren: Index of left child in node array
+      rightChildren: Index of right child in node array
+      constants: Constant values (used for add/mul_constant)
+
+    Returns: Simplified program in same serialized format
+    """
+    ...
+
+def safeDivVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
+    """Zero-copy vectorized safe division"""
+    ...
+
+def isUnaryOperation(opKindInt: int) -> bool:
+    """Check if operation is unary"""
+    ...
+
+def binarySinglePointCrossover(
+    parent1: list[int], parent2: list[int], crossoverProb: float, randomSeed: int
+) -> Any:
+    """Perform single-point crossover on two binary genomes"""
     ...
 
 def getUnaryOperationInts() -> list[int]:
     """Get all unary operation kind integers"""
     ...
 
-def getBinaryOperationInts() -> list[int]:
-    """Get all binary operation kind integers"""
+def getOperationFormat(opKindInt: int) -> str:
+    """Get format string from operation kind integer"""
+    ...
+
+def tanVecZerocopy(ptrA: int, length: int) -> list[float]:
+    """Zero-copy vectorized tan"""
+    ...
+
+def getVersion() -> str:
+    """Get the version of featuristic"""
+    ...
+
+def runMRMR(
+    featurePtrs: list[int],
+    targetData: list[float],
+    numRows: int,
+    numFeatures: int,
+    k: int,
+    floor: float,
+) -> list[int]:
+    """
+    Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
+    This version copies target data (kept for backward compatibility)
+    """
+    ...
+
+def countSelectedFeatures(genome: list[int]) -> int:
+    """Count how many features are selected (number of 1s)"""
     ...
