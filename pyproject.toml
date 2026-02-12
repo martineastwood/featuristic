@@ -158,7 +158,7 @@ extend-exclude = ["scratch.ipynb"]
 [tool.ruff.lint.per-file-ignores]
 # Allow unused imports in __init__.py for package exports
 "__init__.py" = ["F401"]
-# Ignore stub file issues
-"*.pyi" = ["F811"]
+# Ignore stub file issues (duplicate function definitions are intentional overloads)
+"featuristic/featuristic_lib.pyi" = ["F811", "F401"]
 # Ignore example code in docs
 "docs/examples/**" = ["F401", "F541"]
