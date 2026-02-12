@@ -1,10 +1,10 @@
 name: CI
 
 on:
-  # push:
-  #   branches: [ "main", "dev" ]
-  # pull_request:
-  #   branches: [ "main", "dev" ]
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
   workflow_dispatch:
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
             choco install nim --version 2.0.4 -y
           else
             # Linux: Download and extract
-            curl -L https://nim-lang.org/download/nim-2.0.4-macos_x64.tar.xz -o nim.tar.xz
+            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
             tar -xf nim.tar.xz
             sudo mv nim-2.0.4 /opt/nim
             sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
@@ -67,6 +67,14 @@ jobs:
         run: |
           pip install -e ".[dev,test]"
 
+      - name: Run linter
+        run: |
+          ruff check .
+
+      - name: Run formatter check
+        run: |
+          ruff format --check .
+
       - name: Build extension
         run: |
           nuwa develop
@@ -82,6 +90,7 @@ jobs:
           name: test-results-${{ matrix.os }}-py${{ matrix.python }}
           path: |
             .pytest_cache/
+            htmlcov/
 
   test-integration:
     name: Integration tests (Nuwa SDK wrappers)
@@ -114,7 +123,7 @@ jobs:
             rm nim.tar.xz
           elif [ "$RUNNER_OS" == "Linux" ]; then
             # Linux: Download and extract
-            curl -L https://nim-lang.org/download/nim-2.0.4-macos_x64.tar.xz -o nim.tar.xz
+            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
             tar -xf nim.tar.xz
             sudo mv nim-2.0.4 /opt/nim
             sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
@@ -138,35 +147,56 @@ jobs:
         run: |
           pytest tests/test_integration_nuwa_sdk.py -v --tb=short
 
-  build-wheels:
-    name: Wheels on ${{ matrix.os }}
+  build-wheel:
+    name: Build wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
-        exclude:
-          # Windows with Python 3.13 sometimes has issues
-          - os: windows-latest
-            python: '3.13'
-
-    env:
-      PYTHONUTF8: 1
-      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
-      CIBW_SKIP: "pp* *-musllinux_* *i686 *-win32"
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build wheels
-        uses: martineastwood/nuwa-build-action@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          nim-version: "2.0.4"
+          python-version: '3.11'
 
-      - name: Upload wheels
+      - name: Install Nim
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            # macOS: Use direct tarball download (avoids chosenim SSL issues)
+            curl -L https://nim-lang.org/download/nim-2.0.4-macos_x64.tar.xz -o nim.tar.xz
+            tar -xf nim.tar.xz
+            mv nim-2.0.4 /opt/nim
+            echo "$HOME/.nimble/bin" >> $GITHUB_PATH
+            rm nim.tar.xz
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            # Windows: Use choco
+            choco install nim --version 2.0.4 -y
+          else
+            # Linux: Download and extract
+            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
+            tar -xf nim.tar.xz
+            sudo mv nim-2.0.4 /opt/nim
+            sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
+            sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
+            rm nim.tar.xz
+          fi
+
+      - name: Install build tools
+        run: |
+          pip install build nuwa-build
+
+      - name: Build wheel
+        run: |
+          python -m build
+
+      - name: Upload wheel
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.python }}
-          path: wheelhouse/*.whl
+          name: wheel-${{ matrix.os }}
+          path: dist/*.whl
