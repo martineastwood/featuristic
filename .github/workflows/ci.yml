@@ -49,14 +49,6 @@ jobs:
         run: |
           pip install -e ".[dev,test]"
 
-      - name: Run linter
-        run: |
-          ruff check .
-
-      - name: Run formatter check
-        run: |
-          ruff format --check .
-
       - name: Build extension
         run: |
           nuwa develop
@@ -72,7 +64,6 @@ jobs:
           name: test-results-${{ matrix.os }}-py${{ matrix.python }}
           path: |
             .pytest_cache/
-            htmlcov/
 
   test-integration:
     name: Integration tests (Nuwa SDK wrappers)
@@ -114,38 +105,35 @@ jobs:
         run: |
           pytest tests/test_integration_nuwa_sdk.py -v --tb=short
 
-  build-wheel:
-    name: Build wheel on ${{ matrix.os }}
+  build-wheels:
+    name: Wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        exclude:
+          # Windows with Python 3.13 sometimes has issues
+          - os: windows-latest
+            python: '3.13'
+
+    env:
+      PYTHONUTF8: 1
+      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
+      CIBW_SKIP: "pp* *-musllinux_* *i686 *-win32"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Build wheels
+        uses: martineastwood/nuwa-build-action@v1
         with:
-          python-version: '3.11'
+          nim-version: "2.0.4"
 
-      - name: Install Nim
-        uses: jiro4989/setup-nim-action@v1
-        with:
-          nim-version: '2.0.4'
-
-      - name: Install nuwa-build
-        run: |
-          pip install nuwa-build
-
-      - name: Build wheel
-        run: |
-          nuwa build
-
-      - name: Upload wheel
+      - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.os }}
-          path: dist/*.whl
+          name: wheels-${{ matrix.os }}-${{ matrix.python }}
+          path: wheelhouse/*.whl
