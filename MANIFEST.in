@@ -1,0 +1,30 @@
+# MANIFEST.in for featuristic
+# Controls what files are included in source distributions (sdist)
+
+# Prune these directories from being included
+prune .venv
+prune .nimble
+prufe .pytest_cache
+prune htmlcov
+prune .ruff_cache
+prune .mypy_cache
+prune __pycache__
+prune *.egg-info
+prune .git
+prune .github
+prune docs
+prune dist
+prune build
+
+# Exclude specific file patterns
+exclude .gitignore
+exclude .gitattributes
+exclude *.pyc
+exclude *.pyo
+exclude *.so
+exclude *.pyd
+exclude *.dll
+exclude *.dylib
+
+# Include package data (non-Python files in featuristic package)
+recursive-include featuristic *.json *.yaml *.yml
