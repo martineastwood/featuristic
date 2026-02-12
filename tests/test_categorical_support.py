@@ -70,26 +70,26 @@ def test_categorical_support():
     # Verify binary column contains only 0.0 and 1.0
     binary_col_values = X_transformed["feat_binary"].values
     unique_binary_values = np.unique(binary_col_values)
-    assert (
-        len(unique_binary_values) == 2
-    ), "Binary column should have exactly 2 unique values"
-    assert set(unique_binary_values).issubset(
-        {0.0, 1.0}
-    ), "Binary column should contain only 0.0 and 1.0"
+    assert len(unique_binary_values) == 2, (
+        "Binary column should have exactly 2 unique values"
+    )
+    assert set(unique_binary_values).issubset({0.0, 1.0}), (
+        "Binary column should contain only 0.0 and 1.0"
+    )
 
     # Verify high cardinality column contains continuous values (target-encoded means)
     high_card_col_values = X_transformed["feat_high_card"].values
-    assert np.issubdtype(
-        high_card_col_values.dtype, np.floating
-    ), "High cardinality column should be float type"
+    assert np.issubdtype(high_card_col_values.dtype, np.floating), (
+        "High cardinality column should be float type"
+    )
 
     # The target-encoded values should be different from simple ordinal encoding
     # (i.e., they should represent target means, not just 0, 1, 2, 3)
     # We can't make strong assertions about the exact values since they depend on the target,
     # but we can verify they're numeric and reasonable
-    assert np.all(
-        np.isfinite(high_card_col_values)
-    ), "All target-encoded values should be finite"
+    assert np.all(np.isfinite(high_card_col_values)), (
+        "All target-encoded values should be finite"
+    )
 
 
 def test_categorical_transform_new_data():
