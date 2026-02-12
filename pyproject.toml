@@ -112,7 +112,14 @@ dev = [
     "pydata_sphinx_theme",
     "pytest",
     "pylint",
+    "ruff",
     "Sphinx",
+]
+test = [
+    "pytest",
+    "numpy",
+    "pandas",
+    "scikit-learn",
 ]
 
 

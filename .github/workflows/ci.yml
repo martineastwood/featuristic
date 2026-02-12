@@ -35,12 +35,10 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use direct tarball download (avoids chosenim SSL issues)
-            curl -L https://nim-lang.org/download/nim-2.0.4-macos_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            mv nim-2.0.4 /opt/nim
+            # macOS: Use chosenim
+            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+            sh init.sh -y
             echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-            rm nim.tar.xz
           elif [ "$RUNNER_OS" == "Windows" ]; then
             # Windows: Use choco
             choco install nim --version 2.0.4 -y
@@ -115,12 +113,10 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use direct tarball download (avoids chosenim SSL issues)
-            curl -L https://nim-lang.org/download/nim-2.0.4-macos_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            mv nim-2.0.4 /opt/nim
+            # macOS: Use chosenim
+            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+            sh init.sh -y
             echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-            rm nim.tar.xz
           elif [ "$RUNNER_OS" == "Linux" ]; then
             # Linux: Download and extract
             curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
@@ -168,12 +164,10 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use direct tarball download (avoids chosenim SSL issues)
-            curl -L https://nim-lang.org/download/nim-2.0.4-macos_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            mv nim-2.0.4 /opt/nim
+            # macOS: Use chosenim
+            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+            sh init.sh -y
             echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-            rm nim.tar.xz
           elif [ "$RUNNER_OS" == "Windows" ]; then
             # Windows: Use choco
             choco install nim --version 2.0.4 -y
