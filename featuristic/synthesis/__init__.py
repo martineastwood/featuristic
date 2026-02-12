@@ -1,4 +1,4 @@
-""" This module contains the classes and functions for feature synthesis. """
+"""This module contains the classes and functions for feature synthesis."""
 
 from .genetic_feature_synthesis import GeneticFeatureSynthesis
 from .fitness import fitness_pearson

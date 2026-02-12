@@ -11,7 +11,6 @@ Tests:
 4. End-to-end pipeline (if Engine is available)
 """
 
-import featuristic as ft
 from featuristic.constants import (
     OP_KIND_METADATA,
     UNARY_OPERATIONS,
@@ -19,8 +18,6 @@ from featuristic.constants import (
     ALL_OP_KINDS,
 )
 from featuristic.synthesis import render_prog
-import pandas as pd
-import numpy as np
 
 
 def test_operation_metadata():
@@ -100,8 +97,8 @@ def test_simplification_logic():
     }
     simplified = simplify_program(node)
     if simplified != {"feature_name": "x"}:
-        print(f"❌ FAILED: x + 0 simplification")
-        print(f"  Expected: {{'feature_name': 'x'}}")
+        print("❌ FAILED: x + 0 simplification")
+        print("  Expected: {'feature_name': 'x'}")
         print(f"  Got: {simplified}")
         raise AssertionError("Simplification failed")
 
@@ -121,8 +118,8 @@ def test_simplification_logic():
     }
     simplified = simplify_program(node)
     if simplified != {"feature_name": "x"}:
-        print(f"❌ FAILED: double negation simplification")
-        print(f"  Expected: {{'feature_name': 'x'}}")
+        print("❌ FAILED: double negation simplification")
+        print("  Expected: {'feature_name': 'x'}")
         print(f"  Got: {simplified}")
         raise AssertionError("Simplification failed")
 
@@ -137,8 +134,8 @@ def test_simplification_logic():
     }
     simplified = simplify_program(node)
     if simplified != {"feature_name": "0.0"}:
-        print(f"❌ FAILED: x * 0 simplification")
-        print(f"  Expected: {{'feature_name': '0.0'}}")
+        print("❌ FAILED: x * 0 simplification")
+        print("  Expected: {'feature_name': '0.0'}")
         print(f"  Got: {simplified}")
         raise AssertionError("Simplification failed")
 
@@ -153,8 +150,8 @@ def test_simplification_logic():
     }
     simplified = simplify_program(node)
     if simplified != {"feature_name": "x"}:
-        print(f"❌ FAILED: x * 1 simplification")
-        print(f"  Expected: {{'feature_name': 'x'}}")
+        print("❌ FAILED: x * 1 simplification")
+        print("  Expected: {'feature_name': 'x'}")
         print(f"  Got: {simplified}")
         raise AssertionError("Simplification failed")
 
@@ -176,8 +173,8 @@ def test_render_with_new_format_strings():
     }
     rendered = render_prog(node, simplify=False)
     if rendered != "(a + b)":
-        print(f"❌ FAILED: Simple rendering")
-        print(f"  Expected: '(a + b)'")
+        print("❌ FAILED: Simple rendering")
+        print("  Expected: '(a + b)'")
         print(f"  Got: '{rendered}'")
         raise AssertionError("Rendering failed")
 
@@ -199,8 +196,8 @@ def test_render_with_new_format_strings():
     }
     rendered = render_prog(node, simplify=False)
     if rendered != "(x * (a + b))":
-        print(f"❌ FAILED: Nested rendering")
-        print(f"  Expected: '(x * (a + b))'")
+        print("❌ FAILED: Nested rendering")
+        print("  Expected: '(x * (a + b))'")
         print(f"  Got: '{rendered}'")
         raise AssertionError("Rendering failed")
 
@@ -215,8 +212,8 @@ def test_render_with_new_format_strings():
     }
     rendered = render_prog(node, simplify=True)
     if rendered != "x":
-        print(f"❌ FAILED: Rendering with simplification")
-        print(f"  Expected: 'x'")
+        print("❌ FAILED: Rendering with simplification")
+        print("  Expected: 'x'")
         print(f"  Got: '{rendered}'")
         raise AssertionError("Rendering failed")
 

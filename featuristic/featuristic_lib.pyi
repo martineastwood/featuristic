@@ -1,5 +1,5 @@
 # Stubs for featuristic_lib
-from typing import Any, List
+from typing import Any
 
 def addVecZerocopy(ptrA: int, ptrB: int, length: int) -> list[float]:
     """Zero-copy vectorized add"""

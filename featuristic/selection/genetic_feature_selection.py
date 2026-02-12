@@ -182,7 +182,6 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         """
         # Set random seeds for reproducibility
         if self.random_state is not None:
-
             random.seed(self.random_state)
             np.random.seed(self.random_state)
 

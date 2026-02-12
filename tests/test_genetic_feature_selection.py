@@ -30,4 +30,4 @@ def test_selection():
     # The algorithm selects ['b', 'd'] which gives the best objective score
     assert new_X.columns.tolist() == ["b", "d"]
     assert new_X.shape[0] == 3
-    assert gfs.is_fitted_ == True
+    assert gfs.is_fitted_

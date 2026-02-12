@@ -15,8 +15,6 @@ from joblib import Parallel, cpu_count, delayed
 
 # Import from centralized backend (single source of truth for Nim library access)
 from ..featuristic_lib import (
-    binaryBitFlipMutate,
-    binarySinglePointCrossover,
     evaluateBinaryGenomeNative,
     evolveBinaryPopulationBatched,
 )

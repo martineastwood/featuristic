@@ -3,7 +3,6 @@ Test GA with the absolute minimum configuration to isolate the segfault.
 """
 
 import numpy as np
-import sys
 from pathlib import Path
 import importlib.util
 
@@ -46,7 +45,7 @@ try:
         42,  # random_seed
     )
 
-    print(f"✅ SUCCESS! GA completed without segfault!")
+    print("✅ SUCCESS! GA completed without segfault!")
 
     # Result is a tuple with 7 elements:
     # (bestFeatureIndices, bestOpKinds, bestLeftChildren, bestRightChildren,
@@ -67,7 +66,7 @@ try:
     print(f"   Program nodes: {len(best_op_kinds)}")
 
     # Try to interpret the program
-    print(f"\nBest program structure:")
+    print("\nBest program structure:")
     print(f"   Op kinds: {best_op_kinds}")
     print(f"   Feature indices: {best_feature_indices}")
     print(f"   Left children: {best_left_children}")

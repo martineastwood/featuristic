@@ -3,7 +3,6 @@
 import featuristic as ft
 import numpy as np
 import pandas as pd
-import pytest
 
 
 def test_categorical_support():

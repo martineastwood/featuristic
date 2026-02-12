@@ -7,8 +7,8 @@ def test_fetch_cars():
 
     assert X.shape == (392, 7)
     assert y.shape == (392,)
-    assert type(X) == pd.DataFrame
-    assert type(y) == pd.Series
+    assert isinstance(X, pd.DataFrame)
+    assert isinstance(y, pd.Series)
 
 
 def test_wine_cars():
@@ -16,5 +16,5 @@ def test_wine_cars():
 
     assert X.shape == (178, 13)
     assert y.shape == (178,)
-    assert type(X) == pd.DataFrame
-    assert type(y) == pd.Series
+    assert isinstance(X, pd.DataFrame)
+    assert isinstance(y, pd.Series)

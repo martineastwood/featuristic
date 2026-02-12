@@ -7,7 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_numeric_dtype, is_string_dtype, is_object_dtype
+from pandas.api.types import is_numeric_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
 from sklearn.utils.validation import check_is_fitted
@@ -328,7 +328,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # Set random seeds for reproducibility
         if self.random_state is not None:
-
             random.seed(self.random_state)
             np.random.seed(self.random_state)
 

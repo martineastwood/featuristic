@@ -22,7 +22,7 @@ import pandas as pd
 from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.model_selection import train_test_split
 
 # Add parent directory to path to import featuristic
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -189,18 +189,18 @@ print("\n" + "=" * 70)
 print("RESULTS SUMMARY")
 print("=" * 70)
 
-print(f"\n1. Baseline (raw features only):")
+print("\n1. Baseline (raw features only):")
 print(f"   Features: {X_train.shape[1]}")
 print(f"   Accuracy: {acc_baseline:.4f}")
 
-print(f"\n2. Combined (original + synthetic features):")
+print("\n2. Combined (original + synthetic features):")
 print(
     f"   Features: {X_train_synth.shape[1]} (original: {len(original_cols)}, synthetic: {len(synth_cols)})"
 )
 print(f"   Accuracy: {acc_combined:.4f}")
 print(f"   Improvement: {improvement_combined:+.2f}%")
 
-print(f"\n3. Feature Selection (best subset from all features):")
+print("\n3. Feature Selection (best subset from all features):")
 print(
     f"   Features: {len(selected_feature_names)} (selected from {X_train_synth.shape[1]})"
 )

@@ -154,3 +154,14 @@ nim-flags = ["--threads:on", "--mm:arc"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = "."
+
+[tool.ruff]
+extend-exclude = ["scratch.ipynb"]
+
+[tool.ruff.lint.per-file-ignores]
+# Allow unused imports in __init__.py for package exports
+"__init__.py" = ["F401"]
+# Ignore stub file issues
+"*.pyi" = ["F811"]
+# Ignore example code in docs
+"docs/examples/**" = ["F401", "F541"]

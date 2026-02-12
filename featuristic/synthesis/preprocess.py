@@ -1,4 +1,4 @@
-""" Preprocessing functions for data synthesis. """
+"""Preprocessing functions for data synthesis."""
 
 from typing import Tuple
 

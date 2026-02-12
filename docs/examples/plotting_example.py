@@ -259,6 +259,7 @@ synth_reg = ft.GeneticFeatureSynthesis(
 print("   Running Feature Synthesis for regression...")
 synth_reg.fit(X_train_reg, y_train_reg)
 
+
 # Feature selection for regression
 def regression_objective(X_selected, y):
     """Objective function for regression (MSE)."""

@@ -11,8 +11,6 @@ from typing import Dict, Tuple
 from .featuristic_lib import (
     getOperationFormat,
     getOperationName,
-    isBinaryOperation,
-    isUnaryOperation,
     getBinaryOperationInts,
     getOpKindInts,
     getUnaryOperationInts,
