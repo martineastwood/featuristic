@@ -2,7 +2,8 @@
 
 import random
 import sys
-from typing import Callable, Self, Union
+from typing import Callable, Union
+from typing_extensions import Self
 
 import matplotlib
 import matplotlib.pyplot as plt
