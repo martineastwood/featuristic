@@ -42,6 +42,7 @@ jobs:
           elif [ "$RUNNER_OS" == "Windows" ]; then
             # Windows: Use choco
             choco install nim --version 2.0.4 -y
+            echo "C:\\tools\\Nim\\nim-2.0.4\\bin" >> $GITHUB_PATH
           else
             # Linux: Download and extract
             curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
@@ -171,6 +172,7 @@ jobs:
           elif [ "$RUNNER_OS" == "Windows" ]; then
             # Windows: Use choco
             choco install nim --version 2.0.4 -y
+            echo "C:\\tools\\Nim\\nim-2.0.4\\bin" >> $GITHUB_PATH
           else
             # Linux: Download and extract
             curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
