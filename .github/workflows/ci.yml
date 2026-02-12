@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test Python ${{ matrix.python }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        exclude:
+          # Windows with Python 3.13 sometimes has issues with numpy availability
+          - os: windows-latest
+            python: '3.13'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: 'pip'
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: '2.0.4'
+
+      - name: Verify Nim installation
+        run: |
+          nim --version
+          nimble --version
+
+      - name: Install nuwa-build
+        run: |
+          pip install nuwa-build
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev,test]"
+
+      - name: Run linter
+        run: |
+          ruff check .
+
+      - name: Run formatter check
+        run: |
+          ruff format --check .
+
+      - name: Build extension
+        run: |
+          nuwa develop
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-py${{ matrix.python }}
+          path: |
+            .pytest_cache/
+            htmlcov/
+
+  test-integration:
+    name: Integration tests (Nuwa SDK wrappers)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.10', '3.12', '3.13']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: 'pip'
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: '2.0.4'
+
+      - name: Install nuwa-build
+        run: |
+          pip install nuwa-build
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[test]"
+
+      - name: Build extension
+        run: |
+          nuwa develop
+
+      - name: Run integration tests
+        run: |
+          pytest tests/test_integration_nuwa_sdk.py -v --tb=short
+
+  build-wheel:
+    name: Build wheel on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: '2.0.4'
+
+      - name: Install build tools
+        run: |
+          pip install build nuwa-build
+
+      - name: Build wheel
+        run: |
+          python -m build
+
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}
+          path: dist/*.whl
