@@ -3,6 +3,7 @@
 
 import std/random
 import std/tables
+import std/math
 import ../core/types
 
 

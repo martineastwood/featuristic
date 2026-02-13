@@ -479,7 +479,7 @@ proc evaluateProgramImpl(
   constants: seq[float64], # Constants for add/mul_constant ops
   numRows: int,
   numCols: int
-): seq[float64] =
+): seq[float64] {.used.} =
   ## Evaluate a program from Python
   ##
   ## This function takes serialized program data from Python and evaluates it

@@ -11,8 +11,7 @@ include genetic/operations
 include genetic/algorithm
 include genetic/binary_ga
 # Note: mRMR functions are defined directly in this file to avoid nimpy module issues
-
-import nimpy  # For PyObject type
+# nimpy is already imported in numpy_helpers.nim
 
 # Simple test function to verify the build works
 proc getVersion*(): string {.nuwa_export.} =
@@ -1007,7 +1006,7 @@ proc runCompleteBinaryGANative*(
   else: mtMSE
 
   # Run the complete GA in Nim
-  let result = runCompleteBinaryGA(
+  let gaResult = runCompleteBinaryGA(
     featurePtrs,
     targetPtr,
     numRows,
@@ -1022,9 +1021,9 @@ proc runCompleteBinaryGANative*(
   )
 
   return (
-    bestGenome: result.bestGenome,
-    bestFitness: result.bestFitness,
-    history: result.history
+    bestGenome: gaResult.bestGenome,
+    bestFitness: gaResult.bestFitness,
+    history: gaResult.history
   )
 
 # ============================================================================
@@ -1703,7 +1702,7 @@ proc runCompleteBinaryGAArray*(
   else: mtMSE
 
   # Run the complete GA in Nim
-  let result = runCompleteBinaryGA(
+  let gaResult = runCompleteBinaryGA(
     featurePtrs,
     targetPtr,
     nRows,
@@ -1718,9 +1717,9 @@ proc runCompleteBinaryGAArray*(
   )
 
   return (
-    bestGenome: result.bestGenome,
-    bestFitness: result.bestFitness,
-    history: result.history
+    bestGenome: gaResult.bestGenome,
+    bestFitness: gaResult.bestFitness,
+    history: gaResult.history
   )
 
 proc evaluateBinaryGenomeArray*(

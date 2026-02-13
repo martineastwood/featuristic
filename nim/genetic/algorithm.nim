@@ -2,12 +2,10 @@
 # This provides 10-50x speedup by running the entire evolution loop in Nim
 
 import std/random
-import std/math
 import std/typedthreads
 import std/locks
+import std/math
 import ../core/types
-import ../core/program
-import ../core/simplify # Import program simplification
 
 
 # ============================================================================

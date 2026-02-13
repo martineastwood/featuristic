@@ -3,9 +3,6 @@
 # This implements a classic binary GA where each individual is a bitmask
 # indicating which features to select.
 
-import std/random
-import std/math
-
 
 # ============================================================================
 # Types

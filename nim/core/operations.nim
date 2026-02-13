@@ -65,25 +65,6 @@ proc tanVecImpl(ptrA: int, length: int): seq[float64] =
   for i in 0..<length:
     result[i] = tan(dataA[i])
 
-## Vectorized power for NumPy arrays (zero-copy, binary)
-proc powVecImpl(ptrA: int, ptrB: int, length: int): seq[float64] =
-  let dataA = cast[ptr UncheckedArray[float64]](ptrA)
-  let dataB = cast[ptr UncheckedArray[float64]](ptrB)
-  result = newSeq[float64](length)
-  for i in 0..<length:
-    let base = dataA[i]
-    let exp = dataB[i]
-    # Handle special cases for safety
-    if abs(base) < 1e-10 and exp < 0:
-      # 0^(-n) would be infinity, return 1 instead
-      result[i] = 1.0
-    elif base < 0 and floor(exp) != exp:
-      # Negative base with non-integer exponent would be complex
-      # Use absolute value instead
-      result[i] = pow(abs(base), exp)
-    else:
-      result[i] = pow(base, exp)
-
 ## Vectorized sqrt for NumPy arrays (zero-copy)
 proc sqrtVecImpl(ptrA: int, length: int): seq[float64] =
   let dataA = cast[ptr UncheckedArray[float64]](ptrA)

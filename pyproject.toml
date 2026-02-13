@@ -147,7 +147,7 @@ module-name = "featuristic"
 lib-name = "featuristic_lib"
 entry-point = "featuristic_lib.nim"
 nimble-deps = ["nimpy", "nuwa_sdk"]
-nim-flags = ["--threads:on", "--mm:arc"]
+nim-flags = ["--threads:on", "--mm:arc", "--hint:DuplicateModuleImport:off"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
