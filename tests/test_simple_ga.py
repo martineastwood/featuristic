@@ -6,11 +6,15 @@ import numpy as np
 from pathlib import Path
 import importlib.util
 
-# Load featuristic_lib
+# Load featuristic_lib - find the .so file dynamically
 featuristic_path = Path(__file__).parent.parent / "featuristic"
-spec = importlib.util.spec_from_file_location(
-    "featuristic_lib", featuristic_path / "featuristic_lib.cpython-313-darwin.so"
-)
+# Find any featuristic_lib.so file (platform-agnostic)
+so_files = list(featuristic_path.glob("featuristic_lib*.so"))
+if not so_files:
+    raise ImportError(f"No featuristic_lib.so found in {featuristic_path}")
+so_file = so_files[0]
+
+spec = importlib.util.spec_from_file_location("featuristic_lib", str(so_file))
 featuristic_lib = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(featuristic_lib)
 
