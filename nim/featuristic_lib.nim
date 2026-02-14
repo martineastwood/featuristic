@@ -111,10 +111,11 @@ proc evaluateProgram*(
   numCols: int
 ): seq[float64] {.nuwa_export.} =
   ## Evaluate a program from Python using stack-based approach
-  ## WITH GIL RELEASE for concurrent Python threading
+  ## WITHOUT GIL RELEASE - this is a fast single-program evaluation
+  ## that doesn't benefit from concurrent threading. GIL release on Windows
+  ## causes segfaults due to threading/NumPy buffer interactions.
 
-  withNogil:
-    result = evaluateProgramImpl(
+  result = evaluateProgramImpl(
       featurePtrs,
       featureIndices,
       opKinds,
