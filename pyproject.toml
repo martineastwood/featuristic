@@ -152,12 +152,9 @@ nim-flags = ["--threads:on", "--mm:arc", "--hint:DuplicateModuleImport:off"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Disable progress bars completely to avoid threading issues on Windows
-addopts = [
-    "-v",
-    "--tb=short",
-    "-p no:warnings",
-    "--capture=no"
-]
+addopts = "-p no:warnings"
+# Force disable of all progress bars via environment
+env = ["PYTEST_NO_PROGRESS=1"]
 pythonpath = "."
 
 [tool.ruff]

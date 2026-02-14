@@ -57,7 +57,7 @@ try:
         42,  # random_seed
     )
 
-    print("✅ SUCCESS! GA completed without segfault!")
+    print("SUCCESS! GA completed without segfault!")
 
     # Result is a tuple with 7 elements:
     # (bestFeatureIndices, bestOpKinds, bestLeftChildren, bestRightChildren,
