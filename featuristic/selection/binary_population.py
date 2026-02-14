@@ -5,7 +5,6 @@ This replaces the pure Python implementation with a Nim-based backend for
 optimized crossover and mutation operations.
 """
 
-import random
 import sys
 from typing import Callable, List
 
@@ -37,6 +36,9 @@ class BinaryPopulation:
     feature_count : int
         The number of features in the dataset.
 
+    random_state : int, optional
+        Random seed for reproducibility.
+
     tournament_size : int, optional
         The number of individuals to select for the tournament, by default 10.
 
@@ -59,6 +61,7 @@ class BinaryPopulation:
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         n_jobs: int = 1,
+        random_state: int | None = None,
     ):
         self.population_size = population_size
         self.feature_count = feature_count
@@ -66,6 +69,7 @@ class BinaryPopulation:
         self.mutation_proba = mutation_proba
         self.tournament_size = tournament_size
         self.n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+        self.random_state = random_state
 
         self.population = None
         self._initialize_population()
@@ -236,7 +240,12 @@ class BinaryPopulation:
         pop_flat = self.population.flatten().tolist()
 
         # Use random seed for reproducibility
-        seed = random.randint(0, 2**31 - 1)
+        if self.random_state is not None:
+            seed = self.random_state
+        else:
+            import time
+
+            seed = int(time.time()) % (2**31 - 1)
 
         # Call Nim to evolve the entire population at once
         new_pop_flat = evolveBinaryPopulationBatched(

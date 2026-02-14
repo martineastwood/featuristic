@@ -195,6 +195,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             self.crossover_proba,
             self.mutation_proba,
             self.n_jobs,
+            self.random_state,
         )
 
         if self.pbar:
