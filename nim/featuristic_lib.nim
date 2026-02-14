@@ -100,7 +100,7 @@ proc mulConstantVecZerocopy*(ptrA: int, length: int, constant: float64): seq[flo
 # Export wrappers for program evaluation defined in core/program.nim
 # ============================================================================
 
-proc evaluateProgram*(
+proc evaluateProgramPtrs*(
   featurePtrs: seq[int],
   featureIndices: seq[int],
   opKinds: seq[int],
@@ -110,7 +110,7 @@ proc evaluateProgram*(
   numRows: int,
   numCols: int
 ): seq[float64] {.nuwa_export.} =
-  ## Evaluate a program from Python using stack-based approach
+  ## Evaluate a program from Python using stack-based approach with raw pointers
   ## WITHOUT GIL RELEASE - this is a fast single-program evaluation
   ## that doesn't benefit from concurrent threading. GIL release on Windows
   ## causes segfaults due to threading/NumPy buffer interactions.

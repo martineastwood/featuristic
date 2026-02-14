@@ -317,7 +317,7 @@ def testDivide(a: float, b: float) -> float:
     """Test safe division operation"""
     ...
 
-def evaluateProgram(
+def evaluateProgramPtrs(
     featurePtrs: list[int],
     featureIndices: list[int],
     opKinds: list[int],
