@@ -14,6 +14,7 @@
 
 import core/program
 import nimpy
+import nuwa_sdk/numpy as np
 
 # =============================================================================
 # Conversion Errors
@@ -27,7 +28,7 @@ type
 # 1D Array Conversion
 # =============================================================================
 
-proc toSeqFloat64*(arr: NumpyArrayRead[float64]): seq[float64] =
+proc toSeqFloat64*(arr: np.NumpyArrayRead[float64]): seq[float64] =
   ## Convert a 1D numpy array to a Nim sequence
   ##
   ## This copies the data but is necessary for APIs that expect seq[float64].
@@ -35,7 +36,7 @@ proc toSeqFloat64*(arr: NumpyArrayRead[float64]): seq[float64] =
 
   let n = arr.len
   result = newSeq[float64](n)
-  let data = arr.data
+  let data = cast[ptr UncheckedArray[float64]](arr.buf.buf)
 
   for i in 0..<n:
     result[i] = data[i]
@@ -44,7 +45,7 @@ proc toSeqFloat64*(arr: NumpyArrayRead[float64]): seq[float64] =
 # 2D Array to FeatureMatrix Conversion
 # =============================================================================
 
-proc toFeatureMatrix*(X: NumpyArrayRead[float64]): FeatureMatrix =
+proc toFeatureMatrix*(X: np.NumpyArrayRead[float64]): FeatureMatrix =
   ## Convert a 2D numpy array to FeatureMatrix format
   ##
   ## This function expects column-major (Fortran order) layout for optimal
@@ -84,7 +85,7 @@ proc toFeatureMatrix*(X: NumpyArrayRead[float64]): FeatureMatrix =
   # For column-major arrays, extract column pointers
   # baseData points to the start of the array
   # Column i starts at baseData + i * nRows elements
-  let baseData = X.data
+  let baseData = cast[ptr UncheckedArray[float64]](X.buf.buf)
 
   for i in 0..<nCols:
     # Get pointer to column i (offset by i * nRows elements)
@@ -95,7 +96,7 @@ proc toFeatureMatrix*(X: NumpyArrayRead[float64]): FeatureMatrix =
 # Feature Extraction from Arrays
 # =============================================================================
 
-proc extractFeaturePointers*(X: NumpyArrayRead[float64]): seq[int] =
+proc extractFeaturePointers*(X: np.NumpyArrayRead[float64]): seq[int] =
   ## Extract column pointers from a 2D numpy array
   ##
   ## This is a lower-level function that returns raw pointers for each column.
@@ -123,7 +124,7 @@ proc extractFeaturePointers*(X: NumpyArrayRead[float64]): seq[int] =
 
   let nCols = X.shape[1]
   let nRows = X.shape[0]
-  let baseData = X.data
+  let baseData = cast[ptr UncheckedArray[float64]](X.buf.buf)
 
   result = newSeq[int](nCols)
   for i in 0..<nCols:
@@ -132,19 +133,19 @@ proc extractFeaturePointers*(X: NumpyArrayRead[float64]): seq[int] =
     let colPtr = cast[ptr UncheckedArray[float64]](cast[int](baseData) + offsetBytes)
     result[i] = cast[int](colPtr)
 
-proc extractTargetPointer*(y: NumpyArrayRead[float64]): int =
+proc extractTargetPointer*(y: np.NumpyArrayRead[float64]): int =
   ## Extract data pointer from a 1D numpy array
   ##
   ## Returns:
   ##   Integer pointer to the array's data
 
-  result = cast[int](y.data)
+  result = cast[int](cast[ptr UncheckedArray[float64]](y.buf.buf))
 
 # =============================================================================
 # Validation Helpers
 # =============================================================================
 
-proc validateFloat64Array*(arr: PyObject): NumpyArrayRead[float64] =
+proc validateFloat64Array*(arr: PyObject): np.NumpyArrayRead[float64] =
   ## Validate and wrap a 1D numpy array as float64
   ##
   ## This is a convenience function that combines wrapping and validation.
@@ -153,9 +154,9 @@ proc validateFloat64Array*(arr: PyObject): NumpyArrayRead[float64] =
   ##   TypeError if array is not float64
   ##   ValueError if array is not contiguous
 
-  asNumpyArray(arr, float64)
+  np.asNumpyArray[float64](arr)
 
-proc validateFloat64MatrixStrided*(arr: PyObject): NumpyArrayRead[float64] =
+proc validateFloat64MatrixStrided*(arr: PyObject): np.NumpyArrayRead[float64] =
   ## Validate and wrap a 2D numpy array as float64 (strided mode)
   ##
   ## This allows both C-contiguous (row-major) and F-contiguous (column-major) arrays.
@@ -164,7 +165,7 @@ proc validateFloat64MatrixStrided*(arr: PyObject): NumpyArrayRead[float64] =
   ##   TypeError if array is not float64
   ##   ValueError if array is not 2D
 
-  var wrapped = asStridedArray(arr, float64)
+  var wrapped = np.asStridedArray[float64](arr)
   if wrapped.shape.len != 2:
     wrapped.close()
     raise newException(ValueError, "Expected 2D array, got " & $wrapped.shape.len & "D")

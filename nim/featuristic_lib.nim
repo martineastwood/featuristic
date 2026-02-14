@@ -2,6 +2,7 @@
 # This file compiles into the Python extension module
 
 import nuwa_sdk  # Provides nuwa_export for automatic type stub generation and withNogil
+import nuwa_sdk/numpy as np
 include numpy_helpers  # New numpy array conversion helpers
 include core/types
 include core/operations
@@ -1159,7 +1160,7 @@ proc evaluateProgram*(
   ##   X = np.asfortranarray(X)  # Column-major for efficiency
   ##   result = evaluateProgram(X, feature_indices, op_kinds, ...)
 
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
   let nRows = XArr.shape[0]
@@ -1205,7 +1206,7 @@ proc evaluateProgramsBatchedArray*(
   ## Returns:
   ##   Sequence of result sequences, one per program
 
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
   let nRows = XArr.shape[0]
@@ -1274,10 +1275,10 @@ proc runGeneticAlgorithmArray*(
   ##   result = runGeneticAlgorithmArray(X, y, 100, 50, 5, ...)
 
   # Wrap arrays with RAII cleanup
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
-  var yArr = asNumpyArray(y, float64)
+  var yArr = np.asNumpyArray[float64](y)
   defer: yArr.close()
 
   # Validate dimensions
@@ -1389,10 +1390,10 @@ proc runMultipleGAsArray*(
   ##   Tuple with serialized programs and fitnesses for all GAs
 
   # Wrap arrays with RAII cleanup
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
-  var yArr = asNumpyArray(y, float64)
+  var yArr = np.asNumpyArray[float64](y)
   defer: yArr.close()
 
   # Validate dimensions
@@ -1511,10 +1512,10 @@ proc runMRMRArray*(
   ##   Indices of selected features
 
   # Wrap arrays with RAII cleanup
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
-  var yArr = asNumpyArray(y, float64)
+  var yArr = np.asNumpyArray[float64](y)
   defer: yArr.close()
 
   # Validate dimensions
@@ -1670,10 +1671,10 @@ proc runCompleteBinaryGAArray*(
   ##   Tuple with best genome, best fitness, and generation history
 
   # Wrap arrays with RAII cleanup
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
-  var yArr = asNumpyArray(y, float64)
+  var yArr = np.asNumpyArray[float64](y)
   defer: yArr.close()
 
   # Validate dimensions
@@ -1741,10 +1742,10 @@ proc evaluateBinaryGenomeArray*(
   ##   Fitness value (lower is better)
 
   # Wrap arrays with RAII cleanup
-  var XArr = asStridedArray(X, float64)
+  var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
 
-  var yArr = asNumpyArray(y, float64)
+  var yArr = np.asNumpyArray[float64](y)
   defer: yArr.close()
 
   let nRows = XArr.shape[0]
