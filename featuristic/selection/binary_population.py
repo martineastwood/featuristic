@@ -6,7 +6,7 @@ optimized crossover and mutation operations.
 """
 
 import sys
-from typing import Callable, List
+from typing import Callable, List, Union
 
 import numpy as np
 import pandas as pd
@@ -36,7 +36,7 @@ class BinaryPopulation:
     feature_count : int
         The number of features in the dataset.
 
-    random_state : int, optional
+    random_state : Optional[int], optional
         Random seed for reproducibility.
 
     tournament_size : int, optional
@@ -61,7 +61,7 @@ class BinaryPopulation:
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         n_jobs: int = 1,
-        random_state: int | None = None,
+        random_state: Union[int, None] = None,
     ):
         self.population_size = population_size
         self.feature_count = feature_count
