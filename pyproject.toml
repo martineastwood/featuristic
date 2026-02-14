@@ -151,6 +151,8 @@ nim-flags = ["--threads:on", "--mm:arc", "--hint:DuplicateModuleImport:off"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Disable progress bars to avoid threading issues on Windows
+addopts = "-p no:warnings"
 pythonpath = "."
 
 [tool.ruff]
