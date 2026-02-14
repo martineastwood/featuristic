@@ -2,19 +2,27 @@
 Test GA with the absolute minimum configuration to isolate the segfault.
 """
 
+# Tell pytest to skip this file - it's a standalone debugging script
+__test__ = False
+
 import numpy as np
 from pathlib import Path
 import importlib.util
 
-# Load featuristic_lib - find the .so file dynamically
+# Load featuristic_lib - find the compiled library file dynamically
 featuristic_path = Path(__file__).parent.parent / "featuristic"
-# Find any featuristic_lib.so file (platform-agnostic)
-so_files = list(featuristic_path.glob("featuristic_lib*.so"))
-if not so_files:
-    raise ImportError(f"No featuristic_lib.so found in {featuristic_path}")
-so_file = so_files[0]
+# Find any featuristic_lib file (.so on Unix, .pyd on Windows)
+lib_files = list(featuristic_path.glob("featuristic_lib*.so")) + list(
+    featuristic_path.glob("featuristic_lib*.pyd")
+)
+if not lib_files:
+    raise ImportError(
+        f"No featuristic_lib.so or .pyd found in {featuristic_path}. "
+        f"Files in directory: {list(featuristic_path.glob('*'))}"
+    )
+lib_file = lib_files[0]
 
-spec = importlib.util.spec_from_file_location("featuristic_lib", str(so_file))
+spec = importlib.util.spec_from_file_location("featuristic_lib", str(lib_file))
 featuristic_lib = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(featuristic_lib)
 
