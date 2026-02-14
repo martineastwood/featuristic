@@ -64,6 +64,17 @@ proc toFeatureMatrix*(X: NumpyArrayRead[float64]): FeatureMatrix =
   if X.shape.len != 2:
     raise newException(ConversionError,
       "Expected 2D array, got " & $X.shape.len & "D array")
+  if X.strides.len != 2:
+    raise newException(ConversionError, "Expected 2D strides for input array")
+
+  let rowStride = X.strides[0]
+  let colStride = X.strides[1]
+  let expectedRowStride = sizeof(float64)
+  let expectedColStride = sizeof(float64) * X.shape[0]
+
+  if rowStride != expectedRowStride or colStride != expectedColStride:
+    raise newException(ConversionError,
+      "Expected Fortran-contiguous (column-major) array. Use np.asfortranarray().")
 
   let nRows = X.shape[0]
   let nCols = X.shape[1]
@@ -94,6 +105,21 @@ proc extractFeaturePointers*(X: NumpyArrayRead[float64]): seq[int] =
   ##
   ## Returns:
   ##   Sequence of integer pointers (one per column)
+
+  if X.shape.len != 2:
+    raise newException(ConversionError,
+      "Expected 2D array, got " & $X.shape.len & "D array")
+  if X.strides.len != 2:
+    raise newException(ConversionError, "Expected 2D strides for input array")
+
+  let rowStride = X.strides[0]
+  let colStride = X.strides[1]
+  let expectedRowStride = sizeof(float64)
+  let expectedColStride = sizeof(float64) * X.shape[0]
+
+  if rowStride != expectedRowStride or colStride != expectedColStride:
+    raise newException(ConversionError,
+      "Expected Fortran-contiguous (column-major) array. Use np.asfortranarray().")
 
   let nCols = X.shape[1]
   let nRows = X.shape[0]
