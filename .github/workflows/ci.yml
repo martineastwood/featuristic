@@ -68,11 +68,11 @@ jobs:
 
       - name: Run linter
         run: |
-          ruff check .
+          python -m ruff check .
 
       - name: Run formatter check
         run: |
-          ruff format --check .
+          python -m ruff format --check .
 
       - name: Build extension
         run: |
