@@ -3,7 +3,6 @@ import pytest
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
-import numpy as np
 
 
 def objective_function(X, y):
@@ -13,8 +12,7 @@ def objective_function(X, y):
 
 
 def test_selection():
-    np.random.seed(8888)
-    gfs = ft.GeneticFeatureSelector(objective_function)
+    gfs = ft.GeneticFeatureSelector(objective_function, random_state=8888)
 
     with pytest.raises(Exception):
         gfs.fit(X=None, y=None)
