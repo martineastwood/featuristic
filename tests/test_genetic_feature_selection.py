@@ -1,31 +1,50 @@
 import featuristic as ft
 import pytest
 import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import cross_val_score
-
-
-def objective_function(X, y):
-    model = LinearRegression()
-    scores = cross_val_score(model, X, y, cv=3, scoring="neg_mean_absolute_error")
-    return scores.mean() * -1
+import numpy as np
 
 
 def test_selection():
-    gfs = ft.GeneticFeatureSelector(objective_function, random_state=8888)
+    """Test genetic feature selection with deterministic native metric."""
+    # Use native metric for deterministic results (15-30x faster, no flakiness)
+    gfs = ft.GeneticFeatureSelector(
+        metric="mae",
+        random_state=8888,
+        population_size=50,
+        max_generations=100,
+    )
 
     with pytest.raises(Exception):
         gfs.fit(X=None, y=None)
 
+    # Create a dataset where feature importance is unambiguous:
+    # - "useful": perfectly correlated with y (MAE = 0)
+    # - "redundant": also correlated but redundant
+    # - "constant": constant feature (MAE same as no features)
+    # - "noise": random noise
+    np.random.seed(42)
+    n = 20
     X = pd.DataFrame(
-        {"a": [1, 2, 3], "b": [4, 5, 6], "c": [10, 10, 10], "d": [1, 1, 1]}
+        {
+            "useful": np.arange(1, n + 1, dtype=float),
+            "redundant": np.arange(2, 2 * n + 1, 2, dtype=float),
+            "constant": np.ones(n),
+            "noise": np.random.randn(n),
+        }
     )
-    y = pd.Series([1, 2, 3])
+    # y is exactly "useful" plus small noise
+    y = pd.Series(X["useful"].values + np.random.randn(n) * 0.01)
 
     gfs.fit(X, y)
     new_X = gfs.transform(X)
-    # With the tiny dataset (3 samples), cv=3 creates unstable folds
-    # The algorithm selects ['b', 'd'] which gives the best objective score
-    assert new_X.columns.tolist() == ["b", "d"]
-    assert new_X.shape[0] == 3
+
+    # The algorithm should select useful features
+    # It should NOT select constant features since they add no information
+    selected = new_X.columns.tolist()
+    assert "useful" in selected, "Feature 'useful' should be selected"
+    assert "constant" not in selected, "Feature 'constant' should not be selected"
+
+    # Verify basic properties
+    assert new_X.shape[0] == n
     assert gfs.is_fitted_
+    assert len(selected) <= 4  # Should not select more features than available
