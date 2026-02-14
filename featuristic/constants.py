@@ -5,7 +5,7 @@ Operation metadata is imported from Nim to ensure consistency.
 The single source of truth is the Nim codebase.
 """
 
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 # Import operation metadata directly from Nim
 from .featuristic_lib import (
@@ -26,7 +26,7 @@ BINARY_OPERATIONS = set(getBinaryOperationInts())
 # Build mappings dynamically from Nim
 OP_NAME_TO_KIND: Dict[str, int] = {getOperationName(i): i for i in ALL_OP_KINDS}
 
-OP_KIND_METADATA: Dict[int, Tuple[str, str | None]] = {
+OP_KIND_METADATA: Dict[int, Tuple[str, Optional[str]]] = {
     i: (getOperationName(i), getOperationFormat(i)) for i in ALL_OP_KINDS
 }
 

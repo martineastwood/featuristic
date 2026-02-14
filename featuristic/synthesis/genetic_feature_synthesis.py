@@ -1,7 +1,7 @@
 """Contains the SymbolicFeatureGenerator class."""
 
 import random
-from typing import List, Union
+from typing import List, Optional, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -77,10 +77,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
-        functions: Union[List[str] | None] = None,
+        functions: Optional[List[str]] = None,
         return_all_features: bool = True,
         verbose: bool = False,
-        random_state: Union[int, None] = None,
+        random_state: Optional[int] = None,
         max_depth: int = 6,
     ):
         """
@@ -679,7 +679,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             for entry in sorted_hof
         ]
 
-    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes | None] = None):
+    def plot_history(self, ax: Optional[matplotlib.axes._axes.Axes] = None):
         """
         Plot the history of the fitness function with enhanced visualization.
 
