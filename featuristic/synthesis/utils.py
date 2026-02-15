@@ -1,6 +1,6 @@
 """Utility functions for data preparation and zero-copy access."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -69,7 +69,9 @@ def extract_column_pointers(X: pd.DataFrame) -> Tuple[List[int], np.ndarray]:
     return column_pointers, X_colmajor
 
 
-def extract_feature_pointers(X: pd.DataFrame) -> Tuple[List[int], List[np.ndarray]]:
+def extract_feature_pointers(
+    X: Union[pd.DataFrame, np.ndarray],
+) -> Tuple[List[int], List[np.ndarray]]:
     """
     Extract feature pointers for mRMR algorithm.
 
@@ -78,8 +80,8 @@ def extract_feature_pointers(X: pd.DataFrame) -> Tuple[List[int], List[np.ndarra
 
     Parameters
     ----------
-    X : pd.DataFrame
-        Input feature dataframe
+    X : pd.DataFrame or np.ndarray
+        Input feature dataframe or array (shape: n_samples, n_features)
 
     Returns
     -------
@@ -87,8 +89,15 @@ def extract_feature_pointers(X: pd.DataFrame) -> Tuple[List[int], List[np.ndarra
         - List of feature pointers
         - List of feature arrays (kept alive to prevent GC)
     """
-    # Convert each column to numpy array
-    feature_arrays = [X[col].to_numpy() for col in X.columns]
+    if isinstance(X, pd.DataFrame):
+        # Convert each column to numpy array
+        feature_arrays = [X[col].to_numpy() for col in X.columns]
+    else:
+        # Assume numpy array - extract columns
+        X_arr = np.asarray(X, dtype=np.float64)
+        if X_arr.ndim == 1:
+            X_arr = X_arr.reshape(-1, 1)
+        feature_arrays = [X_arr[:, i] for i in range(X_arr.shape[1])]
 
     # Extract pointers using __array_interface__ for consistency
     feature_ptrs = [int(arr.__array_interface__["data"][0]) for arr in feature_arrays]
@@ -96,14 +105,14 @@ def extract_feature_pointers(X: pd.DataFrame) -> Tuple[List[int], List[np.ndarra
     return feature_ptrs, feature_arrays
 
 
-def extract_target_pointer(y: pd.Series) -> Tuple[int, np.ndarray]:
+def extract_target_pointer(y: Union[pd.Series, np.ndarray]) -> Tuple[int, np.ndarray]:
     """
     Extract target pointer for mRMR algorithm.
 
     Parameters
     ----------
-    y : pd.Series
-        Target series
+    y : pd.Series or np.ndarray
+        Target series or array
 
     Returns
     -------
@@ -111,7 +120,11 @@ def extract_target_pointer(y: pd.Series) -> Tuple[int, np.ndarray]:
         - Memory pointer to target array
         - Target array (kept alive to prevent GC)
     """
-    target_array = y.to_numpy()
+    if isinstance(y, pd.Series):
+        target_array = y.to_numpy()
+    else:
+        target_array = np.asarray(y, dtype=np.float64)
+
     target_ptr = int(target_array.__array_interface__["data"][0])
 
     return target_ptr, target_array

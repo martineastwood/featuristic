@@ -11,9 +11,108 @@ import numpy as np
 import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression, Ridge
 from tqdm import tqdm
 
 from .binary_population import BinaryPopulation
+
+
+def make_cv_objective(
+    metric: str = "f1",
+    cv: int = 5,
+    model: Union[Callable, None] = None,
+    n_jobs: int = -1,
+) -> Callable:
+    """
+    Create a cross-validation objective function for GeneticFeatureSelector.
+
+    This helper function creates an objective function that uses sklearn's
+    cross_val_score to evaluate feature subsets. Use this for robust feature
+    selection with proper cross-validation.
+
+    Parameters
+    ----------
+    metric : str, default="f1"
+        sklearn scoring metric. Common options:
+        * Classification: "f1", "accuracy", "roc_auc", "precision", "recall",
+          "neg_log_loss", "f1_macro", "f1_weighted"
+        * Regression: "neg_mean_squared_error", "neg_mean_absolute_error",
+          "r2", "neg_root_mean_squared_error"
+        See https://scikit-learn.org/stable/modules/model_evaluation.html
+    cv : int, default=5
+        Number of cross-validation folds.
+    model : callable, optional
+        sklearn model to use. If None, uses LogisticRegression for classification
+        metrics and Ridge for regression metrics.
+    n_jobs : int, default=-1
+        Number of parallel jobs for cross_val_score. -1 uses all cores.
+
+    Returns
+    -------
+    callable
+        Objective function that can be passed to GeneticFeatureSelector.
+
+    Examples
+    --------
+    >>> from featuristic import make_cv_objective, GeneticFeatureSelector
+    >>>
+    >>> # Classification with F1 score
+    >>> objective = make_cv_objective(metric="f1", cv=5)
+    >>> selector = GeneticFeatureSelector(objective_function=objective)
+    >>> selector.fit(X, y)
+    >>>
+    >>> # Regression with R²
+    >>> objective = make_cv_objective(metric="r2", cv=3)
+    >>> selector = GeneticFeatureSelector(objective_function=objective)
+    >>>
+    >>> # Custom model
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> objective = make_cv_objective(
+    ...     metric="roc_auc",
+    ...     cv=5,
+    ...     model=RandomForestClassifier(n_estimators=100)
+    ... )
+    >>> selector = GeneticFeatureSelector(objective_function=objective)
+    """
+    # Auto-select model based on metric if not provided
+    if model is None:
+        classification_metrics = {
+            "f1",
+            "accuracy",
+            "roc_auc",
+            "precision",
+            "recall",
+            "neg_log_loss",
+            "f1_macro",
+            "f1_micro",
+            "f1_weighted",
+            "precision_macro",
+            "recall_macro",
+            "roc_auc_ovr",
+            "roc_auc_ovo",
+        }
+        if (
+            metric in classification_metrics
+            or metric.startswith("f1")
+            or metric.startswith("precision")
+            or metric.startswith("recall")
+        ):
+            model = LogisticRegression(max_iter=1000)
+        else:
+            model = Ridge()
+
+    def objective(X_subset, y):
+        """Objective function for genetic feature selection."""
+        scores = cross_val_score(
+            model, X_subset, y, cv=cv, scoring=metric, n_jobs=n_jobs
+        )
+        # Return negative mean because genetic algorithm minimizes
+        return -scores.mean()
+
+    # Set name for debugging
+    objective.__name__ = f"cv_objective_{metric}"
+    return objective
 
 
 class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
@@ -48,12 +147,25 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         ----------
         objective_function : callable, optional
             The cost function to minimize. Must take X and y as input and return a
-            float. Note that the function should return a value to minimize so a
-            smaller value is better. If you want to maximize a metric, you should
-            multiply the output of your objective_function by -1.
+            float. The function should return a value to minimize (smaller is better).
+            If you want to maximize a metric, multiply the output by -1.
 
-            If None, you must specify a native metric using the `metric` parameter
-            for 100-150x speedup.
+            **Recommended for production use.** Use this for:
+            - Cross-validation (more robust evaluation)
+            - Custom models (not just linear/logistic regression)
+            - Any sklearn metric (accuracy, f1, roc_auc, etc.)
+            - Complex evaluation logic
+
+            Example for classification with CV:
+            >>> from sklearn.model_selection import cross_val_score
+            >>> from sklearn.linear_model import LogisticRegression
+            >>> def objective(X_subset, y):
+            ...     model = LogisticRegression(max_iter=1000)
+            ...     scores = cross_val_score(model, X_subset, y, cv=5, scoring='f1')
+            ...     return -scores.mean()  # minimize negative F1
+            >>> selector = GeneticFeatureSelector(objective_function=objective)
+
+            If None, you must specify a native metric using the `metric` parameter.
 
         population_size : int
             The number of individuals in the population.
@@ -61,38 +173,54 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         max_generations : int
             The maximum number of iterations.
 
-        crossover_proba : float
+        tournament_size : int, default=10
+            The number of individuals to select for tournament selection.
+
+        crossover_proba : float, default=0.9
             The probability of crossover.
 
-        mutation_proba : float
+        mutation_proba : float, default=0.1
             The probability of mutation.
 
-        early_termination_iters : int
+        early_termination_iters : int, default=15
             The number of iterations to wait for early termination.
 
-        n_jobs : int
-            The number of parallel jobs to run. If -1, use all available cores else uses the
-            minimum of n_jobs and cpu_count.
+        n_jobs : int, default=-1
+            The number of parallel jobs to run. If -1, use all available cores.
+            Only used when objective_function is provided (for native metrics,
+            evaluation is serial in Nim).
 
-        verbose : bool
+        verbose : bool, default=False
             Whether to print progress.
 
         random_state : int, optional
             Seed for random number generator for reproducibility. If None,
-            results will not be reproducible. Default is None.
+            results will not be reproducible.
 
         metric : str, optional
-            Native metric to use for evaluation. Provides 100-150x speedup compared to
-            custom objective functions. If specified, objective_function is ignored.
+            Native metric for fast prototyping only. Uses simple models trained
+            in Nim, evaluated on training data without cross-validation.
+
+            **Not recommended for production** - use objective_function instead
+            for better generalization through cross-validation.
 
             Supported metrics:
             * Regression: "mse", "mae", "r2"
             * Classification: "logloss", "accuracy"
+
+            If specified, objective_function is ignored.
+
+        Notes
+        -----
+        The native metrics are useful for quick experimentation but may overfit
+        since they evaluate on the training data. For robust feature selection,
+        use objective_function with cross-validation.
         """
         if objective_function is None and metric is None:
             raise ValueError(
-                "Either objective_function or metric must be specified. "
-                "Use metric for 100-150x speedup with native computation."
+                "Either objective_function or metric must be specified.\n"
+                "Recommended: Use objective_function with cross-validation for production.\n"
+                "Quick prototyping: Use metric='mse' (regression) or metric='accuracy' (classification)."
             )
 
         self.objective_function = objective_function

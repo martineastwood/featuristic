@@ -7,7 +7,7 @@ a hybrid Python-Nim architecture for optimal performance.
 # Import Python-level functionality
 from .datasets import fetch_cars_dataset, fetch_wine_dataset
 
-from .selection import GeneticFeatureSelector
+from .selection import GeneticFeatureSelector, make_cv_objective
 from .synthesis import GeneticFeatureSynthesis
 from .synthesis.mrmr import MaxRelevanceMinRedundancy
 from .synthesis.symbolic_functions import (
@@ -29,6 +29,7 @@ __all__ = [
     "fetch_wine_dataset",
     # Utility functions
     "list_symbolic_functions",
+    "make_cv_objective",
     # Version
     "__version__",
 ]
