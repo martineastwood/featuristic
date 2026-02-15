@@ -82,8 +82,8 @@ jobs:
         run: |
           pytest tests/ -v --tb=short
 
-  test-integration:
-    name: Integration tests (Nuwa SDK wrappers)
+  test-integration-lowlevel:
+    name: Low-level integration tests (Nuwa SDK wrappers)
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -131,9 +131,62 @@ jobs:
         run: |
           nuwa develop
 
-      - name: Run integration tests
+      - name: Run low-level integration tests
         run: |
           pytest tests/test_integration_nuwa_sdk.py -v --tb=short
+
+  test-integration-e2e:
+    name: End-to-end integration tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.11', '3.13']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: 'pip'
+
+      - name: Install Nim
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            # macOS: Use chosenim
+            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+            sh init.sh -y
+            echo "$HOME/.nimble/bin" >> $GITHUB_PATH
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            # Linux: Download and extract
+            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
+            tar -xf nim.tar.xz
+            sudo mv nim-2.0.4 /opt/nim
+            sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
+            sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
+            rm nim.tar.xz
+          fi
+
+      - name: Install nuwa-build
+        run: |
+          pip install nuwa-build
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[test]"
+
+      - name: Build extension
+        run: |
+          nuwa develop
+
+      - name: Run end-to-end integration tests
+        run: |
+          pytest tests/test_end_to_end.py -v --tb=short
 
   build-wheel:
     name: Build wheel on ${{ matrix.os }}
