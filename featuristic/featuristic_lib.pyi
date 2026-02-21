@@ -9,6 +9,24 @@ def addVecZerocopy(
     """Zero-copy vectorized add"""
     ...
 
+def evaluateProgramPtrs(
+    featurePtrs: list[int],
+    featureIndices: list[int],
+    opKinds: list[int],
+    leftChildren: list[int],
+    rightChildren: list[int],
+    constants: list[float],
+    numRows: int,
+    numCols: int,
+) -> list[float]:
+    """
+    Evaluate a program from Python using stack-based approach with raw pointers
+    WITHOUT GIL RELEASE - this is a fast single-program evaluation
+    that doesn't benefit from concurrent threading. GIL release on Windows
+    causes segfaults due to threading/NumPy buffer interactions.
+    """
+    ...
+
 def runGeneticAlgorithm(
     featurePtrs: list[int],
     targetData: list[float],
@@ -315,22 +333,6 @@ def mulVecZerocopy(
 
 def testDivide(a: float, b: float) -> float:
     """Test safe division operation"""
-    ...
-
-def evaluateProgramPtrs(
-    featurePtrs: list[int],
-    featureIndices: list[int],
-    opKinds: list[int],
-    leftChildren: list[int],
-    rightChildren: list[int],
-    constants: list[float],
-    numRows: int,
-    numCols: int,
-) -> list[float]:
-    """
-    Evaluate a program from Python using stack-based approach
-    WITH GIL RELEASE for concurrent Python threading
-    """
     ...
 
 def mulConstantVecZerocopy(

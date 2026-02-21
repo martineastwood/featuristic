@@ -33,6 +33,14 @@ proc toSeqFloat64*(arr: np.NumpyArrayRead[float64]): seq[float64] =
   ##
   ## This copies the data but is necessary for APIs that expect seq[float64].
   ## Use direct pointer access instead when possible for zero-copy performance.
+  ##
+  ## Raises:
+  ##   ConversionError if array is not contiguous
+
+  if not arr.isContiguous:
+    raise newException(ConversionError,
+      "Cannot convert non-contiguous array to seq. " &
+      "Use np.ascontiguousarray() in Python first.")
 
   let n = arr.len
   result = newSeq[float64](n)
@@ -136,8 +144,22 @@ proc extractFeaturePointers*(X: np.NumpyArrayRead[float64]): seq[int] =
 proc extractTargetPointer*(y: np.NumpyArrayRead[float64]): int =
   ## Extract data pointer from a 1D numpy array
   ##
+  ## The array MUST be contiguous for safe pointer access.
+  ##
   ## Returns:
   ##   Integer pointer to the array's data
+  ##
+  ## Raises:
+  ##   ConversionError if array is not 1D or not contiguous
+
+  if y.shape.len != 1:
+    raise newException(ConversionError,
+      "Expected 1D array for target, got " & $y.shape.len & "D array")
+
+  if not y.isContiguous:
+    raise newException(ConversionError,
+      "Cannot extract pointer from non-contiguous array. " &
+      "Use np.ascontiguousarray() in Python first.")
 
   result = cast[int](cast[ptr UncheckedArray[float64]](y.buf.buf))
 

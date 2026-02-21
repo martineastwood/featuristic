@@ -88,18 +88,34 @@ def extract_feature_pointers(
     Tuple[List[int], List[np.ndarray]]
         - List of feature pointers
         - List of feature arrays (kept alive to prevent GC)
+
+    Notes
+    -----
+    All arrays are guaranteed to be C-contiguous before pointer extraction
+    to prevent reading incorrect data from strided views or dangling pointers.
     """
     if isinstance(X, pd.DataFrame):
-        # Convert each column to numpy array
-        feature_arrays = [X[col].to_numpy() for col in X.columns]
+        # Convert each column to numpy array and ensure contiguity
+        # DataFrame columns may not be contiguous for certain dtypes or views
+        feature_arrays = [
+            np.ascontiguousarray(X[col].to_numpy(), dtype=np.float64)
+            for col in X.columns
+        ]
     else:
         # Assume numpy array - extract columns
         X_arr = np.asarray(X, dtype=np.float64)
         if X_arr.ndim == 1:
             X_arr = X_arr.reshape(-1, 1)
-        feature_arrays = [X_arr[:, i] for i in range(X_arr.shape[1])]
 
-    # Extract pointers using __array_interface__ for consistency
+        # Ensure each column is contiguous before extracting pointer
+        # Column views from C-contiguous arrays are strided, so we copy them
+        feature_arrays = [
+            np.ascontiguousarray(X_arr[:, i], dtype=np.float64)
+            for i in range(X_arr.shape[1])
+        ]
+
+    # Extract pointers from contiguous arrays
+    # All arrays in feature_arrays are now guaranteed to be contiguous
     feature_ptrs = [int(arr.__array_interface__["data"][0]) for arr in feature_arrays]
 
     return feature_ptrs, feature_arrays
@@ -119,11 +135,21 @@ def extract_target_pointer(y: Union[pd.Series, np.ndarray]) -> Tuple[int, np.nda
     Tuple[int, np.ndarray]
         - Memory pointer to target array
         - Target array (kept alive to prevent GC)
+
+    Notes
+    -----
+    The returned array is guaranteed to be C-contiguous to prevent reading
+    incorrect data from strided views.
     """
     if isinstance(y, pd.Series):
         target_array = y.to_numpy()
     else:
         target_array = np.asarray(y, dtype=np.float64)
+
+    # Ensure contiguity before extracting pointer
+    # This is critical: non-contiguous views will cause Nim to read wrong memory
+    if not target_array.flags["C_CONTIGUOUS"]:
+        target_array = np.ascontiguousarray(target_array, dtype=np.float64)
 
     target_ptr = int(target_array.__array_interface__["data"][0])
 

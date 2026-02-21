@@ -1748,8 +1748,18 @@ proc evaluateBinaryGenomeArray*(
   var yArr = np.asNumpyArray[float64](y)
   defer: yArr.close()
 
+  # Validate dimensions
+  if XArr.ndim != 2:
+    raise newException(ValueError, "X must be 2-dimensional")
+  if yArr.ndim != 1:
+    raise newException(ValueError, "y must be 1-dimensional")
+
   let nRows = XArr.shape[0]
   let nCols = XArr.shape[1]
+  let yLen = yArr.len
+
+  if nRows != yLen:
+    raise newException(ValueError, "X and y must have the same number of rows")
 
   # Extract pointers
   let featurePtrs = extractFeaturePointers(XArr)
