@@ -6,7 +6,6 @@ These tests verify that the full pipeline works correctly:
 3. sklearn compatibility
 """
 
-import featuristic as ft
 import numpy as np
 import pandas as pd
 import pytest
@@ -14,6 +13,8 @@ from sklearn.datasets import make_classification, make_regression
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import accuracy_score, r2_score
 from sklearn.model_selection import cross_val_score
+
+import featuristic as ft
 
 
 class TestFullPipeline:
@@ -250,7 +251,7 @@ class TestSklearnCompatibility:
 
     def test_transform_before_fit_raises_error(self):
         """Test that transform before fit raises an error."""
-        X, y = make_classification(n_samples=80, n_features=8, random_state=42)
+        X, _y = make_classification(n_samples=80, n_features=8, random_state=42)
         X = pd.DataFrame(X)
 
         selector = ft.GeneticFeatureSelector(
@@ -262,7 +263,7 @@ class TestSklearnCompatibility:
 
     def test_plot_history_before_fit_raises_error(self):
         """Test that plot_history before fit raises an error."""
-        X, y = make_classification(n_samples=80, n_features=8, random_state=42)
+        X, _y = make_classification(n_samples=80, n_features=8, random_state=42)
         X = pd.DataFrame(X)
 
         selector = ft.GeneticFeatureSelector(

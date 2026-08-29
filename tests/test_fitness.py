@@ -1,8 +1,10 @@
-import featuristic as ft
+import sys
+
 import numpy as np
 import pandas as pd
-import sys
 from pytest import approx
+
+import featuristic as ft
 
 
 def test_pearson_fitness():

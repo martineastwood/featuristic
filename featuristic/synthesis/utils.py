@@ -1,11 +1,9 @@
 """Prepare float64 arrays for the Nim backend (Fortran-contiguous X, 1D y)."""
 
-from typing import Tuple, Union
-
 import numpy as np
 import pandas as pd
 
-ArrayLike = Union[pd.DataFrame, pd.Series, np.ndarray]
+ArrayLike = pd.DataFrame | pd.Series | np.ndarray
 
 
 def as_fortran_matrix(X: ArrayLike) -> np.ndarray:
@@ -30,7 +28,7 @@ def as_float64_1d(y: ArrayLike) -> np.ndarray:
     return np.ascontiguousarray(arr, dtype=np.float64)
 
 
-def as_fortran_xy(X: ArrayLike, y: ArrayLike) -> Tuple[np.ndarray, np.ndarray]:
+def as_fortran_xy(X: ArrayLike, y: ArrayLike) -> tuple[np.ndarray, np.ndarray]:
     """Feature matrix + target for Nim array APIs."""
     X_f = as_fortran_matrix(X)
     y_c = as_float64_1d(y)

@@ -6,7 +6,7 @@ Default synthesis fitness (Pearson) runs entirely in Nim. Optional ``fitness_fun
 scores each program in Python once per generation.
 """
 
-from typing import Callable, List, Optional
+from collections.abc import Callable
 
 import numpy as np
 import pandas as pd
@@ -21,7 +21,7 @@ from ..featuristic_lib import (
 from .utils import as_fortran_matrix, as_fortran_xy
 
 
-def deserialize_program(program_data: dict, feature_names: List[str]) -> dict:
+def deserialize_program(program_data: dict, feature_names: list[str]) -> dict:
     """
     Deserialize a program from Nim format to Python dict.
 
@@ -55,7 +55,7 @@ def _deserialize_program(
     left_children: list[int],
     right_children: list[int],
     constants: list[float],
-    feature_names: List[str],
+    feature_names: list[str],
 ) -> dict:
     """Deserialize a program from Nim format to Python dict."""
 
@@ -80,13 +80,10 @@ def _deserialize_program(
             child = deserialize_node(left_idx)
 
             # For constant operations, replace format with actual constant
-            if op_kind == OP_NAME_TO_KIND["add_constant"]:
-                return {
-                    "operation": op_name,
-                    "format_str": format_str,
-                    "children": [{"feature_name": str(constants[idx])}, child],
-                }
-            elif op_kind == OP_NAME_TO_KIND["mul_constant"]:
+            if (
+                op_kind == OP_NAME_TO_KIND["add_constant"]
+                or op_kind == OP_NAME_TO_KIND["mul_constant"]
+            ):
                 return {
                     "operation": op_name,
                     "format_str": format_str,
@@ -125,7 +122,7 @@ def run_genetic_algorithm(
     crossover_prob: float,
     parsimony_coefficient: float,
     random_seed: int,
-    available_op_kinds: Optional[list] = None,
+    available_op_kinds: list | None = None,
     fitness_metric: int = 0,
 ) -> dict:
     """
@@ -315,9 +312,9 @@ def run_multiple_gas_python_fitness(
     max_depth: int,
     tournament_size: int,
     crossover_prob: float,
-    random_seeds: List[int],
+    random_seeds: list[int],
     fitness_function: Callable,
-    available_op_kinds: Optional[List[int]] = None,
+    available_op_kinds: list[int] | None = None,
 ) -> dict:
     """Run independent GAs with a Python fitness callback each generation.
 
@@ -368,8 +365,7 @@ def run_multiple_gas_python_fitness(
                 if not np.isfinite(score):
                     score = float(np.inf)
                 fitness.append(score)
-                if score < gen_best:
-                    gen_best = score
+                gen_best = min(gen_best, score)
                 if score < best_fitness:
                     best_fitness = score
                     best_program = _program_at(pop, i)

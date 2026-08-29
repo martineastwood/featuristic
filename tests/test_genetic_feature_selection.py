@@ -1,9 +1,10 @@
-import featuristic as ft
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 from sklearn.datasets import make_classification, make_regression
 from sklearn.linear_model import LogisticRegression
+
+import featuristic as ft
 
 
 def test_selection():
@@ -16,7 +17,7 @@ def test_selection():
         max_generations=100,
     )
 
-    with pytest.raises(Exception):
+    with pytest.raises(AttributeError):
         gfs.fit(X=None, y=None)
 
     # Create a dataset where feature importance is unambiguous:

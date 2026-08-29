@@ -6,7 +6,7 @@ optimized crossover and mutation operations.
 """
 
 import sys
-from typing import Callable, List, Union
+from collections.abc import Callable
 
 import numpy as np
 import pandas as pd
@@ -61,7 +61,7 @@ class BinaryPopulation:
         crossover_proba: float = 0.9,
         mutation_proba: float = 0.1,
         n_jobs: int = 1,
-        random_state: Union[int, None] = None,
+        random_state: int | None = None,
     ):
         self.population_size = population_size
         self.feature_count = feature_count
@@ -89,7 +89,7 @@ class BinaryPopulation:
 
     def evaluate(
         self, cost_func: Callable, X: pd.DataFrame, y: pd.Series
-    ) -> List[float]:
+    ) -> list[float]:
         """
         Evaluate the population against the dataframe of features.
 
@@ -151,7 +151,7 @@ class BinaryPopulation:
 
     def evaluate_native(
         self, X: pd.DataFrame, y: pd.Series, metric: str = "mse"
-    ) -> List[float]:
+    ) -> list[float]:
         """
         Evaluate the population using native Nim computation (15-30x faster).
 
@@ -191,7 +191,7 @@ class BinaryPopulation:
         )
         return [float(s) for s in scores]
 
-    def _selection(self, scores: List, k: int = 3) -> np.ndarray:
+    def _selection(self, scores: list, k: int = 3) -> np.ndarray:
         """
         Select an individual from the population using tournament selection.
 
@@ -214,7 +214,7 @@ class BinaryPopulation:
                 selection_ix = ix
         return self.population[selection_ix]
 
-    def evolve(self, fitness: List[float]):
+    def evolve(self, fitness: list[float]):
         """
         Evolve the population based on the fitness scores.
 

@@ -1,7 +1,5 @@
 """Class for selecting most relevant features using the mrmr algorithm."""
 
-from typing import List
-
 import pandas as pd
 from sklearn.feature_selection import f_classif, f_regression
 
@@ -102,7 +100,7 @@ class MaxRelevanceMinRedundancy:
         self.fit(X, y)
         return self.transform(X)
 
-    def _mrmr(self, X: pd.DataFrame, y: pd.Series) -> List[str]:
+    def _mrmr(self, X: pd.DataFrame, y: pd.Series) -> list[str]:
         """
         Select the top n_features features using the mRMR algorithm.
 

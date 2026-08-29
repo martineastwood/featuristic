@@ -7,13 +7,10 @@ Operation names are used for API validation. Format strings are used for renderi
 Arg count (arity) is used for program generation.
 """
 
-from typing import List, Tuple
-
 from ..constants import OP_KIND_METADATA
 
-
 # Build reverse lookup: operation name -> (name, format_str)
-OP_NAME_TO_METADATA: dict[str, Tuple[str, str]] = {
+OP_NAME_TO_METADATA: dict[str, tuple[str, str]] = {
     name: (name, fmt if fmt is not None else "{}")
     for name, fmt in OP_KIND_METADATA.values()
 }
@@ -27,7 +24,7 @@ AVAILABLE_OPERATIONS = {name for name, _ in OP_KIND_METADATA.values()}
 OPERATION_NAMES = sorted(AVAILABLE_OPERATIONS)
 
 
-def list_symbolic_functions() -> List[str]:
+def list_symbolic_functions() -> list[str]:
     """
     List all the available built-in symbolic functions.
 

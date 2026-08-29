@@ -98,7 +98,7 @@ ax.text(
     transform=ax.transAxes,
     fontsize=10,
     verticalalignment="top",
-    bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+    bbox={"boxstyle": "round", "facecolor": "wheat", "alpha": 0.5},
 )
 
 plt.savefig(
@@ -165,7 +165,7 @@ ax.text(
     transform=ax.transAxes,
     fontsize=10,
     verticalalignment="top",
-    bbox=dict(boxstyle="round", facecolor="lightblue", alpha=0.7),
+    bbox={"boxstyle": "round", "facecolor": "lightblue", "alpha": 0.7},
 )
 
 plt.savefig(
@@ -341,7 +341,7 @@ print("   ✓ Returns matplotlib axes for further customization")
 print("\nUsage:")
 print("   synth.fit(X, y)")
 print("   ax = synth.plot_convergence()  # or synth.plot_history()")
-print("")
+print()
 print("   selector.fit(X, y)")
 print("   ax = selector.plot_convergence()  # or selector.plot_history()")
 

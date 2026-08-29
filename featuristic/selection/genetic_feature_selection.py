@@ -2,8 +2,7 @@
 
 import random
 import sys
-from typing import Callable, Union
-from typing_extensions import Self
+from collections.abc import Callable
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -11,9 +10,10 @@ import numpy as np
 import pandas as pd
 from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.model_selection import cross_val_score
 from tqdm import tqdm
+from typing_extensions import Self
 
 from .binary_population import BinaryPopulation
 
@@ -21,7 +21,7 @@ from .binary_population import BinaryPopulation
 def make_cv_objective(
     metric: str = "f1",
     cv: int = 5,
-    model: Union[Callable, None] = None,
+    model: Callable | None = None,
     n_jobs: int = -1,
 ) -> Callable:
     """
@@ -92,11 +92,8 @@ def make_cv_objective(
             "roc_auc_ovr",
             "roc_auc_ovo",
         }
-        if (
-            metric in classification_metrics
-            or metric.startswith("f1")
-            or metric.startswith("precision")
-            or metric.startswith("recall")
+        if metric in classification_metrics or metric.startswith(
+            ("f1", "precision", "recall")
         ):
             model = LogisticRegression(max_iter=1000)
         else:
@@ -127,7 +124,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        objective_function: Union[Callable, None] = None,
+        objective_function: Callable | None = None,
         population_size: int = 50,
         max_generations: int = 100,
         tournament_size: int = 10,
@@ -137,8 +134,8 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         n_jobs: int = -1,
         pbar: bool = True,
         verbose: bool = False,
-        random_state: Union[int, None] = None,
-        metric: Union[str, None] = None,
+        random_state: int | None = None,
+        metric: str | None = None,
     ) -> None:
         """
         Initialize the genetic algorithm.
@@ -374,7 +371,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         self.selected_columns = X.columns[self.best_genome == 1]
 
-    def plot_history(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
+    def plot_history(self, ax: matplotlib.axes._axes.Axes | None = None):
         """
         Plot the history of the fitness function with enhanced visualization.
 
@@ -402,7 +399,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
             raise ValueError("Must call fit_transform or fit before plot_history")
 
         if ax is None:
-            fig, ax = plt.subplots(figsize=(10, 6))
+            _fig, ax = plt.subplots(figsize=(10, 6))
 
         if len(self.history) == 0:
             ax.text(
@@ -502,18 +499,18 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
                     xytext=(10, 10),
                     textcoords="offset points",
                     fontsize=9,
-                    bbox=dict(
-                        boxstyle="round,pad=0.5",
-                        facecolor="#fef3c7",
-                        edgecolor="#f59e0b",
-                        alpha=0.8,
-                    ),
-                    arrowprops=dict(
-                        arrowstyle="->",
-                        connectionstyle="arc3,rad=0",
-                        color="#f59e0b",
-                        lw=1.5,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.5",
+                        "facecolor": "#fef3c7",
+                        "edgecolor": "#f59e0b",
+                        "alpha": 0.8,
+                    },
+                    arrowprops={
+                        "arrowstyle": "->",
+                        "connectionstyle": "arc3,rad=0",
+                        "color": "#f59e0b",
+                        "lw": 1.5,
+                    },
                 )
 
         # Adjust layout to prevent label cutoff
@@ -521,7 +518,7 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         return ax
 
-    def plot_convergence(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
+    def plot_convergence(self, ax: matplotlib.axes._axes.Axes | None = None):
         """
         Plot convergence of genetic algorithm.
 

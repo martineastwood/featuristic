@@ -41,7 +41,7 @@ def simplify_program(node: dict, depth: int = 0, max_depth: int = 10) -> dict:
     format_str = node.get("format_str", "")
 
     # Helper to check if a child is a constant
-    def is_constant(n: dict, value: float = None) -> bool:
+    def is_constant(n: dict, value: float | None = None) -> bool:
         if "children" in n:
             return False
         try:
@@ -51,13 +51,13 @@ def simplify_program(node: dict, depth: int = 0, max_depth: int = 10) -> dict:
             return name.replace(".", "", 1).replace(
                 "-", "", 1
             ).isdigit() or name.startswith("-")
-        except Exception:
+        except (TypeError, ValueError, AttributeError):
             return False
 
     def get_constant_value(n: dict) -> float:
         try:
             return float(n.get("feature_name", 0))
-        except Exception:
+        except (TypeError, ValueError, AttributeError):
             return 0.0
 
     # Apply simplification rules

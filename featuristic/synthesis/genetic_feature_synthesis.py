@@ -1,7 +1,7 @@
 """Contains the SymbolicFeatureGenerator class."""
 
 import random
-from typing import Callable, List, Optional, Union
+from collections.abc import Callable
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -84,12 +84,12 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         crossover_proba: float = 0.85,
         parsimony_coefficient: float = 0.001,
         early_termination_iters: int = 15,
-        functions: Optional[List[str]] = None,
+        functions: list[str] | None = None,
         return_all_features: bool = True,
         verbose: bool = False,
-        random_state: Optional[int] = None,
+        random_state: int | None = None,
         max_depth: int = 6,
-        fitness_function: Optional[Callable] = None,
+        fitness_function: Callable | None = None,
         fitness_metric: str = "pearson",
     ):
         """
@@ -731,7 +731,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             for entry in sorted_hof
         ]
 
-    def plot_history(self, ax: Optional[matplotlib.axes._axes.Axes] = None):
+    def plot_history(self, ax: matplotlib.axes._axes.Axes | None = None):
         """
         Plot the history of the fitness function with enhanced visualization.
 
@@ -757,7 +757,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         check_is_fitted(self, "feature_names_")
 
         if ax is None:
-            fig, ax = plt.subplots(figsize=(10, 6))
+            _fig, ax = plt.subplots(figsize=(10, 6))
 
         # Check if we have generation histories
         if (
@@ -883,7 +883,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return ax
 
-    def plot_convergence(self, ax: Union[matplotlib.axes._axes.Axes, None] = None):
+    def plot_convergence(self, ax: matplotlib.axes._axes.Axes | None = None):
         """
         Plot convergence of genetic algorithm.
 

@@ -13,7 +13,7 @@ from ..featuristic_lib import pearsonCorrelationNim
 def node_count(node: dict) -> int:
     if "children" not in node:
         return 1
-    return sum((node_count(c) for c in node["children"]))
+    return sum(node_count(c) for c in node["children"])
 
 
 def linearly_scaled(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:

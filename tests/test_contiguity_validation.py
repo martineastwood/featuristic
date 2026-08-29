@@ -4,12 +4,12 @@ Tests for contiguity validation in array API functions.
 These tests verify that the fixes for non-contiguous array handling work correctly.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
-
 import sys
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
 
 # Add featuristic to path to import the compiled module directly
 featuristic_path = Path(__file__).parent.parent / "featuristic"

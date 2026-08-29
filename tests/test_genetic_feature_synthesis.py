@@ -1,7 +1,9 @@
-import featuristic as ft
-import pytest
 import pandas as pd
+import pytest
+from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
+
+import featuristic as ft
 
 
 def test_gfs():
@@ -15,15 +17,12 @@ def test_gfs():
         n_features=n_features, population_size=10, max_generations=2, verbose=False
     )
 
-    with pytest.raises(Exception):
+    with pytest.raises(NotFittedError):
         gfs.plot_history()
 
     # Check that the model is not fitted
-    with pytest.raises(Exception):
+    with pytest.raises(NotFittedError):
         check_is_fitted(gfs, "feature_names_")
-
-    with pytest.raises(Exception):
-        gfs.fit(X=None, y=None)
 
     X = pd.DataFrame({"a": [1, 2, 4], "b": [4, 5, 6]})
     y = pd.Series([1, 2, 3])

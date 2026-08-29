@@ -7,16 +7,16 @@ import numpy as np
 import pytest
 
 from featuristic.featuristic_lib import (
+    evaluateBinaryGenomeArray,
     # New API with direct numpy array input
     evaluateProgram,
     evaluateProgramsBatchedArray,
-    runGeneticAlgorithmArray,
-    runMRMRArray,
-    runCompleteBinaryGAArray,
-    evaluateBinaryGenomeArray,
-    runMultipleGAsArray,
     # Utility functions
     getVersion,
+    runCompleteBinaryGAArray,
+    runGeneticAlgorithmArray,
+    runMRMRArray,
+    runMultipleGAsArray,
 )
 
 
@@ -226,9 +226,9 @@ class TestNumpyWrapperAPI:
         (
             best_feature_indices,
             best_op_kinds,
-            best_left_children,
-            best_right_children,
-            best_constants,
+            _best_left_children,
+            _best_right_children,
+            _best_constants,
             best_fitness,
             best_score,
         ) = result
@@ -266,10 +266,10 @@ class TestNumpyWrapperAPI:
         # Unpack tuple
         (
             best_feature_indices,
-            best_op_kinds,
-            best_left_children,
-            best_right_children,
-            best_constants,
+            _best_op_kinds,
+            _best_left_children,
+            _best_right_children,
+            _best_constants,
             best_fitnesses,
             best_scores,
             generation_histories,

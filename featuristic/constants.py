@@ -5,13 +5,11 @@ Operation metadata is imported from Nim to ensure consistency.
 The single source of truth is the Nim codebase.
 """
 
-from typing import Dict, Optional, Tuple
-
 # Import operation metadata directly from Nim
 from .featuristic_lib import (
+    getBinaryOperationInts,
     getOperationFormat,
     getOperationName,
-    getBinaryOperationInts,
     getOpKindInts,
     getUnaryOperationInts,
 )
@@ -24,9 +22,9 @@ UNARY_OPERATIONS = set(getUnaryOperationInts())
 BINARY_OPERATIONS = set(getBinaryOperationInts())
 
 # Build mappings dynamically from Nim
-OP_NAME_TO_KIND: Dict[str, int] = {getOperationName(i): i for i in ALL_OP_KINDS}
+OP_NAME_TO_KIND: dict[str, int] = {getOperationName(i): i for i in ALL_OP_KINDS}
 
-OP_KIND_METADATA: Dict[int, Tuple[str, Optional[str]]] = {
+OP_KIND_METADATA: dict[int, tuple[str, str | None]] = {
     i: (getOperationName(i), getOperationFormat(i)) for i in ALL_OP_KINDS
 }
 
@@ -46,11 +44,11 @@ def synthesis_op_kinds(function_names: list[str]) -> list[int]:
 
 
 __all__ = [
-    "OP_NAME_TO_KIND",
-    "OP_KIND_METADATA",
-    "UNARY_OPERATIONS",
-    "BINARY_OPERATIONS",
     "ALL_OP_KINDS",
+    "BINARY_OPERATIONS",
+    "OP_KIND_METADATA",
+    "OP_NAME_TO_KIND",
     "SYNTHESIS_FITNESS_METRICS",
+    "UNARY_OPERATIONS",
     "synthesis_op_kinds",
 ]

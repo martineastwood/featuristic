@@ -5,9 +5,10 @@ Test GA with the absolute minimum configuration to isolate segfaults.
 # Tell pytest to skip this file - it's a standalone debugging script
 __test__ = False
 
-import numpy as np
-from pathlib import Path
 import importlib.util
+from pathlib import Path
+
+import numpy as np
 
 featuristic_path = Path(__file__).parent.parent / "featuristic"
 lib_files = list(featuristic_path.glob("featuristic_lib*.so")) + list(
@@ -34,45 +35,38 @@ print(f"y: {y}")
 
 print("\nAttempting GA with pop_size=2, generations=1...")
 
-try:
-    result = featuristic_lib.runGeneticAlgorithmArray(
-        X,
-        y,
-        2,  # population_size
-        1,  # num_generations
-        2,  # max_depth
-        2,  # tournament_size
-        0.5,  # crossover_prob
-        0.1,  # parsimony_coefficient
-        42,  # random_seed
-    )
+result = featuristic_lib.runGeneticAlgorithmArray(
+    X,
+    y,
+    2,  # population_size
+    1,  # num_generations
+    2,  # max_depth
+    2,  # tournament_size
+    0.5,  # crossover_prob
+    0.1,  # parsimony_coefficient
+    42,  # random_seed
+)
 
-    print("SUCCESS! GA completed without segfault!")
+print("SUCCESS! GA completed without segfault!")
 
-    (
-        best_feature_indices,
-        best_op_kinds,
-        best_left_children,
-        best_right_children,
-        best_constants,
-        best_fitness,
-        best_score,
-    ) = result
+(
+    best_feature_indices,
+    best_op_kinds,
+    best_left_children,
+    best_right_children,
+    best_constants,
+    best_fitness,
+    best_score,
+) = result
 
-    print(f"   Best fitness: {best_fitness}")
-    print(f"   Best score: {best_score}")
-    print(f"   Program nodes: {len(best_op_kinds)}")
+print(f"   Best fitness: {best_fitness}")
+print(f"   Best score: {best_score}")
+print(f"   Program nodes: {len(best_op_kinds)}")
 
-    print("\nBest program structure:")
-    print(f"   Op kinds: {best_op_kinds}")
-    print(f"   Feature indices: {best_feature_indices}")
-    print(f"   Left children: {best_left_children}")
-    print(f"   Right children: {best_right_children}")
-
-except Exception as e:
-    print(f"FAILED: {e}")
-    import traceback
-
-    traceback.print_exc()
+print("\nBest program structure:")
+print(f"   Op kinds: {best_op_kinds}")
+print(f"   Feature indices: {best_feature_indices}")
+print(f"   Left children: {best_left_children}")
+print(f"   Right children: {best_right_children}")
 
 print("\nTest complete!")

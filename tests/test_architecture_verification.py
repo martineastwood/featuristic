@@ -12,10 +12,10 @@ Tests:
 """
 
 from featuristic.constants import (
+    ALL_OP_KINDS,
+    BINARY_OPERATIONS,
     OP_KIND_METADATA,
     UNARY_OPERATIONS,
-    BINARY_OPERATIONS,
-    ALL_OP_KINDS,
 )
 from featuristic.synthesis import render_prog
 
@@ -260,28 +260,17 @@ def run_all_verification_tests():
     print("ARCHITECTURE VERIFICATION TEST SUITE")
     print("=" * 60)
 
-    try:
-        test_operation_metadata()
-        test_format_strings_have_parentheses()
-        test_simplification_logic()
-        test_render_with_new_format_strings()
-        test_list_symbolic_functions()
+    test_operation_metadata()
+    test_format_strings_have_parentheses()
+    test_simplification_logic()
+    test_render_with_new_format_strings()
+    test_list_symbolic_functions()
 
-        print("\n" + "=" * 60)
-        print("✅ ALL TESTS PASSED - Architecture is stable!")
-        print("=" * 60)
-        print("\nRefactoring complete. You are now in PRODUCTION mode.")
-        return True
-
-    except Exception as e:
-        print("\n" + "=" * 60)
-        print("❌ VERIFICATION FAILED")
-        print("=" * 60)
-        print(f"\nError: {e}")
-        import traceback
-
-        traceback.print_exc()
-        return False
+    print("\n" + "=" * 60)
+    print("✅ ALL TESTS PASSED - Architecture is stable!")
+    print("=" * 60)
+    print("\nRefactoring complete. You are now in PRODUCTION mode.")
+    return True
 
 
 if __name__ == "__main__":

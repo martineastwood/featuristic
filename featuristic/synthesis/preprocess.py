@@ -1,11 +1,9 @@
 """Preprocessing functions for data synthesis."""
 
-from typing import Tuple
-
 import pandas as pd
 
 
-def preprocess_data(X: pd.DataFrame, y: pd.Series) -> Tuple[pd.DataFrame, pd.Series]:
+def preprocess_data(X: pd.DataFrame, y: pd.Series) -> tuple[pd.DataFrame, pd.Series]:
     """
     Preprocess the input data.
 
