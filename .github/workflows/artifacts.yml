@@ -66,6 +66,8 @@ jobs:
           pip install build "nuwa-build>=0.5.1"
           python -m build --wheel
           pip install dist/*.whl
+          # Import from a temp dir so the checkout does not shadow site-packages.
+          cd "$RUNNER_TEMP"
           python -c "import featuristic as ft; from featuristic import featuristic_lib as lib; assert ft.__version__ == '2.0.0'; assert lib.getVersion() == '2.0.0'"
 
       - uses: actions/upload-artifact@v4
@@ -91,6 +93,8 @@ jobs:
           pip install build "nuwa-build>=0.5.1"
           python -m build --sdist
           pip install dist/*.tar.gz
+          # Import from a temp dir so the checkout does not shadow site-packages.
+          cd "$RUNNER_TEMP"
           python -c "import featuristic as ft; from featuristic import featuristic_lib as lib; assert ft.__version__ == '2.0.0'; assert lib.getVersion() == '2.0.0'"
 
       - uses: actions/upload-artifact@v4
