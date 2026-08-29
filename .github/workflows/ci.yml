@@ -9,6 +9,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install ruff
+        run: pip install "ruff>=0.9.6,<0.16"
+
+      - name: Lint
+        run: |
+          python -m ruff check .
+          python -m ruff format --check .
+
   test:
     name: Test Python ${{ matrix.python }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -33,11 +53,6 @@ jobs:
         run: |
           pip install "nuwa-build>=0.5.1"
           pip install -e ".[dev,test]"
-
-      - name: Lint
-        run: |
-          python -m ruff check .
-          python -m ruff format --check .
 
       - name: Build extension
         run: nuwa develop
