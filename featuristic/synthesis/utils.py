@@ -18,7 +18,7 @@ def as_fortran_matrix(X: ArrayLike) -> np.ndarray:
             arr = arr.reshape(-1, 1)
         if arr.ndim != 2:
             raise ValueError(f"Expected 2D features, got ndim={arr.ndim}")
-    return np.asfortranarray(arr, dtype=np.float64)
+    return np.array(arr, dtype=np.float64, order="F", copy=True)
 
 
 def as_float64_1d(y: ArrayLike) -> np.ndarray:

@@ -2,7 +2,6 @@
 # Optimizes program trees by removing redundant operations
 
 import std/sets
-import ./types
 
 
 # ============================================================================
@@ -117,7 +116,3 @@ proc simplifyProgram*(program: StackProgram): StackProgram =
     discard processNode(rootIdx)
 
   return StackProgram(nodes: newNodes, depth: program.depth)
-
-
-# Export functions without nuwa_export (implementation only)
-export simplifyProgram

@@ -4,7 +4,6 @@
 import std/random
 import std/tables
 import std/math
-import ../core/types
 
 
 # ============================================================================
@@ -437,8 +436,3 @@ proc tournamentSelect*(population: seq[StackProgram], fitness: seq[float64],
       bestIdx = idx
 
   return population[bestIdx]
-
-
-# Export functions without nuwa_export (implementation only)
-export countNodes, findSubtreeBounds, getRandomNodeIndex, cloneSubtree, replaceSubtree,
-       crossover, mutate, tournamentSelect, generateMutationNode, generateRandomSubtree

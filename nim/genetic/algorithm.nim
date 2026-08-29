@@ -5,7 +5,6 @@ import std/random
 import std/typedthreads
 import std/locks
 import std/math
-import ../core/types
 
 
 # ============================================================================
@@ -312,10 +311,8 @@ type
 
 
 proc runGeneticAlgorithmImpl(
-  featurePtrs: seq[int],
+  fm: FeatureMatrix,
   targetData: seq[float64],
-  numRows: int,
-  numFeatures: int,
   populationSize: int,
   numGenerations: int,
   maxDepth: int,
@@ -324,60 +321,37 @@ proc runGeneticAlgorithmImpl(
   parsimonyCoefficient: float64,
   rng: var Rand
 ): EvolutionResult =
-  ## Run the complete genetic algorithm in Nim
-
-  ## Available operations (safe set for numerical stability)
+  let numFeatures = fm.numCols
   let availableOps = @[
-    # Binary operations (arithmetic)
     opAdd, opSubtract, opMultiply, opDivide, opPow,
-    # Unary operations (transformations)
     opNegate, opSquare, opCube,
-    opAbs, opSqrt,      # Safe operations only
-    opSin, opCos, opTan # Trigonometric functions for non-linear features
+    opAbs, opSqrt,
+    opSin, opCos, opTan
   ]
 
-  # Initialize population
   var population = initializePopulation(rng, populationSize, maxDepth,
       numFeatures, availableOps)
 
-  # Create feature matrix
-  var fm = newFeatureMatrix(numRows, numFeatures)
-  for i in 0..<numFeatures:
-    fm.setColumn(i, featurePtrs[i])
-
-  # Create buffer pool (pre-allocated once for all evaluations)
-  # Max nodes per program determines pool size
-  # Calculate max nodes for a full binary tree: 2^(depth+1) - 1
-  # This prevents costly reallocation during evaluation
   var maxNodes = (1 shl (maxDepth + 1)) - 1
-  var pool = newEvalBufferPool(maxNodes, numRows)
+  var pool = newEvalBufferPool(maxNodes, fm.numRows)
+  defer: destroyEvalBufferPool(pool)
 
-  # Track best
   var bestIdx = 0
   var bestFitness = Inf
   var bestScore = Inf
 
-  # Evolution loop
   for generation in 0..<numGenerations:
-    # Evaluate population
     var fitnessValues = newSeq[float64](populationSize)
-
     for i in 0..<populationSize:
-      # Evaluate program with buffer pool (NO per-node allocations!)
       let yPred = evaluateProgramStack(population[i], fm, pool)
-
-      # Compute fitness
       let fitnessResult = computeFitness(yPred, targetData, len(population[
           i].nodes), parsimonyCoefficient)
       fitnessValues[i] = fitnessResult.finalFitness
-
-      # Track best
       if fitnessResult.finalFitness < bestFitness:
         bestFitness = fitnessResult.finalFitness
         bestScore = fitnessResult.score
         bestIdx = i
 
-    # Evolve to next generation (skip last generation)
     if generation < numGenerations - 1:
       population = evolveGeneration(
         population, fitnessValues, tournamentSize, crossoverProb,
@@ -393,21 +367,9 @@ proc runGeneticAlgorithmImpl(
   )
 
 
-# Export functions without nuwa_export (implementation only)
-export pearsonCorrelation, computeFitness, generateRandomProgram,
-       initializePopulation, tournamentSelect, crossover, mutate,
-       evolveGeneration
-
-
-# ============================================================================
-# Single GA Run (Thread-Safe for Parallel Execution)
-# ============================================================================
-
 proc runSingleGA(
-  featurePtrs: seq[int],
+  sharedFm: FeatureMatrix,
   targetData: seq[float64],
-  numRows: int,
-  numFeatures: int,
   generations: int,
   popSize: int,
   maxDepth: int,
@@ -416,41 +378,21 @@ proc runSingleGA(
   parsimonyCoef: float64,
   seed: int32
 ): SingleGAResult {.gcsafe.} =
-  ## Run a single GA with thread-local resources
-  ##
-  ## This procedure is designed to be called from multiple threads.
-  ## Each thread gets its own:
-  ## - Random number generator (rng)
-  ## - FeatureMatrix wrapper (lightweight, points to same data)
-  ## - EvalBufferPool (thread-local scratch memory)
-  ##
-  ## The featurePtrs and targetData are read-only, so sharing is safe.
-
-  # A. Setup Thread-Local Random Generator
   var rng = initRand(seed)
-
-  # B. Setup Thread-Local Data Access (Cheap wrapper)
-  # It is safe to create a new FeatureMatrix struct pointing to the same data
-  var fm = newFeatureMatrix(numRows, numFeatures)
-  for i in 0..<numFeatures:
-    fm.setColumn(i, featurePtrs[i])
+  var fm = cloneFeatureMatrix(sharedFm)
   defer: destroyFeatureMatrix(fm)
 
-  # C. Setup Thread-Local Buffer Pool (CRITICAL: Must be per-thread)
-  # Each thread needs its own pool to avoid race conditions
-  # Calculate max nodes for a full binary tree: 2^(depth+1) - 1
+  let numFeatures = fm.numCols
   var maxNodes = (1 shl (maxDepth + 1)) - 1
-  var pool = newEvalBufferPool(maxNodes, numRows)
+  var pool = newEvalBufferPool(maxNodes, fm.numRows)
   defer: destroyEvalBufferPool(pool)
 
-  # D. Define available operations (same for all GAs)
   let availableOps = @[
     opAdd, opSubtract, opMultiply, opDivide, opPow,
     opNegate, opSquare, opCube, opAbs, opSqrt,
     opSin, opCos, opTan, opAddConstant, opMulConstant
   ]
 
-  # E. Initialize Population
   var population = initializePopulation(rng, popSize, maxDepth, numFeatures, availableOps)
 
   # F. Run Evolution
@@ -510,10 +452,8 @@ type
 
 
 proc runMultipleGAs*(
-  featurePtrs: seq[int],
+  fm: FeatureMatrix,
   targetData: seq[float64],
-  numRows: int,
-  numFeatures: int,
   numGAs: int,
   generationsPerGA: int,
   populationSize: int,
@@ -523,42 +463,12 @@ proc runMultipleGAs*(
   parsimonyCoefficient: float64,
   randomSeeds: seq[int32]
 ): MultipleGAResult =
-  ## Run multiple independent GAs in parallel
-  ##
-  ## Each GA is independent. Threads use std/typedthreads (not weave).
-  ##
-  ## Benefits:
-  ## - Single Python-Nim boundary crossing
-  ## - Parallel execution across CPU cores
-  ## - Thread-local resources (each thread gets its own pool)
-  ##
-  ## Args:
-  ##   featurePtrs: Pointers to feature columns (read-only, shared safely)
-  ##   targetData: Target values (read-only, shared safely)
-  ##   numRows: Number of samples
-  ##   numFeatures: Number of input features
-  ##   numGAs: Number of independent GAs to run
-  ##   generationsPerGA: Generations per GA (typically 5-10 for diversity)
-  ##   populationSize: Size of population for each GA
-  ##   maxDepth: Maximum program depth
-  ##   tournamentSize: Tournament selection size
-  ##   crossoverProb: Crossover probability
-  ##   parsimonyCoefficient: Parsimony coefficient
-  ##   randomSeeds: Random seed for each GA (length = numGAs)
-  ##
-  ## Returns:
-  ##   MultipleGAResult with best programs and fitnesses from all GAs
-
-  # Parallel execution using std/typedthreads
-  # Each GA run is independent, so we create a thread per GA
-  # Use locks to synchronize access to shared results array
+  ## Independent GAs in parallel via std/typedthreads.
 
   type
     GAParams = tuple[
-      featurePtrs: seq[int], # Thread-local copy
-      targetData: seq[float64], # Thread-local copy
-      numRows: int,
-      numFeatures: int,
+      sharedFm: FeatureMatrix,
+      targetData: seq[float64],
       generations: int,
       popSize: int,
       maxDepth: int,
@@ -567,8 +477,8 @@ proc runMultipleGAs*(
       parsimonyCoef: float64,
       seed: int32,
       idx: int,
-      results: ptr seq[SingleGAResult], # Pointer to shared results array
-      lock: ptr Lock # Lock for synchronized access
+      results: ptr seq[SingleGAResult],
+      lock: ptr Lock
     ]
 
   var
@@ -578,12 +488,9 @@ proc runMultipleGAs*(
   initLock(resultsLock)
 
   proc gaThreadFunc(params: GAParams) {.thread.} =
-    # Run the GA and store result in the shared array with lock
     let gaResult = runSingleGA(
-      params.featurePtrs,
+      params.sharedFm,
       params.targetData,
-      params.numRows,
-      params.numFeatures,
       params.generations,
       params.popSize,
       params.maxDepth,
@@ -592,33 +499,16 @@ proc runMultipleGAs*(
       params.parsimonyCoef,
       params.seed
     )
-
-    # Safely store result using lock
     acquire(params.lock[])
     params.results[][params.idx] = gaResult
     release(params.lock[])
 
-  # Create and launch threads with data copies
-  # Track how many threads were successfully created for cleanup
   var threadsCreated = 0
   try:
     for i in 0..<numGAs:
-      # Create thread-local copies of the input data
-      # Note: featurePtrs and targetData are read-only, so shallow copies are safe
-      # and avoid expensive memory copying for large datasets
-      var featurePtrsCopy = newSeq[int](len(featurePtrs))
-      for j in 0..<len(featurePtrs):
-        featurePtrsCopy[j] = featurePtrs[j]
-
-      # Shallow copy for targetData - safe because it's read-only and {.gcsafe.}
-      # This avoids O(numRows * numGAs) memory copying overhead
-      let targetDataCopy = targetData
-
       let params: GAParams = (
-        featurePtrs: featurePtrsCopy,
-        targetData: targetDataCopy,
-        numRows: numRows,
-        numFeatures: numFeatures,
+        sharedFm: fm,
+        targetData: targetData,
         generations: generationsPerGA,
         popSize: populationSize,
         maxDepth: maxDepth,
@@ -631,7 +521,7 @@ proc runMultipleGAs*(
         lock: addr resultsLock
       )
       createThread(threads[i], gaThreadFunc, params)
-      threadsCreated = i + 1 # Track successful creation
+      threadsCreated = i + 1
 
     # Wait for all threads to complete
     joinThreads(threads)
