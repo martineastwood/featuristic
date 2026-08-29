@@ -44,3 +44,41 @@ def test_gfs():
     new_cols = [x for x in new_X.columns if x.startswith("synth_")]
     assert len(new_cols) >= 0
     assert len(new_cols) <= n_features
+
+
+def test_gfs_functions_subset():
+    allowed = ["add", "multiply"]
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=2,
+        population_size=12,
+        max_generations=3,
+        functions=allowed,
+        random_state=7,
+        verbose=False,
+    )
+    X = pd.DataFrame({"a": [1.0, 2.0, 4.0, 5.0], "b": [4.0, 5.0, 6.0, 8.0]})
+    y = pd.Series([1.0, 2.0, 3.0, 4.0])
+    gfs.fit(X, y)
+    from featuristic.constants import OP_NAME_TO_KIND, synthesis_op_kinds
+
+    allowed_kinds = set(synthesis_op_kinds(allowed))
+    feature_kind = OP_NAME_TO_KIND["feature"]
+    for entry in gfs.all_generated_features_:
+        for kind in entry["individual"]["op_kinds"]:
+            assert kind == feature_kind or kind in allowed_kinds
+
+
+def test_gfs_fitness_metric_mae():
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        population_size=8,
+        max_generations=2,
+        fitness_metric="mae",
+        random_state=3,
+        verbose=False,
+    )
+    X = pd.DataFrame({"a": [1.0, 2.0, 4.0, 8.0], "b": [0.5, 1.0, 1.5, 2.0]})
+    y = pd.Series([1.0, 2.0, 4.0, 8.0])
+    out = gfs.fit_transform(X, y)
+    assert out.shape[0] == len(X)
+    assert gfs.fitness_metric == "mae"

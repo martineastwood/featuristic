@@ -14,7 +14,7 @@ from joblib import Parallel, cpu_count, delayed
 
 # Import from centralized backend (single source of truth for Nim library access)
 from ..featuristic_lib import (
-    evaluateBinaryGenomeArray,
+    evaluateBinaryPopulationArray,
     evolveBinaryPopulationBatched,
 )
 from ..synthesis.utils import as_fortran_xy
@@ -180,18 +180,16 @@ class BinaryPopulation:
         metric_map = {"mse": 0, "mae": 1, "r2": 2, "logloss": 3, "accuracy": 4}
         metric_type = metric_map.get(metric.lower(), 0)
 
-        fitness = []
-        for genome in self.population:
-            genome_list = genome.tolist()
-            score = evaluateBinaryGenomeArray(
-                genome_list,
-                X_f,
-                y_c,
-                metric_type,
-            )
-            fitness.append(score)
-
-        return fitness
+        pop = np.asarray(self.population, dtype=int)
+        scores = evaluateBinaryPopulationArray(
+            pop.flatten().tolist(),
+            int(pop.shape[0]),
+            int(pop.shape[1]),
+            X_f,
+            y_c,
+            metric_type,
+        )
+        return [float(s) for s in scores]
 
     def _selection(self, scores: List, k: int = 3) -> np.ndarray:
         """

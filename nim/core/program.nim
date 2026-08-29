@@ -183,13 +183,11 @@ proc evaluateProgramStack(program: StackProgram, fm: FeatureMatrix,
     let node = program.nodes[nodeIdx]
     case node.kind
     of opFeature:
-      let targetBuffer = pool.getBuffer(stackPtr)
       stack[stackPtr] = EvalFrame(
-        isLeaf: true, featureIndex: node.featureIndex, resultBuffer: targetBuffer
+        isLeaf: true,
+        featureIndex: node.featureIndex,
+        resultBuffer: fm.getColumn(node.featureIndex),
       )
-      let colData = fm.getColumn(node.featureIndex)
-      for i in 0..<fm.numRows:
-        targetBuffer[i] = colData[i]
       stackPtr += 1
     of opNegate:
       pushUnary:
@@ -301,5 +299,51 @@ proc evaluateProgramsBatchedImpl*(
       constants[j] = constantsFlat[idx]
     result[i] = evaluateProgramImpl(
       fm, featureIndices, opKinds, leftChildren, rightChildren, constants
+    )
+    offset += progSize
+
+proc serializePopulation*(pop: seq[StackProgram]): tuple[
+  programSizes: seq[int],
+  featureIndicesFlat: seq[int],
+  opKindsFlat: seq[int],
+  leftChildrenFlat: seq[int],
+  rightChildrenFlat: seq[int],
+  constantsFlat: seq[float64]
+] =
+  result.programSizes = newSeq[int](pop.len)
+  for i, program in pop:
+    let ser = serializeStackProgram(program)
+    result.programSizes[i] = len(ser.opKinds)
+    result.featureIndicesFlat.add(ser.featureIndices)
+    result.opKindsFlat.add(ser.opKinds)
+    result.leftChildrenFlat.add(ser.leftChildren)
+    result.rightChildrenFlat.add(ser.rightChildren)
+    result.constantsFlat.add(ser.constants)
+
+proc deserializePopulation*(
+  programSizes: seq[int],
+  featureIndicesFlat: seq[int],
+  opKindsFlat: seq[int],
+  leftChildrenFlat: seq[int],
+  rightChildrenFlat: seq[int],
+  constantsFlat: seq[float64]
+): seq[StackProgram] =
+  result = newSeq[StackProgram](programSizes.len)
+  var offset = 0
+  for i, progSize in programSizes:
+    var featureIndices = newSeq[int](progSize)
+    var opKinds = newSeq[int](progSize)
+    var leftChildren = newSeq[int](progSize)
+    var rightChildren = newSeq[int](progSize)
+    var constants = newSeq[float64](progSize)
+    for j in 0..<progSize:
+      let idx = offset + j
+      featureIndices[j] = featureIndicesFlat[idx]
+      opKinds[j] = opKindsFlat[idx]
+      leftChildren[j] = leftChildrenFlat[idx]
+      rightChildren[j] = rightChildrenFlat[idx]
+      constants[j] = constantsFlat[idx]
+    result[i] = stackProgramFromSerialized(
+      featureIndices, opKinds, leftChildren, rightChildren, constants
     )
     offset += progSize

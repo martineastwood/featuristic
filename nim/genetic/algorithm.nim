@@ -5,11 +5,24 @@ import std/random
 import std/typedthreads
 import std/locks
 import std/math
+import std/cpuinfo
 
 
-# ============================================================================
-# Types for Parallel Execution
-# ============================================================================
+func synthesisOps(): seq[OperationKind] =
+  @[
+    opAdd, opSubtract, opMultiply, opDivide, opPow,
+    opNegate, opSquare, opCube, opAbs, opSqrt,
+    opSin, opCos, opTan, opAddConstant, opMulConstant
+  ]
+
+func resolveOps(opKinds: seq[int]): seq[OperationKind] =
+  for k in opKinds:
+    let kind = OperationKind(k)
+    if kind != opFeature:
+      result.add(kind)
+  if result.len == 0:
+    result = synthesisOps()
+
 
 type
   SingleGAResult* = object
@@ -69,22 +82,77 @@ proc pearsonCorrelation*(yPred: seq[float64], yTrue: seq[float64]): float64 =
   covariance / sqrt(stdPred * stdTrue)
 
 
+proc linearlyScaled(yPred, yTrue: seq[float64]): seq[float64] =
+  ## Least-squares a + b * yPred (Keijzer linear scaling).
+  let n = len(yPred)
+  result = newSeq[float64](n)
+  if n == 0 or n != len(yTrue):
+    return
+  var meanP = 0.0
+  var meanT = 0.0
+  for i in 0..<n:
+    meanP += yPred[i]
+    meanT += yTrue[i]
+  meanP /= n.float64
+  meanT /= n.float64
+  var cov = 0.0
+  var varP = 0.0
+  for i in 0..<n:
+    let dp = yPred[i] - meanP
+    cov += dp * (yTrue[i] - meanT)
+    varP += dp * dp
+  let b = if varP < 1e-18: 0.0 else: cov / varP
+  let a = meanT - b * meanP
+  for i in 0..<n:
+    result[i] = a + b * yPred[i]
+
+proc maeSeq(yPred, yTrue: seq[float64]): float64 =
+  let n = len(yPred)
+  if n == 0 or n != len(yTrue):
+    return Inf
+  var s = 0.0
+  for i in 0..<n:
+    s += abs(yPred[i] - yTrue[i])
+  s / n.float64
+
+proc mseSeq(yPred, yTrue: seq[float64]): float64 =
+  let n = len(yPred)
+  if n == 0 or n != len(yTrue):
+    return Inf
+  var s = 0.0
+  for i in 0..<n:
+    let d = yPred[i] - yTrue[i]
+    s += d * d
+  s / n.float64
+
 proc computeFitness*(
   yPred: seq[float64],
   yTrue: seq[float64],
   programSize: int,
-  parsimonyCoefficient: float64
+  parsimonyCoefficient: float64,
+  fitnessMetric: int = 0
 ): FitnessResult =
-  ## Compute fitness score with parsimony penalty
+  ## fitnessMetric: 0 = Pearson (1-|r|), 1 = MAE, 2 = MSE.
+  ## MAE/MSE use linear scaling of yPred before scoring.
+  var pred = yPred
+  if fitnessMetric == 1 or fitnessMetric == 2:
+    pred = linearlyScaled(yPred, yTrue)
 
-  let correlation = pearsonCorrelation(yPred, yTrue)
+  var score: float64
+  case fitnessMetric
+  of 1:
+    score = maeSeq(pred, yTrue)
+  of 2:
+    score = mseSeq(pred, yTrue)
+  else:
+    score = 1.0 - abs(pearsonCorrelation(pred, yTrue))
 
-  # Convert to error (lower is better)
-  let score = 1.0 - abs(correlation)
-
-  # Apply parsimony penalty
   let penalty = pow(programSize.float64, parsimonyCoefficient)
-  let finalFitness = score / penalty
+  var finalFitness: float64
+  if fitnessMetric == 0:
+    finalFitness = score / max(penalty, 1e-18)
+  else:
+    finalFitness = score * (1.0 + parsimonyCoefficient * programSize.float64)
 
   return FitnessResult(
     score: score,
@@ -319,15 +387,12 @@ proc runGeneticAlgorithmImpl(
   tournamentSize: int,
   crossoverProb: float64,
   parsimonyCoefficient: float64,
-  rng: var Rand
+  rng: var Rand,
+  availableOpKinds: seq[int] = @[],
+  fitnessMetric: int = 0
 ): EvolutionResult =
   let numFeatures = fm.numCols
-  let availableOps = @[
-    opAdd, opSubtract, opMultiply, opDivide, opPow,
-    opNegate, opSquare, opCube,
-    opAbs, opSqrt,
-    opSin, opCos, opTan
-  ]
+  let availableOps = resolveOps(availableOpKinds)
 
   var population = initializePopulation(rng, populationSize, maxDepth,
       numFeatures, availableOps)
@@ -345,7 +410,7 @@ proc runGeneticAlgorithmImpl(
     for i in 0..<populationSize:
       let yPred = evaluateProgramStack(population[i], fm, pool)
       let fitnessResult = computeFitness(yPred, targetData, len(population[
-          i].nodes), parsimonyCoefficient)
+          i].nodes), parsimonyCoefficient, fitnessMetric)
       fitnessValues[i] = fitnessResult.finalFitness
       if fitnessResult.finalFitness < bestFitness:
         bestFitness = fitnessResult.finalFitness
@@ -376,7 +441,9 @@ proc runSingleGA(
   tournamentSize: int,
   crossoverProb: float64,
   parsimonyCoef: float64,
-  seed: int32
+  seed: int32,
+  availableOpKinds: seq[int],
+  fitnessMetric: int
 ): SingleGAResult {.gcsafe.} =
   var rng = initRand(seed)
   var fm = cloneFeatureMatrix(sharedFm)
@@ -387,11 +454,7 @@ proc runSingleGA(
   var pool = newEvalBufferPool(maxNodes, fm.numRows)
   defer: destroyEvalBufferPool(pool)
 
-  let availableOps = @[
-    opAdd, opSubtract, opMultiply, opDivide, opPow,
-    opNegate, opSquare, opCube, opAbs, opSqrt,
-    opSin, opCos, opTan, opAddConstant, opMulConstant
-  ]
+  let availableOps = resolveOps(availableOpKinds)
 
   var population = initializePopulation(rng, popSize, maxDepth, numFeatures, availableOps)
 
@@ -408,7 +471,7 @@ proc runSingleGA(
     for i in 0..<popSize:
       # Use thread-local pool
       let yPred = evaluateProgramStack(population[i], fm, pool)
-      let fitRes = computeFitness(yPred, targetData, len(population[i].nodes), parsimonyCoef)
+      let fitRes = computeFitness(yPred, targetData, len(population[i].nodes), parsimonyCoef, fitnessMetric)
       fitnessValues[i] = fitRes.finalFitness
 
       # Track overall best
@@ -461,9 +524,11 @@ proc runMultipleGAs*(
   tournamentSize: int,
   crossoverProb: float64,
   parsimonyCoefficient: float64,
-  randomSeeds: seq[int32]
+  randomSeeds: seq[int32],
+  availableOpKinds: seq[int] = @[],
+  fitnessMetric: int = 0
 ): MultipleGAResult =
-  ## Independent GAs in parallel via std/typedthreads.
+  ## Independent GAs in parallel, at most one OS thread per CPU.
 
   type
     GAParams = tuple[
@@ -477,13 +542,14 @@ proc runMultipleGAs*(
       parsimonyCoef: float64,
       seed: int32,
       idx: int,
+      availableOpKinds: seq[int],
+      fitnessMetric: int,
       results: ptr seq[SingleGAResult],
       lock: ptr Lock
     ]
 
   var
     results = newSeq[SingleGAResult](numGAs)
-    threads = newSeq[Thread[GAParams]](numGAs)
     resultsLock: Lock
   initLock(resultsLock)
 
@@ -497,47 +563,53 @@ proc runMultipleGAs*(
       params.tournamentSize,
       params.crossoverProb,
       params.parsimonyCoef,
-      params.seed
+      params.seed,
+      params.availableOpKinds,
+      params.fitnessMetric
     )
     acquire(params.lock[])
     params.results[][params.idx] = gaResult
     release(params.lock[])
 
-  var threadsCreated = 0
+  let maxPar = max(1, min(numGAs, countProcessors()))
   try:
-    for i in 0..<numGAs:
-      let params: GAParams = (
-        sharedFm: fm,
-        targetData: targetData,
-        generations: generationsPerGA,
-        popSize: populationSize,
-        maxDepth: maxDepth,
-        tournamentSize: tournamentSize,
-        crossoverProb: crossoverProb,
-        parsimonyCoef: parsimonyCoefficient,
-        seed: randomSeeds[i],
-        idx: i,
-        results: addr results,
-        lock: addr resultsLock
-      )
-      createThread(threads[i], gaThreadFunc, params)
-      threadsCreated = i + 1
-
-    # Wait for all threads to complete
-    joinThreads(threads)
+    var batchStart = 0
+    while batchStart < numGAs:
+      let batchLen = min(maxPar, numGAs - batchStart)
+      var threads = newSeq[Thread[GAParams]](batchLen)
+      var threadsCreated = 0
+      try:
+        for j in 0..<batchLen:
+          let i = batchStart + j
+          let params: GAParams = (
+            sharedFm: fm,
+            targetData: targetData,
+            generations: generationsPerGA,
+            popSize: populationSize,
+            maxDepth: maxDepth,
+            tournamentSize: tournamentSize,
+            crossoverProb: crossoverProb,
+            parsimonyCoef: parsimonyCoefficient,
+            seed: randomSeeds[i],
+            idx: i,
+            availableOpKinds: availableOpKinds,
+            fitnessMetric: fitnessMetric,
+            results: addr results,
+            lock: addr resultsLock
+          )
+          createThread(threads[j], gaThreadFunc, params)
+          threadsCreated = j + 1
+        joinThreads(threads)
+      except Exception:
+        for j in 0..<threadsCreated:
+          joinThread(threads[j])
+        raise
+      batchStart += batchLen
     deinitLock(resultsLock)
   except Exception:
-    # Cleanup: join any threads that were successfully created
-    # This prevents hanging if thread creation fails partway through
-    if threadsCreated > 0:
-      # Join only the threads that were successfully created
-      for i in 0..<threadsCreated:
-        joinThread(threads[i])
     deinitLock(resultsLock)
-    # Re-raise the exception to the caller
     raise
 
-  # Collect final results
   var bestPrograms = newSeq[StackProgram](numGAs)
   var bestFitnesses = newSeq[float64](numGAs)
   var bestScores = newSeq[float64](numGAs)

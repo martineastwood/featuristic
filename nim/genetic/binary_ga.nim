@@ -333,6 +333,17 @@ proc evaluateBinaryGenome*(
     return -computeAccuracy(yPred, yTrueSeq)
 
 
+proc evaluateBinaryPopulation*(
+  population: BinaryPopulation,
+  fm: FeatureMatrix,
+  y: ptr UncheckedArray[float64],
+  metricType: MetricType
+): seq[float64] =
+  result = newSeq[float64](len(population))
+  for i in 0..<len(population):
+    result[i] = evaluateBinaryGenome(population[i], fm, y, metricType)
+
+
 # ============================================================================
 # Selection
 # ============================================================================

@@ -24,7 +24,7 @@ In modern machine learning, we treat hyperparameter tuning as a rigorous, mathem
 Featuristic doesn't just blindly apply standard transformations. It **learns** the optimal combinations of operators (like `sin`, `abs`, `sqrt`, etc.) for your specific dataset through evolutionary pressure:
 
 1. **Initialization**: Creates a diverse "population" of random mathematical formulas (e.g., $(feature_1^2 - |feature_2|) \cdot feature_3$).
-2. **Evaluation**: Quantifies fitness by calculating the Pearson correlation between each transformed feature and your target variable.
+2. **Evaluation**: By default, fitness is Pearson correlation in Nim (`fitness_metric="mae"` / `"mse"` are built-in alternatives). Pass `fitness_function` to minimize a Python loss on `y_pred` instead.
 3. **Evolution**: Propagates the most successful formulas into the next generation using genetic operators like **Crossover** (combining subtrees of good formulas) and **Mutation** (randomly altering operators).
 4. **Simplification**: Automatically simplifies redundant operations (e.g., $x * 1$ to $x$, $-(-x)$ to $x$) to prevent formula bloat.
 
@@ -96,7 +96,8 @@ To build **this branch**, see [Installation](getting-started/installation.md) (`
 
 * **[Installation Guide](getting-started/installation.md)** - Get Featuristic up and running.
 * **[Quick Start](getting-started/quickstart.md)** - Learn the basic workflows.
-* **[Feature Synthesis Guide](guide/synthesis.md)** - Deep dive into genetic parameters, complexity control, and parsimony coefficients.
+* **[Feature Synthesis Guide](guide/synthesis.md)** - Genetic parameters, `functions=`, `fitness_metric`, custom `fitness_function`, and parsimony.
+* **[Metrics](guide/metrics.md)** - Native Nim metrics for selection and custom losses for synthesis and selection.
 * **[Feature Selection Guide](guide/selection.md)** - Learn about mRMR and genetic selection algorithms.
 * **[Scikit-Learn Integration](guide/sklearn.md)** - Use Featuristic in your existing pipelines.
 * **[Cars Dataset Example](examples/cars_example.md)** - Complete walkthrough with the UCI cars dataset.

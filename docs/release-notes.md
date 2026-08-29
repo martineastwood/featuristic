@@ -9,6 +9,8 @@ Compiled backend via [Nuwa](https://github.com/martineastwood/nuwa-build). **Not
 - Genetic synthesis, selection, and mRMR hot path in Nim; sklearn API in Python.
 - CPython 3.10–3.14. Python 3.8 and 3.9 are not supported on this line.
 - Pins: `nuwa-build>=0.5.1`, `nimpy@0.2.1`, `nuwa_sdk@0.4.4`.
+- Default synthesis fitness is Pearson in Nim; ``fitness_metric`` may be ``mae``/``mse`` (linearly scaled); optional ``fitness_function`` scores in Python.
+- ``functions=`` is passed into the Nim GA (operator subset).
 - Version string is `2.0.0` in Python and in `featuristic_lib.getVersion()`.
 - Parallel GA uses `std/typedthreads`, not weave.
 - Mutation node pick is uniform; 1.1 used depth-weighted selection (intentional 2.0 difference until revisited).

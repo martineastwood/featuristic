@@ -149,6 +149,15 @@ entry-point = "featuristic_lib.nim"
 nimble-deps = ["nimpy@0.2.1", "nuwa_sdk@0.4.4"]
 nim-flags = ["--threads:on", "--mm:arc", "--hint:DuplicateModuleImport:off"]
 
+[tool.nuwa.profiles.dev]
+nim-flags = ["-d:debug", "--debugger:native"]
+
+[tool.nuwa.profiles.release]
+nim-flags = ["-d:release", "--opt:speed", "--stacktrace:off", "--checks:off"]
+
+[tool.nuwa.profiles.bench]
+nim-flags = ["-d:release", "--opt:speed", "--stacktrace:on"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Disable progress bars completely to avoid threading issues on Windows

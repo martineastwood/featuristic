@@ -8,7 +8,7 @@ Rather than randomly guessing standard polynomial expansions, GFS acts as an alg
 
 ## Under the Hood: The Evolutionary Loop
 
-When you execute `.fit()`, Featuristic initiates a high-performance evolutionary loop entirely within its compiled Nim backend.
+When you execute `.fit()` with a built-in `fitness_metric`, Featuristic runs the evolutionary loop entirely in compiled Nim. With `fitness_function`, Nim still evaluates programs and evolves the population; Python only returns a scalar score each generation.
 
 ### 1. Initialization (The Primordial Soup)
 
@@ -16,7 +16,24 @@ The algorithm spawns a population of random algebraic expression trees limited b
 
 ### 2. Evaluation (Survival of the Fittest)
 
-Each formula is applied to your data to create a new feature vector. Featuristic evaluates fitness by calculating the **Pearson correlation** between this new feature and your target variable. Formulas with high correlation (low error) survive; the rest are discarded.
+Each formula is applied to your data to create a new feature vector. By default, Featuristic evaluates fitness **in Nim** using the **Pearson correlation** between this new feature and your target (`fitness_metric="mae"` or `"mse"` are compiled alternatives). Formulas with better fitness survive; the rest are discarded.
+
+To minimize a Python loss instead (MAE, pinball, a ranking score, …), pass `fitness_function`. Nim still evaluates programs and evolves the population each generation; your callable only scores `y_pred` vs `y`. That path is slower (GAs run one after another, and Python runs once per program per generation) and is the right tradeoff when Pearson is the wrong objective.
+
+```python
+import numpy as np
+import featuristic as ft
+
+def mae_fitness(y_true, y_pred, n_nodes):
+    # Lower is better. n_nodes is available if you want a complexity penalty.
+    return float(np.mean(np.abs(y_true - y_pred))) + 0.001 * n_nodes
+
+synth = ft.GeneticFeatureSynthesis(
+    n_features=5,
+    fitness_function=mae_fitness,
+)
+```
+
 
 ### 3. Evolution (Crossover & Mutation)
 
@@ -60,12 +77,30 @@ Understanding these parameters allows you to precisely control the bias-variance
 
 **The output constraint.** Internally, Featuristic generates `3 * n_features` high-quality candidates and utilizes mRMR to select the absolute best `n_features`.
 
+### `functions` (Default: all built-in operators)
+
+**The operator subset for the Nim GA.** Names from `list_symbolic_functions()` (for example `["add", "multiply"]`). Leaves are always original columns; you do not need to include `"feature"`.
+
 ### `parsimony_coefficient` (Default: 0.001)
 
-**The complexity penalty.** Genetic programming is prone to "bloat" (formulas growing arbitrarily large). The parsimony coefficient penalizes the fitness score based on the number of nodes in the formula tree.
+**Complexity penalty for built-in Nim fitness.** Genetic programming is prone to "bloat". It is **ignored** when you pass `fitness_function`; fold complexity into that callable via `n_nodes` instead.
 
+* **Pearson:** fitness is `(1 - |r|) / size**c`.
+* **MAE / MSE:** after linear scaling of `y_pred`, fitness is `score * (1 + c * size)`.
 * **Need highly interpretable features?** Increase to `0.01 - 0.1`.
 * **Need maximum predictive power?** Decrease to `0.0001 - 0.001`.
+
+### `fitness_metric` (Default: `"pearson"`)
+
+**Built-in Nim objective** when `fitness_function` is omitted: `"pearson"`, `"mae"`, or `"mse"`. MAE/MSE fit `a + b * y_pred` (Keijzer linear scaling) before the error is computed. Pearson is left unscaled (affine-invariant). Ignored when `fitness_function` is set.
+
+### `fitness_function` (Default: `None`)
+
+**Optional Python loss for synthesis.** Signature: `fitness_function(y_true, y_pred, n_nodes) -> float`. Lower is better. `y_true` and `y_pred` are 1-D float64 arrays (the target and the formula applied to `X`); `n_nodes` is the size of the expression tree.
+
+When `None`, Pearson correlation is computed in Nim for the whole GA (fastest). When set, independent GAs run one after another and Python is called once per program per generation.
+
+See the [Metrics guide](metrics.md#synthesis-geneticfeaturesynthesis) for a full example.
 
 ### `max_depth` (Default: 6)
 
@@ -123,7 +158,7 @@ plt.show()
 
 ### Note on Performance (`n_jobs`)
 
-Unlike traditional Python implementations, you do not need to manage parallelism (`n_jobs`) for Synthesis. Featuristic runs all feature-generation GAs in one compiled `runMultipleGAsArray` call in the Nim backend.
+You do not need `n_jobs` for synthesis. With a built-in `fitness_metric`, all feature-generation GAs run in one compiled `runMultipleGAsArray` call. With `fitness_function`, those GAs run sequentially so your Python callable can run with the GIL.
 
 ## Next Steps
 

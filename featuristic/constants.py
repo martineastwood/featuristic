@@ -30,6 +30,20 @@ OP_KIND_METADATA: Dict[int, Tuple[str, Optional[str]]] = {
     i: (getOperationName(i), getOperationFormat(i)) for i in ALL_OP_KINDS
 }
 
+SYNTHESIS_FITNESS_METRICS = {"pearson": 0, "mae": 1, "mse": 2}
+
+
+def synthesis_op_kinds(function_names: list[str]) -> list[int]:
+    """Map Python operator names to Nim op-kind ints (excludes leaf ``feature``)."""
+    kinds: list[int] = []
+    for name in function_names:
+        if name == "feature":
+            continue
+        if name not in OP_NAME_TO_KIND:
+            raise ValueError(f"Unknown symbolic function '{name}'")
+        kinds.append(OP_NAME_TO_KIND[name])
+    return kinds
+
 
 __all__ = [
     "OP_NAME_TO_KIND",
@@ -37,4 +51,6 @@ __all__ = [
     "UNARY_OPERATIONS",
     "BINARY_OPERATIONS",
     "ALL_OP_KINDS",
+    "SYNTHESIS_FITNESS_METRICS",
+    "synthesis_op_kinds",
 ]

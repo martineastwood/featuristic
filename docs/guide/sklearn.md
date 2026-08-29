@@ -85,7 +85,7 @@ predictions = pipeline.predict(X_test)
 
 ## Custom Objective Functions with Sklearn Estimators
 
-When using `GeneticFeatureSelector`, you can define custom objective functions that utilize any Scikit-Learn estimator to evaluate feature subsets during the evolution process.
+When using `GeneticFeatureSelector`, you can define custom objective functions that utilize any Scikit-Learn estimator to evaluate **feature subsets** during the evolution process.
 
 !!! tip "Performance Tip"
 While custom objective functions offer maximum flexibility, Featuristic also provides native Nim metrics (like `mse`, `r2`, `logloss`, `accuracy`) which run 15-30x faster by avoiding the Python-Nim boundary.
@@ -114,6 +114,28 @@ selector = ft.GeneticFeatureSelector(
 
 # Fit the selector
 X_train_selected = selector.fit_transform(X_train, y_train)
+```
+
+### Synthesis fitness with a vector loss
+
+`GeneticFeatureSynthesis` can minimize a Python loss on the **predicted feature** (`y_pred`) vs the target. That is not the same as selection's `objective_function`, which scores a **column subset**.
+
+```python
+import numpy as np
+import featuristic as ft
+
+def mae_fitness(y_true, y_pred, n_nodes):
+    return float(np.mean(np.abs(y_true - y_pred))) + 0.001 * n_nodes
+
+synth = ft.GeneticFeatureSynthesis(
+    n_features=10,
+    fitness_function=mae_fitness,
+    random_state=42,
+)
+
+# Or a compiled MAE objective without a Python callback:
+synth = ft.GeneticFeatureSynthesis(n_features=10, fitness_metric="mae")
+X_train_new = synth.fit_transform(X_train, y_train)
 ```
 
 ## Cross-Validation Compatibility

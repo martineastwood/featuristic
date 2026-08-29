@@ -72,6 +72,8 @@ selector = ft.GeneticFeatureSelector(
 
 ```
 
+To minimize a loss on a **synthesized feature vector** (not a column mask), use `GeneticFeatureSynthesis(..., fitness_function=...)`. See the [Metrics](metrics.md#synthesis-geneticfeaturesynthesis) guide.
+
 ---
 
 ## Tuning the Genetic Search Space

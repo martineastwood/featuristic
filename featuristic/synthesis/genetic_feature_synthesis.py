@@ -1,7 +1,7 @@
 """Contains the SymbolicFeatureGenerator class."""
 
 import random
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -12,8 +12,13 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
 from sklearn.utils.validation import check_is_fitted
 
+from ..constants import SYNTHESIS_FITNESS_METRICS, synthesis_op_kinds
 from ..featuristic_lib import runMultipleGAsArray
-from .engine import deserialize_program, evaluate_programs
+from .engine import (
+    deserialize_program,
+    evaluate_programs,
+    run_multiple_gas_python_fitness,
+)
 from .mrmr import MaxRelevanceMinRedundancy
 from .preprocess import preprocess_data
 from .render import render_prog, simplify_program
@@ -41,7 +46,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
       * Pre-allocated buffer pools (no per-node allocations)
       * Zero-copy NumPy array access
       * Stack-based evaluation (no Python recursion overhead)
-    - The entire genetic algorithm loop runs in Nim, minimizing Python/Nim boundary crossings
+    - The entire genetic algorithm loop runs in Nim when using the default Pearson
+      fitness. Pass ``fitness_function`` to score each program in Python; Nim still
+      evaluates formulas and evolves the population each generation.
 
     **Thread Safety:**
     - Nim backend is already faster than Python-based parallelism
@@ -82,6 +89,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         verbose: bool = False,
         random_state: Optional[int] = None,
         max_depth: int = 6,
+        fitness_function: Optional[Callable] = None,
+        fitness_metric: str = "pearson",
     ):
         """
         Initialize the Symbolic Feature Generator.
@@ -113,20 +122,19 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             generation.
 
         parsimony_coefficient : float
-            The parsimony coefficient. Larger values penalize larger programs more and
-            encourage smaller programs. This helps prevent bloat where the programs
-            become increasingly large and complex without improving the fitness, which
-            increases computation complexity and reduces the interpretability of the
-            features.
+            Complexity penalty for built-in Nim fitness (ignored with
+            ``fitness_function``). Pearson uses ``score / size**c``. MAE/MSE use
+            ``score * (1 + c * size)`` after linear scaling of ``y_pred``.
 
         early_termination_iters : int
             If the best score does not improve for this number of generations, then the
             algorithm will terminate early.
 
         functions : list
-            The list of functions to use in the programs. If `None` then all the
-            built-in functions are used. The functions must be the names of the
-            functions returned by the `list_symbolic_functions` method.
+            Operator names allowed in synthesized formulas (see
+            ``list_symbolic_functions``). These are passed into the Nim GA.
+            If ``None``, every built-in operator is used. The leaf ``feature``
+            name is ignored if present.
 
         return_all_features : bool
             Whether to return all the features generated or just the best features.
@@ -142,6 +150,20 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             The maximum depth of the expression trees in the genetic programming.
             Larger values allow for more complex features but increase the risk of
             overfitting (bloat). Typical values are 3-6. Default is 6.
+
+        fitness_function : callable, optional
+            Custom loss for synthesis. Called as
+            ``fitness_function(y_true, y_pred, n_nodes) -> float`` once per
+            program each generation (lower is better). ``y_true`` / ``y_pred``
+            are 1-D float64 arrays; ``n_nodes`` is program size (for parsimony).
+            When omitted, fitness is Pearson correlation entirely in Nim (faster).
+            With a custom function, GAs run sequentially: Nim still evaluates
+            programs and evolves the population.
+
+        fitness_metric : str
+            Built-in Nim fitness when ``fitness_function`` is None: ``"pearson"``
+            (default), ``"mae"``, or ``"mse"``. MAE/MSE linearly scale ``y_pred``
+            before scoring. Ignored when ``fitness_function`` is set.
         """
         if functions is None:
             self.functions = list(AVAILABLE_OPERATIONS)
@@ -154,6 +176,15 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                         f"Function '{func}' not found in symbolic operations"
                     )
                 self.functions.append(func)
+
+        metric_key = fitness_metric.lower()
+        if metric_key not in SYNTHESIS_FITNESS_METRICS:
+            raise ValueError(
+                f"fitness_metric must be one of {sorted(SYNTHESIS_FITNESS_METRICS)}, "
+                f"got {fitness_metric!r}"
+            )
+        self.fitness_metric = metric_key
+        self.op_kinds_ = synthesis_op_kinds(self.functions)
 
         self.population_size = population_size
         self.max_generations = max_generations
@@ -172,6 +203,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         self.verbose = verbose
         self.random_state = random_state
+        self.fitness_function = fitness_function
 
         # Categorical encoding attributes
         self.target_encoder_ = None
@@ -349,27 +381,52 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             ]
 
         # Note: Nim function returns tuple (positional args due to nimpy)
-        (
-            best_feature_indices,
-            best_op_kinds,
-            best_left_children,
-            best_right_children,
-            best_constants,
-            best_fitnesses,
-            best_scores,
-            generation_histories,  # Generation-by-generation fitness for each GA
-        ) = runMultipleGAsArray(
-            X_f,
-            y_c,
-            self.n_features,
-            generations_per_ga,
-            self.population_size,
-            self.max_depth,
-            self.tournament_size,
-            self.crossover_proba,
-            self.parsimony_coefficient,
-            random_seeds,
-        )
+        if self.fitness_function is None:
+            (
+                best_feature_indices,
+                best_op_kinds,
+                best_left_children,
+                best_right_children,
+                best_constants,
+                best_fitnesses,
+                best_scores,
+                generation_histories,
+            ) = runMultipleGAsArray(
+                X_f,
+                y_c,
+                self.n_features,
+                generations_per_ga,
+                self.population_size,
+                self.max_depth,
+                self.tournament_size,
+                self.crossover_proba,
+                self.parsimony_coefficient,
+                random_seeds,
+                self.op_kinds_,
+                SYNTHESIS_FITNESS_METRICS[self.fitness_metric],
+            )
+        else:
+            custom = run_multiple_gas_python_fitness(
+                X_f,
+                y_c,
+                self.n_features,
+                generations_per_ga,
+                self.population_size,
+                self.max_depth,
+                self.tournament_size,
+                self.crossover_proba,
+                random_seeds,
+                self.fitness_function,
+                self.op_kinds_,
+            )
+            best_feature_indices = custom["best_feature_indices"]
+            best_op_kinds = custom["best_op_kinds"]
+            best_left_children = custom["best_left_children"]
+            best_right_children = custom["best_right_children"]
+            best_constants = custom["best_constants"]
+            best_fitnesses = custom["best_fitnesses"]
+            best_scores = custom["best_scores"]
+            generation_histories = custom["generation_histories"]
 
         # Store generation histories for convergence plotting
         self.generation_histories_ = generation_histories

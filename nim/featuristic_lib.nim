@@ -120,7 +120,9 @@ proc runGeneticAlgorithmArray*(
   tournamentSize: int,
   crossoverProb: float64,
   parsimonyCoefficient: float64,
-  randomSeed: int
+  randomSeed: int,
+  availableOpKinds: seq[int] = @[],
+  fitnessMetric: int = 0
 ): tuple[
   bestFeatureIndices: seq[int],
   bestOpKinds: seq[int],
@@ -149,7 +151,8 @@ proc runGeneticAlgorithmArray*(
   withNogil:
     evolutionResult = runGeneticAlgorithmImpl(
       fm, targetData, populationSize, numGenerations, maxDepth,
-      tournamentSize, crossoverProb, parsimonyCoefficient, rng
+      tournamentSize, crossoverProb, parsimonyCoefficient, rng,
+      availableOpKinds, fitnessMetric
     )
   let ser = serializeStackProgram(evolutionResult.bestProgram)
   (
@@ -172,7 +175,9 @@ proc runMultipleGAsArray*(
   tournamentSize: int,
   crossoverProb: float64,
   parsimonyCoefficient: float64,
-  randomSeeds: seq[int32]
+  randomSeeds: seq[int32],
+  availableOpKinds: seq[int] = @[],
+  fitnessMetric: int = 0
 ): tuple[
   bestFeatureIndices: seq[seq[int]],
   bestOpKinds: seq[seq[int]],
@@ -201,7 +206,8 @@ proc runMultipleGAsArray*(
   withNogil:
     multiGAResult = runMultipleGAs(
       fm, targetData, numGAs, generationsPerGA, populationSize, maxDepth,
-      tournamentSize, crossoverProb, parsimonyCoefficient, randomSeeds
+      tournamentSize, crossoverProb, parsimonyCoefficient, randomSeeds,
+      availableOpKinds, fitnessMetric
     )
 
   var bestFeatureIndices = newSeq[seq[int]](numGAs)
@@ -324,6 +330,46 @@ proc evaluateBinaryGenomeArray*(
   else: mtMSE
   evaluateBinaryGenome(genome, fm, target, metric)
 
+proc evaluateBinaryPopulationArray*(
+  populationFlat: seq[int],
+  populationSize: int,
+  genomeLength: int,
+  X: PyObject,
+  y: PyObject,
+  metricType: int
+): seq[float64] {.nuwa_export.} =
+  var XArr = np.asStridedArray[float64](X)
+  defer: XArr.close()
+  var yArr = np.asNumpyArray[float64](y)
+  defer: yArr.close()
+  if XArr.ndim != 2:
+    raise newException(ValueError, "X must be 2-dimensional")
+  if yArr.ndim != 1:
+    raise newException(ValueError, "y must be 1-dimensional")
+  if XArr.shape[0] != yArr.len:
+    raise newException(ValueError, "X and y must have the same number of rows")
+
+  var fm = toFeatureMatrix(XArr)
+  defer: destroyFeatureMatrix(fm)
+  let target = yDataPtr(yArr)
+  let metric = case metricType
+  of 0: mtMSE
+  of 1: mtMAE
+  of 2: mtR2
+  of 3: mtLogLoss
+  of 4: mtAccuracy
+  else: mtMSE
+  var population = newSeq[BinaryGenome](populationSize)
+  for i in 0..<populationSize:
+    var genome = newSeq[int](genomeLength)
+    for j in 0..<genomeLength:
+      genome[j] = populationFlat[i * genomeLength + j]
+    population[i] = genome
+  var scores: seq[float64]
+  withNogil:
+    scores = evaluateBinaryPopulation(population, fm, target, metric)
+  scores
+
 proc evolveBinaryPopulationBatched*(
   populationFlat: seq[int],
   fitness: seq[float64],
@@ -349,6 +395,63 @@ proc evolveBinaryPopulationBatched*(
     for j in 0..<genomeLength:
       flatResult[i * genomeLength + j] = newPopulation[i][j]
   flatResult
+
+proc initializeGPPopulationArray*(
+  numFeatures: int,
+  populationSize: int,
+  maxDepth: int,
+  randomSeed: int,
+  availableOpKinds: seq[int] = @[]
+): tuple[
+  programSizes: seq[int],
+  featureIndicesFlat: seq[int],
+  opKindsFlat: seq[int],
+  leftChildrenFlat: seq[int],
+  rightChildrenFlat: seq[int],
+  constantsFlat: seq[float64]
+] {.nuwa_export.} =
+  ## Random GP population for a Python-driven generation loop.
+  var rng = initRand(randomSeed)
+  serializePopulation(
+    initializePopulation(
+      rng, populationSize, maxDepth, numFeatures, resolveOps(availableOpKinds)
+    )
+  )
+
+proc evolveGPGenerationArray*(
+  programSizes: seq[int],
+  featureIndicesFlat: seq[int],
+  opKindsFlat: seq[int],
+  leftChildrenFlat: seq[int],
+  rightChildrenFlat: seq[int],
+  constantsFlat: seq[float64],
+  fitness: seq[float64],
+  tournamentSize: int,
+  crossoverProb: float64,
+  maxDepth: int,
+  numFeatures: int,
+  randomSeed: int,
+  availableOpKinds: seq[int] = @[]
+): tuple[
+  programSizes: seq[int],
+  featureIndicesFlat: seq[int],
+  opKindsFlat: seq[int],
+  leftChildrenFlat: seq[int],
+  rightChildrenFlat: seq[int],
+  constantsFlat: seq[float64]
+] {.nuwa_export.} =
+  ## One GP generation (selection, crossover/mutation, simplify) given Python fitness.
+  var rng = initRand(randomSeed)
+  let population = deserializePopulation(
+    programSizes, featureIndicesFlat, opKindsFlat,
+    leftChildrenFlat, rightChildrenFlat, constantsFlat
+  )
+  serializePopulation(
+    evolveGeneration(
+      population, fitness, tournamentSize, crossoverProb,
+      maxDepth, numFeatures, resolveOps(availableOpKinds), rng
+    )
+  )
 
 proc pearsonCorrelationNim*(
   yPred: seq[float64],

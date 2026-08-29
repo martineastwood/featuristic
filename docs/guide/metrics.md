@@ -16,30 +16,26 @@ If you are using an error metric (like MAE or MSE), the algorithm naturally mini
 
 ## Execution Modes: Native vs. Custom
 
-Featuristic evaluates metrics using two distinct computational pathways. Understanding the difference is key to pipeline performance.
+Fitness is computed on two different surfaces: **feature selection** (binary masks) and **feature synthesis** (symbolic formulas). Each has a fast Nim default and a Python hook.
 
-### 1. Native Metrics
+### Selection (`GeneticFeatureSelector`)
 
-If you are optimizing for standard machine learning metrics, pass the `metric` string argument. This bypasses the Python interpreter completely. The feature matrix and target are passed as NumPy arrays into the compiled Nim backend.
+#### Native metrics
 
-Native evaluation runs the entire evolution loop—Selection, Crossover, Mutation, and Fitness Calculation, at the C-level, resulting in a significant speedup compared to standard Scikit-Learn evaluation.
+Pass `metric` (`"mae"`, `"mse"`, `"r2"`, `"logloss"`, `"accuracy"`). Evaluation uses the compiled Nim backend on Fortran-contiguous arrays.
 
 ```python
 import featuristic as ft
 
-# The fastest execution pathway
 selector = ft.GeneticFeatureSelector(
-    metric="mae", # Uses Native Nim MAE
+    metric="mae",
     population_size=100
 )
-
 ```
 
-### 2. Custom Objective Functions
+#### Custom objectives
 
-If you require complex validation schemes (like Stratified Group K-Fold), custom ensemble models, or specialized business metrics, you can define a custom Python objective function.
-
-**Best Practice:** Always use cross-validation within custom objectives. Evaluating on a single train/test split will cause the genetic algorithm to overfit to that specific split.
+Use `objective_function(X_subset, y) -> float` (minimize) for CV, custom models, or business metrics. Prefer cross-validation inside the callable so the GA does not overfit one split.
 
 ```python
 from sklearn.model_selection import cross_val_score
@@ -47,23 +43,44 @@ from sklearn.linear_model import LogisticRegression
 
 def custom_objective(X_subset, y):
     model = LogisticRegression(max_iter=1000)
-    # Stratified 5-fold CV to prevent overfitting
     scores = cross_val_score(model, X_subset, y, cv=5, scoring="f1")
-    # Convert F1 (maximization) to minimization
     return scores.mean() * -1
 
 selector = ft.GeneticFeatureSelector(
     objective_function=custom_objective,
     population_size=100
 )
-
 ```
+
+Crossover and mutation still run in Nim (`evolveBinaryPopulationBatched`). Only scoring is Python.
+
+### Synthesis (`GeneticFeatureSynthesis`)
+
+#### Native metrics (`fitness_metric`)
+
+With no `fitness_function`, the whole GA stays in Nim. Choose `fitness_metric="pearson"` (default), `"mae"`, or `"mse"`. Pearson uses \(1-|r|\) with penalty `score / size**c`. MAE/MSE linearly scale predictions, then apply `score * (1 + c * size)`.
+
+#### Custom `fitness_function`
+
+Pass `fitness_function(y_true, y_pred, n_nodes) -> float` (minimize). Nim evaluates each formula to `y_pred` and evolves the population; Python only returns the scalar. Independent GAs run sequentially. `parsimony_coefficient` does not apply; use `n_nodes` if you want a complexity penalty.
+
+```python
+import numpy as np
+import featuristic as ft
+
+def mae_fitness(y_true, y_pred, n_nodes):
+    return float(np.mean(np.abs(y_true - y_pred))) + 0.001 * n_nodes
+
+synth = ft.GeneticFeatureSynthesis(fitness_function=mae_fitness)
+```
+
+Do not put a heavy sklearn `cross_val_score` on the full original `X` inside this hook: the callable sees the **synthesized feature vector**, not a column subset. For model-based subset search, use `GeneticFeatureSelector`.
 
 ---
 
-## Supported Native Metrics
+## Supported Native Metrics (selection)
 
-The Nim backend includes custom, highly optimized solvers for both Regression and Classification tasks.
+The Nim backend includes optimized solvers for **feature selection** (`metric=`). Synthesis uses `fitness_metric` (`pearson` / `mae` / `mse`) or a custom `fitness_function`. Those selection metric strings are not synthesis losses.
 
 ### Regression Metrics
 
@@ -95,3 +112,6 @@ Use this quick-reference table to determine the optimal configuration for your d
 | **Classification (Balanced)** | `"accuracy"` | Higher is Better (Inverted) | ✅ Yes |
 | **Classification (Imbalanced)** | *Custom: `roc_auc*` | Higher is Better (Inverted) | ❌ No |
 | **Classification (Precision/Recall)** | *Custom: `f1*` | Higher is Better (Inverted) | ❌ No |
+| **Synthesis (Pearson)** | `fitness_metric="pearson"` | Higher abs(r) (Nim) | ✅ Yes |
+| **Synthesis (MAE/MSE)** | `fitness_metric="mae"` / `"mse"` | Lower is Better (Nim, scaled) | ✅ Yes |
+| **Synthesis (custom loss)** | `fitness_function(...)` | Lower is Better | Python |

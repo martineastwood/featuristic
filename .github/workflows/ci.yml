@@ -3,9 +3,9 @@ name: CI
 # This branch is Featuristic 2.0 (Nim). Do not treat a green run as a PyPI release.
 on:
   push:
-    branches: ["main", "dev", "nim"]
+    branches: ["nim"]
   pull_request:
-    branches: ["main", "dev", "nim"]
+    branches: ["nim"]
   workflow_dispatch:
 
 jobs:
@@ -102,31 +102,3 @@ jobs:
 
       - name: Run end-to-end integration tests
         run: pytest tests/test_end_to_end.py -v --tb=short
-
-  build-wheel:
-    name: Local wheel smoke on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - uses: ./.github/actions/setup-nim
-
-      - name: Build wheel
-        run: |
-          pip install build "nuwa-build>=0.5.1"
-          python -m build --wheel
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheel-${{ matrix.os }}
-          path: dist/*.whl

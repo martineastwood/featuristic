@@ -32,7 +32,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
 Next, we deploy Symbolic Regression to autonomously generate new features. Featuristic creates hundreds of mathematical formulas (e.g., sin(horsepower) * weight, model_year^3 / cylinders) and evolves them over multiple generations.
 
-*Note: Behind the scenes, the entire evolutionary loop is running in Featuristic's compiled Nim backend, evaluating thousands of trees per second.*
+*Note: Behind the scenes, the default evolutionary loop (`fitness_metric="pearson"`) runs in Featuristic's compiled Nim backend. Use `fitness_metric="mae"` / `"mse"` for compiled error metrics, or `fitness_function` for a Python loss — see the [Metrics](../guide/metrics.md#synthesis-geneticfeaturesynthesis) and [Synthesis](../guide/synthesis.md) guides.*
 
 ```python
 # Initialize the synthesizer

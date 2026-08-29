@@ -2,15 +2,22 @@
 Nim bridge for high-performance genetic programming.
 
 This module provides Python functions to interface with the Nim genetic algorithm backend.
-All evolution happens in Nim for 10-50x speedup.
+Default synthesis fitness (Pearson) runs entirely in Nim. Optional ``fitness_function``
+scores each program in Python once per generation.
 """
 
-from typing import List
+from typing import Callable, List, Optional
 
+import numpy as np
 import pandas as pd
 
 from ..constants import OP_KIND_METADATA, OP_NAME_TO_KIND
-from ..featuristic_lib import evaluateProgramsBatchedArray, runGeneticAlgorithmArray
+from ..featuristic_lib import (
+    evaluateProgramsBatchedArray,
+    evolveGPGenerationArray,
+    initializeGPPopulationArray,
+    runGeneticAlgorithmArray,
+)
 from .utils import as_fortran_matrix, as_fortran_xy
 
 
@@ -118,6 +125,8 @@ def run_genetic_algorithm(
     crossover_prob: float,
     parsimony_coefficient: float,
     random_seed: int,
+    available_op_kinds: Optional[list] = None,
+    fitness_metric: int = 0,
 ) -> dict:
     """
     Run the complete genetic algorithm in Nim.
@@ -151,6 +160,12 @@ def run_genetic_algorithm(
     random_seed : int
         Random seed for reproducibility.
 
+    available_op_kinds : list[int], optional
+        Nim operator kinds; empty uses the full synthesis operator set.
+
+    fitness_metric : int
+        ``0`` Pearson, ``1`` MAE, ``2`` MSE.
+
     Returns
     -------
     dict
@@ -175,6 +190,8 @@ def run_genetic_algorithm(
         crossover_prob,
         parsimony_coefficient,
         random_seed,
+        available_op_kinds or [],
+        fitness_metric,
     )
 
     # Unpack result
@@ -255,3 +272,151 @@ def evaluate_programs(X: pd.DataFrame, program_data_list: list[dict]) -> pd.Data
 
     # Convert results to DataFrame (transpose for column-per-program format)
     return pd.DataFrame(results).T
+
+
+def _unpack_population(raw) -> dict:
+    (
+        program_sizes,
+        feature_indices_flat,
+        op_kinds_flat,
+        left_children_flat,
+        right_children_flat,
+        constants_flat,
+    ) = raw
+    return {
+        "program_sizes": list(program_sizes),
+        "feature_indices_flat": list(feature_indices_flat),
+        "op_kinds_flat": list(op_kinds_flat),
+        "left_children_flat": list(left_children_flat),
+        "right_children_flat": list(right_children_flat),
+        "constants_flat": list(constants_flat),
+    }
+
+
+def _program_at(pop: dict, index: int) -> dict:
+    offset = sum(pop["program_sizes"][:index])
+    size = pop["program_sizes"][index]
+    end = offset + size
+    return {
+        "feature_indices": pop["feature_indices_flat"][offset:end],
+        "op_kinds": pop["op_kinds_flat"][offset:end],
+        "left_children": pop["left_children_flat"][offset:end],
+        "right_children": pop["right_children_flat"][offset:end],
+        "constants": pop["constants_flat"][offset:end],
+    }
+
+
+def run_multiple_gas_python_fitness(
+    X,
+    y,
+    num_gas: int,
+    generations_per_ga: int,
+    population_size: int,
+    max_depth: int,
+    tournament_size: int,
+    crossover_prob: float,
+    random_seeds: List[int],
+    fitness_function: Callable,
+    available_op_kinds: Optional[List[int]] = None,
+) -> dict:
+    """Run independent GAs with a Python fitness callback each generation.
+
+    ``fitness_function(y_true, y_pred, n_nodes) -> float`` must return a
+    value to minimize. Evaluation and evolution stay in Nim; scoring does not.
+    """
+    X_f, y_c = as_fortran_xy(X, y)
+    n_features = X_f.shape[1]
+    y_true = np.asarray(y_c, dtype=np.float64)
+    op_kinds = list(available_op_kinds or [])
+
+    best_feature_indices = []
+    best_op_kinds = []
+    best_left_children = []
+    best_right_children = []
+    best_constants = []
+    best_fitnesses = []
+    best_scores = []
+    generation_histories = []
+
+    for ga_idx in range(num_gas):
+        seed = int(random_seeds[ga_idx])
+        pop = _unpack_population(
+            initializeGPPopulationArray(
+                n_features, population_size, max_depth, seed, op_kinds
+            )
+        )
+        best_fitness = np.inf
+        best_program = None
+        history = []
+
+        for gen in range(generations_per_ga):
+            preds = evaluateProgramsBatchedArray(
+                X_f,
+                pop["program_sizes"],
+                pop["feature_indices_flat"],
+                pop["op_kinds_flat"],
+                pop["left_children_flat"],
+                pop["right_children_flat"],
+                pop["constants_flat"],
+            )
+            fitness = []
+            gen_best = np.inf
+            for i, pred in enumerate(preds):
+                y_pred = np.asarray(pred, dtype=np.float64)
+                n_nodes = pop["program_sizes"][i]
+                score = float(fitness_function(y_true, y_pred, n_nodes))
+                if not np.isfinite(score):
+                    score = float(np.inf)
+                fitness.append(score)
+                if score < gen_best:
+                    gen_best = score
+                if score < best_fitness:
+                    best_fitness = score
+                    best_program = _program_at(pop, i)
+                    best_program["fitness"] = score
+                    best_program["score"] = score
+            history.append(gen_best)
+            if gen < generations_per_ga - 1:
+                pop = _unpack_population(
+                    evolveGPGenerationArray(
+                        pop["program_sizes"],
+                        pop["feature_indices_flat"],
+                        pop["op_kinds_flat"],
+                        pop["left_children_flat"],
+                        pop["right_children_flat"],
+                        pop["constants_flat"],
+                        fitness,
+                        tournament_size,
+                        crossover_prob,
+                        max_depth,
+                        n_features,
+                        (seed + gen + 1) % (2**31),
+                        op_kinds,
+                    )
+                )
+
+        if best_program is None:
+            best_program = _program_at(pop, 0)
+            best_program["fitness"] = float(np.inf)
+            best_program["score"] = float(np.inf)
+            best_fitness = float(np.inf)
+
+        best_feature_indices.append(best_program["feature_indices"])
+        best_op_kinds.append(best_program["op_kinds"])
+        best_left_children.append(best_program["left_children"])
+        best_right_children.append(best_program["right_children"])
+        best_constants.append(best_program["constants"])
+        best_fitnesses.append(best_fitness)
+        best_scores.append(best_program["score"])
+        generation_histories.append(history)
+
+    return {
+        "best_feature_indices": best_feature_indices,
+        "best_op_kinds": best_op_kinds,
+        "best_left_children": best_left_children,
+        "best_right_children": best_right_children,
+        "best_constants": best_constants,
+        "best_fitnesses": best_fitnesses,
+        "best_scores": best_scores,
+        "generation_histories": generation_histories,
+    }
