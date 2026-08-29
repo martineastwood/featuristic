@@ -17,21 +17,21 @@ include genetic/binary_ga
 # Simple test function to verify the build works
 proc getVersion*(): string {.nuwa_export.} =
   ## Get the version of featuristic
-  return "1.1.0-nim"
+  return "2.0.0"
 
-proc testAdd*(a: float64, b: float64): float64 {.nuwa_export.} =
+proc testAdd*(a: float64, b: float64): float64 =
   ## Test addition operation
   return a + b
 
-proc testSubtract*(a: float64, b: float64): float64 {.nuwa_export.} =
+proc testSubtract*(a: float64, b: float64): float64 =
   ## Test subtraction operation
   return a - b
 
-proc testMultiply*(a: float64, b: float64): float64 {.nuwa_export.} =
+proc testMultiply*(a: float64, b: float64): float64 =
   ## Test multiplication operation
   return a * b
 
-proc testDivide*(a: float64, b: float64): float64 {.nuwa_export.} =
+proc testDivide*(a: float64, b: float64): float64 =
   ## Test safe division operation
   return safeDiv(a, b)
 
@@ -40,59 +40,59 @@ proc testDivide*(a: float64, b: float64): float64 {.nuwa_export.} =
 # Export wrappers for zero-copy operations defined in core/operations.nim
 # ============================================================================
 
-proc safeDivVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] {.nuwa_export.} =
+proc safeDivVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] =
   ## Zero-copy vectorized safe division
   return safeDivVecImpl(ptrA, ptrB, length)
 
-proc negateVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc negateVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized negate
   return negateVecImpl(ptrA, length)
 
-proc squareVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc squareVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized square
   return squareVecImpl(ptrA, length)
 
-proc cubeVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc cubeVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized cube
   return cubeVecImpl(ptrA, length)
 
-proc sinVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc sinVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized sin
   return sinVecImpl(ptrA, length)
 
-proc cosVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc cosVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized cos
   return cosVecImpl(ptrA, length)
 
-proc tanVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc tanVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized tan
   return tanVecImpl(ptrA, length)
 
-proc sqrtVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc sqrtVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized sqrt
   return sqrtVecImpl(ptrA, length)
 
-proc absVecZerocopy*(ptrA: int, length: int): seq[float64] {.nuwa_export.} =
+proc absVecZerocopy*(ptrA: int, length: int): seq[float64] =
   ## Zero-copy vectorized abs
   return absVecImpl(ptrA, length)
 
-proc addVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] {.nuwa_export.} =
+proc addVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] =
   ## Zero-copy vectorized add
   return addVecImpl(ptrA, ptrB, length)
 
-proc subVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] {.nuwa_export.} =
+proc subVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] =
   ## Zero-copy vectorized subtract
   return subVecImpl(ptrA, ptrB, length)
 
-proc mulVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] {.nuwa_export.} =
+proc mulVecZerocopy*(ptrA: int, ptrB: int, length: int): seq[float64] =
   ## Zero-copy vectorized multiply
   return mulVecImpl(ptrA, ptrB, length)
 
-proc addConstantVecZerocopy*(ptrA: int, length: int, constant: float64): seq[float64] {.nuwa_export.} =
+proc addConstantVecZerocopy*(ptrA: int, length: int, constant: float64): seq[float64] =
   ## Zero-copy add constant
   return addConstantVecImpl(ptrA, length, constant)
 
-proc mulConstantVecZerocopy*(ptrA: int, length: int, constant: float64): seq[float64] {.nuwa_export.} =
+proc mulConstantVecZerocopy*(ptrA: int, length: int, constant: float64): seq[float64] =
   ## Zero-copy multiply constant
   return mulConstantVecImpl(ptrA, length, constant)
 
@@ -110,7 +110,7 @@ proc evaluateProgramPtrs*(
   constants: seq[float64],
   numRows: int,
   numCols: int
-): seq[float64] {.nuwa_export.} =
+): seq[float64] =
   ## Evaluate a program from Python using stack-based approach with raw pointers
   ## WITHOUT GIL RELEASE - this is a fast single-program evaluation
   ## that doesn't benefit from concurrent threading. GIL release on Windows
@@ -127,7 +127,7 @@ proc evaluateProgramPtrs*(
       numCols
     )
 
-proc testEvaluation*(): string {.nuwa_export.} =
+proc testEvaluation*(): string =
   ## Test function to verify program evaluation works
   return "program evaluation test passed"
 
@@ -250,7 +250,7 @@ proc evaluateProgramsBatched*(
   constantsFlat: seq[float64],  # Flattened constants for all programs
   numRows: int,                   # Number of rows
   numCols: int                    # Number of columns
-): seq[seq[float64]] {.nuwa_export.} =
+): seq[seq[float64]] =
   ## Evaluate multiple programs in a single Python-Nim call (batched evaluation)
   ##
   ## This reduces Python-Nim boundary crossing overhead from N calls to 1 call
@@ -333,7 +333,7 @@ proc runGeneticAlgorithm*(
   bestConstants: seq[float64],
   bestFitness: float64,
   bestScore: float64
-] {.nuwa_export.} =
+] =
   ## Run the complete genetic algorithm in Nim
 
   ## This function runs the entire evolution loop in Nim, providing
@@ -420,7 +420,7 @@ proc runMultipleGAsWrapper*(
   bestFitnesses: seq[float64],
   bestScores: seq[float64],
   generationHistories: seq[seq[float64]]
-] {.nuwa_export.} =
+] =
   ## Run multiple independent GAs in a single Nim call
   ##
   ## This is the key optimization for feature synthesis - instead of Python
@@ -515,7 +515,7 @@ proc binarySinglePointCrossover*(
   parent2: seq[int],
   crossoverProb: float64,
   randomSeed: int
-): tuple[child1: seq[int], child2: seq[int]] {.nuwa_export.} =
+): tuple[child1: seq[int], child2: seq[int]] =
   ## Perform single-point crossover on two binary genomes
 
   var rng = initRand(randomSeed)
@@ -553,7 +553,7 @@ proc binaryBitFlipMutate*(
   genome: seq[int],
   mutationProb: float64,
   randomSeed: int
-): seq[int] {.nuwa_export.} =
+): seq[int] =
   ## Mutate a binary genome by flipping bits
 
   var rng = initRand(randomSeed)
@@ -567,7 +567,7 @@ proc binaryBitFlipMutate*(
       result[i] = genome[i]
 
 
-proc countSelectedFeatures*(genome: seq[int]): int {.nuwa_export.} =
+proc countSelectedFeatures*(genome: seq[int]): int =
   ## Count how many features are selected (number of 1s)
   var count = 0
   for val in genome:
@@ -664,7 +664,7 @@ proc runMRMR*(
   numFeatures: int,
   k: int,
   floor: float64
-): seq[int] {.nuwa_export.} =
+): seq[int] =
   ## Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
   ## This version copies target data (kept for backward compatibility)
 
@@ -754,7 +754,7 @@ proc runMRMRZerocopy*(
   numFeatures: int,
   k: int,
   floor: float64
-): seq[int] {.nuwa_export.} =
+): seq[int] =
   ## Run Maximum Relevance Minimum Redundancy (mRMR) feature selection
   ## ZERO-COPY VERSION: Both features and target passed as pointers
   ## WITH GIL RELEASE for concurrent Python threading
@@ -841,7 +841,7 @@ proc runMRMRZerocopy*(
   return selected
 
 
-proc testTargetPointer*(targetPtr: int, length: int): float64 {.nuwa_export.} =
+proc testTargetPointer*(targetPtr: int, length: int): float64 =
   ## Test function to see if single pointer works with nimpy
   ## This should help us debug if we can pass target as pointer
 
@@ -866,7 +866,7 @@ proc evaluateBinaryGenomeNative*(
   numRows: int,
   numFeatures: int,
   metricType: int                    # 0=MSE, 1=MAE, 2=R2
-): float64 {.nuwa_export.} =
+): float64 =
   ## Evaluate a binary genome using native Nim computation
   ##
   ## This function provides 15-30x speedup by:
@@ -967,7 +967,7 @@ proc runCompleteBinaryGANative*(
   bestGenome: seq[int],
   bestFitness: float64,
   history: seq[float64]
-] {.nuwa_export.} =
+] =
   ## Run the COMPLETE binary GA in Nim with native metrics
   ##
   ## This is the FASTEST option - Python calls Nim ONCE, Nim does everything:

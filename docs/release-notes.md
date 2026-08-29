@@ -1,5 +1,24 @@
 # Release Notes
 
+## v2.0.0 — unreleased (Nim branch)
+
+Compiled backend via [Nuwa](https://github.com/martineastwood/nuwa-build). **Not on PyPI.** Do not tag this as a public 2.0 until wheel CI is green and install docs match.
+
+### Planned / in this branch
+
+- Genetic synthesis, selection, and mRMR hot path in Nim; sklearn API in Python.
+- CPython 3.10–3.14. Python 3.8 and 3.9 are not supported on this line.
+- Pins: `nuwa-build>=0.5.1`, `nimpy@0.2.1`, `nuwa_sdk@0.4.4`.
+- Version string is `2.0.0` in Python and in `featuristic_lib.getVersion()`.
+- Parallel GA uses `std/typedthreads`, not weave.
+- Mutation node pick is uniform; 1.1 used depth-weighted selection (intentional 2.0 difference until revisited).
+
+### Not done before go-live
+
+- PyPI wheels / Trusted Publishing
+- Deploying this docs tree to featuristic.co.uk
+- Merging `nim` over `main` (would replace 1.1.0)
+
 ## v1.1.0 - April 10, 2024
 
 ### Changes

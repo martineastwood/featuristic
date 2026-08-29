@@ -122,96 +122,48 @@ def test_contiguous_arrays_still_work():
     assert isinstance(result, float)
 
 
-def test_python_extract_target_pointer_with_noncontiguous():
-    """Test Python extract_target_pointer makes non-contiguous arrays contiguous."""
-    from featuristic.synthesis.utils import extract_target_pointer
+def test_as_float64_1d_copies_noncontiguous():
+    from featuristic.synthesis.utils import as_float64_1d
 
-    # Create non-contiguous y
     y_full = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], dtype=np.float64)
-    y = y_full[::2]  # Creates non-contiguous view
-
-    assert not y.flags["C_CONTIGUOUS"], "Test setup failed: y should be non-contiguous"
-
-    # extract_target_pointer should make it contiguous
-    ptr, arr = extract_target_pointer(y)
-
-    # The returned array should be contiguous
-    assert arr.flags["C_CONTIGUOUS"], "Returned array should be contiguous"
-    assert ptr == int(arr.__array_interface__["data"][0])
+    y = y_full[::2]
+    assert not y.flags["C_CONTIGUOUS"]
+    arr = as_float64_1d(y)
+    assert arr.flags["C_CONTIGUOUS"]
+    np.testing.assert_array_equal(arr, [1.0, 3.0, 5.0])
 
 
-def test_python_extract_feature_pointers_with_numpy():
-    """Test Python extract_feature_pointers handles numpy arrays correctly."""
-    from featuristic.synthesis.utils import extract_feature_pointers
+def test_as_fortran_matrix_from_numpy():
+    from featuristic.synthesis.utils import as_fortran_matrix
 
-    # Create C-contiguous array (column views are strided)
     X = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]], dtype=np.float64)
-
-    assert X.flags["C_CONTIGUOUS"], "Test setup failed: X should be C-contiguous"
-
-    # extract_feature_pointers should handle strided column views
-    ptrs, arrays = extract_feature_pointers(X)
-
-    # All returned arrays should be contiguous
-    for i, arr in enumerate(arrays):
-        assert arr.flags["C_CONTIGUOUS"], f"Feature array {i} should be contiguous"
-        assert ptrs[i] == int(arr.__array_interface__["data"][0])
-
-    # Verify the data is correct
-    for i in range(3):
-        np.testing.assert_array_equal(arrays[i], X[:, i])
+    X_f = as_fortran_matrix(X)
+    assert X_f.flags["F_CONTIGUOUS"]
+    np.testing.assert_array_equal(X_f, X)
 
 
-def test_python_extract_feature_pointers_with_dataframe():
-    """Test Python extract_feature_pointers handles DataFrames correctly."""
-    from featuristic.synthesis.utils import extract_feature_pointers
+def test_as_fortran_matrix_from_dataframe():
+    from featuristic.synthesis.utils import as_fortran_matrix
 
-    # Create DataFrame
     df = pd.DataFrame(
         {"a": [1.0, 2.0, 3.0], "b": [4.0, 5.0, 6.0], "c": [7.0, 8.0, 9.0]}
     )
-
-    # extract_feature_pointers should handle DataFrames
-    ptrs, arrays = extract_feature_pointers(df)
-
-    # All returned arrays should be contiguous
-    for i, arr in enumerate(arrays):
-        assert arr.flags["C_CONTIGUOUS"], f"Feature array {i} should be contiguous"
-        assert ptrs[i] == int(arr.__array_interface__["data"][0])
-
-    # Verify the data is correct
-    for i, col in enumerate(df.columns):
-        np.testing.assert_array_equal(arrays[i], df[col].values)
+    X_f = as_fortran_matrix(df)
+    assert X_f.flags["F_CONTIGUOUS"]
+    np.testing.assert_array_equal(X_f, df.to_numpy(dtype=np.float64))
 
 
-def test_dataframe_with_noncontiguous_column():
-    """Test that non-contiguous DataFrame columns are made contiguous."""
-    from featuristic.synthesis.utils import extract_feature_pointers
+def test_as_fortran_matrix_from_strided_rows():
+    from featuristic.synthesis.utils import as_fortran_matrix
 
-    # Create a DataFrame from a non-contiguous array
-    # This simulates cases where DataFrame columns might not be contiguous
     base_arr = np.array(
         [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]], dtype=np.float64
     )
-
-    # Take a strided view (every other row)
-    strided_arr = base_arr[::2]  # Creates non-contiguous view
-
-    # Create DataFrame from strided array - columns may not be contiguous
+    strided_arr = base_arr[::2]
     df = pd.DataFrame(strided_arr, columns=["a", "b", "c"])
-
-    # extract_feature_pointers should handle this safely
-    ptrs, arrays = extract_feature_pointers(df)
-
-    # All returned arrays should be contiguous
-    for i, arr in enumerate(arrays):
-        assert arr.flags["C_CONTIGUOUS"], f"Feature array {i} should be contiguous"
-        # Verify pointers point to the arrays we're keeping alive
-        assert ptrs[i] == int(arr.__array_interface__["data"][0])
-
-    # Verify the data is correct
-    for i, col in enumerate(df.columns):
-        np.testing.assert_array_equal(arrays[i], df[col].values)
+    X_f = as_fortran_matrix(df)
+    assert X_f.flags["F_CONTIGUOUS"]
+    np.testing.assert_array_equal(X_f, df.to_numpy(dtype=np.float64))
 
 
 def test_sliced_column_from_2d_raises_error():

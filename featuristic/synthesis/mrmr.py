@@ -5,8 +5,8 @@ from typing import List
 import pandas as pd
 from sklearn.feature_selection import f_classif, f_regression
 
-from ..featuristic_lib import runMRMRZerocopy
-from ..synthesis.utils import extract_feature_pointers, extract_target_pointer
+from ..featuristic_lib import runMRMRArray
+from .utils import as_fortran_xy
 
 # set the floor value for the correlation matrix
 FLOOR: float = 0.00001
@@ -106,7 +106,7 @@ class MaxRelevanceMinRedundancy:
         """
         Select the top n_features features using the mRMR algorithm.
 
-        Uses Nim implementation for 38x speedup via zero-copy NumPy access.
+        Uses Nim implementation (Fortran-contiguous float64 arrays).
 
         Parameters
         ----------
@@ -127,19 +127,8 @@ class MaxRelevanceMinRedundancy:
         # Filter out constant features and features with NaN
         X = X.loc[:, X.nunique() > 1].dropna(axis=1)
 
-        # Extract pointers using centralized backend utilities
-        feature_ptrs, _ = extract_feature_pointers(X)
-        target_ptr, _ = extract_target_pointer(y)
-
-        # Call Nim mRMR implementation (38x faster)
-        selected_indices = runMRMRZerocopy(
-            featurePtrs=feature_ptrs,
-            targetPtr=target_ptr,
-            numRows=len(X),
-            numFeatures=len(X.columns),
-            k=k,
-            floor=FLOOR,
-        )
+        X_f, y_c = as_fortran_xy(X, y)
+        selected_indices = runMRMRArray(X_f, y_c, k, FLOOR)
 
         # Convert indices back to feature names
         selected_features = [str(X.columns[i]) for i in selected_indices]

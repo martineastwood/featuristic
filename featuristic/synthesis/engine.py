@@ -7,12 +7,11 @@ All evolution happens in Nim for 10-50x speedup.
 
 from typing import List
 
-import numpy as np
 import pandas as pd
 
-from ..featuristic_lib import evaluateProgramsBatched, runGeneticAlgorithm
-from ..synthesis.utils import ensure_contiguous
-from ..constants import OP_KIND_METADATA
+from ..constants import OP_KIND_METADATA, OP_NAME_TO_KIND
+from ..featuristic_lib import evaluateProgramsBatchedArray, runGeneticAlgorithmArray
+from .utils import as_fortran_matrix, as_fortran_xy
 
 
 def deserialize_program(program_data: dict, feature_names: List[str]) -> dict:
@@ -57,7 +56,7 @@ def _deserialize_program(
         """Deserialize a node recursively."""
         op_kind = op_kinds[idx]
 
-        if op_kind == 15:  # opFeature
+        if op_kind == OP_NAME_TO_KIND["feature"]:
             # Leaf node
             feature_idx = feature_indices[idx]
             return {"feature_name": feature_names[feature_idx]}
@@ -74,13 +73,13 @@ def _deserialize_program(
             child = deserialize_node(left_idx)
 
             # For constant operations, replace format with actual constant
-            if op_kind == 13:  # add_constant
+            if op_kind == OP_NAME_TO_KIND["add_constant"]:
                 return {
                     "operation": op_name,
                     "format_str": format_str,
                     "children": [{"feature_name": str(constants[idx])}, child],
                 }
-            elif op_kind == 14:  # mul_constant
+            elif op_kind == OP_NAME_TO_KIND["mul_constant"]:
                 return {
                     "operation": op_name,
                     "format_str": format_str,
@@ -164,23 +163,11 @@ def run_genetic_algorithm(
             - 'fitness': Best fitness value (with parsimony penalty)
             - 'score': Best raw score (without parsimony penalty)
     """
-    # Prepare data
-    X_array = X.values.astype(np.float64)
-    X_array = ensure_contiguous(X_array)
+    X_f, y_c = as_fortran_xy(X, y)
 
-    X_colmajor = X_array.T.copy()
-    X_colmajor = ensure_contiguous(X_colmajor)
-
-    feature_ptrs = [int(X_colmajor[i, :].ctypes.data) for i in range(X_array.shape[1])]
-
-    y_list = y.tolist()
-
-    # Run GA in Nim
-    result = runGeneticAlgorithm(
-        feature_ptrs,
-        y_list,
-        len(X),
-        X_array.shape[1],
+    result = runGeneticAlgorithmArray(
+        X_f,
+        y_c,
         population_size,
         num_generations,
         max_depth,
@@ -238,16 +225,8 @@ def evaluate_programs(X: pd.DataFrame, program_data_list: list[dict]) -> pd.Data
     if not program_data_list:
         return pd.DataFrame()
 
-    # Prepare feature pointers
-    X_array = X.values.astype(np.float64)
-    X_array = ensure_contiguous(X_array)
+    X_f = as_fortran_matrix(X)
 
-    X_colmajor = X_array.T.copy()
-    X_colmajor = ensure_contiguous(X_colmajor)
-
-    feature_ptrs = [int(X_colmajor[i, :].ctypes.data) for i in range(X_array.shape[1])]
-
-    # Flatten all programs into single arrays for Nim
     program_sizes = []
     feature_indices_flat = []
     op_kinds_flat = []
@@ -264,16 +243,14 @@ def evaluate_programs(X: pd.DataFrame, program_data_list: list[dict]) -> pd.Data
         constants_flat.extend(prog_data["constants"])
 
     # Call Nim batched evaluation
-    results = evaluateProgramsBatched(
-        feature_ptrs,
+    results = evaluateProgramsBatchedArray(
+        X_f,
         program_sizes,
         feature_indices_flat,
         op_kinds_flat,
         left_children_flat,
         right_children_flat,
         constants_flat,
-        len(X),
-        X.shape[1],
     )
 
     # Convert results to DataFrame (transpose for column-per-program format)

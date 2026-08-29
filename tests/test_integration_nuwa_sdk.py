@@ -1,7 +1,6 @@
 """Integration tests for nuwa_sdk numpy wrapper API.
 
-These tests specifically verify that the new array-based API works correctly
-and provides the same results as the old pointer-based API.
+These tests specifically verify that the array-based Nim API works correctly.
 """
 
 import numpy as np
@@ -27,8 +26,7 @@ class TestNumpyWrapperAPI:
     def test_get_version(self):
         """Test that we can get the version from the Nim module."""
         version = getVersion()
-        assert isinstance(version, str)
-        assert "nim" in version.lower()
+        assert version == "2.0.0"
 
     def test_evaluate_program_simple(self):
         """Test basic program evaluation with direct numpy array input."""

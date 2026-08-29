@@ -26,7 +26,7 @@ X, y = ft.fetch_cars_dataset()
 * **Features:** `displacement`, `cylinders`, `horsepower`, `weight`, `acceleration`, `model_year`, `origin`.
 * **Problem Type:** Regression.
 
-**Data Integrity:** Real-world data often contains missing values. The `fetch_cars_dataset` function automatically detects and removes any rows containing null values in either the feature matrix or the target vector. It then resets the indices to ensure the data is contiguous, preventing segmentation faults when memory pointers are passed to the Nim backend.
+**Data Integrity:** Real-world data often contains missing values. The `fetch_cars_dataset` function automatically detects and removes any rows containing null values in either the feature matrix or the target vector. It then resets the indices so the arrays are contiguous before they are passed to the Nim backend.
 
 ### 2. The Wine Dataset (UCI ID: 109)
 

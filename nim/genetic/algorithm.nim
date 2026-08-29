@@ -523,16 +523,14 @@ proc runMultipleGAs*(
   parsimonyCoefficient: float64,
   randomSeeds: seq[int32]
 ): MultipleGAResult =
-  ## Run multiple independent GAs in parallel using weave
+  ## Run multiple independent GAs in parallel
   ##
-  ## This uses weave instead of the deprecated threadpool, which avoids
-  ## the pytest import-time initialization issues.
+  ## Each GA is independent. Threads use std/typedthreads (not weave).
   ##
   ## Benefits:
   ## - Single Python-Nim boundary crossing
-  ## - Parallel execution across CPU cores (near-linear speedup)
-  ## - Thread-local resources for safety (each thread gets its own pool)
-  ## - No global threadpool state - weave uses work-stealing with lazy initialization
+  ## - Parallel execution across CPU cores
+  ## - Thread-local resources (each thread gets its own pool)
   ##
   ## Args:
   ##   featurePtrs: Pointers to feature columns (read-only, shared safely)

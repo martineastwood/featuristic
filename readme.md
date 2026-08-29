@@ -6,6 +6,11 @@
 <i>"Because feature engineering should be a science, not an art."</i>
 </p>
 
+> **This is the `nim` branch (Featuristic 2.0, not released).**
+> `pip install featuristic` still installs **1.1.0** (pure Python) from PyPI.
+> Docs at [featuristic.co.uk](https://www.featuristic.co.uk/) describe that release.
+> Do not merge this branch to `main` or tag a PyPI 2.0 until wheels are proven.
+
 <div align="center">
 
   <a href="">[![Python Version](https://img.shields.io/pypi/pyversions/featuristic)](https://pypi.org/project/featuristic/)</a>
@@ -23,11 +28,25 @@
 See the [documentation](https://www.featuristic.co.uk/) for more detailed information.
 
 ## Installation
-Install with pip
+
+**PyPI 1.1.0 (current public release):**
 
 ```
 python3 -m pip install featuristic
 ```
+
+**This branch (2.0 development, compiled Nim backend):**
+
+You need a [Nim compiler](https://nim-lang.org/install.html) on `PATH` and CPython 3.10 or newer.
+
+```
+python3 -m pip install "nuwa-build>=0.5.1"
+nuwa develop
+```
+
+Then run examples from the checkout. There are no 2.0 wheels on PyPI yet. An sdist cannot be installed without Nim.
+
+See [installation](docs/getting-started/installation.md) for the support matrix.
 
 ## Understanding Genetic Feature Synthesis
 

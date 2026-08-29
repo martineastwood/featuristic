@@ -16,7 +16,7 @@ from .synthesis.symbolic_functions import (
 from .version import __version__
 
 # Import the compiled Nim extension functions (private - not exposed in __all__)
-# These provide vectorized symbolic operations with 5-10x speedup using zero-copy NumPy access
+# These provide the compiled genetic programming / selection backend
 from . import featuristic_lib  # noqa: F401
 
 __all__ = [

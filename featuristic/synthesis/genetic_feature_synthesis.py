@@ -12,13 +12,13 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
 from sklearn.utils.validation import check_is_fitted
 
-from ..featuristic_lib import runMultipleGAsWrapper
-from ..synthesis.utils import extract_column_pointers
+from ..featuristic_lib import runMultipleGAsArray
 from .engine import deserialize_program, evaluate_programs
 from .mrmr import MaxRelevanceMinRedundancy
 from .preprocess import preprocess_data
 from .render import render_prog, simplify_program
 from .symbolic_functions import AVAILABLE_OPERATIONS
+from .utils import as_fortran_xy
 
 
 class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
@@ -46,7 +46,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
     **Thread Safety:**
     - Nim backend is already faster than Python-based parallelism
     - True multiprocessing is not supported because:
-      * Zero-copy architecture uses memory pointers that cannot be pickled
+      * Compiled extension state and native arrays are not picklable across processes
       * Reconstructing data structures in worker processes would negate performance gains
     - For better performance, consider running multiple instances with different random seeds
 
@@ -334,10 +334,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         # Generate diverse features using Nim GA
         generations_per_ga = self.max_generations
 
-        # Prepare data for Nim - single column-major copy
-
-        feature_ptrs, X_colmajor = extract_column_pointers(X_copy)
-        y_list = y_copy.tolist()
+        X_f, y_c = as_fortran_xy(X_copy, y_copy)
 
         # Generate random seeds for each GA
         if self.random_state is not None:
@@ -361,15 +358,13 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             best_fitnesses,
             best_scores,
             generation_histories,  # Generation-by-generation fitness for each GA
-        ) = runMultipleGAsWrapper(
-            feature_ptrs,
-            y_list,
-            len(X_copy),
-            X_copy.shape[1],
-            self.n_features,  # Number of GAs to run
+        ) = runMultipleGAsArray(
+            X_f,
+            y_c,
+            self.n_features,
             generations_per_ga,
             self.population_size,
-            self.max_depth,  # User-configurable depth for controlling complexity
+            self.max_depth,
             self.tournament_size,
             self.crossover_proba,
             self.parsimony_coefficient,

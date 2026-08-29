@@ -14,10 +14,10 @@ from joblib import Parallel, cpu_count, delayed
 
 # Import from centralized backend (single source of truth for Nim library access)
 from ..featuristic_lib import (
-    evaluateBinaryGenomeNative,
+    evaluateBinaryGenomeArray,
     evolveBinaryPopulationBatched,
 )
-from ..synthesis.utils import extract_feature_pointers, extract_target_pointer
+from ..synthesis.utils import as_fortran_xy
 
 
 class BinaryPopulation:
@@ -175,25 +175,18 @@ class BinaryPopulation:
         List[float]
             The fitness scores.
         """
-        # Extract feature pointers for zero-copy access
-        feature_ptrs, _ = extract_feature_pointers(X)
-        target_ptr, _ = extract_target_pointer(y)
+        X_f, y_c = as_fortran_xy(X, y)
 
-        # Map metric string to int
         metric_map = {"mse": 0, "mae": 1, "r2": 2, "logloss": 3, "accuracy": 4}
         metric_type = metric_map.get(metric.lower(), 0)
 
-        # Evaluate each genome using Nim
         fitness = []
         for genome in self.population:
             genome_list = genome.tolist()
-            # Note: Nim function uses positional arguments (nimpy limitation)
-            score = evaluateBinaryGenomeNative(
+            score = evaluateBinaryGenomeArray(
                 genome_list,
-                feature_ptrs,
-                target_ptr,
-                X.shape[0],
-                X.shape[1],
+                X_f,
+                y_c,
                 metric_type,
             )
             fitness.append(score)

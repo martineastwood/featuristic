@@ -1,72 +1,67 @@
 # Installation
 
-Integrate Featuristic's high-performance feature engineering pipeline into your environment.
+This documentation in the `nim` branch describes **Featuristic 2.0** (compiled Nim backend). That version is **not on PyPI**.
 
-## System Requirements
+[featuristic.co.uk](https://www.featuristic.co.uk/) and `pip install featuristic` are still **1.1.0** (pure Python, Python 3.8+).
 
-Featuristic is designed to be lightweight and highly compatible. The only hard requirement is a modern Python environment.
+## Support matrix (2.0 / this branch)
 
-* **Python:** Version 3.8 or higher.
-* **OS:** Windows, macOS, or Linux.
-* **Backend:** Nim is **not** required for installation. The high-performance Nim binaries are pre-compiled and bundled directly with the Python package.
+| Item | Status |
+| --- | --- |
+| CPython | 3.10–3.14 |
+| Python 3.8 / 3.9 | Dropped (nuwa-build requires 3.10+) |
+| OS | Linux, macOS, Windows (native architecture) |
+| Linux wheels (when published) | manylinux x86_64 |
+| Nim | 2.2.10 in CI (not required for a future *wheel* install) |
+| nuwa-build | 0.5.1+ |
+| nuwa_sdk | 0.4.4 |
+
+Free-threaded CPython, PyPy, musllinux, and Linux aarch64 are not in the tested matrix.
 
 ---
 
-## Standard Installation
-
-The recommended way to install Featuristic for production or standard data science workflows is via the Python Package Index (PyPI).
+## Public install (1.1.0)
 
 ```bash
 pip install featuristic
-
 ```
 
-This single command installs the core library along with the optimized Nim backend and all required dependencies.
+That does **not** install this branch.
 
 ---
 
-## Installation from Source
+## Develop this branch
 
-For advanced users, contributors, or those requiring the bleeding-edge development branch, you can install Featuristic directly from the source repository.
+You need Nim on `PATH` (`nim --version`) and CPython 3.10+.
 
 ```bash
 git clone https://github.com/martineastwood/featuristic.git
 cd featuristic
-pip install .
-
+git checkout nim
+pip install "nuwa-build>=0.5.1"
+pip install -e ".[dev]"
+nuwa develop
+pytest
 ```
 
-### Development Mode
-
-If you intend to modify the source code, run the test suite, or contribute to the documentation, install the package in editable mode with the `[dev]` flag. This installs additional tooling including `pytest`, `black`, `pylint`, and `Sphinx`.
-
-```bash
-pip install -e .[dev]
-
-```
+`pip install .` from a source tree also needs Nim (PEP 517 backend). `pip install -e .` does not compile the extension by itself; run `nuwa develop`.
 
 ---
 
-## Verification
-
-To confirm that the package and its underlying Nim binaries are installed correctly, run the following command in your Python terminal:
+## Verification (after `nuwa develop`)
 
 ```python
 import featuristic as ft
-print(f"Featuristic version: {ft.__version__}")
+from featuristic import featuristic_lib
 
+print(ft.__version__)           # 2.0.0
+print(featuristic_lib.getVersion())  # 2.0.0
 ```
-
-If the version number is returned without errors, your installation is successful and ready for use.
 
 ---
 
-## Ecosystem Integration
+## Ecosystem
 
-Featuristic is built to integrate seamlessly with the modern PyData ecosystem. The installer automatically handles the following core dependencies:
-
-* **NumPy (>= 1.25.0) & Pandas (>= 2.0.0):** Used for zero-copy memory management and data manipulation.
-* **Scikit-Learn (>= 1.4.0):** Featuristic explicitly inherits from `BaseEstimator` and `TransformerMixin` for total compatibility with standard ML pipelines.
-* **Matplotlib (>= 3.0.0):** Required for generating convergence plots and feature history visualizations.
-* **Tqdm (>= 4.32.0):** Provides efficient, low-overhead progress tracking during long genetic evolution runs.
-* **Ucimlrepo (>= 0.0.5):** Included for easily fetching benchmark datasets during testing and evaluation.
+* **NumPy (>= 1.25.0) & Pandas (>= 2.0.0):** Data frames at the Python API; the Nim path uses Fortran-contiguous float64 internally (copied in `fit`/`transform`).
+* **Scikit-Learn (>= 1.4.0):** `BaseEstimator` / `TransformerMixin`.
+* **Matplotlib, tqdm, ucimlrepo:** plots, progress, example datasets.

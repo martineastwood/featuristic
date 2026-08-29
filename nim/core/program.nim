@@ -88,7 +88,8 @@ proc getBuffer*(pool: var EvalBufferPool, index: int): ptr UncheckedArray[float6
     for i in 0..<pool.totalSize:
       newData[i] = pool.data[i]
 
-    # Free old and assign new (in C, we'd use realloc here)
+    if pool.data != nil:
+      dealloc(pool.data)
     pool.data = newData
     pool.totalSize = newSize
     pool.numBuffers = index + 1

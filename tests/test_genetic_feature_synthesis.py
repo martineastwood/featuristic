@@ -7,7 +7,7 @@ from sklearn.utils.validation import check_is_fitted
 def test_gfs():
     """Test Genetic Feature Synthesis with parallel execution.
 
-    Uses weave (modern threading library) instead of deprecated threadpool.
+    Uses Nim threads (std/typedthreads) for parallel GA runs.
     """
     # Use n_features=2 to test parallel execution
     n_features = 2

@@ -1,0 +1,31 @@
+name: Setup Nim
+description: Install Nim 2.2.10 (same line as nuwa-build-action)
+
+runs:
+  using: composite
+  steps:
+    - name: Install Nim
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ "$RUNNER_OS" = "macOS" ]; then
+          export CHOOSENIM_CHOOSE_VERSION=2.2.10
+          curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+          sh init.sh -y
+          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
+        elif [ "$RUNNER_OS" = "Windows" ]; then
+          choco install nim --version 2.2.10 -y
+          echo "C:\\tools\\Nim\\nim-2.2.10\\bin" >> "$GITHUB_PATH"
+        else
+          curl -L https://nim-lang.org/download/nim-2.2.10-linux_x64.tar.xz -o nim.tar.xz
+          tar -xf nim.tar.xz
+          sudo mv nim-2.2.10 /opt/nim
+          sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
+          sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
+          rm nim.tar.xz
+        fi
+    - name: Verify Nim
+      shell: bash
+      run: |
+        nim --version
+        nimble --version

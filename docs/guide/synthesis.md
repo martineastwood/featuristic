@@ -123,7 +123,7 @@ plt.show()
 
 ### Note on Performance (`n_jobs`)
 
-Unlike traditional Python implementations, you do not need to manage parallelism (`n_jobs`) for Synthesis. Featuristic utilizes a `runMultipleGAsWrapper` in the Nim backend that orchestrates all feature generation runs in a single, highly optimized compiled call.
+Unlike traditional Python implementations, you do not need to manage parallelism (`n_jobs`) for Synthesis. Featuristic runs all feature-generation GAs in one compiled `runMultipleGAsArray` call in the Nim backend.
 
 ## Next Steps
 

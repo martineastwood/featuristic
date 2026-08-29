@@ -1,5 +1,8 @@
 name: Publish to PyPI
 
+# Wheel/sdist dry-run. Do not add a PyPI publish job until 2.0 is intended to go live.
+# Tagging v* on this branch would currently only build artifacts.
+
 on:
   push:
     tags:
@@ -16,8 +19,10 @@ jobs:
 
     env:
       PYTHONUTF8: 1
-      CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+      CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
       CIBW_SKIP: "pp* *-musllinux_* *i686 *-win32"
+      CIBW_TEST_COMMAND: >-
+        python -c "import featuristic; assert featuristic.__version__ == '2.0.0'"
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +30,8 @@ jobs:
       - name: Build wheels
         uses: martineastwood/nuwa-build-action@v1
         with:
-          nim-version: "2.0.4"
+          nim-version: "2.2.10"
+          cibw-version: "4.2.0"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -40,7 +46,7 @@ jobs:
 
       - name: Build sdist
         run: |
-          pip install build
+          pip install build "nuwa-build>=0.5.1"
           python -m build --sdist
 
       - uses: actions/upload-artifact@v4

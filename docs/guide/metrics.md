@@ -20,7 +20,7 @@ Featuristic evaluates metrics using two distinct computational pathways. Underst
 
 ### 1. Native Metrics
 
-If you are optimizing for standard machine learning metrics, pass the `metric` string argument. This bypasses the Python interpreter completely. The entire data matrix and target vector are passed as zero-copy memory pointers to the compiled Nim backend.
+If you are optimizing for standard machine learning metrics, pass the `metric` string argument. This bypasses the Python interpreter completely. The feature matrix and target are passed as NumPy arrays into the compiled Nim backend.
 
 Native evaluation runs the entire evolution loop—Selection, Crossover, Mutation, and Fitness Calculation, at the C-level, resulting in a significant speedup compared to standard Scikit-Learn evaluation.
 

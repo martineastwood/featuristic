@@ -1,10 +1,11 @@
 name: CI
 
+# This branch is Featuristic 2.0 (Nim). Do not treat a green run as a PyPI release.
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev", "nim"]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev", "nim"]
   workflow_dispatch:
 
 jobs:
@@ -15,72 +16,34 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
-        exclude:
-          # Windows with Python 3.13 sometimes has issues with numpy availability
-          - os: windows-latest
-            python: '3.13'
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-          cache: 'pip'
+          cache: pip
 
-      - name: Install Nim
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use chosenim
-            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
-            sh init.sh -y
-            echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            # Windows: Use choco
-            choco install nim --version 2.0.4 -y
-            echo "C:\\tools\\Nim\\nim-2.0.4\\bin" >> $GITHUB_PATH
-          else
-            # Linux: Download and extract
-            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            sudo mv nim-2.0.4 /opt/nim
-            sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
-            sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
-            rm nim.tar.xz
-          fi
+      - uses: ./.github/actions/setup-nim
 
-      - name: Verify Nim installation
+      - name: Install nuwa-build and package
         run: |
-          nim --version
-          nimble --version
-
-      - name: Install nuwa-build
-        run: |
-          pip install nuwa-build
-
-      - name: Install dependencies
-        run: |
+          pip install "nuwa-build>=0.5.1"
           pip install -e ".[dev,test]"
 
-      - name: Run linter
+      - name: Lint
         run: |
           python -m ruff check .
-
-      - name: Run formatter check
-        run: |
           python -m ruff format --check .
 
       - name: Build extension
-        run: |
-          nuwa develop
+        run: nuwa develop
 
-      - name: Run tests
-        run: |
-          pytest tests/ -v --tb=short
+      - name: Tests
+        run: pytest tests/ -v --tb=short
 
   test-integration-lowlevel:
     name: Low-level integration tests (Nuwa SDK wrappers)
@@ -89,51 +52,27 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python: ['3.10', '3.12', '3.13']
+        python: ["3.10", "3.12", "3.13"]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-          cache: 'pip'
+          cache: pip
 
-      - name: Install Nim
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use chosenim
-            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
-            sh init.sh -y
-            echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-          elif [ "$RUNNER_OS" == "Linux" ]; then
-            # Linux: Download and extract
-            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            sudo mv nim-2.0.4 /opt/nim
-            sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
-            sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
-            rm nim.tar.xz
-          fi
+      - uses: ./.github/actions/setup-nim
 
-      - name: Install nuwa-build
+      - name: Install and build
         run: |
-          pip install nuwa-build
-
-      - name: Install dependencies
-        run: |
+          pip install "nuwa-build>=0.5.1"
           pip install -e ".[test]"
-
-      - name: Build extension
-        run: |
           nuwa develop
 
       - name: Run low-level integration tests
-        run: |
-          pytest tests/test_integration_nuwa_sdk.py -v --tb=short
+        run: pytest tests/test_integration_nuwa_sdk.py -v --tb=short
 
   test-integration-e2e:
     name: End-to-end integration tests
@@ -142,54 +81,30 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python: ['3.11', '3.13']
+        python: ["3.11", "3.13"]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-          cache: 'pip'
+          cache: pip
 
-      - name: Install Nim
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use chosenim
-            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
-            sh init.sh -y
-            echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-          elif [ "$RUNNER_OS" == "Linux" ]; then
-            # Linux: Download and extract
-            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            sudo mv nim-2.0.4 /opt/nim
-            sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
-            sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
-            rm nim.tar.xz
-          fi
+      - uses: ./.github/actions/setup-nim
 
-      - name: Install nuwa-build
+      - name: Install and build
         run: |
-          pip install nuwa-build
-
-      - name: Install dependencies
-        run: |
+          pip install "nuwa-build>=0.5.1"
           pip install -e ".[test]"
-
-      - name: Build extension
-        run: |
           nuwa develop
 
       - name: Run end-to-end integration tests
-        run: |
-          pytest tests/test_end_to_end.py -v --tb=short
+        run: pytest tests/test_end_to_end.py -v --tb=short
 
   build-wheel:
-    name: Build wheel on ${{ matrix.os }}
+    name: Local wheel smoke on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -197,46 +112,21 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install Nim
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            # macOS: Use chosenim
-            curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
-            sh init.sh -y
-            echo "$HOME/.nimble/bin" >> $GITHUB_PATH
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            # Windows: Use choco
-            choco install nim --version 2.0.4 -y
-            echo "C:\\tools\\Nim\\nim-2.0.4\\bin" >> $GITHUB_PATH
-          else
-            # Linux: Download and extract
-            curl -L https://nim-lang.org/download/nim-2.0.4-linux_x64.tar.xz -o nim.tar.xz
-            tar -xf nim.tar.xz
-            sudo mv nim-2.0.4 /opt/nim
-            sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
-            sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
-            rm nim.tar.xz
-          fi
-
-      - name: Install build tools
-        run: |
-          pip install build nuwa-build
+      - uses: ./.github/actions/setup-nim
 
       - name: Build wheel
         run: |
-          python -m build
+          pip install build "nuwa-build>=0.5.1"
+          python -m build --wheel
 
-      - name: Upload wheel
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: wheel-${{ matrix.os }}
           path: dist/*.whl
