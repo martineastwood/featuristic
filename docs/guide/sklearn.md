@@ -88,7 +88,10 @@ predictions = pipeline.predict(X_test)
 When using `GeneticFeatureSelector`, you can define custom objective functions that utilize any Scikit-Learn estimator to evaluate **feature subsets** during the evolution process.
 
 !!! tip "Performance Tip"
-While custom objective functions offer maximum flexibility, Featuristic also provides native Nim metrics (like `mse`, `r2`, `logloss`, `accuracy`) which run 15-30x faster by avoiding the Python-Nim boundary.
+While custom objective functions offer maximum flexibility, Featuristic also provides
+native Nim metrics such as `mse`, `r2`, `logloss`, and `accuracy`. Native metrics avoid
+crossing the Python–Nim boundary for every candidate and are preferable when one matches
+the required objective.
 
 Here is how to use a standard Scikit-Learn model as a fitness evaluator:
 

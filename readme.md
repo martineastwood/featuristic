@@ -32,7 +32,7 @@ python3 -m pip install featuristic
 ```
 
 Building from source requires CPython 3.10 or newer, Nim 2.2, and
-`nuwa-build>=0.5.2`.
+`nuwa-build>=0.5.3`.
 
 See [installation](docs/getting-started/installation.md) for the support matrix.
 

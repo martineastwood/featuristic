@@ -9,9 +9,9 @@ This example demonstrates a complete feature engineering pipeline:
 5. Final optimized model
 
 Performance improvements through Nim backend:
-- Feature Selection: 100-150x speedup with native metrics (mse, mae, r2, logloss, accuracy)
-- Feature Selection: 10-20x speedup with custom objective functions
-- Feature Synthesis: 10-50x speedup (single Nim call for all GAs)
+- Feature Selection: compiled evaluation with native metrics (mse, mae, r2, logloss, accuracy)
+- Feature Selection: custom Python objective functions when extra flexibility is needed
+- Feature Synthesis: compiled evaluation and evolution in the Nim backend
 """
 
 import sys
@@ -81,10 +81,10 @@ print(f"   Baseline Accuracy: {acc_baseline:.4f}")
 # ============================================================================
 
 print("\n3. Feature Synthesis: Creating synthetic features...")
-print("   Using Nim backend (single call runs all GAs - 10-50x speedup!)")
+print("   Using the compiled Nim synthesis backend")
 
 synth = ft.GeneticFeatureSynthesis(
-    n_features=100,  # Generate 10 synthetic features
+    n_features=100,  # Target up to 100 synthetic features
     population_size=100,  # Moderate population
     max_generations=100,  # Moderate generations for good evolution
     tournament_size=10,
@@ -141,12 +141,12 @@ print(f"   Improvement over baseline: {improvement_combined:+.2f}%")
 # ============================================================================
 
 print("\n5. Feature Selection: Finding optimal feature subset...")
-print("   Using Nim backend (native metrics - 100-150x speedup!)")
+print("   Using the Nim backend with a native metric")
 
 # For classification, we can use native metrics (logloss or accuracy)
-# This provides 100-150x speedup compared to custom objective functions
+# Native metrics avoid a Python callback for every candidate.
 selector = ft.GeneticFeatureSelector(
-    metric="logloss",  # Native metric for 100-150x speedup! Also supports "accuracy"
+    metric="logloss",  # Native metric; "accuracy" is also supported
     population_size=50,
     max_generations=50,
     tournament_size=10,
@@ -235,6 +235,6 @@ print("=" * 70)
 print("✓ Feature Synthesis: Creates new features from existing ones")
 print("✓ Feature Selection: Automatically finds optimal feature subset")
 print("✓ Combined approach: Synthetic features can add predictive power")
-print("✓ Nim backend: 10-150x speedup depending on operation")
+print("✓ Nim backend: compiled synthesis and native metric evaluation")
 print("✓ Pipeline: synthesis → selection can outperform either alone")
 print("=" * 70)

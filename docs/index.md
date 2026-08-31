@@ -32,7 +32,7 @@ Featuristic doesn't just blindly apply standard transformations. It **learns** t
 
 ## Key Capabilities
 
-* **10-50x Performance Architecture**: Under the hood, the entire genetic evolution loop runs in a compiled **Nim** backend. By utilizing zero-copy NumPy array access, pre-allocated buffer pools, and stack-based tree evaluation, Featuristic eliminates Python recursion overhead entirely.
+* **Compiled Performance Architecture**: Under the hood, the genetic evolution loop runs in a compiled **Nim** backend. Zero-copy NumPy array access, pre-allocated buffer pools, and stack-based tree evaluation reduce Python boundary and recursion overhead.
 * **Interpretable by Design**: Unlike deep learning latent spaces, every synthesized feature is fully transparent and output as a human-readable mathematical formula.
 * **Intelligent Categorical Handling**: Non-numeric features are automatically detected. Featuristic uses a hybrid encoding strategy (Ordinal for binary, Target Encoding for high-cardinality) to preserve the dimensionality of the search space without creating the column explosion associated with One-Hot Encoding.
 * **Scikit-Learn Native**: Fully implements standard `BaseEstimator` and `TransformerMixin` APIs, meaning it drops seamlessly into your existing `Pipeline` or `GridSearchCV` workflows.
@@ -65,7 +65,7 @@ print(synth.get_feature_info()["formula"].iloc[0])
 
 # 3. Select the ultimate subset using Native Nim Optimization
 selector = ft.GeneticFeatureSelector(
-    metric="logloss", # Uses native Nim backend for massive speedup
+    metric="logloss", # Uses the native Nim evaluation path
     population_size=50,
     max_generations=50
 )

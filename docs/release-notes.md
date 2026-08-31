@@ -2,42 +2,33 @@
 
 ## v2.0.0
 
-Compiled backend built with [Nuwa](https://github.com/martineastwood/nuwa-build).
+Featuristic 2.0 moves its genetic synthesis, selection, and mRMR hot paths to a
+compiled [Nim](https://nim-lang.org/) backend built with
+[Nuwa](https://github.com/martineastwood/nuwa-build). The public estimators retain
+their familiar scikit-learn-style Python API.
 
 ### Highlights
 
-- Genetic synthesis, selection, and mRMR hot path in Nim; sklearn API in Python.
-- CPython 3.10–3.14. Python 3.8 and 3.9 are not supported on this line.
-- Build requirements: `nuwa-build>=0.5.2`, `nimpy@0.2.1`, `nuwa_sdk@0.4.4`.
-- Default synthesis fitness is Pearson in Nim; ``fitness_metric`` may be ``mae``/``mse`` (linearly scaled); optional ``fitness_function`` scores in Python.
-- ``functions=`` is passed into the Nim GA (operator subset).
-- Version string is `2.0.0` in Python and in `featuristic_lib.getVersion()`.
-- Parallel GA uses `std/typedthreads`, not weave.
-- Mutation node pick is uniform; 1.1 used depth-weighted selection (intentional 2.0 difference until revisited).
+- Supports CPython 3.10–3.14 on Linux, macOS, and Windows.
+- Requires `nuwa-build>=0.5.3`, `nimpy@0.2.1`, and `nuwa_sdk@0.4.4` when
+  building from source. Binary wheels do not require a local Nim installation.
+- Provides native synthesis fitness metrics (`pearson`, `mae`, and `mse`) and
+  native feature-selection metrics (`mse`, `mae`, `r2`, `logloss`, and
+  `accuracy`).
+- Supports custom Python synthesis fitness functions and feature-selection
+  objective functions when application-specific scoring is required.
+- Accepts an operator subset by name through `functions=` and evaluates it in
+  the compiled genetic algorithm.
+- Uses deterministic random seeds and supports early termination in both
+  estimators.
+- Returns up to `n_features` useful synthetic features. If fewer candidates
+  survive validation and de-duplication, all available features are returned.
+- Reports `2.0.0` from both `featuristic.__version__` and
+  `featuristic_lib.getVersion()`.
 
-## v1.1.0 - April 10, 2024
+### Symbolic operators
 
-### Changes
-- The `functions` parameter in the `GeneticFeatureSynthesis` class now accepts a list of strings representing the names of the functions to be used in the genetic programming process. The default value is `['add', 'sub', 'mul', 'div', 'square', 'cube', 'abs' 'negate', 'sin', 'cos', 'tan']`. The full list of built in functions can be found in the `list_symbolic_functions` function.
-- Added `SymbolicMulConstant` and `SymbolicAddConstant` symbolic functions. These can be useful where their is an offset to the data but are not currently used by default as there is a risk of overfitting where an offset is not present.
-- Renamed `list_operations` to `list_symbolic_functions` for consistency
-- Added `CustomSymbolicFunction` class to allow users to define their own symbolic functions to be used in the genetic feature synthesis process.
-- Updated unit tests to reflect changes
-
-### Documentation
-- Added example showing use of custom symbolic functions.
-
-## v1.0.1 - April 4, 2024
-
-### Changes
-- Added `tournament_size` parameter to GeneticFeatureSelection class and set default to 10
-- Set default tournament size to 10 for GeneticFeatureSynthesis class
-
-### Documentation
-- Updated README.md example
-- Updated example notebooks
-- Added explanation of tournament selection in the `Tuning the Genetic Feature Synthesis` guide
-
-## v1.0.0 - March 30, 2024
-
-### Initial Release
+Synthesis operators are selected by name from Featuristic's compiled operator
+catalogue. Arbitrary Python operator callbacks are not part of the synthesis API;
+keeping expression evaluation native avoids maintaining separate Python and Nim
+execution semantics.

@@ -17,7 +17,7 @@ Published wheels contain the compiled backend; users do not need to install Nim.
 | OS | Linux, macOS, Windows (native architecture) |
 | Linux wheels | manylinux x86_64 |
 | Nim | 2.2.10 for source builds; not required for wheel installs |
-| nuwa-build | 0.5.2+ for source builds |
+| nuwa-build | 0.5.3+ for source builds |
 | nuwa_sdk | 0.4.4 |
 
 Free-threaded CPython, PyPy, musllinux, and Linux aarch64 are not in the tested matrix.
@@ -29,7 +29,7 @@ You need Nim on `PATH` (`nim --version`) and CPython 3.10+.
 ```bash
 git clone https://github.com/martineastwood/featuristic.git
 cd featuristic
-pip install "nuwa-build>=0.5.2"
+pip install "nuwa-build>=0.5.3"
 pip install -e ".[dev]"
 nuwa develop
 pytest

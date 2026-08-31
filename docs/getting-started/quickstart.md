@@ -53,7 +53,8 @@ X_train_synth = synth.fit_transform(X_train, y_train)
 
 The synthesis stage generates highly predictive features, but they may contain redundant information. To find the globally optimal subset that maximizes predictive power while minimizing redundancy, we apply Genetic Feature Selection.
 
-By passing `metric="mae"`, we trigger the Native Nim backend, bypassing the Python interpreter for a **100-150x speedup** during evaluation.
+Passing `metric="mae"` keeps population evaluation in the compiled Nim backend and
+avoids calling a Python objective function for every candidate.
 
 ```python
 # Initialize the selector using Native Nim metrics for speed

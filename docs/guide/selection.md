@@ -26,7 +26,9 @@ Featuristic offers two distinct pathways for evaluating feature subsets: **Nativ
 
 ### 1. The High-Performance Mode (Native Nim)
 
-If you are optimizing for standard metrics, passing a `metric` string bypasses Python entirely. The evaluation loop runs in the compiled Nim backend on Fortran-contiguous feature matrices, resulting in a **100-150x speedup**.
+If you are optimizing for standard metrics, passing a `metric` string keeps the
+evaluation loop in the compiled Nim backend on Fortran-contiguous feature matrices.
+This avoids a Python callback for every candidate and is the fastest execution path.
 
 ```python
 import featuristic as ft

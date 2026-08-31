@@ -51,7 +51,7 @@ jobs:
 
       - name: Install nuwa-build and package
         run: |
-          pip install "nuwa-build>=0.5.2"
+          pip install "nuwa-build>=0.5.3"
           pip install -e ".[dev,test]"
 
       - name: Build extension
@@ -82,7 +82,7 @@ jobs:
 
       - name: Install and build
         run: |
-          pip install "nuwa-build>=0.5.2"
+          pip install "nuwa-build>=0.5.3"
           pip install -e ".[test]"
           nuwa develop
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: Install and build
         run: |
-          pip install "nuwa-build>=0.5.2"
+          pip install "nuwa-build>=0.5.3"
           pip install -e ".[test]"
           nuwa develop
 

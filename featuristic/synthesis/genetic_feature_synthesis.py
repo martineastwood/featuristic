@@ -43,7 +43,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
     -----
     **Performance Architecture:**
     - This class uses a hybrid Python-Nim architecture for maximum performance
-    - The Nim backend provides 10-50x speedup through:
+    - The Nim backend reduces Python overhead through:
       * Pre-allocated buffer pools (no per-node allocations)
       * Zero-copy NumPy array access
       * Stack-based evaluation (no Python recursion overhead)

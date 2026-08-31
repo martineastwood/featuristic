@@ -153,7 +153,7 @@ class BinaryPopulation:
         self, X: pd.DataFrame, y: pd.Series, metric: str = "mse"
     ) -> list[float]:
         """
-        Evaluate the population using native Nim computation (15-30x faster).
+        Evaluate the population using native Nim computation.
 
         This method uses Nim's native metric computation (MSE, MAE, R², LogLoss, or Accuracy)
         instead of calling Python's objective function. This is much faster
@@ -223,8 +223,8 @@ class BinaryPopulation:
         """
         Evolve the population based on the fitness scores.
 
-        Uses Nim batched evolution for 10-20x speedup by avoiding
-        multiple Python-Nim boundary crossings.
+        Uses Nim batched evolution to avoid repeated Python-Nim boundary
+        crossings.
 
         Parameters
         ----------

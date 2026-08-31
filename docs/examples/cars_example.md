@@ -98,7 +98,7 @@ We now have 12 total features (7 original + 5 synthetic). To filter out noise an
 
 ```python
 selector = ft.GeneticFeatureSelector(
-    metric="mae", # Triggers 100-150x faster Native Nim execution
+    metric="mae", # Keeps evaluation in the native Nim backend
     population_size=200,
     max_generations=100,
     early_termination_iters=25

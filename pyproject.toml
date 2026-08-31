@@ -138,7 +138,7 @@ homepage = "https://www.featuristic.co.uk"
 repository = "https://github.com/martineastwood/featuristic.git"
 
 [build-system]
-requires = ["nuwa-build>=0.5.2"]
+requires = ["nuwa-build>=0.5.3"]
 build-backend = "nuwa_build"
 
 [tool.nuwa]
