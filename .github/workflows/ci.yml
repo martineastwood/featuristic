@@ -3,9 +3,9 @@ name: CI
 # This branch is Featuristic 2.0 (Nim). Do not treat a green run as a PyPI release.
 on:
   push:
-    branches: ["nim"]
+    branches: ["nim", "main"]
   pull_request:
-    branches: ["nim"]
+    branches: ["nim", "main"]
   workflow_dispatch:
 
 jobs:

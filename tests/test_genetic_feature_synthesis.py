@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 from sklearn.exceptions import NotFittedError
@@ -81,3 +82,33 @@ def test_gfs_fitness_metric_mae():
     out = gfs.fit_transform(X, y)
     assert out.shape[0] == len(X)
     assert gfs.fitness_metric == "mae"
+
+
+def test_synthetic_values_do_not_depend_on_transform_batch():
+    X = pd.DataFrame(
+        {
+            "a": np.linspace(1.0, 20.0, 20),
+            "b": np.linspace(2.0, 8.0, 20) ** 2,
+        }
+    )
+    y = pd.Series(np.linspace(1.0, 20.0, 20) ** 2)
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=2,
+        population_size=12,
+        max_generations=3,
+        tournament_size=3,
+        random_state=7,
+        verbose=False,
+    ).fit(X, y)
+
+    batch_result = gfs.transform(X.iloc[:5])
+    single_result = gfs.transform(X.iloc[:1])
+    synthetic_columns = [
+        column for column in batch_result if str(column).startswith("synth_")
+    ]
+
+    assert synthetic_columns
+    np.testing.assert_allclose(
+        batch_result.loc[0, synthetic_columns],
+        single_result.loc[0, synthetic_columns],
+    )

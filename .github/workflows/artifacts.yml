@@ -4,9 +4,9 @@ name: Build artifacts
 
 on:
   push:
-    branches: ["nim"]
+    branches: ["nim", "main"]
   pull_request:
-    branches: ["nim"]
+    branches: ["nim", "main"]
   workflow_dispatch:
 
 permissions:

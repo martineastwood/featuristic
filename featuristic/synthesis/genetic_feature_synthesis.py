@@ -210,6 +210,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.binary_encoder_ = None
         self.high_card_cols_ = []
         self.binary_cols_ = []
+        self.synthetic_feature_stats_ = {}
 
     def _select_best_features(self, X: pd.DataFrame, y: pd.Series):
         """
@@ -245,7 +246,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         X_df = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
 
         # Clean the combined features to handle any remaining NaN/Inf values
-        synthetic_features = self._clean_features(synthetic_features)
+        synthetic_features = self._clean_features(
+            synthetic_features, fit_synthetic_scaler=True
+        )
 
         # Run mRMR on synthetic features only to select the best ones
         # (We want n_features synthetic features, not total features)
@@ -263,12 +266,6 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         selected_synth_names = [
             name for name in selected_names if str(name).startswith("synth_")
         ]
-
-        # Add back original features
-        all_features = pd.concat(
-            [X_df.reset_index(drop=True), synthetic_features], axis=1
-        )
-        all_features = self._clean_features(all_features)
 
         # Final selection: all original + selected synthetic
         selected_names = list(X_df.columns) + selected_synth_names
@@ -321,6 +318,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         X_copy, y_copy = preprocess_data(
             X_pd.reset_index(drop=True), y_pd.reset_index(drop=True)
         )
+
+        # A refit must learn normalization parameters from the new training data.
+        self.synthetic_feature_stats_ = {}
 
         # Validate input data for NaN/Inf values (raises error if found)
         self._clean_features(X_copy, is_input=True)
@@ -500,7 +500,12 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         return self
 
-    def _clean_features(self, df: pd.DataFrame, is_input: bool = False) -> pd.DataFrame:
+    def _clean_features(
+        self,
+        df: pd.DataFrame,
+        is_input: bool = False,
+        fit_synthetic_scaler: bool = False,
+    ) -> pd.DataFrame:
         """
         Clean synthetic features by replacing NaN and Inf values.
 
@@ -516,6 +521,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         is_input : bool
             If True, this is input data and should be validated (not auto-imputed).
             If False, this is synthetic features and should be cleaned.
+
+        fit_synthetic_scaler : bool
+            If True, learn normalization statistics for synthetic features from this
+            training data. Otherwise, reuse the statistics learned during ``fit``.
 
         return
         ------
@@ -573,18 +582,24 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             lower=-max_value, upper=max_value
         )
 
-        # Normalize synthetic features to prevent convergence issues
-        # Use robust normalization (median and IQR) to handle outliers
+        # Normalize synthetic features using statistics learned during fit. Recomputing
+        # these values here would make a row's output depend on the rest of its batch.
         for col in df_clean.columns:
             if str(col).startswith("synth_"):
                 col_data = df_clean[col].values
-                # Skip if all zeros or constant
-                if np.std(col_data) > 1e-10:
-                    # Use standardization (z-score) with clipping for extreme outliers
-                    mean = np.mean(col_data)
-                    std = np.std(col_data)
+                if fit_synthetic_scaler:
+                    self.synthetic_feature_stats_[col] = (
+                        float(np.mean(col_data)),
+                        float(np.std(col_data)),
+                    )
+
+                stats = self.synthetic_feature_stats_.get(col)
+                if stats is not None:
+                    mean, std = stats
+                    # Leave constant training features unchanged, as before.
+                    if std <= 1e-10:
+                        continue
                     df_clean[col] = (col_data - mean) / (std + 1e-10)
-                    # Clip to reasonable range after normalization
                     df_clean[col] = df_clean[col].clip(-10, 10)
 
         return df_clean
