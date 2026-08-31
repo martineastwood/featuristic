@@ -63,7 +63,7 @@ jobs:
       - name: Build and install wheel
         shell: bash
         run: |
-          pip install build "nuwa-build>=0.5.1"
+          pip install build "nuwa-build>=0.5.2"
           python -m build --wheel
           pip install dist/*.whl
           # Import from a temp dir so the checkout does not shadow site-packages.
@@ -90,7 +90,7 @@ jobs:
 
       - name: Build sdist and install from it
         run: |
-          pip install build "nuwa-build>=0.5.1"
+          pip install build "nuwa-build>=0.5.2"
           python -m build --sdist
           pip install dist/*.tar.gz
           # Import from a temp dir so the checkout does not shadow site-packages.
