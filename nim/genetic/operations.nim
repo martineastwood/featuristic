@@ -68,8 +68,7 @@ proc getRandomNodeIndex*(program: StackProgram, rng: var Rand): int =
   if numNodes == 0:
     return -1
 
-  # Uniform node pick. Python 1.1 used depth-weighted selection; that is a
-  # known 2.0 difference, not a forgotten weave dependency.
+  # Uniform node selection keeps crossover and mutation unbiased.
   return rng.rand(numNodes - 1)
 
 

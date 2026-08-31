@@ -15,6 +15,7 @@ from sklearn.model_selection import cross_val_score
 from tqdm import tqdm
 from typing_extensions import Self
 
+from ..validation import nonnegative_int, positive_int, probability
 from .binary_population import BinaryPopulation
 
 
@@ -213,6 +214,19 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         since they evaluate on the training data. For robust feature selection,
         use objective_function with cross-validation.
         """
+        positive_int("population_size", population_size, minimum=2)
+        positive_int("max_generations", max_generations)
+        positive_int("tournament_size", tournament_size)
+        probability("crossover_proba", crossover_proba)
+        probability("mutation_proba", mutation_proba)
+        nonnegative_int("early_termination_iters", early_termination_iters)
+        if n_jobs != -1:
+            positive_int("n_jobs", n_jobs)
+        if objective_function is not None and not callable(objective_function):
+            raise TypeError("objective_function must be callable or None")
+        if objective_function is not None and metric is not None:
+            raise ValueError("Specify either objective_function or metric, not both")
+
         if objective_function is None and metric is None:
             raise ValueError(
                 "Either objective_function or metric must be specified.\n"
@@ -222,6 +236,14 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         self.objective_function = objective_function
         self.metric = metric
+        if metric is not None:
+            metric_key = metric.lower()
+            valid_metrics = {"mse", "mae", "r2", "logloss", "accuracy"}
+            if metric_key not in valid_metrics:
+                raise ValueError(
+                    f"metric must be one of {sorted(valid_metrics)}, got {metric!r}"
+                )
+            self.metric = metric_key
         self.population_size = population_size
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
@@ -306,6 +328,25 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         -------
         self
         """
+        if not isinstance(X, pd.DataFrame):
+            raise TypeError("X must be a pandas DataFrame")
+        y_array = np.asarray(y)
+        if X.ndim != 2 or X.shape[1] == 0 or X.shape[0] == 0:
+            raise ValueError("X must contain at least one row and one feature")
+        if y_array.ndim != 1:
+            raise ValueError("y must be 1-dimensional")
+        if len(X) != len(y_array):
+            raise ValueError("X and y must have the same number of rows")
+        if X.columns.duplicated().any():
+            raise ValueError("X must not contain duplicate column names")
+
+        # Reset fitted state so repeated calls to fit are independent.
+        self.history = []
+        self.best_genome = None
+        self.best_cost = sys.maxsize
+        self.early_termination_counter = 0
+        self.is_fitted_ = False
+
         # Set random seeds for reproducibility
         if self.random_state is not None:
             random.seed(self.random_state)
@@ -344,7 +385,10 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
             # check for early termination
             self.early_termination_counter += 1
-            if self.early_termination_counter >= self.early_termination_iters:
+            if (
+                self.early_termination_iters > 0
+                and self.early_termination_counter >= self.early_termination_iters
+            ):
                 if self.verbose:
                     print(
                         f"Early termination at iter {current_iter}, \
@@ -370,6 +414,8 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         self.is_fitted_ = True
 
         self.selected_columns = X.columns[self.best_genome == 1]
+
+        return self
 
     def plot_history(self, ax: matplotlib.axes._axes.Axes | None = None):
         """
@@ -517,30 +563,3 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         plt.tight_layout()
 
         return ax
-
-    def plot_convergence(self, ax: matplotlib.axes._axes.Axes | None = None):
-        """
-        Plot convergence of genetic algorithm.
-
-        Alias for plot_history() for API consistency. Displays the fitness
-        progression over generations with population statistics.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes, optional
-            The axes to plot on. If None, creates a new figure.
-
-        Returns
-        -------
-        matplotlib.axes.Axes
-            The axes with the plot.
-
-        Examples
-        --------
-        >>> selector = GeneticFeatureSelector(objective_function=...)
-        >>> selector.fit(X, y)
-        >>> selector.plot_convergence()
-        """
-        if not self.is_fitted_:
-            raise ValueError("Must call fit_transform or fit before plot_convergence")
-        return self.plot_history(ax)

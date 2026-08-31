@@ -24,7 +24,7 @@ synth.fit(X_train, y_train)
 
 # Visualize the generation trajectory
 fig, ax = plt.subplots(figsize=(10, 6))
-synth.plot_convergence(ax=ax)
+synth.plot_history(ax=ax)
 plt.tight_layout()
 plt.show()
 
@@ -32,7 +32,7 @@ plt.show()
 
 ### Interpreting the Synthesis Plot
 
-The built-in `plot_convergence()` method generates a detailed time-series graph containing three critical metrics:
+The built-in `plot_history()` method generates a detailed time-series graph containing three critical metrics:
 
 * **Best Fitness per Feature (Blue Line):** The absolute best score achieved by each feature's independent evolution.
 * **Cumulative Best (Red Dashed Line):** Tracks the global minimum achieved up to that point in the search.
@@ -51,7 +51,7 @@ selector = ft.GeneticFeatureSelector(
 selector.fit(X_train_synth, y_train)
 
 # The method returns a standard Matplotlib Axes object for easy customization
-ax = selector.plot_convergence()
+ax = selector.plot_history()
 plt.show()
 
 ```
@@ -78,11 +78,11 @@ Because the plotting methods accept `ax` parameters and return standard Matplotl
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
 # Plot Synthesis on the left
-synth.plot_convergence(ax=axes[0])
+synth.plot_history(ax=axes[0])
 axes[0].set_title("Synthesis Trajectory", fontweight="bold")
 
 # Plot Selection on the right
-selector.plot_convergence(ax=axes[1])
+selector.plot_history(ax=axes[1])
 axes[1].set_title("Selection Trajectory", fontweight="bold")
 
 plt.tight_layout()

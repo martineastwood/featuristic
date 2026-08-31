@@ -7,6 +7,37 @@ from sklearn.linear_model import LogisticRegression
 import featuristic as ft
 
 
+@pytest.mark.parametrize(
+    ("parameter", "value"),
+    [
+        ("population_size", 1),
+        ("max_generations", 0),
+        ("tournament_size", 0),
+        ("crossover_proba", -0.1),
+        ("mutation_proba", 1.1),
+        ("early_termination_iters", -1),
+        ("n_jobs", 0),
+    ],
+)
+def test_selector_rejects_invalid_constructor_parameters(parameter, value):
+    with pytest.raises((TypeError, ValueError)):
+        ft.GeneticFeatureSelector(metric="mae", **{parameter: value})
+
+
+def test_selector_requires_exactly_one_objective():
+    with pytest.raises(ValueError, match="[Ee]ither objective_function or metric"):
+        ft.GeneticFeatureSelector()
+    with pytest.raises(ValueError, match="either objective_function or metric"):
+        ft.GeneticFeatureSelector(objective_function=lambda X, y: 0.0, metric="mae")
+
+
+def test_selector_rejects_mismatched_training_rows():
+    with pytest.raises(ValueError, match="same number of rows"):
+        ft.GeneticFeatureSelector(metric="mae").fit(
+            pd.DataFrame({"a": [1.0, 2.0]}), pd.Series([1.0])
+        )
+
+
 def test_selection():
     """Test genetic feature selection with deterministic native metric."""
     # Use native metric for deterministic results (15-30x faster, no flakiness)
@@ -17,7 +48,7 @@ def test_selection():
         max_generations=100,
     )
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(TypeError, match="pandas DataFrame"):
         gfs.fit(X=None, y=None)
 
     # Create a dataset where feature importance is unambiguous:
@@ -38,7 +69,7 @@ def test_selection():
     # y is exactly "useful" plus small noise
     y = pd.Series(X["useful"].values + np.random.randn(n) * 0.01)
 
-    gfs.fit(X, y)
+    assert gfs.fit(X, y) is gfs
     new_X = gfs.transform(X)
 
     # The algorithm should select useful features
@@ -51,6 +82,11 @@ def test_selection():
     assert new_X.shape[0] == n
     assert gfs.is_fitted_
     assert len(selected) <= 4  # Should not select more features than available
+
+
+def test_invalid_native_metric_is_rejected():
+    with pytest.raises(ValueError, match="metric must be one of"):
+        ft.GeneticFeatureSelector(metric="not-a-metric")
 
 
 class TestMakeCVObjective:

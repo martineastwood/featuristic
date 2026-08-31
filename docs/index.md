@@ -79,18 +79,14 @@ In benchmark testing on the UCI `cars` dataset, this exact Featuristic pipeline 
 
 ---
 
-!!! warning "2.0 is not released"
-    This MkDocs source is the **Nim port** (`nim` branch), version **2.0.0**.
-    It must not be deployed over [featuristic.co.uk](https://www.featuristic.co.uk/) until 2.0 wheels ship.
-    `pip install featuristic` still installs **1.1.0**.
-
-## Ready to try 1.1.0 from PyPI?
+## Installation
 
 ```bash
 pip install featuristic
 ```
 
-To build **this branch**, see [Installation](getting-started/installation.md) (`nuwa develop`, Nim required).
+Published wheels include the compiled Nim backend. See [Installation](getting-started/installation.md)
+for supported platforms and source-build instructions.
 
 ### Next Steps
 

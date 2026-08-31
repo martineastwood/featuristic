@@ -178,7 +178,12 @@ class BinaryPopulation:
         X_f, y_c = as_fortran_xy(X, y)
 
         metric_map = {"mse": 0, "mae": 1, "r2": 2, "logloss": 3, "accuracy": 4}
-        metric_type = metric_map.get(metric.lower(), 0)
+        metric_key = metric.lower()
+        if metric_key not in metric_map:
+            raise ValueError(
+                f"metric must be one of {sorted(metric_map)}, got {metric!r}"
+            )
+        metric_type = metric_map[metric_key]
 
         pop = np.asarray(self.population, dtype=int)
         scores = evaluateBinaryPopulationArray(

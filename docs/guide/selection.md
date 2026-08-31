@@ -110,7 +110,7 @@ selector.fit(X_train, y_train)
 print(f"Selected features: {selector.selected_columns.tolist()}")
 
 # Visualize the evolutionary trajectory
-ax = selector.plot_convergence()
+ax = selector.plot_history()
 plt.show()
 
 ```

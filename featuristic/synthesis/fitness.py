@@ -1,19 +1,8 @@
-"""Helpers for Python ``fitness_function`` callbacks (not used by the Nim hot path)."""
-
-import sys
-import warnings
+"""Helpers for Python ``fitness_function`` callbacks."""
 
 import numpy as np
-import pandas as pd
-import scipy
 
 from ..featuristic_lib import pearsonCorrelationNim
-
-
-def node_count(node: dict) -> int:
-    if "children" not in node:
-        return 1
-    return sum(node_count(c) for c in node["children"])
 
 
 def linearly_scaled(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
@@ -51,25 +40,3 @@ def vector_fitness(
     r = float(pearsonCorrelationNim(y_pred.tolist(), y_true.tolist()))
     score = 1.0 - abs(r)
     return score / max(n_nodes**parsimony, 1e-18)
-
-
-def fitness_pearson(
-    program: dict, parsimony: float, y_true: pd.Series, y_pred: pd.Series
-):
-    """Legacy helper: negative correlation plus linear node penalty (tests / notebooks)."""
-
-    with warnings.catch_warnings(record=True) as _:
-        warnings.simplefilter("ignore", category=scipy.stats.NearConstantInputWarning)
-        if y_pred.isna().any():
-            return sys.maxsize
-
-        if np.isinf(y_pred).any():
-            return sys.maxsize
-
-        if np.ptp(y_true) == 0 or np.ptp(y_pred) == 0:
-            return sys.maxsize
-
-        correlation = abs(pearsonCorrelationNim(y_pred.tolist(), y_true.tolist()))
-        num_nodes = node_count(program)
-        penalty = parsimony * num_nodes
-        return -(correlation) + penalty

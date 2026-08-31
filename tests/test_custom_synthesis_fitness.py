@@ -29,5 +29,22 @@ def test_custom_mae_fitness_runs():
     synth.fit(X, y)
     out = synth.transform(X)
     assert out.shape[0] == len(X)
-    assert len(synth.generation_histories_) == 1
+    assert len(synth.generation_histories_) == 3
+    assert all(len(history) == 2 for history in synth.generation_histories_)
+
+
+def test_custom_fitness_honors_early_termination():
+    X = pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": [3.0, 2.0, 1.0]})
+    y = pd.Series([1.0, 2.0, 3.0])
+
+    synth = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        population_size=6,
+        max_generations=10,
+        early_termination_iters=1,
+        fitness_function=lambda y_true, y_pred, n_nodes: 1.0,
+        random_state=7,
+    )
+    synth.fit(X, y)
+
     assert len(synth.generation_histories_[0]) == 2

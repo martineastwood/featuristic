@@ -443,7 +443,8 @@ proc runSingleGA(
   parsimonyCoef: float64,
   seed: int32,
   availableOpKinds: seq[int],
-  fitnessMetric: int
+  fitnessMetric: int,
+  earlyTerminationIters: int
 ): SingleGAResult {.gcsafe.} =
   var rng = initRand(seed)
   var fm = cloneFeatureMatrix(sharedFm)
@@ -459,14 +460,16 @@ proc runSingleGA(
   var population = initializePopulation(rng, popSize, maxDepth, numFeatures, availableOps)
 
   # F. Run Evolution
-  var bestIdx = 0
+  var bestProgram = population[0]
   var bestFitness = Inf
   var bestScore = Inf
-  var fitnessHistory = newSeq[float64](generations) # Track best fitness per generation
+  var fitnessHistory: seq[float64] = @[] # Track best fitness per generation
+  var generationsWithoutImprovement = 0
 
   for generation in 0..<generations:
     var fitnessValues = newSeq[float64](popSize)
     var genBestFitness = Inf # Track best fitness in this generation
+    var improved = false
 
     for i in 0..<popSize:
       # Use thread-local pool
@@ -478,14 +481,24 @@ proc runSingleGA(
       if fitRes.finalFitness < bestFitness:
         bestFitness = fitRes.finalFitness
         bestScore = fitRes.score
-        bestIdx = i
+        bestProgram = population[i]
+        improved = true
 
       # Track generation best
       if fitRes.finalFitness < genBestFitness:
         genBestFitness = fitRes.finalFitness
 
     # Record the best fitness from this generation
-    fitnessHistory[generation] = genBestFitness
+    fitnessHistory.add(genBestFitness)
+
+    if improved:
+      generationsWithoutImprovement = 0
+    else:
+      inc generationsWithoutImprovement
+
+    if earlyTerminationIters > 0 and
+        generationsWithoutImprovement >= earlyTerminationIters:
+      break
 
     if generation < generations - 1:
       population = evolveGeneration(
@@ -495,7 +508,7 @@ proc runSingleGA(
 
   # Return the best result from this thread with history
   return SingleGAResult(
-    program: population[bestIdx],
+    program: bestProgram,
     fitness: bestFitness,
     score: bestScore,
     history: fitnessHistory
@@ -526,7 +539,8 @@ proc runMultipleGAs*(
   parsimonyCoefficient: float64,
   randomSeeds: seq[int32],
   availableOpKinds: seq[int] = @[],
-  fitnessMetric: int = 0
+  fitnessMetric: int = 0,
+  earlyTerminationIters: int = 0
 ): MultipleGAResult =
   ## Independent GAs in parallel, at most one OS thread per CPU.
 
@@ -544,6 +558,7 @@ proc runMultipleGAs*(
       idx: int,
       availableOpKinds: seq[int],
       fitnessMetric: int,
+      earlyTerminationIters: int,
       results: ptr seq[SingleGAResult],
       lock: ptr Lock
     ]
@@ -565,7 +580,8 @@ proc runMultipleGAs*(
       params.parsimonyCoef,
       params.seed,
       params.availableOpKinds,
-      params.fitnessMetric
+      params.fitnessMetric,
+      params.earlyTerminationIters
     )
     acquire(params.lock[])
     params.results[][params.idx] = gaResult
@@ -594,6 +610,7 @@ proc runMultipleGAs*(
             idx: i,
             availableOpKinds: availableOpKinds,
             fitnessMetric: fitnessMetric,
+            earlyTerminationIters: earlyTerminationIters,
             results: addr results,
             lock: addr resultsLock
           )

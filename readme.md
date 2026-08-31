@@ -6,11 +6,6 @@
 <i>"Because feature engineering should be a science, not an art."</i>
 </p>
 
-> **This is the `nim` branch (Featuristic 2.0, not released).**
-> `pip install featuristic` still installs **1.1.0** (pure Python) from PyPI.
-> Docs at [featuristic.co.uk](https://www.featuristic.co.uk/) describe that release.
-> Do not merge this branch to `main` or tag a PyPI 2.0 until wheels are proven.
-
 <div align="center">
 
   <a href="">[![Python Version](https://img.shields.io/pypi/pyversions/featuristic)](https://pypi.org/project/featuristic/)</a>
@@ -29,22 +24,15 @@ See the [documentation](https://www.featuristic.co.uk/) for more detailed inform
 
 ## Installation
 
-**PyPI 1.1.0 (current public release):**
+Install Featuristic from PyPI. Published wheels include the compiled Nim backend, so a
+Nim compiler is not required.
 
 ```
 python3 -m pip install featuristic
 ```
 
-**This branch (2.0 development, compiled Nim backend):**
-
-You need a [Nim compiler](https://nim-lang.org/install.html) on `PATH` and CPython 3.10 or newer.
-
-```
-python3 -m pip install "nuwa-build>=0.5.1"
-nuwa develop
-```
-
-Then run examples from the checkout. There are no 2.0 wheels on PyPI yet. An sdist cannot be installed without Nim.
+Building from source requires CPython 3.10 or newer, Nim 2.2, and
+`nuwa-build>=0.5.2`.
 
 See [installation](docs/getting-started/installation.md) for the support matrix.
 
@@ -122,7 +110,7 @@ generated_features = synth.transform(X_train)
 print(generated_features.head())
 ```
 
-|    |   displacement |   cylinders |   horsepower |   weight |   acceleration |   model_year |   origin |   feature_0 |   feature_4 |   feature_11 |   feature_1 |   feature_22 |
+|    |   displacement |   cylinders |   horsepower |   weight |   acceleration |   model_year |   origin |   synth_0 |   synth_4 |   synth_11 |   synth_1 |   synth_22 |
 |---:|---------------:|------------:|-------------:|---------:|---------------:|-------------:|---------:|------------:|------------:|-------------:|------------:|-------------:|
 |  0 |             89 |           4 |           62 |     2050 |           17.3 |           81 |        3 |    -8571.63 |   -0.312535 |     -96.7449 |   -105.823  |    -0.624987 |
 |  1 |            318 |           8 |          150 |     4077 |           14   |           72 |        1 |    -2488.32 |   -0.786564 |     -75.1698 |    -34.56   |    -1.57302  |
@@ -174,7 +162,7 @@ Let's print out the selected features to see what the Genetic Feature Selection 
 print(selected_features.head())
 ```
 
-|    |   weight |   acceleration |   model_year |   origin |   feature_0 |   feature_4 |   feature_11 |   feature_1 |
+|    |   weight |   acceleration |   model_year |   origin |   synth_0 |   synth_4 |   synth_11 |   synth_1 |
 |---:|---------:|---------------:|-------------:|---------:|------------:|------------:|-------------:|------------:|
 |  0 |     2050 |           17.3 |           81 |        3 |    -8571.63 |   -0.312535 |     -96.7449 |   -105.823  |
 |  1 |     4077 |           14   |           72 |        1 |    -2488.32 |   -0.786564 |     -75.1698 |    -34.56   |

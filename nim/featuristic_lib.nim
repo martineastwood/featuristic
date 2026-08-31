@@ -177,7 +177,8 @@ proc runMultipleGAsArray*(
   parsimonyCoefficient: float64,
   randomSeeds: seq[int32],
   availableOpKinds: seq[int] = @[],
-  fitnessMetric: int = 0
+  fitnessMetric: int = 0,
+  earlyTerminationIters: int = 0
 ): tuple[
   bestFeatureIndices: seq[seq[int]],
   bestOpKinds: seq[seq[int]],
@@ -207,7 +208,7 @@ proc runMultipleGAsArray*(
     multiGAResult = runMultipleGAs(
       fm, targetData, numGAs, generationsPerGA, populationSize, maxDepth,
       tournamentSize, crossoverProb, parsimonyCoefficient, randomSeeds,
-      availableOpKinds, fitnessMetric
+      availableOpKinds, fitnessMetric, earlyTerminationIters
     )
 
   var bestFeatureIndices = newSeq[seq[int]](numGAs)

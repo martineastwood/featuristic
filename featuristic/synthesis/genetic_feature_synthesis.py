@@ -14,6 +14,7 @@ from sklearn.utils.validation import check_is_fitted
 
 from ..constants import SYNTHESIS_FITNESS_METRICS, synthesis_op_kinds
 from ..featuristic_lib import runMultipleGAsArray
+from ..validation import nonnegative_int, positive_int, probability
 from .engine import (
     deserialize_program,
     evaluate_programs,
@@ -98,10 +99,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         Args
         ----
         n_features : int
-            The number of best features to generate. Internally, `3 * n_features`
-            programs are generated and the
-            best `n_features` are selected via Maximum Relevance Minimum Redundancy
-            (mRMR).
+            Target number of synthetic features. Internally, `3 * n_features`
+            candidates are generated and up to `n_features` non-trivial transformations
+            are selected with Maximum Relevance Minimum Redundancy (mRMR).
 
         population_size : int
             The number of programs in each generation. The larger the population, the
@@ -137,7 +137,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             name is ignored if present.
 
         return_all_features : bool
-            Whether to return all the features generated or just the best features.
+            If True, transformed data contains the original columns plus selected
+            synthetic features. If False, it contains only synthetic features.
 
         verbose : bool
             Whether to print out aditional information
@@ -164,10 +165,25 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             Built-in Nim fitness when ``fitness_function`` is None: ``"pearson"``
             (default), ``"mae"``, or ``"mse"``. MAE/MSE linearly scale ``y_pred``
             before scoring. Ignored when ``fitness_function`` is set.
+
         """
+        positive_int("n_features", n_features)
+        positive_int("population_size", population_size, minimum=2)
+        positive_int("max_generations", max_generations)
+        positive_int("tournament_size", tournament_size)
+        probability("crossover_proba", crossover_proba)
+        nonnegative_int("early_termination_iters", early_termination_iters)
+        positive_int("max_depth", max_depth)
+        if parsimony_coefficient < 0:
+            raise ValueError("parsimony_coefficient must be non-negative")
+        if fitness_function is not None and not callable(fitness_function):
+            raise TypeError("fitness_function must be callable or None")
+
         if functions is None:
             self.functions = list(AVAILABLE_OPERATIONS)
         else:
+            if not functions:
+                raise ValueError("functions must contain at least one operator")
             # Validate function names
             self.functions = []
             for func in functions:
@@ -176,6 +192,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                         f"Function '{func}' not found in symbolic operations"
                     )
                 self.functions.append(func)
+            if not any(func != "feature" for func in self.functions):
+                raise ValueError(
+                    "functions must contain at least one non-leaf operator"
+                )
 
         metric_key = fitness_metric.lower()
         if metric_key not in SYNTHESIS_FITNESS_METRICS:
@@ -267,8 +287,13 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             name for name in selected_names if str(name).startswith("synth_")
         ]
 
-        # Final selection: all original + selected synthetic
-        selected_names = list(X_df.columns) + selected_synth_names
+        # Match the public return_all_features contract: either retain the original
+        # columns alongside the selected synthetic features, or return only the
+        # generated features.
+        if self.return_all_features:
+            selected_names = list(X_df.columns) + selected_synth_names
+        else:
+            selected_names = selected_synth_names
 
         # Filter hall of fame to only include selected synthetic features
         selected_hof = []
@@ -312,6 +337,19 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         returns self
         """
         # Convert numpy arrays to pandas if needed, then reset index
+        X_array = np.asarray(X)
+        y_array = np.asarray(y)
+        if X_array.ndim != 2:
+            raise ValueError("X must be 2-dimensional")
+        if y_array.ndim != 1:
+            raise ValueError("y must be 1-dimensional")
+        if X_array.shape[0] == 0 or X_array.shape[1] == 0:
+            raise ValueError("X must contain at least one row and one feature")
+        if X_array.shape[0] != y_array.shape[0]:
+            raise ValueError("X and y must have the same number of rows")
+        if isinstance(X, pd.DataFrame) and X.columns.duplicated().any():
+            raise ValueError("X must not contain duplicate column names")
+
         X_pd = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
         y_pd = pd.Series(y) if not isinstance(y, pd.Series) else y
 
@@ -368,16 +406,22 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         X_f, y_c = as_fortran_xy(X_copy, y_copy)
 
+        # Generate a larger candidate pool before mRMR selection. Individual GAs can
+        # converge to a raw input feature; those candidates are intentionally discarded.
+        # Over-generation preserves the contract that n_features is the requested
+        # number of actual synthetic transformations, rather than merely an upper bound.
+        num_candidate_features = self.n_features * 3
+
         # Generate random seeds for each GA
         if self.random_state is not None:
             # Generate deterministic seeds for reproducibility
             random_seeds = [
-                (self.random_state + i) % (2**31) for i in range(self.n_features)
+                (self.random_state + i) % (2**31) for i in range(num_candidate_features)
             ]
         else:
             # Generate random seeds
             random_seeds = [
-                random.randint(0, 2**31 - 1) for _ in range(self.n_features)
+                random.randint(0, 2**31 - 1) for _ in range(num_candidate_features)
             ]
 
         # Note: Nim function returns tuple (positional args due to nimpy)
@@ -394,7 +438,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             ) = runMultipleGAsArray(
                 X_f,
                 y_c,
-                self.n_features,
+                num_candidate_features,
                 generations_per_ga,
                 self.population_size,
                 self.max_depth,
@@ -404,12 +448,13 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 random_seeds,
                 self.op_kinds_,
                 SYNTHESIS_FITNESS_METRICS[self.fitness_metric],
+                self.early_termination_iters,
             )
         else:
             custom = run_multiple_gas_python_fitness(
                 X_f,
                 y_c,
-                self.n_features,
+                num_candidate_features,
                 generations_per_ga,
                 self.population_size,
                 self.max_depth,
@@ -418,6 +463,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 random_seeds,
                 self.fitness_function,
                 self.op_kinds_,
+                self.early_termination_iters,
             )
             best_feature_indices = custom["best_feature_indices"]
             best_op_kinds = custom["best_op_kinds"]
@@ -434,7 +480,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         # Process results from Nim
         self.hall_of_fame = []
 
-        for feature_idx in range(self.n_features):
+        for feature_idx in range(num_candidate_features):
             # Extract serialized program data for this GA
             program_data = {
                 "feature_indices": best_feature_indices[feature_idx],
@@ -491,6 +537,12 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             if self.verbose and feature_idx == 0:
                 print(f"First generated feature: {formula}")
                 print(f"Fitness: {best_fitness:.6f}")
+
+        if self.verbose and len(self.hall_of_fame) < self.n_features:
+            print(
+                f"Generated {len(self.hall_of_fame)} of {self.n_features} requested "
+                "non-trivial synthetic features."
+            )
 
         if self.verbose:
             print(f"Generated {len(self.hall_of_fame)} synthetic features using Nim GA")
@@ -648,10 +700,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             # Clean NaN/Inf values from synthetic features
             synthetic_features = self._clean_features(synthetic_features)
 
-            # Use stored names or generate defaults
-            synthetic_features.columns = [
-                x.get("name", f"synth_{i}") for i, x in enumerate(self.hall_of_fame)
-            ]
+            synthetic_features.columns = [x["name"] for x in self.hall_of_fame]
 
             # Combine original and synthetic features
             all_features = pd.concat(
@@ -661,19 +710,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             # Clean the combined features to handle any remaining NaN/Inf values
             all_features = self._clean_features(all_features)
 
-            # Select only the features chosen by mRMR
-            if hasattr(self, "selected_feature_names_"):
-                return all_features[self.selected_feature_names_]
-            else:
-                # Fallback: return synthetic features if no selection was done
-                if self.return_all_features:
-                    return all_features
-                return synthetic_features
-        else:
-            # No synthetic features selected, return original features
-            if hasattr(self, "selected_feature_names_"):
-                return X_pd.reset_index(drop=True)[self.selected_feature_names_]
-            return X_pd.reset_index(drop=True)
+            return all_features[self.selected_feature_names_]
+
+        return X_pd.reset_index(drop=True)[self.selected_feature_names_]
 
     def fit_transform(self, X: pd.DataFrame, y: pd.Series = None) -> pd.DataFrame:
         """
@@ -741,7 +780,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 "program": entry["individual"],
                 "fitness": entry["fitness"],
                 "formula": entry["formula"],
-                "name": entry.get("name", "unknown"),
+                "name": entry["name"],
             }
             for entry in sorted_hof
         ]
@@ -897,29 +936,3 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         plt.tight_layout()
 
         return ax
-
-    def plot_convergence(self, ax: matplotlib.axes._axes.Axes | None = None):
-        """
-        Plot convergence of genetic algorithm.
-
-        Alias for plot_history() for API consistency. Displays the fitness
-        progression across generated features with running statistics.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes, optional
-            The axes to plot on. If None, creates a new figure.
-
-        Returns
-        -------
-        matplotlib.axes.Axes
-            The axes with the plot.
-
-        Examples
-        --------
-        >>> synth = GeneticFeatureSynthesis(n_features=10)
-        >>> synth.fit(X, y)
-        >>> synth.plot_convergence()
-        """
-        check_is_fitted(self, "feature_names_")
-        return self.plot_history(ax)

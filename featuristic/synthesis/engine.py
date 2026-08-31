@@ -69,7 +69,7 @@ def _deserialize_program(
             return {"feature_name": feature_names[feature_idx]}
 
         # Internal node - use shared constants
-        op_name, format_str = OP_KIND_METADATA.get(op_kind, ("add", "({} + {})"))
+        op_name, format_str = OP_KIND_METADATA[op_kind]
 
         # Get children
         left_idx = left_children[idx]
@@ -315,6 +315,7 @@ def run_multiple_gas_python_fitness(
     random_seeds: list[int],
     fitness_function: Callable,
     available_op_kinds: list[int] | None = None,
+    early_termination_iters: int = 0,
 ) -> dict:
     """Run independent GAs with a Python fitness callback each generation.
 
@@ -345,6 +346,7 @@ def run_multiple_gas_python_fitness(
         best_fitness = np.inf
         best_program = None
         history = []
+        generations_without_improvement = 0
 
         for gen in range(generations_per_ga):
             preds = evaluateProgramsBatchedArray(
@@ -358,6 +360,7 @@ def run_multiple_gas_python_fitness(
             )
             fitness = []
             gen_best = np.inf
+            improved = False
             for i, pred in enumerate(preds):
                 y_pred = np.asarray(pred, dtype=np.float64)
                 n_nodes = pop["program_sizes"][i]
@@ -371,7 +374,17 @@ def run_multiple_gas_python_fitness(
                     best_program = _program_at(pop, i)
                     best_program["fitness"] = score
                     best_program["score"] = score
+                    improved = True
             history.append(gen_best)
+            if improved:
+                generations_without_improvement = 0
+            else:
+                generations_without_improvement += 1
+            if (
+                early_termination_iters > 0
+                and generations_without_improvement >= early_termination_iters
+            ):
+                break
             if gen < generations_per_ga - 1:
                 pop = _unpack_population(
                     evolveGPGenerationArray(

@@ -87,7 +87,7 @@ print("\n3. Plotting Feature Synthesis convergence...")
 plt.figure(figsize=(12, 6))
 
 # Plot the convergence
-ax = synth.plot_convergence()
+ax = synth.plot_history()
 
 # Customize further if needed
 ax.set_ylabel("Fitness (lower is better)", fontsize=12)
@@ -153,7 +153,7 @@ print("\n5. Plotting Feature Selection convergence...")
 plt.figure(figsize=(12, 6))
 
 # Plot the convergence
-ax = selector.plot_convergence()
+ax = selector.plot_history()
 
 # Add more context
 ax.text(
@@ -186,7 +186,7 @@ print("\n6. Creating side-by-side comparison plot...")
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
 # Feature Synthesis plot
-synth.plot_convergence(ax=axes[0])
+synth.plot_history(ax=axes[0])
 axes[0].set_title(
     "Feature Synthesis: Best Fitness per Generated Feature",
     fontsize=13,
@@ -195,7 +195,7 @@ axes[0].set_title(
 )
 
 # Feature Selection plot
-selector.plot_convergence(ax=axes[1])
+selector.plot_history(ax=axes[1])
 axes[1].set_title(
     "Feature Selection: Convergence Over Generations",
     fontsize=13,
@@ -287,12 +287,12 @@ selector_reg.fit(X_train_reg, y_train_reg)
 # Plot regression results
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
-synth_reg.plot_convergence(ax=axes[0])
+synth_reg.plot_history(ax=axes[0])
 axes[0].set_title(
     "Regression: Feature Synthesis Convergence", fontsize=13, fontweight="bold", pad=12
 )
 
-selector_reg.plot_convergence(ax=axes[1])
+selector_reg.plot_history(ax=axes[1])
 axes[1].set_title(
     "Regression: Feature Selection Convergence", fontsize=13, fontweight="bold", pad=12
 )
@@ -340,9 +340,9 @@ print("   ✓ Returns matplotlib axes for further customization")
 
 print("\nUsage:")
 print("   synth.fit(X, y)")
-print("   ax = synth.plot_convergence()  # or synth.plot_history()")
+print("   ax = synth.plot_history()")
 print()
 print("   selector.fit(X, y)")
-print("   ax = selector.plot_convergence()  # or selector.plot_history()")
+print("   ax = selector.plot_history()")
 
 print("\n" + "=" * 70)

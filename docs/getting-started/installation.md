@@ -1,44 +1,35 @@
 # Installation
 
-This documentation in the `nim` branch describes **Featuristic 2.0** (compiled Nim backend). That version is **not on PyPI**.
+## Install from PyPI
 
-[featuristic.co.uk](https://www.featuristic.co.uk/) and `pip install featuristic` are still **1.1.0** (pure Python, Python 3.8+).
+```bash
+python -m pip install featuristic
+```
 
-## Support matrix (2.0 / this branch)
+Published wheels contain the compiled backend; users do not need to install Nim.
+
+## Support matrix
 
 | Item | Status |
 | --- | --- |
 | CPython | 3.10–3.14 |
-| Python 3.8 / 3.9 | Dropped (nuwa-build requires 3.10+) |
+| Python 3.8 / 3.9 | Not supported |
 | OS | Linux, macOS, Windows (native architecture) |
-| Linux wheels (when published) | manylinux x86_64 |
-| Nim | 2.2.10 in CI (not required for a future *wheel* install) |
-| nuwa-build | 0.5.1+ |
+| Linux wheels | manylinux x86_64 |
+| Nim | 2.2.10 for source builds; not required for wheel installs |
+| nuwa-build | 0.5.2+ for source builds |
 | nuwa_sdk | 0.4.4 |
 
 Free-threaded CPython, PyPy, musllinux, and Linux aarch64 are not in the tested matrix.
 
----
-
-## Public install (1.1.0)
-
-```bash
-pip install featuristic
-```
-
-That does **not** install this branch.
-
----
-
-## Develop this branch
+## Development installation
 
 You need Nim on `PATH` (`nim --version`) and CPython 3.10+.
 
 ```bash
 git clone https://github.com/martineastwood/featuristic.git
 cd featuristic
-git checkout nim
-pip install "nuwa-build>=0.5.1"
+pip install "nuwa-build>=0.5.2"
 pip install -e ".[dev]"
 nuwa develop
 pytest
@@ -48,7 +39,7 @@ pytest
 
 ---
 
-## Verification (after `nuwa develop`)
+## Verify the installation
 
 ```python
 import featuristic as ft

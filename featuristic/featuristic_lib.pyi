@@ -1,20 +1,6 @@
 # Stubs for featuristic_lib
 from typing import Any
 
-def runMultipleGAsArray(
-    X: Any,
-    y: Any,
-    numGAs: int,
-    generationsPerGA: int,
-    populationSize: int,
-    maxDepth: int,
-    tournamentSize: int,
-    crossoverProb: float,
-    parsimonyCoefficient: float,
-    randomSeeds: list[int],
-    availableOpKinds: list[int] = ...,
-    fitnessMetric: int = ...,
-) -> Any: ...
 def getOperationFormat(opKindInt: int) -> str: ...
 def evaluateProgram(
     X: Any,
@@ -113,6 +99,21 @@ def runGeneticAlgorithmArray(
     fitnessMetric: int = ...,
 ) -> Any: ...
 def getUnaryOperationInts() -> list[int]: ...
+def runMultipleGAsArray(
+    X: Any,
+    y: Any,
+    numGAs: int,
+    generationsPerGA: int,
+    populationSize: int,
+    maxDepth: int,
+    tournamentSize: int,
+    crossoverProb: float,
+    parsimonyCoefficient: float,
+    randomSeeds: list[int],
+    availableOpKinds: list[int] = ...,
+    fitnessMetric: int = ...,
+    earlyTerminationIters: int = ...,
+) -> Any: ...
 def isUnaryOperation(opKindInt: int) -> bool: ...
 def evaluateBinaryGenomeArray(
     genome: list[int],

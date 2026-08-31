@@ -24,8 +24,7 @@ jobs:
       PYTHONUTF8: 1
       CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
       CIBW_SKIP: "pp* *-musllinux_* *i686 *-win32"
-      CIBW_TEST_COMMAND: >-
-        python -c "import featuristic as ft; from featuristic import featuristic_lib as lib; assert ft.__version__ == '2.0.0'; assert lib.getVersion() == '2.0.0'"
+      CIBW_TEST_COMMAND: "python {project}/tests/artifact_smoke.py"
 
     steps:
       - uses: actions/checkout@v4

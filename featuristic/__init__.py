@@ -12,9 +12,7 @@ from .datasets import fetch_cars_dataset, fetch_wine_dataset
 from .selection import GeneticFeatureSelector, make_cv_objective
 from .synthesis import GeneticFeatureSynthesis
 from .synthesis.mrmr import MaxRelevanceMinRedundancy
-from .synthesis.symbolic_functions import (
-    list_symbolic_functions,
-)
+from .synthesis.symbolic_functions import list_symbolic_functions
 from .version import __version__
 
 __all__ = [

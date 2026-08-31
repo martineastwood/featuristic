@@ -58,7 +58,7 @@ import featuristic as ft
 
 # Initialize the synthesizer
 synth = ft.GeneticFeatureSynthesis(
-    n_features=5,        # The number of final features to return
+    n_features=5,        # Target number of synthetic features
     population_size=200, # Size of the genetic pool
     max_generations=100  # Number of evolutionary cycles
 )
@@ -75,11 +75,36 @@ Understanding these parameters allows you to precisely control the bias-variance
 
 ### `n_features` (Default: 10)
 
-**The output constraint.** Internally, Featuristic generates `3 * n_features` high-quality candidates and utilizes mRMR to select the absolute best `n_features`.
+**The output target.** Internally, Featuristic generates `3 * n_features` candidates,
+discards formulas that simplify to an original input, and uses mRMR to select up to
+`n_features`. A difficult or tightly restricted search may produce fewer genuine
+transformations; Featuristic returns those it found instead of padding the result with
+copies of existing columns.
 
 ### `functions` (Default: all built-in operators)
 
 **The operator subset for the Nim GA.** Names from `list_symbolic_functions()` (for example `["add", "multiply"]`). Leaves are always original columns; you do not need to include `"feature"`.
+
+Operators are compiled into the Nim evaluator so formula evaluation remains fast and can
+run safely across native threads. The available catalogue is returned by
+`list_symbolic_functions()`; use `functions=` to restrict a search to the operators that
+make sense for your data. Custom scoring is available separately through
+`fitness_function`.
+
+### Numerical behavior of built-in operators
+
+The native evaluator uses protected operations so candidate formulas remain usable:
+
+* Division by a value whose absolute magnitude is below `1e-10` returns the numerator.
+* Square root evaluates `sqrt(abs(x))`.
+* Power uses the absolute base for non-integer powers of negative values, and returns
+  `1.0` for zero raised to a negative power.
+* Synthetic NaN and infinity values are replaced with zero, values are clipped to
+  `[-1e6, 1e6]`, and non-constant synthetic columns are standardized using statistics
+  learned during `fit` and clipped to `[-10, 10]`.
+
+Call `list_symbolic_functions()` to inspect the operator catalogue installed with your
+version of Featuristic.
 
 ### `parsimony_coefficient` (Default: 0.001)
 
@@ -151,7 +176,7 @@ To ensure your algorithm isn't stopping too early (or running too long), visuali
 import matplotlib.pyplot as plt
 
 # Plots best fitness per feature generation, including a 3-period moving average
-ax = synth.plot_convergence()
+ax = synth.plot_history()
 plt.show()
 
 ```
