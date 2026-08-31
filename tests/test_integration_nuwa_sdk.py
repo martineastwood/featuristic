@@ -239,6 +239,26 @@ class TestNumpyWrapperAPI:
         assert isinstance(best_fitness, float)
         assert isinstance(best_score, float)
 
+    def test_genetic_algorithm_handles_all_non_finite_fitness(self):
+        """Tournament selection keeps a valid candidate when all scores are infinite."""
+        X = np.asfortranarray(np.full((12, 2), np.nan))
+        y = np.arange(12, dtype=float)
+
+        result = runGeneticAlgorithmArray(
+            X,
+            y,
+            populationSize=6,
+            numGenerations=2,
+            maxDepth=2,
+            tournamentSize=2,
+            crossoverProb=0.9,
+            parsimonyCoefficient=0.01,
+            randomSeed=7,
+        )
+
+        assert len(result[0]) > 0
+        assert np.isinf(result[5])
+
     def test_run_multiple_gas_array(self):
         """Test running multiple independent GAs."""
         np.random.seed(42)

@@ -424,11 +424,14 @@ proc tournamentSelect*(population: seq[StackProgram], fitness: seq[float64],
     # Value type cannot return nil - return empty program instead
     return StackProgram(nodes: @[], depth: 0)
 
-  var bestIdx = -1
-  var bestFitness = Inf
+  # Seed the tournament with a valid candidate.  Fitness can legitimately be
+  # Inf when every generated expression is unusable; starting at -1 would
+  # leave the winner unset and trigger an IndexDefect below.
+  var bestIdx = rng.rand(popSize - 1)
+  var bestFitness = fitness[bestIdx]
 
   # Run tournament
-  for _ in 0..<tournamentSize:
+  for _ in 1..<tournamentSize:
     let idx = rng.rand(popSize - 1)
     if fitness[idx] < bestFitness:
       bestFitness = fitness[idx]
