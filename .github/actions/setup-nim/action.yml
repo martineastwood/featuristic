@@ -17,7 +17,12 @@ runs:
           choco install nim --version 2.2.10 -y
           echo "C:\\tools\\Nim\\nim-2.2.10\\bin" >> "$GITHUB_PATH"
         else
-          curl -L https://nim-lang.org/download/nim-2.2.10-linux_x64.tar.xz -o nim.tar.xz
+          case "$(uname -m)" in
+            x86_64) platform="x64" ;;
+            aarch64|arm64) platform="arm64" ;;
+            *) echo "Unsupported Linux architecture: $(uname -m)" >&2; exit 1 ;;
+          esac
+          curl -L "https://nim-lang.org/download/nim-2.2.10-linux_${platform}.tar.xz" -o nim.tar.xz
           tar -xf nim.tar.xz
           sudo mv nim-2.2.10 /opt/nim
           sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim

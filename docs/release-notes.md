@@ -9,7 +9,8 @@ their familiar scikit-learn-style Python API.
 
 ### Highlights
 
-- Supports CPython 3.10–3.14 on Linux, macOS, and Windows.
+- Supports CPython 3.10–3.14 with native wheels for Linux x86_64/aarch64,
+  macOS arm64/x86_64, and Windows x86_64.
 - Requires `nuwa-build>=0.5.3`, `nimpy@0.2.1`, and `nuwa_sdk@0.4.4` when
   building from source. Binary wheels do not require a local Nim installation.
 - Provides native synthesis fitness metrics (`pearson`, `mae`, and `mse`) and

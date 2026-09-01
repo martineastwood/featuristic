@@ -35,7 +35,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # Keep every supported native architecture explicit.
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - macos-14
+          - macos-15-intel
+          - windows-latest
         python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:

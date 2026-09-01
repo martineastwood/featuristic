@@ -14,13 +14,15 @@ Published wheels contain the compiled backend; users do not need to install Nim.
 | --- | --- |
 | CPython | 3.10–3.14 |
 | Python 3.8 / 3.9 | Not supported |
-| OS | Linux, macOS, Windows (native architecture) |
-| Linux wheels | manylinux x86_64 |
+| OS | Linux, macOS, Windows |
+| Linux wheels | manylinux x86_64 and aarch64 |
+| macOS wheels | Apple Silicon (arm64) and Intel (x86_64) |
+| Windows wheels | x86_64 |
 | Nim | 2.2.10 for source builds; not required for wheel installs |
 | nuwa-build | 0.5.3+ for source builds |
 | nuwa_sdk | 0.4.4 |
 
-Free-threaded CPython, PyPy, musllinux, and Linux aarch64 are not in the tested matrix.
+Free-threaded CPython, PyPy, and musllinux are not in the tested matrix.
 
 ## Development installation
 
