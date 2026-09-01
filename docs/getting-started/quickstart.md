@@ -24,7 +24,9 @@ np.random.seed(8888)
 X, y = ft.fetch_cars_dataset()
 
 # Create training and holdout sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=8888
+)
 
 ```
 
@@ -42,6 +44,7 @@ synth = ft.GeneticFeatureSynthesis(
     max_generations=100,
     early_termination_iters=25,
     parsimony_coefficient=0.035, # Prevents formula bloat
+    random_state=8888,
 )
 
 # Fit and generate new features
@@ -49,12 +52,14 @@ X_train_synth = synth.fit_transform(X_train, y_train)
 
 ```
 
-## Step 3: Optimal Feature Selection
+## Step 3: Feature Selection
 
-The synthesis stage generates highly predictive features, but they may contain redundant information. To find the globally optimal subset that maximizes predictive power while minimizing redundancy, we apply Genetic Feature Selection.
+The synthesis stage generates predictive candidates, but they may contain redundant information. We apply Genetic Feature Selection to search for a strong subset. This stochastic search does not guarantee the global optimum.
 
 Passing `metric="mae"` keeps population evaluation in the compiled Nim backend and
 avoids calling a Python objective function for every candidate.
+It scores the training data directly, so treat it as a fast heuristic; use a
+cross-validated custom objective for production model selection.
 
 ```python
 # Initialize the selector using Native Nim metrics for speed
@@ -63,9 +68,10 @@ selector = ft.GeneticFeatureSelector(
     population_size=200,
     max_generations=100,
     early_termination_iters=25,
+    random_state=8888,
 )
 
-# Find the ultimate feature subset
+# Search for a useful feature subset
 X_train_final = selector.fit_transform(X_train_synth, y_train)
 
 ```
@@ -98,7 +104,7 @@ print(f"Improvement:     {round((1 - (mae_optimized / mae_baseline))* 100, 1)}%"
 
 ### The Payoff
 
-In benchmark testing, this exact pipeline yields a **24.7% reduction in Mean Absolute Error**. We achieved a significantly better model without performing any manual data manipulation.
+Results vary with the split, random seed, and search budget. Compare the two MAE values on the untouched holdout set rather than assuming a fixed improvement.
 
 ## Interpretability: What drove the improvement?
 
@@ -111,6 +117,6 @@ print(info["formula"].iloc[0])
 
 ```
 
-This output reveals that the algorithm identified a complex, non-linear relationship between model_year, horsepower, and fuel efficiency that standard polynomial scaling would never uncover.
+This output reveals a complex, non-linear relationship between `model_year`, `horsepower`, and fuel efficiency. A conventional polynomial expansion would need the relevant interaction and division terms specified explicitly to represent the same formula.
 
 ---

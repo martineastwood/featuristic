@@ -1,10 +1,10 @@
 # Genetic Feature Selection
 
-> "The optimal subset of features is rarely found by greedy algorithms. It requires a global search of the combinatorial space."
+> "Greedy feature selection can miss useful combinations. Evolutionary search explores a broader part of the combinatorial space."
 
 If you have 50 candidate features, the total number of possible subsets is $2^{50}$. **Brute force is impossible.** Traditional heuristics like Stepwise Selection are "greedy", they make locally optimal choices and often get trapped in suboptimal feature combinations.
 
-**Genetic Feature Selection** reframes feature selection as a global optimization problem. By mimicking natural selection, it searches the vast combinatorial space efficiently, retaining the combination of features that maximizes predictive power while minimizing redundancy.
+**Genetic Feature Selection** reframes feature selection as a global optimization problem. By mimicking natural selection, it searches the vast combinatorial space for a strong feature subset. Like any stochastic heuristic, it does not guarantee the global optimum.
 
 ## The Evolutionary Mechanism
 
@@ -22,7 +22,7 @@ The search process follows strict evolutionary dynamics:
 
 ## The Two Evaluation Modes
 
-Featuristic offers two distinct pathways for evaluating feature subsets: **Native Execution** (for ultimate speed) and **Custom Objectives** (for ultimate flexibility).
+Featuristic offers two pathways for evaluating feature subsets: fast **Native Execution** and flexible **Custom Objectives**.
 
 ### 1. The High-Performance Mode (Native Nim)
 
@@ -39,7 +39,7 @@ selector = ft.GeneticFeatureSelector(
     max_generations=100
 )
 
-# Finds the optimal subset in a fraction of the time
+# Searches for a strong subset using the fastest evaluation path
 X_train_final = selector.fit_transform(X_train, y_train)
 
 ```
@@ -48,6 +48,9 @@ X_train_final = selector.fit_transform(X_train, y_train)
 
 * **Regression**: `"mse"`, `"mae"`, `"r2"`
 * **Classification**: `"accuracy"`, `"logloss"`
+
+!!! warning "Validate native-metric results"
+    Native metrics score candidates on the data passed to `fit`, so they are fast heuristics and can overfit. For production model selection, use a custom objective with cross-validation and retain an untouched holdout set.
 
 ### 2. The Flexible Mode (Custom Objective Functions)
 
@@ -101,7 +104,7 @@ Treat the genetic algorithm like any other machine learning model: its hyperpara
 
 ## Visualizing Convergence and Diversity
 
-Did the algorithm actually find the optimal solution, or did it get stuck? Featuristic includes a comprehensive plotting tool that tracks not just the best score, but the median population score to visualize genetic diversity.
+Did the search continue improving, or did it get stuck? Featuristic includes a plotting tool that tracks both the best and median population scores to visualize genetic diversity.
 
 ```python
 import matplotlib.pyplot as plt

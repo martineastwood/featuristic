@@ -32,11 +32,12 @@ plt.show()
 
 ### Interpreting the Synthesis Plot
 
-The built-in `plot_history()` method generates a detailed time-series graph containing three critical metrics:
+The built-in `plot_history()` method shows every independent synthesis run and its aggregate trajectory:
 
-* **Best Fitness per Feature (Blue Line):** The absolute best score achieved by each feature's independent evolution.
-* **Cumulative Best (Red Dashed Line):** Tracks the global minimum achieved up to that point in the search.
-* **3-Period Moving Average (Green Dotted Line):** Smooths out generation-to-generation volatility to reveal the underlying optimization trend.
+* **Individual runs (faint gray lines):** The fitness history of each independent genetic search.
+* **Best fitness (solid red line):** The lowest fitness reached across all runs at each generation.
+* **Median fitness (dashed blue line):** The typical fitness across the runs at each generation.
+* **Min-max spread (shaded area):** The range between the best and worst active run. Runs that stop early retain their final score in the aggregate curves.
 
 ## 2. Visualizing Feature Selection
 
@@ -60,7 +61,7 @@ plt.show()
 
 The selection plot shows the **Best Score (Blue)** and the **Median Score (Purple)** of the entire population at each generation. The shaded region between them represents the "Population Spread."
 
-* **Healthy Search:** A wide spread in early generations that gradually narrows as the algorithm converges on the optimal feature subset.
+* **Healthy Search:** A wide spread in early generations that gradually narrows as the search converges on a strong feature subset.
 * **Over-Elitism (Danger):** If the median line collapses into the best line immediately, the population has lost genetic diversity. The algorithm is trapped in a local optimum. *Solution: Decrease `tournament_size` or increase `mutation_proba`.*
 
 ### Automated Early Termination
@@ -99,7 +100,7 @@ Use this guide to troubleshoot your evolutionary runs based on visual feedback:
 | **Line plunges, then goes completely flat** | Premature Convergence | Increase `mutation_proba` to re-introduce diversity. |
 | **Line is still steeply dropping at final generation** | Incomplete Search | Increase `max_generations` or `early_termination_iters`. |
 | **Erratic, jagged lines with no downward trend** | Pure Noise / No Signal | The target variable may be entirely uncorrelated with the features, or `population_size` is too small. |
-| **Early termination annotation appears very early (e.g., Gen 15/100)** | Successful Optimization | No action needed. The algorithm successfully conserved compute resources. |
+| **Early termination annotation appears very early (e.g., Gen 15/100)** | Search stopped after its configured patience | Check the final score; increase `early_termination_iters` if the result is not satisfactory. |
 
 ---
 

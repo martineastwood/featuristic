@@ -84,7 +84,7 @@ Run the synthesis and selection stages exclusively on your training data, then t
 synth = ft.GeneticFeatureSynthesis(n_features=10)
 X_train_synth = synth.fit_transform(X_train, y_train)
 
-# 2. Select the optimal subset via Native Nim optimization
+# 2. Search for a feature subset via native Nim evaluation
 selector = ft.GeneticFeatureSelector(metric="mae")
 X_train_final = selector.fit_transform(X_train_synth, y_train)
 

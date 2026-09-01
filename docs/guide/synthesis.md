@@ -8,7 +8,7 @@ Rather than randomly guessing standard polynomial expansions, GFS acts as an alg
 
 ## Under the Hood: The Evolutionary Loop
 
-When you execute `.fit()` with a built-in `fitness_metric`, Featuristic runs the evolutionary loop entirely in compiled Nim. With `fitness_function`, Nim still evaluates programs and evolves the population; Python only returns a scalar score each generation.
+When you execute `.fit()` with a built-in `fitness_metric`, Featuristic runs the evolutionary loop in compiled Nim batches. With `fitness_function`, Nim still evaluates programs and evolves the population, while Python scores each candidate feature vector.
 
 ### 1. Initialization (The Primordial Soup)
 
@@ -45,7 +45,7 @@ The fittest formulas undergo genetic operations to create the next generation:
 
 ### 4. Simplification & Selection
 
-Before a new formula enters the population, it undergoes automated algebraic simplification (e.g., $x * 1$ to $x$) to prevent bloat. Finally, the algorithm utilizes **Maximum Relevance Minimum Redundancy (mRMR)** to filter the generated features, ensuring the final output is highly predictive but not overly correlated with existing features.
+Before a new formula enters the population, it undergoes automated algebraic simplification (e.g., $x * 1$ to $x$) to prevent bloat. Finally, the algorithm utilizes **Maximum Relevance Minimum Redundancy (mRMR)** to filter the generated features, ensuring the retained synthetic features are predictive but not overly redundant with one another.
 
 ---
 
@@ -180,7 +180,7 @@ To ensure your algorithm isn't stopping too early (or running too long), visuali
 ```python
 import matplotlib.pyplot as plt
 
-# Plots best fitness per feature generation, including a 3-period moving average
+# Plots individual runs plus aggregate best, median, and min-max spread
 ax = synth.plot_history()
 plt.show()
 

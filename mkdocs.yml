@@ -8,7 +8,7 @@ repo_name: martineastwood/featuristic
 repo_url: https://github.com/martineastwood/featuristic
 
 # Copyright
-copyright: Copyright &copy; 2024 Martin Eastwood
+copyright: Copyright &copy; 2024&ndash;2026 Martin Eastwood
 
 theme:
   name: material

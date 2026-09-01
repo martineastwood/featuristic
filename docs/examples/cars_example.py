@@ -24,8 +24,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-# Add parent directory to path to import featuristic
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Allow the example to run directly from a source checkout.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import featuristic as ft
 
@@ -123,8 +123,7 @@ for entry in synth.all_generated_features_:
 
 print("\n4. Training model on original + synthetic features...")
 
-# fit_transform already returns the optimal combination from mRMR
-# X_train_synth contains both original and synthetic features selected by mRMR
+# fit_transform returns the original features plus the synthetic features retained by mRMR
 
 combined_model = LogisticRegression(max_iter=1000)
 combined_model.fit(X_train_synth, y_train)
@@ -140,7 +139,7 @@ print(f"   Improvement over baseline: {improvement_combined:+.2f}%")
 # 5. Feature Selection: Select Best Subset
 # ============================================================================
 
-print("\n5. Feature Selection: Finding optimal feature subset...")
+print("\n5. Feature Selection: Searching for a strong feature subset...")
 print("   Using the Nim backend with a native metric")
 
 # For classification, we can use native metrics (logloss or accuracy)
@@ -233,7 +232,7 @@ print("\n" + "=" * 70)
 print("KEY TAKEAWAYS")
 print("=" * 70)
 print("✓ Feature Synthesis: Creates new features from existing ones")
-print("✓ Feature Selection: Automatically finds optimal feature subset")
+print("✓ Feature Selection: Searches for a useful feature subset")
 print("✓ Combined approach: Synthetic features can add predictive power")
 print("✓ Nim backend: compiled synthesis and native metric evaluation")
 print("✓ Pipeline: synthesis → selection can outperform either alone")

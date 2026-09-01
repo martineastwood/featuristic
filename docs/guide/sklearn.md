@@ -27,7 +27,9 @@ import featuristic as ft
 # 1. Prepare data
 X_raw, y = make_classification(n_samples=1000, n_features=20, random_state=42)
 X = pd.DataFrame(X_raw, columns=[f"f_{i}" for i in range(20)])
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # 2. Initialize the feature synthesizer
 synth = ft.GeneticFeatureSynthesis(

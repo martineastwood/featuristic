@@ -21,7 +21,7 @@ In modern machine learning, we treat hyperparameter tuning as a rigorous, mathem
 
 ## How It Works
 
-Featuristic doesn't just blindly apply standard transformations. It **learns** the optimal combinations of operators (like `sin`, `abs`, `sqrt`, etc.) for your specific dataset through evolutionary pressure:
+Featuristic doesn't just blindly apply standard transformations. It **searches for** useful combinations of operators (like `sin`, `abs`, `sqrt`, etc.) for your specific dataset through evolutionary pressure:
 
 1. **Initialization**: Creates a diverse "population" of random mathematical formulas (e.g., $(feature_1^2 - |feature_2|) \cdot feature_3$).
 2. **Evaluation**: By default, fitness is Pearson correlation in Nim (`fitness_metric="mae"` / `"mse"` are built-in alternatives). Pass `fitness_function` to minimize a Python loss on `y_pred` instead.
@@ -48,14 +48,17 @@ import featuristic as ft
 
 # 1. Load data
 X, y = ft.fetch_cars_dataset()
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
 
 # 2. Synthesize powerful non-linear features
 synth = ft.GeneticFeatureSynthesis(
     n_features=5,
     population_size=100,
     max_generations=50,
-    parsimony_coefficient=0.005 # Penalizes overly complex formulas
+    parsimony_coefficient=0.005, # Penalizes overly complex formulas
+    random_state=42,
 )
 X_train_synth = synth.fit_transform(X_train, y_train)
 
@@ -63,11 +66,12 @@ X_train_synth = synth.fit_transform(X_train, y_train)
 print(synth.get_feature_info()["formula"].iloc[0])
 # Example output: -(abs((cube(model_year) / horsepower)))
 
-# 3. Select the ultimate subset using Native Nim Optimization
+# 3. Search for a feature subset using native Nim evaluation
 selector = ft.GeneticFeatureSelector(
     metric="logloss", # Uses the native Nim evaluation path
     population_size=50,
-    max_generations=50
+    max_generations=50,
+    random_state=42,
 )
 X_train_final = selector.fit_transform(X_train_synth, y_train)
 
@@ -75,7 +79,7 @@ X_train_final = selector.fit_transform(X_train_synth, y_train)
 
 ### Empirical Results
 
-In benchmark testing on the UCI `cars` dataset, this exact Featuristic pipeline achieved a **25% reduction in Mean Absolute Error** compared to the baseline model using raw features.
+On the UCI `cars` example, seeded runs have improved holdout Mean Absolute Error over a raw-feature baseline. The result depends on the split and search budget; see the [complete example](examples/cars_example.md) and validate on unseen data.
 
 ---
 

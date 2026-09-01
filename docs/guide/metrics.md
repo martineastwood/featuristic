@@ -58,11 +58,11 @@ Crossover and mutation still run in Nim (`evolveBinaryPopulationBatched`). Only 
 
 #### Native metrics (`fitness_metric`)
 
-With no `fitness_function`, the whole GA stays in Nim. Choose `fitness_metric="pearson"` (default), `"mae"`, or `"mse"`. Pearson uses \(1-|r|\) with penalty `score / size**c`. MAE/MSE linearly scale predictions, then apply `score * (1 + c * size)`.
+With no `fitness_function`, each CPU-sized GA batch stays in Nim. Choose `fitness_metric="pearson"` (default), `"mae"`, or `"mse"`. Pearson uses \(1-|r|\) with penalty `score / size**c`. MAE/MSE linearly scale predictions, then apply `score * (1 + c * size)`.
 
 #### Custom `fitness_function`
 
-Pass `fitness_function(y_true, y_pred, n_nodes) -> float` (minimize). Nim evaluates each formula to `y_pred` and evolves the population; Python only returns the scalar. Independent GAs run sequentially. `parsimony_coefficient` does not apply; use `n_nodes` if you want a complexity penalty.
+Pass `fitness_function(y_true, y_pred, n_nodes) -> float` (minimize). Nim evaluates each formula to `y_pred` and evolves the population; Python returns one scalar score per candidate. Independent GAs run sequentially. `parsimony_coefficient` does not apply; use `n_nodes` if you want a complexity penalty.
 
 ```python
 import numpy as np
@@ -81,6 +81,9 @@ Do not put a heavy sklearn `cross_val_score` on the full original `X` inside thi
 ## Supported Native Metrics (selection)
 
 The Nim backend includes optimized solvers for **feature selection** (`metric=`). Synthesis uses `fitness_metric` (`pearson` / `mae` / `mse`) or a custom `fitness_function`. Those selection metric strings are not synthesis losses.
+
+!!! warning "Native selection metrics are training-set heuristics"
+    They score candidate subsets on the data passed to `fit`; they do not perform cross-validation. Use a custom `objective_function` with cross-validation when estimating generalization performance matters.
 
 ### Regression Metrics
 
@@ -101,7 +104,7 @@ For classification, the Native backend uses a fast logistic heuristic that scale
 
 ## Metric Selection Matrix
 
-Use this quick-reference table to determine the optimal configuration for your data:
+Use this quick-reference table to choose a configuration for your data:
 
 | Objective | Metric String | Direction | Supported Natively? |
 | --- | --- | --- | --- |

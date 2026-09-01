@@ -66,7 +66,9 @@ np.random.seed(8888)
 
 X, y = ft.fetch_cars_dataset()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=8888
+)
 ```
 
 Next, we'll initiate the Genetic Feature Synthesis process. We've configured the genetic algorithm to synthesize 5 new features: a population of 200, 100 generations, and early stop if the best formula does not improve for 25 generations. Parallelism for the default Pearson path is handled in Nim; you do not set `n_jobs` on the synthesizer.
@@ -78,6 +80,7 @@ synth = ft.GeneticFeatureSynthesis(
     max_generations=100,
     early_termination_iters=25,
     parsimony_coefficient=0.035,
+    random_state=8888,
 )
 
 synth.fit(X_train, y_train)
@@ -124,7 +127,7 @@ print(info["formula"].iloc[0])
 -(abs((cube(model_year) / horsepower)))
 ```
 
-Following the synthesis of our new features, we can now use another genetic algorithm for [feature selection](https://en.wikipedia.org/wiki/Feature_selection). This process sifts through all our features to identify the subset that optimally contributes to predictive performance while minimizing redundancy.
+Following synthesis, we can use another genetic algorithm for [feature selection](https://en.wikipedia.org/wiki/Feature_selection). This stochastic process searches for a subset that contributes to predictive performance while limiting redundancy; it does not guarantee the global optimum.
 
 To do this, we define a custom objective function that the Genetic Feature Selection algorithm will use to quantify how well each subset of features predicts the target. Please note that the function should return a value to minimize so a smaller value is better. If you want to maximize a metric, you should multiply the output of your objective_function by -1, as shown in the example below.
 
@@ -135,7 +138,7 @@ def objective_function(X, y):
     return scores.mean() * -1
 ```
 
-Next, we set up the Genetic Feature Selector. We've configured the genetic algorithm to evolve a population consisting of 200 individuals iteratively over 100 generations. To ensure optimal performance, we've set the genetic algorithm to halt early if it fails to improve upon the best feature set identified within 25 generations. Additionally, for enhanced computational efficiency, we've set n_jobs as -1, enabling concurrent execution across all available CPUs on our computer.
+Next, we set up the Genetic Feature Selector. It evolves 200 individuals for up to 100 generations and stops early if the best feature set does not improve for 25 generations. Setting `n_jobs=-1` evaluates the Python objective across all available CPUs.
 
 ```python
 selector = ft.GeneticFeatureSelector(
@@ -144,6 +147,7 @@ selector = ft.GeneticFeatureSelector(
     max_generations=100,
     early_termination_iters=25,
     n_jobs=-1,
+    random_state=8888,
 )
 
 selector.fit(generated_features, y_train)
@@ -206,4 +210,4 @@ Featuristic MAE: 1.9497667311649802
 Improvement: 24.7%
 ```
 
-The new features generated / selected by the Genetic Feature Synthesis have successfully reduced our mean absolute error &#128512;
+For this seeded split and run, the synthesized and selected features reduced holdout mean absolute error. Results vary with the data split and search budget, so validate the full pipeline on unseen data.

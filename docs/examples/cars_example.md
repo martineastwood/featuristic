@@ -24,7 +24,9 @@ np.random.seed(8888)
 X, y = ft.fetch_cars_dataset()
 
 # Create a 30% holdout test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=8888
+)
 
 ```
 
@@ -64,7 +66,8 @@ synth = ft.GeneticFeatureSynthesis(
     population_size=200,
     max_generations=100,
     parsimony_coefficient=0.035, # Prevents the formulas from getting too complex
-    early_termination_iters=25   # Halts if convergence is reached early
+    early_termination_iters=25,  # Halts if convergence is reached early
+    random_state=8888,
 )
 
 # Synthesize new features
@@ -88,7 +91,7 @@ print(info[["name", "formula", "fitness"]].head(1))
 The algorithm discovered the following relationship:
 
 
-This is highly intuitive: newer cars (model_year^3) with smaller engines (horsepower) are vastly more efficient. A standard polynomial expansion would struggle to find this exact cubic-divided-by-linear relationship.
+This candidate relates model year and horsepower through a cubic-divided-by-linear expression. A conventional polynomial expansion would need the relevant interaction and division terms specified explicitly to represent it.
 
 ---
 
@@ -101,10 +104,11 @@ selector = ft.GeneticFeatureSelector(
     metric="mae", # Keeps evaluation in the native Nim backend
     population_size=200,
     max_generations=100,
-    early_termination_iters=25
+    early_termination_iters=25,
+    random_state=8888,
 )
 
-# Find the optimal combination of original and synthetic features
+# Search for a strong combination of original and synthetic features
 X_train_final = selector.fit_transform(X_train_synth, y_train)
 
 ```
@@ -134,7 +138,7 @@ print(f"Improvement:     {improvement:.1f}%")
 
 ```
 
-**Results:**
+**Example results for this seeded run:**
 
 * **Baseline MAE:** 2.58
 * **Featuristic MAE:** 2.17
@@ -156,4 +160,4 @@ The Genetic Algorithm created a superior hybrid feature set:
 2. **Dropped 3 original features** (displacement, cylinders, horsepower) because they were redundant.
 3. **Added 2 synthetic features** (`synth_0` and `synth_1`) that captured the non-linear variance missed by the dropped features.
 
-By automating the synthesis and selection process, Featuristic reduced the error by nearly 25% with zero manual data manipulation.
+In this example run, automated synthesis and selection reduced the holdout error. Results can vary with the data split, seed, and search budget, so evaluate the complete pipeline on unseen data.

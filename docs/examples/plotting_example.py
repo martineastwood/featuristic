@@ -17,10 +17,12 @@ from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.metrics import accuracy_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 
-# Add parent directory to path to import featuristic
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Allow the example to run directly from a source checkout.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import featuristic as ft
+
+OUTPUT_DIR = Path(__file__).resolve().parent
 
 print("=" * 70)
 print("Featuristic Plotting Example: Visualizing Convergence")
@@ -102,7 +104,7 @@ ax.text(
 )
 
 plt.savefig(
-    "/Users/martin/repos/featuristic/examples/synthesis_convergence.png",
+    OUTPUT_DIR / "synthesis_convergence.png",
     dpi=150,
     bbox_inches="tight",
 )
@@ -169,7 +171,7 @@ ax.text(
 )
 
 plt.savefig(
-    "/Users/martin/repos/featuristic/examples/selection_convergence.png",
+    OUTPUT_DIR / "selection_convergence.png",
     dpi=150,
     bbox_inches="tight",
 )
@@ -213,7 +215,7 @@ fig.suptitle(
 
 plt.tight_layout()
 plt.savefig(
-    "/Users/martin/repos/featuristic/examples/convergence_comparison.png",
+    OUTPUT_DIR / "convergence_comparison.png",
     dpi=150,
     bbox_inches="tight",
 )
@@ -306,7 +308,7 @@ fig.suptitle(
 
 plt.tight_layout()
 plt.savefig(
-    "/Users/martin/repos/featuristic/examples/regression_convergence.png",
+    OUTPUT_DIR / "regression_convergence.png",
     dpi=150,
     bbox_inches="tight",
 )
@@ -330,7 +332,7 @@ print("   4. regression_convergence.png - Regression task convergence")
 
 print("\nKey features of the enhanced plots:")
 print("   ✓ Professional styling with consistent color schemes")
-print("   ✓ Running statistics (cumulative best, moving averages)")
+print("   ✓ Aggregate best/median statistics and fitness spread")
 print("   ✓ Population diversity visualization (selection)")
 print("   ✓ Early termination annotations")
 print("   ✓ Grid lines for better readability")
