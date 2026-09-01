@@ -1,10 +1,8 @@
 name: Publish to PyPI
 
-# Pushes to nim exercise the complete build and artifact-assembly path without
-# publishing. Production publishing only happens for a v* tag.
+# Release builds only. Branch and pull-request artifacts are built by artifacts.yml.
 on:
   push:
-    branches: ["nim"]
     tags: ["v*"]
   workflow_dispatch:
 
@@ -32,10 +30,7 @@ jobs:
 
     env:
       PYTHONUTF8: 1
-      CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
       CIBW_ARCHS: "${{ matrix.arch }}"
-      CIBW_SKIP: "*-musllinux_* *i686 *-win32"
-      CIBW_TEST_COMMAND: "python {project}/tests/artifact_smoke.py"
 
     steps:
       - uses: actions/checkout@v4

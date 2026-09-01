@@ -158,6 +158,11 @@ nim-flags = ["-d:release", "--opt:speed", "--stacktrace:off", "--checks:off"]
 [tool.nuwa.profiles.bench]
 nim-flags = ["-d:release", "--opt:speed", "--stacktrace:on"]
 
+[tool.cibuildwheel]
+build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
+skip = "*-musllinux_*"
+test-command = "python {project}/tests/artifact_smoke.py"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Disable progress bars completely to avoid threading issues on Windows

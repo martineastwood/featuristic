@@ -8,6 +8,10 @@ on:
     branches: ["nim", "main"]
   workflow_dispatch:
 
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Lint
@@ -29,28 +33,26 @@ jobs:
           python -m ruff check .
           python -m ruff format --check .
 
-  test:
-    name: Test Python ${{ matrix.python }} on ${{ matrix.os }}
+  test-platform:
+    name: Full suite on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        # Keep every supported native architecture explicit.
         os:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-14
           - macos-15-intel
           - windows-latest
-        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python }}
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python }}
+          python-version: "3.12"
           cache: pip
 
       - uses: ./.github/actions/setup-nim
@@ -58,7 +60,7 @@ jobs:
       - name: Install nuwa-build and package
         run: |
           pip install "nuwa-build>=0.5.3"
-          pip install -e ".[dev,test]"
+          pip install -e ".[test]"
 
       - name: Build extension
         run: nuwa develop
@@ -66,14 +68,14 @@ jobs:
       - name: Tests
         run: pytest tests/ -v --tb=short
 
-  test-integration-lowlevel:
-    name: Low-level integration tests (Nuwa SDK wrappers)
-    runs-on: ${{ matrix.os }}
+  test-python:
+    name: Python ${{ matrix.python }} compatibility
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python: ["3.10", "3.12", "3.13"]
+        # Python 3.12 receives the full suite in test-platform.
+        python: ["3.10", "3.11", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v4
@@ -92,34 +94,11 @@ jobs:
           pip install -e ".[test]"
           nuwa develop
 
-      - name: Run low-level integration tests
-        run: pytest tests/test_integration_nuwa_sdk.py -v --tb=short
-
-  test-integration-e2e:
-    name: End-to-end integration tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        python: ["3.11", "3.13"]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-          cache: pip
-
-      - uses: ./.github/actions/setup-nim
-
-      - name: Install and build
+      - name: Run compatibility tests
         run: |
-          pip install "nuwa-build>=0.5.3"
-          pip install -e ".[test]"
-          nuwa develop
-
-      - name: Run end-to-end integration tests
-        run: pytest tests/test_end_to_end.py -v --tb=short
+          pytest \
+            tests/test_architecture_verification.py \
+            tests/test_nim_integration.py \
+            tests/test_integration_nuwa_sdk.py \
+            tests/test_end_to_end.py \
+            -v --tb=short
