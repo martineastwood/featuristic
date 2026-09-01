@@ -829,12 +829,30 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             )
             return ax
 
-        # Convert histories to numpy array for easier manipulation
-        # Shape: (num_GAs, num_generations)
-        histories = np.array(self.generation_histories_)
+        raw_histories = [
+            np.asarray(history, dtype=float)
+            for history in self.generation_histories_
+            if len(history) > 0
+        ]
+        if not raw_histories:
+            ax.text(
+                0.5,
+                0.5,
+                "No generation history available",
+                ha="center",
+                va="center",
+                transform=ax.transAxes,
+            )
+            return ax
 
-        # Number of generations (all GAs should have same length)
-        num_generations = histories.shape[1]
+        # GAs may terminate at different generations. Pad each completed run
+        # with its final best score so aggregate curves retain stopped runs.
+        num_generations = max(len(history) for history in raw_histories)
+        histories = np.empty((len(raw_histories), num_generations), dtype=float)
+        for ga_idx, history in enumerate(raw_histories):
+            histories[ga_idx, : len(history)] = history
+            histories[ga_idx, len(history) :] = history[-1]
+
         generations = np.arange(num_generations)
 
         # Calculate statistics across all GAs at each generation
@@ -844,10 +862,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         max_per_gen = np.max(histories, axis=0)  # Worst GA at each generation
 
         # Plot individual GA convergence curves (faint)
-        for ga_idx in range(histories.shape[0]):
+        for history in raw_histories:
             ax.plot(
-                generations,
-                histories[ga_idx, :],
+                np.arange(len(history)),
+                history,
                 "-",
                 linewidth=0.5,
                 color="#64748b",

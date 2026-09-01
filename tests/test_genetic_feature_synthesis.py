@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+from matplotlib import pyplot as plt
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 
@@ -169,6 +170,22 @@ def test_gfs_early_termination():
     gfs.fit(X, y)
 
     assert len(gfs.generation_histories_[0]) < gfs.max_generations
+
+
+def test_plot_history_supports_different_early_termination_lengths():
+    gfs = ft.GeneticFeatureSynthesis(n_features=1)
+    gfs.feature_names_ = ["a"]
+    gfs.generation_histories_ = [
+        [0.8, 0.5, 0.4],
+        [0.9],
+        [0.7, 0.6],
+    ]
+
+    ax = gfs.plot_history()
+
+    assert ax.get_title() == "Feature Synthesis Convergence (per Generation)"
+    assert max(len(line.get_xdata()) for line in ax.lines) == 3
+    plt.close(ax.figure)
 
 
 def test_synthetic_values_do_not_depend_on_transform_batch():
