@@ -316,6 +316,7 @@ def run_multiple_gas_python_fitness(
     fitness_function: Callable,
     available_op_kinds: list[int] | None = None,
     early_termination_iters: int = 0,
+    progress_callback: Callable[[int], None] | None = None,
 ) -> dict:
     """Run independent GAs with a Python fitness callback each generation.
 
@@ -418,6 +419,8 @@ def run_multiple_gas_python_fitness(
         best_fitnesses.append(best_fitness)
         best_scores.append(best_program["score"])
         generation_histories.append(history)
+        if progress_callback is not None:
+            progress_callback(1)
 
     return {
         "best_feature_indices": best_feature_indices,

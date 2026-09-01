@@ -1,5 +1,6 @@
 """Contains the SymbolicFeatureGenerator class."""
 
+import os
 import random
 from collections.abc import Callable
 
@@ -11,6 +12,7 @@ from pandas.api.types import is_numeric_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
 from sklearn.utils.validation import check_is_fitted
+from tqdm import tqdm
 
 from ..constants import SYNTHESIS_FITNESS_METRICS, synthesis_op_kinds
 from ..featuristic_lib import runMultipleGAsArray
@@ -92,6 +94,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         max_depth: int = 6,
         fitness_function: Callable | None = None,
         fitness_metric: str = "pearson",
+        pbar: bool = True,
     ):
         """
         Initialize the Symbolic Feature Generator.
@@ -166,6 +169,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             (default), ``"mae"``, or ``"mse"``. MAE/MSE linearly scale ``y_pred``
             before scoring. Ignored when ``fitness_function`` is set.
 
+        pbar : bool
+            Whether to display progress bars while generating and selecting
+            synthetic features. Default is True.
+
         """
         positive_int("n_features", n_features)
         positive_int("population_size", population_size, minimum=2)
@@ -224,6 +231,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.random_state = random_state
         self.fitness_function = fitness_function
+        self.pbar = pbar
 
         # Categorical encoding attributes
         self.target_encoder_ = None
@@ -274,7 +282,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         # (We want n_features synthetic features, not total features)
         if len(synthetic_features.columns) >= self.n_features:
             selected_names = (
-                MaxRelevanceMinRedundancy(k=self.n_features, pbar=True)
+                MaxRelevanceMinRedundancy(k=self.n_features, pbar=self.pbar)
                 .fit_transform(synthetic_features, y)
                 .columns
             )
@@ -426,6 +434,40 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # Note: Nim function returns tuple (positional args due to nimpy)
         if self.fitness_function is None:
+            batch_size = (
+                min(num_candidate_features, os.cpu_count() or 1)
+                if self.pbar
+                else num_candidate_features
+            )
+            native_results = [[] for _ in range(8)]
+            with tqdm(
+                total=num_candidate_features,
+                desc="Generating synthetic features...",
+                disable=not self.pbar,
+            ) as progress:
+                for batch_start in range(0, num_candidate_features, batch_size):
+                    batch_seeds = random_seeds[batch_start : batch_start + batch_size]
+                    batch_results = runMultipleGAsArray(
+                        X_f,
+                        y_c,
+                        len(batch_seeds),
+                        generations_per_ga,
+                        self.population_size,
+                        self.max_depth,
+                        self.tournament_size,
+                        self.crossover_proba,
+                        self.parsimony_coefficient,
+                        batch_seeds,
+                        self.op_kinds_,
+                        SYNTHESIS_FITNESS_METRICS[self.fitness_metric],
+                        self.early_termination_iters,
+                    )
+                    for combined, batch_values in zip(
+                        native_results, batch_results, strict=True
+                    ):
+                        combined.extend(batch_values)
+                    progress.update(len(batch_seeds))
+
             (
                 best_feature_indices,
                 best_op_kinds,
@@ -435,36 +477,28 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 best_fitnesses,
                 best_scores,
                 generation_histories,
-            ) = runMultipleGAsArray(
-                X_f,
-                y_c,
-                num_candidate_features,
-                generations_per_ga,
-                self.population_size,
-                self.max_depth,
-                self.tournament_size,
-                self.crossover_proba,
-                self.parsimony_coefficient,
-                random_seeds,
-                self.op_kinds_,
-                SYNTHESIS_FITNESS_METRICS[self.fitness_metric],
-                self.early_termination_iters,
-            )
+            ) = native_results
         else:
-            custom = run_multiple_gas_python_fitness(
-                X_f,
-                y_c,
-                num_candidate_features,
-                generations_per_ga,
-                self.population_size,
-                self.max_depth,
-                self.tournament_size,
-                self.crossover_proba,
-                random_seeds,
-                self.fitness_function,
-                self.op_kinds_,
-                self.early_termination_iters,
-            )
+            with tqdm(
+                total=num_candidate_features,
+                desc="Generating synthetic features...",
+                disable=not self.pbar,
+            ) as progress:
+                custom = run_multiple_gas_python_fitness(
+                    X_f,
+                    y_c,
+                    num_candidate_features,
+                    generations_per_ga,
+                    self.population_size,
+                    self.max_depth,
+                    self.tournament_size,
+                    self.crossover_proba,
+                    random_seeds,
+                    self.fitness_function,
+                    self.op_kinds_,
+                    self.early_termination_iters,
+                    progress_callback=progress.update,
+                )
             best_feature_indices = custom["best_feature_indices"]
             best_op_kinds = custom["best_op_kinds"]
             best_left_children = custom["best_left_children"]

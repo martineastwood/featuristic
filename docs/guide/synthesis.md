@@ -141,6 +141,11 @@ Controls the breadth and depth of the search. Larger populations explore more in
 
 * **Pro Tip:** Set `early_termination_iters` (Default: 15) to halt the algorithm automatically once convergence is reached, saving computational resources.
 
+### `pbar` (Default: `True`)
+
+Displays progress while candidate features are generated and during mRMR
+selection. Set `pbar=False` for quiet batch jobs and automated tests.
+
 ---
 
 ## Advanced Capabilities
@@ -183,7 +188,10 @@ plt.show()
 
 ### Note on Performance (`n_jobs`)
 
-You do not need `n_jobs` for synthesis. With a built-in `fitness_metric`, all feature-generation GAs run in one compiled `runMultipleGAsArray` call. With `fitness_function`, those GAs run sequentially so your Python callable can run with the GIL.
+You do not need `n_jobs` for synthesis. With a built-in `fitness_metric`,
+feature-generation GAs run in CPU-sized compiled batches. With
+`fitness_function`, those GAs run sequentially so your Python callable can run
+with the GIL.
 
 ## Next Steps
 

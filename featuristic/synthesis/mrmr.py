@@ -119,11 +119,14 @@ class MaxRelevanceMinRedundancy:
         list
             The list of selected features.
         """
-        # set the maximum number of features to select
-        k: int = min(self.k, X.shape[1])
-
         # Filter out constant features and features with NaN
         X = X.loc[:, X.nunique() > 1].dropna(axis=1)
+
+        # Set the maximum only after filtering; a candidate pool can become
+        # empty when every generated feature is constant or invalid.
+        k: int = min(self.k, X.shape[1])
+        if k == 0:
+            return []
 
         X_f, y_c = as_fortran_xy(X, y)
         selected_indices = runMRMRArray(X_f, y_c, k, FLOOR)
