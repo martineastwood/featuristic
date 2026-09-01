@@ -187,22 +187,21 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             raise TypeError("fitness_function must be callable or None")
 
         if functions is None:
-            self.functions = list(AVAILABLE_OPERATIONS)
+            resolved_functions = list(AVAILABLE_OPERATIONS)
         else:
             if not functions:
                 raise ValueError("functions must contain at least one operator")
             # Validate function names
-            self.functions = []
             for func in functions:
                 if func not in AVAILABLE_OPERATIONS:
                     raise ValueError(
                         f"Function '{func}' not found in symbolic operations"
                     )
-                self.functions.append(func)
-            if not any(func != "feature" for func in self.functions):
+            if not any(func != "feature" for func in functions):
                 raise ValueError(
                     "functions must contain at least one non-leaf operator"
                 )
+            resolved_functions = functions
 
         metric_key = fitness_metric.lower()
         if metric_key not in SYNTHESIS_FITNESS_METRICS:
@@ -210,8 +209,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 f"fitness_metric must be one of {sorted(SYNTHESIS_FITNESS_METRICS)}, "
                 f"got {fitness_metric!r}"
             )
-        self.fitness_metric = metric_key
-        self.op_kinds_ = synthesis_op_kinds(self.functions)
+        # Estimator parameters must be stored unchanged for sklearn.clone().
+        self.functions = functions
+        self.fitness_metric = fitness_metric
+        self.op_kinds_ = synthesis_op_kinds(resolved_functions)
 
         self.population_size = population_size
         self.max_generations = max_generations
@@ -358,6 +359,25 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         if isinstance(X, pd.DataFrame) and X.columns.duplicated().any():
             raise ValueError("X must not contain duplicate column names")
 
+        # set_params() may change search parameters after construction.
+        resolved_functions = (
+            list(AVAILABLE_OPERATIONS) if self.functions is None else self.functions
+        )
+        if not resolved_functions or not any(
+            func != "feature" for func in resolved_functions
+        ):
+            raise ValueError("functions must contain at least one non-leaf operator")
+        unknown_functions = set(resolved_functions) - set(AVAILABLE_OPERATIONS)
+        if unknown_functions:
+            raise ValueError(f"Unknown symbolic functions: {sorted(unknown_functions)}")
+        metric_key = self.fitness_metric.lower()
+        if metric_key not in SYNTHESIS_FITNESS_METRICS:
+            raise ValueError(
+                f"fitness_metric must be one of {sorted(SYNTHESIS_FITNESS_METRICS)}, "
+                f"got {self.fitness_metric!r}"
+            )
+        self.op_kinds_ = synthesis_op_kinds(resolved_functions)
+
         X_pd = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
         y_pd = pd.Series(y) if not isinstance(y, pd.Series) else y
 
@@ -459,7 +479,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                         self.parsimony_coefficient,
                         batch_seeds,
                         self.op_kinds_,
-                        SYNTHESIS_FITNESS_METRICS[self.fitness_metric],
+                        SYNTHESIS_FITNESS_METRICS[self.fitness_metric.lower()],
                         self.early_termination_iters,
                     )
                     for combined, batch_values in zip(

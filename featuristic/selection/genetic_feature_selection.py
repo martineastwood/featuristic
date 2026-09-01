@@ -8,7 +8,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from joblib import cpu_count
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.model_selection import cross_val_score
@@ -17,6 +16,29 @@ from typing_extensions import Self
 
 from ..validation import nonnegative_int, positive_int, probability
 from .binary_population import BinaryPopulation
+
+
+class _CVObjective:
+    """Pickle-safe cross-validation objective returned by make_cv_objective."""
+
+    def __init__(self, metric: str, cv: int, model, n_jobs: int):
+        self.metric = metric
+        self.cv = cv
+        self.model = model
+        self.n_jobs = n_jobs
+        self.__name__ = f"cv_objective_{metric}"
+
+    def __call__(self, X_subset, y):
+        scores = cross_val_score(
+            self.model,
+            X_subset,
+            y,
+            cv=self.cv,
+            scoring=self.metric,
+            n_jobs=self.n_jobs,
+        )
+        # GeneticFeatureSelector minimizes its objective.
+        return -scores.mean()
 
 
 def make_cv_objective(
@@ -100,17 +122,7 @@ def make_cv_objective(
         else:
             model = Ridge()
 
-    def objective(X_subset, y):
-        """Objective function for genetic feature selection."""
-        scores = cross_val_score(
-            model, X_subset, y, cv=cv, scoring=metric, n_jobs=n_jobs
-        )
-        # Return negative mean because genetic algorithm minimizes
-        return -scores.mean()
-
-    # Set name for debugging
-    objective.__name__ = f"cv_objective_{metric}"
-    return objective
+    return _CVObjective(metric=metric, cv=cv, model=model, n_jobs=n_jobs)
 
 
 class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
@@ -243,7 +255,6 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
                 raise ValueError(
                     f"metric must be one of {sorted(valid_metrics)}, got {metric!r}"
                 )
-            self.metric = metric_key
         self.population_size = population_size
         self.crossover_proba = crossover_proba
         self.mutation_proba = mutation_proba
@@ -261,10 +272,9 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
 
         self.is_fitted_ = False
 
-        if n_jobs == -1:
-            self.n_jobs = cpu_count()
-        else:
-            self.n_jobs = n_jobs
+        # Store constructor parameters unchanged for sklearn.clone(). The
+        # population resolves n_jobs=-1 when it is created.
+        self.n_jobs = n_jobs
 
         self.verbose = verbose
         self.random_state = random_state
@@ -372,7 +382,9 @@ class GeneticFeatureSelector(BaseEstimator, TransformerMixin):
         for current_iter in range(self.max_generations):
             # Use native metric or custom objective function
             if self.metric is not None:
-                scores = self.population.evaluate_native(X, y, metric=self.metric)
+                scores = self.population.evaluate_native(
+                    X, y, metric=self.metric.lower()
+                )
             else:
                 scores = self.population.evaluate(self.objective_function, X, y)
 
