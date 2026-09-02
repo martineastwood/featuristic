@@ -1,34 +1,42 @@
 name: Setup Nim
-description: Install Nim 2.2.10 (same line as nuwa-build-action)
+description: Install the pinned Nim toolchain
 
 runs:
   using: composite
   steps:
-    - name: Install Nim
+    - name: Install Nim 2.2.10
       shell: bash
       run: |
         set -euo pipefail
-        if [ "$RUNNER_OS" = "macOS" ]; then
-          export CHOOSENIM_CHOOSE_VERSION=2.2.10
-          curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
-          sh init.sh -y
-          echo "$HOME/.nimble/bin" >> "$GITHUB_PATH"
-        elif [ "$RUNNER_OS" = "Windows" ]; then
-          choco install nim --version 2.2.10 -y
-          echo "C:\\tools\\Nim\\nim-2.2.10\\bin" >> "$GITHUB_PATH"
-        else
-          case "$(uname -m)" in
-            x86_64) platform="x64" ;;
-            aarch64|arm64) platform="arm64" ;;
-            *) echo "Unsupported Linux architecture: $(uname -m)" >&2; exit 1 ;;
-          esac
-          curl -L "https://nim-lang.org/download/nim-2.2.10-linux_${platform}.tar.xz" -o nim.tar.xz
-          tar -xf nim.tar.xz
-          sudo mv nim-2.2.10 /opt/nim
-          sudo ln -s /opt/nim/bin/nim /usr/local/bin/nim
-          sudo ln -s /opt/nim/bin/nimble /usr/local/bin/nimble
-          rm nim.tar.xz
+        nim_version="2.2.10"
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          choco install nim --version "$nim_version" -y
+          echo "C:\tools\Nim\nim-$nim_version\bin" >> "$GITHUB_PATH"
+          echo "C:\Users\runneradmin\.nimble\bin" >> "$GITHUB_PATH"
+          exit 0
         fi
+
+        case "$RUNNER_OS-$(uname -m)" in
+          Linux-x86_64) archive="nim-$nim_version-linux_x64.tar.xz" ;;
+          Linux-aarch64|Linux-arm64) archive="nim-$nim_version-linux_arm64.tar.xz" ;;
+          macOS-arm64) archive="nim-$nim_version-macosx_arm64.tar.xz" ;;
+          macOS-x86_64) archive="nim-$nim_version-macosx_x64.tar.xz" ;;
+          *) echo "Unsupported platform: $RUNNER_OS $(uname -m)" >&2; exit 1 ;;
+        esac
+
+        install_dir="$RUNNER_TEMP/nuwa-nim"
+        mkdir -p "$install_dir"
+        cd "$install_dir"
+        curl -fsSLO "https://nim-lang.org/download/$archive"
+        curl -fsSLO "https://nim-lang.org/download/$archive.sha256"
+        if [ "$RUNNER_OS" = "macOS" ]; then
+          shasum -a 256 -c "$archive.sha256"
+        else
+          sha256sum --check "$archive.sha256"
+        fi
+        tar -xf "$archive"
+        echo "$install_dir/nim-$nim_version/bin" >> "$GITHUB_PATH"
+
     - name: Verify Nim
       shell: bash
       run: |
