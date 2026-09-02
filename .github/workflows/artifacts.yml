@@ -13,44 +13,58 @@ permissions:
   contents: read
 
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
+  # A push and its pull_request event can represent the same commit. Keep one.
+  group: "${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.sha }}"
   cancel-in-progress: true
 
 jobs:
   cibuildwheel:
-    name: cibuildwheel on ${{ matrix.os }}
+    name: Wheel cp${{ matrix.python }} on ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        python: ["310", "311", "312", "313", "314"]
+        platform:
+          - linux-x86_64
+          - linux-arm64
+          - windows-x86_64
+          - macos-arm64
+          - macos-x86_64
         include:
-          - os: ubuntu-latest
+          - platform: linux-x86_64
+            os: ubuntu-latest
             arch: x86_64
-          - os: ubuntu-24.04-arm
+          - platform: linux-arm64
+            os: ubuntu-24.04-arm
             arch: aarch64
-          - os: windows-latest
+          - platform: windows-x86_64
+            os: windows-latest
             arch: AMD64
-          - os: macos-14
+          - platform: macos-arm64
+            os: macos-14
             arch: arm64
-          - os: macos-15-intel
+          - platform: macos-x86_64
+            os: macos-15-intel
             arch: x86_64
 
     env:
       PYTHONUTF8: 1
       CIBW_ARCHS: "${{ matrix.arch }}"
+      CIBW_BUILD: "cp${{ matrix.python }}-*"
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Build wheels
-        uses: martineastwood/nuwa-build-action@7270181908b83673bb456fb5539b84d77cb18d1c
+        uses: martineastwood/nuwa-build-action@297c4d536f3e4154431dedac55593a96b6b84df2
         with:
           nim-version: "2.2.10"
           cibw-version: "4.2.0"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: cibw-wheels-${{ matrix.os }}
+          name: cibw-wheel-${{ matrix.platform }}-cp${{ matrix.python }}
           path: ./wheelhouse/*.whl
           if-no-files-found: error
 

@@ -9,7 +9,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
+  # A push and its pull_request event can represent the same commit. Keep one.
+  group: "${{ github.workflow }}-${{ github.event.pull_request.head.sha || github.sha }}"
   cancel-in-progress: true
 
 jobs:
