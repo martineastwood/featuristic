@@ -67,6 +67,19 @@ proc anovaFStatistic(
   (betweenGroups / (numClasses - 1).float64) /
     (withinGroups / (n - numClasses).float64)
 
+proc regressionFStatistic(
+  feature, target: ptr UncheckedArray[float64], n: int
+): float64 =
+  ## Linear-regression F-statistic, equivalent to sklearn's f_regression.
+  if n <= 2:
+    return 0.0
+  let correlation = pearsonCorrelationCols(feature, target, n)
+  let correlationSquared = correlation * correlation
+  let denominator = 1.0 - correlationSquared
+  if denominator <= 0.0:
+    return Inf
+  correlationSquared / denominator * (n - 2).float64
+
 proc runMRMRImpl*(
   fm: FeatureMatrix,
   target: ptr UncheckedArray[float64],
@@ -85,7 +98,7 @@ proc runMRMRImpl*(
         fm.getColumn(i), target, numRows, numClasses
       )
     else:
-      fStats[i] = abs(pearsonCorrelationCols(fm.getColumn(i), target, numRows))
+      fStats[i] = regressionFStatistic(fm.getColumn(i), target, numRows)
 
   var corr = newSeq[seq[float64]](numFeatures)
   for i in 0..<numFeatures:

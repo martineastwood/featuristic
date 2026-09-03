@@ -1,9 +1,10 @@
+import numpy as np
 import pandas as pd
 import pytest
-from sklearn.feature_selection import f_classif
+from sklearn.feature_selection import f_classif, f_regression
 
 import featuristic as ft
-from featuristic.synthesis.mrmr import MaxRelevanceMinRedundancy
+from featuristic.synthesis.mrmr import FLOOR, MaxRelevanceMinRedundancy
 
 
 def test_preprocess_data():
@@ -90,3 +91,26 @@ def test_native_classification_mrmr_matches_sklearn_top_feature(labels):
     ).fit_transform(X, pd.Series(labels))
 
     assert result.columns.tolist() == [expected]
+
+
+def test_native_regression_mrmr_matches_sklearn_selection():
+    rng = np.random.default_rng(1)
+    X = pd.DataFrame(rng.normal(size=(60, 8)), columns=list("abcdefgh"))
+    y = pd.Series(rng.normal(size=60))
+    relevance = pd.Series(f_regression(X, y)[0], index=X.columns)
+    correlations = pd.DataFrame(FLOOR, index=X.columns, columns=X.columns)
+    expected = []
+    not_selected = X.columns.to_list()
+    for _ in range(5):
+        if expected:
+            correlations.loc[not_selected, expected[-1]] = (
+                X[not_selected].corrwith(X[expected[-1]]).abs().clip(lower=FLOOR)
+            )
+        redundancy = correlations.loc[not_selected, expected].mean(axis=1).fillna(FLOOR)
+        best = (relevance.loc[not_selected] / redundancy).idxmax()
+        expected.append(best)
+        not_selected.remove(best)
+
+    result = MaxRelevanceMinRedundancy(k=5).fit_transform(X, y)
+
+    assert result.columns.tolist() == expected

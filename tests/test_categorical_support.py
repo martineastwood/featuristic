@@ -226,6 +226,33 @@ def test_refit_clears_categorical_encoder_state():
     assert transformed.shape[0] == len(X_numeric)
 
 
+def test_categorical_synthesis_is_deterministic_with_random_state():
+    X = pd.DataFrame(
+        {
+            "category": list("abcde") * 20,
+            "value": np.arange(100.0),
+        }
+    )
+    y = pd.Series(np.sin(np.arange(100.0)))
+    params = {
+        "n_features": 3,
+        "population_size": 10,
+        "max_generations": 3,
+        "tournament_size": 3,
+        "pbar": False,
+        "random_state": 7,
+    }
+
+    first = ft.GeneticFeatureSynthesis(**params).fit(X, y)
+    second = ft.GeneticFeatureSynthesis(**params).fit(X, y)
+
+    pd.testing.assert_frame_equal(
+        first.get_feature_info().reset_index(drop=True),
+        second.get_feature_info().reset_index(drop=True),
+    )
+    pd.testing.assert_frame_equal(first.transform(X), second.transform(X))
+
+
 if __name__ == "__main__":
     # Run tests
     test_categorical_support()

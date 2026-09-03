@@ -427,7 +427,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
                 target_type = (
                     "binary" if type_of_target(y_copy) == "binary" else "continuous"
                 )
-                self.target_encoder_ = TargetEncoder(target_type=target_type)
+                self.target_encoder_ = TargetEncoder(
+                    target_type=target_type,
+                    random_state=self.random_state,
+                )
                 X_copy[self.high_card_cols_] = self.target_encoder_.fit_transform(
                     X_copy[self.high_card_cols_], y_copy
                 )
