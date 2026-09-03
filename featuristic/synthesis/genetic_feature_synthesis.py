@@ -11,6 +11,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
+from sklearn.utils.multiclass import type_of_target
 from sklearn.utils.validation import check_is_fitted
 from tqdm import tqdm
 
@@ -283,7 +284,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         # (We want n_features synthetic features, not total features)
         if len(synthetic_features.columns) >= self.n_features:
             selected_names = (
-                MaxRelevanceMinRedundancy(k=self.n_features, pbar=self.pbar)
+                MaxRelevanceMinRedundancy(k=self.n_features)
                 .fit_transform(synthetic_features, y)
                 .columns
             )
@@ -387,6 +388,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         # A refit must learn normalization parameters from the new training data.
         self.synthetic_feature_stats_ = {}
+        self.target_encoder_ = None
+        self.binary_encoder_ = None
+        self.high_card_cols_ = []
+        self.binary_cols_ = []
 
         # Validate input data for NaN/Inf values (raises error if found)
         self._clean_features(X_copy, is_input=True)
@@ -415,7 +420,13 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
             # Encode high cardinality columns with TargetEncoder
             if self.high_card_cols_:
-                target_type = "continuous" if is_numeric_dtype(y_copy) else "binary"
+                # Multiclass TargetEncoder expands each input column into one
+                # column per class, which would change the synthesis feature space.
+                # Preserve one output column while still treating ordinary 0/1
+                # numeric targets as classification rather than regression.
+                target_type = (
+                    "binary" if type_of_target(y_copy) == "binary" else "continuous"
+                )
                 self.target_encoder_ = TargetEncoder(target_type=target_type)
                 X_copy[self.high_card_cols_] = self.target_encoder_.fit_transform(
                     X_copy[self.high_card_cols_], y_copy
@@ -730,7 +741,9 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         check_is_fitted(self, "feature_names_")
 
         # Convert numpy array to pandas DataFrame if needed
-        X_pd = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
+        # Encoding below assigns into columns, so never retain or mutate the caller's
+        # DataFrame. A deep copy also keeps object-backed categorical data isolated.
+        X_pd = pd.DataFrame(X).copy(deep=True)
 
         # Transform categorical columns if encoders were fitted
         if self.binary_cols_ and self.binary_encoder_ is not None:

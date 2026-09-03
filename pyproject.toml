@@ -110,11 +110,13 @@ dev = [
     "pre-commit",
     "pydata_sphinx_theme",
     "pytest",
+    "pytest-env",
     "ruff>=0.16.5",
     "Sphinx",
 ]
 test = [
     "pytest",
+    "pytest-env",
     "numpy",
     "pandas",
     "scikit-learn",

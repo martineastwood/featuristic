@@ -1,7 +1,7 @@
 """Class for selecting most relevant features using the mrmr algorithm."""
 
 import pandas as pd
-from sklearn.feature_selection import f_classif, f_regression
+from sklearn.preprocessing import LabelEncoder
 
 from ..featuristic_lib import runMRMRArray
 from .utils import as_fortran_xy
@@ -15,7 +15,7 @@ class MaxRelevanceMinRedundancy:
     Class for selecting most relevant features using the mrmr algorithm.
     """
 
-    def __init__(self, k: int = 6, problem_type: str = "regression", pbar=True):
+    def __init__(self, k: int = 6, problem_type: str = "regression"):
         """
         Initialize the MaxRelevanceMinRedundancy class.
 
@@ -27,21 +27,15 @@ class MaxRelevanceMinRedundancy:
         problem_type : str (default='regression')
             The type of problem. Either 'regression' or 'classification'.
 
-        pbar : bool (default=True)
-            Whether to display a progress bar or not.
         """
         self.k = k
+        self.problem_type = problem_type
         self.selected_features = None
-        self.pbar = pbar
 
         if problem_type not in ["regression", "classification"]:
             raise ValueError(
                 "Invalid type. Must be either 'regression' or 'classification'."
             )
-        if problem_type == "regression":
-            self.metric = f_regression
-        else:
-            self.metric = f_classif
 
     def fit(self, X: pd.DataFrame, y: pd.Series):
         """
@@ -128,10 +122,19 @@ class MaxRelevanceMinRedundancy:
         if k == 0:
             return []
 
-        X_f, y_c = as_fortran_xy(X, y)
-        selected_indices = runMRMRArray(X_f, y_c, k, FLOOR)
+        metric_type = 0
+        num_classes = 0
+        target = y
+        if self.problem_type == "classification":
+            encoder = LabelEncoder()
+            target = encoder.fit_transform(y)
+            num_classes = len(encoder.classes_)
+            if num_classes < 2:
+                raise ValueError(
+                    "Classification target must contain at least two classes"
+                )
+            metric_type = 1
 
-        # Convert indices back to feature names
-        selected_features = [str(X.columns[i]) for i in selected_indices]
-
-        return selected_features
+        X_f, y_c = as_fortran_xy(X, target)
+        selected_indices = runMRMRArray(X_f, y_c, k, FLOOR, metric_type, num_classes)
+        return [X.columns[i] for i in selected_indices]

@@ -2,6 +2,10 @@
 
 import std/math
 
+const
+  mrmrRegression* = 0
+  mrmrClassification* = 1
+
 proc pearsonCorrelationCols(x, y: ptr UncheckedArray[float64], n: int): float64 =
   var meanX = 0.0
   var meanY = 0.0
@@ -25,18 +29,63 @@ proc pearsonCorrelationCols(x, y: ptr UncheckedArray[float64], n: int): float64 
     return 0.0
   covariance / sqrt(stdX * stdY)
 
+proc anovaFStatistic(
+  feature, target: ptr UncheckedArray[float64], n: int, numClasses: int
+): float64 =
+  ## One-way ANOVA relevance, equivalent to sklearn.feature_selection.f_classif.
+  if numClasses < 2 or n <= numClasses:
+    return 0.0
+
+  var counts = newSeq[int](numClasses)
+  var sums = newSeq[float64](numClasses)
+  var overallSum = 0.0
+  for row in 0..<n:
+    let classIdx = int(target[row])
+    if classIdx < 0 or classIdx >= numClasses:
+      return 0.0
+    counts[classIdx] += 1
+    sums[classIdx] += feature[row]
+    overallSum += feature[row]
+
+  let overallMean = overallSum / n.float64
+  var betweenGroups = 0.0
+  for classIdx in 0..<numClasses:
+    if counts[classIdx] > 0:
+      let classMean = sums[classIdx] / counts[classIdx].float64
+      let difference = classMean - overallMean
+      betweenGroups += counts[classIdx].float64 * difference * difference
+
+  var withinGroups = 0.0
+  for row in 0..<n:
+    let classIdx = int(target[row])
+    let classMean = sums[classIdx] / counts[classIdx].float64
+    let difference = feature[row] - classMean
+    withinGroups += difference * difference
+
+  if withinGroups == 0.0:
+    return (if betweenGroups > 0.0: Inf else: 0.0)
+  (betweenGroups / (numClasses - 1).float64) /
+    (withinGroups / (n - numClasses).float64)
+
 proc runMRMRImpl*(
   fm: FeatureMatrix,
   target: ptr UncheckedArray[float64],
   k: int,
-  floor: float64
+  floor: float64,
+  metricType: int,
+  numClasses: int
 ): seq[int] =
   let numRows = fm.numRows
   let numFeatures = fm.numCols
 
   var fStats = newSeq[float64](numFeatures)
   for i in 0..<numFeatures:
-    fStats[i] = abs(pearsonCorrelationCols(fm.getColumn(i), target, numRows))
+    if metricType == mrmrClassification:
+      fStats[i] = anovaFStatistic(
+        fm.getColumn(i), target, numRows, numClasses
+      )
+    else:
+      fStats[i] = abs(pearsonCorrelationCols(fm.getColumn(i), target, numRows))
 
   var corr = newSeq[seq[float64]](numFeatures)
   for i in 0..<numFeatures:

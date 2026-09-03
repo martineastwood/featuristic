@@ -238,7 +238,9 @@ proc runMRMRArray*(
   X: PyObject,
   y: PyObject,
   k: int,
-  floor: float64
+  floor: float64,
+  metricType: int = mrmrRegression,
+  numClasses: int = 0
 ): seq[int] {.nuwa_export.} =
   var XArr = np.asStridedArray[float64](X)
   defer: XArr.close()
@@ -257,7 +259,9 @@ proc runMRMRArray*(
   let kEffective = min(k, fm.numCols)
   var selected: seq[int]
   withNogil:
-    selected = runMRMRImpl(fm, target, kEffective, floor)
+    selected = runMRMRImpl(
+      fm, target, kEffective, floor, metricType, numClasses
+    )
   selected
 
 proc runCompleteBinaryGAArray*(

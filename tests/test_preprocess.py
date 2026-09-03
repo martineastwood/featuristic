@@ -1,4 +1,6 @@
 import pandas as pd
+import pytest
+from sklearn.feature_selection import f_classif
 
 import featuristic as ft
 from featuristic.synthesis.mrmr import MaxRelevanceMinRedundancy
@@ -16,7 +18,75 @@ def test_mrmr_returns_empty_frame_when_all_features_are_constant():
     X = pd.DataFrame({"a": [1.0, 1.0, 1.0], "b": [2.0, 2.0, 2.0]})
     y = pd.Series([1.0, 2.0, 3.0])
 
-    result = MaxRelevanceMinRedundancy(k=1, pbar=False).fit_transform(X, y)
+    result = MaxRelevanceMinRedundancy(k=1).fit_transform(X, y)
 
     assert result.empty
     assert result.index.equals(X.index)
+
+
+def test_mrmr_classification_uses_anova_relevance():
+    y = pd.Series([0] * 4 + [1] * 4 + [2] * 4)
+    X = pd.DataFrame(
+        {
+            # Strong class separation but no linear relationship with class label.
+            "class_signal": [
+                10.0,
+                10.1,
+                9.9,
+                10.0,
+                0.0,
+                0.1,
+                -0.1,
+                0.0,
+                10.0,
+                10.1,
+                9.9,
+                10.0,
+            ],
+            "linear_signal": [
+                0.0,
+                0.2,
+                -0.1,
+                0.1,
+                1.0,
+                1.2,
+                0.9,
+                1.1,
+                2.0,
+                2.2,
+                1.9,
+                2.1,
+            ],
+        }
+    )
+
+    result = MaxRelevanceMinRedundancy(
+        k=1, problem_type="classification"
+    ).fit_transform(X, y)
+
+    assert result.columns.tolist() == ["class_signal"]
+
+
+@pytest.mark.parametrize(
+    "labels",
+    [
+        ["negative"] * 4 + ["positive"] * 4,
+        ["a"] * 4 + ["b"] * 4 + ["c"] * 4,
+    ],
+)
+def test_native_classification_mrmr_matches_sklearn_top_feature(labels):
+    rows = len(labels)
+    class_codes = pd.factorize(labels)[0]
+    X = pd.DataFrame(
+        {
+            "class_signal": class_codes + [0.0, 0.1, -0.1, 0.05] * (rows // 4),
+            "noise": [0.2, -0.3, 0.1, 0.4] * (rows // 4),
+        }
+    )
+    expected = X.columns[f_classif(X, labels)[0].argmax()]
+
+    result = MaxRelevanceMinRedundancy(
+        k=1, problem_type="classification"
+    ).fit_transform(X, pd.Series(labels))
+
+    assert result.columns.tolist() == [expected]

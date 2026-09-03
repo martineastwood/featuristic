@@ -143,8 +143,9 @@ Controls the breadth and depth of the search. Larger populations explore more in
 
 ### `pbar` (Default: `True`)
 
-Displays progress while candidate features are generated and during mRMR
-selection. Set `pbar=False` for quiet batch jobs and automated tests.
+Displays progress while candidate features are generated. The final native mRMR
+selection is a single compiled operation and does not display a separate progress
+bar. Set `pbar=False` for quiet batch jobs and automated tests.
 
 ---
 

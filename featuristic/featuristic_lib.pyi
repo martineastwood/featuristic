@@ -10,12 +10,6 @@ def evaluateProgram(
     rightChildren: list[int],
     constants: list[float],
 ) -> list[float]: ...
-def runMRMRArray(
-    X: Any,
-    y: Any,
-    k: int,
-    floor: float,
-) -> list[int]: ...
 def getVersion() -> str: ...
 def initializeGPPopulationArray(
     numFeatures: int,
@@ -114,6 +108,14 @@ def runMultipleGAsArray(
     fitnessMetric: int = ...,
     earlyTerminationIters: int = ...,
 ) -> Any: ...
+def runMRMRArray(
+    X: Any,
+    y: Any,
+    k: int,
+    floor: float,
+    metricType: int = ...,
+    numClasses: int = ...,
+) -> list[int]: ...
 def isUnaryOperation(opKindInt: int) -> bool: ...
 def evaluateBinaryGenomeArray(
     genome: list[int],

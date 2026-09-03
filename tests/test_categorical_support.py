@@ -48,7 +48,11 @@ def test_categorical_support():
 
     # Initialize GeneticFeatureSynthesis
     synth = ft.GeneticFeatureSynthesis(
-        n_features=2, max_generations=2, population_size=10, verbose=False
+        n_features=2,
+        max_generations=2,
+        population_size=10,
+        verbose=False,
+        pbar=False,
     )
 
     # Fit on mixed dataset - should not raise TypeError
@@ -118,7 +122,11 @@ def test_categorical_transform_new_data():
 
     # Fit and transform
     synth = ft.GeneticFeatureSynthesis(
-        n_features=1, max_generations=1, population_size=5, verbose=False
+        n_features=1,
+        max_generations=1,
+        population_size=5,
+        verbose=False,
+        pbar=False,
     )
     synth.fit(X_train, y_train)
     X_train_transformed = synth.transform(X_train)
@@ -146,7 +154,11 @@ def test_all_numeric_columns_unchanged():
     y = pd.Series(np.random.randn(100))
 
     synth = ft.GeneticFeatureSynthesis(
-        n_features=1, max_generations=1, population_size=5, verbose=False
+        n_features=1,
+        max_generations=1,
+        population_size=5,
+        verbose=False,
+        pbar=False,
     )
 
     synth.fit(X, y)
@@ -156,6 +168,62 @@ def test_all_numeric_columns_unchanged():
     assert synth.target_encoder_ is None
     assert len(synth.binary_cols_) == 0
     assert len(synth.high_card_cols_) == 0
+
+
+def test_binary_numeric_target_uses_binary_target_encoding():
+    X = pd.DataFrame({"category": list("abcd") * 10, "value": np.arange(40.0)})
+    y = pd.Series([0, 1] * 20)
+    synth = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        max_generations=1,
+        population_size=5,
+        pbar=False,
+        random_state=42,
+    )
+
+    synth.fit(X, y)
+
+    assert synth.target_encoder_.target_type_ == "binary"
+
+
+def test_transform_does_not_mutate_input_dataframe():
+    X = pd.DataFrame({"category": list("abcd") * 10, "value": np.arange(40.0)})
+    y = pd.Series(np.arange(40.0) + np.linspace(0.0, 0.5, 40))
+    synth = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        max_generations=1,
+        population_size=5,
+        pbar=False,
+        random_state=42,
+    ).fit(X, y)
+    X_before = X.copy(deep=True)
+
+    synth.transform(X)
+
+    pd.testing.assert_frame_equal(X, X_before)
+
+
+def test_refit_clears_categorical_encoder_state():
+    X_categorical = pd.DataFrame(
+        {"category": list("abcd") * 10, "value": np.arange(40.0)}
+    )
+    X_numeric = pd.DataFrame({"x": np.arange(40.0), "z": np.arange(40.0) ** 2})
+    y = pd.Series(np.arange(40.0) + np.linspace(0.0, 0.5, 40))
+    synth = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        max_generations=1,
+        population_size=5,
+        pbar=False,
+        random_state=42,
+    )
+
+    synth.fit(X_categorical, y)
+    synth.fit(X_numeric, y)
+    transformed = synth.transform(X_numeric)
+
+    assert synth.target_encoder_ is None
+    assert synth.high_card_cols_ == []
+    assert transformed.shape[0] == len(X_numeric)
 
 
 if __name__ == "__main__":
