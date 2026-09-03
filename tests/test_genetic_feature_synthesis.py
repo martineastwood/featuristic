@@ -216,3 +216,98 @@ def test_synthetic_values_do_not_depend_on_transform_batch():
         batch_result.loc[0, synthetic_columns],
         single_result.loc[0, synthetic_columns],
     )
+
+
+def test_transform_restores_fitted_dataframe_column_order():
+    rng = np.random.default_rng(2)
+    X = pd.DataFrame(
+        {
+            "a": rng.normal(size=50),
+            "constant": 1.0,
+            "b": rng.normal(size=50),
+            "c": rng.normal(size=50),
+        }
+    )
+    y = pd.Series(2 * X["a"] - X["b"])
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=2,
+        population_size=10,
+        max_generations=3,
+        tournament_size=3,
+        return_all_features=False,
+        pbar=False,
+        random_state=3,
+    ).fit(X, y)
+
+    expected = gfs.transform(X)
+    reordered = gfs.transform(X[["c", "constant", "a", "b"]])
+
+    pd.testing.assert_frame_equal(reordered, expected)
+
+
+@pytest.mark.parametrize(
+    "columns",
+    [["a", "b"], ["a", "b", "c", "extra"]],
+)
+def test_transform_rejects_dataframe_schema_mismatch(columns):
+    X = pd.DataFrame(
+        {"a": np.arange(20.0), "b": np.arange(20.0) ** 2, "c": np.arange(20.0) + 1}
+    )
+    y = pd.Series(np.arange(20.0))
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        population_size=5,
+        max_generations=1,
+        pbar=False,
+        random_state=1,
+    ).fit(X, y)
+    invalid = pd.DataFrame({column: [1.0] for column in columns})
+
+    with pytest.raises(ValueError, match="fitted feature schema"):
+        gfs.transform(invalid)
+
+
+def test_transform_rejects_wrong_width_array():
+    X = np.column_stack([np.arange(20.0), np.arange(20.0) ** 2])
+    y = np.arange(20.0)
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        population_size=5,
+        max_generations=1,
+        pbar=False,
+        random_state=1,
+    ).fit(X, y)
+
+    with pytest.raises(ValueError, match="fitted with 2 features"):
+        gfs.transform(np.ones((3, 3)))
+
+
+@pytest.mark.parametrize("invalid_value", [np.nan, np.inf, -np.inf])
+def test_gfs_rejects_non_finite_target(invalid_value):
+    X = pd.DataFrame({"a": np.arange(10.0), "b": np.arange(10.0) ** 2})
+    y = pd.Series(np.arange(10.0))
+    y.iloc[3] = invalid_value
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=1, population_size=5, max_generations=1, pbar=False
+    )
+
+    with pytest.raises(ValueError, match="finite"):
+        gfs.fit(X, y)
+
+
+def test_refit_resets_synthesis_history():
+    X = pd.DataFrame({"a": np.arange(20.0), "b": np.arange(20.0) ** 2})
+    y = pd.Series(np.arange(20.0))
+    gfs = ft.GeneticFeatureSynthesis(
+        n_features=1,
+        population_size=5,
+        max_generations=1,
+        pbar=False,
+        random_state=1,
+    )
+
+    gfs.fit(X, y)
+    first_history = list(gfs.history)
+    gfs.fit(X, y)
+
+    assert gfs.history == first_history

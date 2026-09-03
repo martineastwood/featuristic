@@ -359,6 +359,12 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             raise ValueError("X and y must have the same number of rows")
         if isinstance(X, pd.DataFrame) and X.columns.duplicated().any():
             raise ValueError("X must not contain duplicate column names")
+        try:
+            y_numeric = np.asarray(y, dtype=np.float64)
+        except (TypeError, ValueError) as exc:
+            raise TypeError("y must contain numeric values") from exc
+        if not np.isfinite(y_numeric).all():
+            raise ValueError("y must contain only finite values")
 
         # set_params() may change search parameters after construction.
         resolved_functions = (
@@ -381,6 +387,8 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
 
         X_pd = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X
         y_pd = pd.Series(y) if not isinstance(y, pd.Series) else y
+        self.n_features_in_ = X_pd.shape[1]
+        self.feature_names_in_ = np.asarray(X_pd.columns, dtype=object)
 
         X_copy, y_copy = preprocess_data(
             X_pd.reset_index(drop=True), y_pd.reset_index(drop=True)
@@ -392,6 +400,7 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         self.binary_encoder_ = None
         self.high_card_cols_ = []
         self.binary_cols_ = []
+        self.history = []
 
         # Validate input data for NaN/Inf values (raises error if found)
         self._clean_features(X_copy, is_input=True)
@@ -743,10 +752,30 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
         """
         check_is_fitted(self, "feature_names_")
 
-        # Convert numpy array to pandas DataFrame if needed
-        # Encoding below assigns into columns, so never retain or mutate the caller's
-        # DataFrame. A deep copy also keeps object-backed categorical data isolated.
-        X_pd = pd.DataFrame(X).copy(deep=True)
+        was_dataframe = isinstance(X, pd.DataFrame)
+        if was_dataframe:
+            if X.columns.duplicated().any():
+                raise ValueError("X must not contain duplicate column names")
+            expected = list(self.feature_names_in_)
+            missing = [column for column in expected if column not in X.columns]
+            unexpected = [column for column in X.columns if column not in expected]
+            if missing or unexpected:
+                raise ValueError(
+                    "X columns do not match the fitted feature schema; "
+                    f"missing={missing}, unexpected={unexpected}"
+                )
+            # Restore training order before positional native program evaluation.
+            X_pd = X.loc[:, expected].copy(deep=True)
+        else:
+            X_array = np.asarray(X)
+            if X_array.ndim != 2:
+                raise ValueError("X must be 2-dimensional")
+            if X_array.shape[1] != self.n_features_in_:
+                raise ValueError(
+                    f"X has {X_array.shape[1]} features, but this estimator was "
+                    f"fitted with {self.n_features_in_} features"
+                )
+            X_pd = pd.DataFrame(X_array, columns=self.feature_names_in_)
 
         # Transform categorical columns if encoders were fitted
         if self.binary_cols_ and self.binary_encoder_ is not None:
@@ -758,6 +787,10 @@ class GeneticFeatureSynthesis(BaseEstimator, TransformerMixin):
             X_pd[self.high_card_cols_] = self.target_encoder_.transform(
                 X_pd[self.high_card_cols_]
             )
+
+        # fit() may discard constant columns. Native programs index the resulting
+        # feature matrix, so transform must use exactly that post-processing schema.
+        X_pd = X_pd.loc[:, self.feature_names_]
 
         # Evaluate synthetic features from hall of fame
         if len(self.hall_of_fame) > 0:

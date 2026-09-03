@@ -1,5 +1,6 @@
 """Class for selecting most relevant features using the mrmr algorithm."""
 
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
@@ -113,6 +114,19 @@ class MaxRelevanceMinRedundancy:
         list
             The list of selected features.
         """
+        target_values = np.asarray(y)
+        if target_values.ndim != 1:
+            raise ValueError("y must be 1-dimensional")
+        if len(target_values) != len(X):
+            raise ValueError("X and y must have the same number of rows")
+        if pd.isna(target_values).any():
+            raise ValueError("y must not contain missing values")
+        if (
+            np.issubdtype(target_values.dtype, np.number)
+            and not np.isfinite(target_values).all()
+        ):
+            raise ValueError("y must contain only finite values")
+
         # Filter out constant features and features with NaN
         X = X.loc[:, X.nunique() > 1].dropna(axis=1)
 

@@ -114,3 +114,21 @@ def test_native_regression_mrmr_matches_sklearn_selection():
     result = MaxRelevanceMinRedundancy(k=5).fit_transform(X, y)
 
     assert result.columns.tolist() == expected
+
+
+@pytest.mark.parametrize(
+    ("problem_type", "invalid_value"),
+    [
+        ("regression", np.nan),
+        ("regression", np.inf),
+        ("classification", np.nan),
+        ("classification", np.inf),
+    ],
+)
+def test_mrmr_rejects_missing_or_non_finite_target(problem_type, invalid_value):
+    X = pd.DataFrame({"a": np.arange(10.0), "b": np.arange(10.0) ** 2})
+    y = pd.Series(np.arange(10.0))
+    y.iloc[3] = invalid_value
+
+    with pytest.raises(ValueError, match="missing|finite"):
+        MaxRelevanceMinRedundancy(k=1, problem_type=problem_type).fit_transform(X, y)
