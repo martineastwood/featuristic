@@ -76,7 +76,7 @@ def test_mrmr_classification_uses_anova_relevance():
 )
 def test_native_classification_mrmr_matches_sklearn_top_feature(labels):
     rows = len(labels)
-    class_codes = pd.factorize(labels)[0]
+    class_codes = pd.factorize(pd.Series(labels))[0]
     X = pd.DataFrame(
         {
             "class_signal": class_codes + [0.0, 0.1, -0.1, 0.05] * (rows // 4),
